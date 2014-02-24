@@ -7,7 +7,6 @@ import java.util.LinkedList;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
-import org.eclipse.jetty.util.log.Log;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
@@ -208,6 +207,10 @@ public class PCEServerParameters {
 	private boolean multidomain=false;
 	
 	private boolean isStateful=false;
+	
+	private boolean isSRCapable=false;
+	
+	private int MSD=0;
 	
 	private LSP_DB lspDB;
 	
@@ -449,6 +452,12 @@ public class PCEServerParameters {
 					}
 					else if (qName.equalsIgnoreCase("isStateful")) {
 						isStateful=Boolean.parseBoolean(tempVal.trim());
+					}
+					else if (qName.equalsIgnoreCase("isSRCapable")) {
+						isSRCapable=Boolean.parseBoolean(tempVal.trim());
+					}
+					else if (qName.equalsIgnoreCase("MSD")){
+						MSD = Integer.parseInt(tempVal.trim());
 					}
 					else if (qName.equalsIgnoreCase("timeSendTopologyTask")) {
 						timerOSPFupdatesToParentPCE=Long.parseLong(tempVal.trim());
@@ -871,6 +880,26 @@ public class PCEServerParameters {
 		this.isStateful = isStateful;
 	}
 
+	public boolean isSRCapable() {
+		return isSRCapable;
+	}
+	
+	public int getMSD() 
+	{
+		return MSD;
+	}
+	
+
+	public void setSRCapable(boolean isSRCapable) {
+		this.isSRCapable = isSRCapable;
+	}
+	
+	public void setSRCapable(int MSD) {
+		this.isSRCapable = (MSD>=0);
+		this.MSD = MSD;
+	}
+	
+	
 	public boolean isActive() {
 		return isActive;
 	}

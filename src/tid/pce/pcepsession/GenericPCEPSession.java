@@ -24,6 +24,7 @@ import tid.pce.pcep.objects.tlvs.DomainIDTLV;
 import tid.pce.pcep.objects.tlvs.LSPDatabaseVersionTLV;
 import tid.pce.pcep.objects.tlvs.PCE_ID_TLV;
 import tid.pce.pcep.objects.tlvs.PCE_Redundancy_Group_Identifier_TLV;
+import tid.pce.pcep.objects.tlvs.SRCapabilityTLV;
 import tid.pce.pcep.objects.tlvs.StatefulCapabilityTLV;
 import tid.pce.server.RequestQueue;
 
@@ -36,57 +37,57 @@ import tid.pce.server.RequestQueue;
  *
  */
 public abstract class GenericPCEPSession extends Thread implements PCEPSession {
-	
+
 	/**
 	 * PCEP Session Manager
 	 */
 	protected PCEPSessionsInformation pcepSessionManager;
-	
+
 	/**
 	 * Thread to send periodic Keepalives
 	 */
 	protected KeepAliveThread keepAliveT = null;
-	
+
 	/**
 	 * Value of the Keepalive timer set by the Local PCE. Used to send keepalives
 	 */
-	
+
 	protected int keepAliveLocal;
-	
+
 	/**
 	 * Value of the Keepalive timer of the peer PCC. It is not used in the server!!!
 	 */
 	protected int keepAlivePeer;
-	
+
 	/**
 	 * Thread to check if the connection is still alive. 
 	 * If in this time the PCE has not received anything, it closes the session
 	 * It is set by the PCC (in this case, the remote peer)
 	 */
 	protected DeadTimerThread deadTimerT = null; 
-	
+
 	/**
 	 *  Value of the deadtimer that the PCE sends, so the PCC uses it
 	 *  If in this time the PCC has not received anything, it closes the session
 	 *  It is set by the PCE (in this case, the local peer)
 	 */
 	protected int deadTimerLocal;
-	
+
 	/**
 	 * Value of the deadtimer that the PCC sends. It is used in the PCC in the thread
 	 */
 	protected int deadTimerPeer;
-	
+
 	/**
 	 * Socket of the communication between PCC and PCE
 	 */
 	protected Socket socket = null; 
-	
+
 	/**
 	 * DataOutputStream to send messages to the peer PCC
 	 */
 	protected DataOutputStream out=null; 
-	
+
 
 
 	/**
@@ -97,97 +98,99 @@ public abstract class GenericPCEPSession extends Thread implements PCEPSession {
 	 * Queue to send the Computing Path Requests
 	 */
 	protected RequestQueue req;
-	
+
 	/**
 	 * Logger to write the Parent PCE server log
 	 */
 	protected Logger log;
-	
+
 	/**
 	 * Timer to schedule KeepWait and OpenWait Timers
 	 */
 	protected Timer timer;
-	
+
 	/**
 	 * Finite State Machine of the PCEP protocol
 	 */
 	protected int FSMstate;
-	
+
 	/**
 	 * Remote PCE ID Address
 	 * null if not sent
 	 */
 	protected Inet4Address remotePCEId=null;
-	
+
 	/**
 	 * Remote Domain ID
 	 * null if not sent
 	 */
 	protected Inet4Address remoteDomainId=null;
-	
+
 	/**
 	 * Remote List of OF Codes
 	 * If sent by the peer PCE
 	 */
 	protected LinkedList<Integer> remoteOfCodes;//FIME: What do we do with them?
-	
+
 	/**
 	 * RemoteOK:  a boolean that is set to 1 if the system has received an
       acceptable Open message.
 	 */
 	protected boolean remoteOK=false;
-	
+
 	/**
 	 * 
 	 */
 	protected boolean localOK=false;
-	
+
 	/**
 	 * 
 	 */
 	protected int openRetry=0;
-	
+
 	/**
 	 * Byte array to store the last PCEP message read.
 	 */
 	protected byte[] msg = null;
-	
+
 	/**
 	 * Initial number of the session ID (internal use only)
 	 */
 	public static long sessionIdCounter=0;
-	
+
 	/**
 	 * Session ID (internal use only)
 	 */
 	private long sessionId;
-	
+
 	/**
 	 * OPEN object of PCEPOpen message. It is used for stateful operations
 	 */
-	
+
 	protected OPEN open;
-	
-	
+
+
 	private boolean sendErrorStateful = false;
-	
-	
+
+
 	protected boolean isSessionStateful = false;
-	
-	
+	protected boolean isSessionSRCapable = false;
+	protected int sessionMSD = 0;
+
+
 	public GenericPCEPSession(PCEPSessionsInformation pcepSessionManager){
 		this.pcepSessionManager=pcepSessionManager;
 		this.newSessionId();
 		this.pcepSessionManager.addSession(this.sessionId, this);
 	}
-	
+
 	/**
 	 * Read PCE message from TCP stream
 	 * @param in InputStream
 	 */
 	protected byte[] readMsg(DataInputStream in) throws IOException{
 		byte[] ret = null;
-		
+
 		byte[] hdr = new byte[4];
 		byte[] temp = null;
 		boolean endHdr = false;
@@ -195,7 +198,7 @@ public abstract class GenericPCEPSession extends Thread implements PCEPSession {
 		int length = 0;
 		boolean endMsg = false;
 		int offset = 0;
-		
+
 		while (!endMsg) {
 			try {
 				if (endHdr) {
@@ -207,11 +210,11 @@ public abstract class GenericPCEPSession extends Thread implements PCEPSession {
 			} catch (IOException e){
 				log.warning("Mistake reading data: "+ e.getMessage());
 				throw e;
-		    }catch (Exception e) {
+			}catch (Exception e) {
 				log.warning("readMsg Oops: " + e.getMessage());
 				throw new IOException();
 			}
-		    
+
 			if (r > 0) {
 				if (offset == 2) {
 					length = ((int)hdr[offset]&0xFF) << 8;
@@ -238,14 +241,14 @@ public abstract class GenericPCEPSession extends Thread implements PCEPSession {
 		}		
 		return ret;
 	}
-	
+
 	/**
 	 * Read PCE message from TCP stream
 	 * @param in InputStream
 	 */
 	protected byte[] readMsgOptimized(DataInputStream in) throws IOException{
 		byte[] ret = null;
-		
+
 		byte[] hdr = new byte[4];
 		byte[] temp = null;
 		boolean endHdr = false;
@@ -253,8 +256,8 @@ public abstract class GenericPCEPSession extends Thread implements PCEPSession {
 		int length = 0;
 		boolean endMsg = false;
 		int offset = 0;
-		
-		
+
+
 		while (!endMsg) {
 			try {
 				if (endHdr) {
@@ -267,7 +270,7 @@ public abstract class GenericPCEPSession extends Thread implements PCEPSession {
 						}else {
 							offset=offset+r;
 						}
-						
+
 					}
 					else if (r<0){
 						log.severe("End of stream has been reached reading data");
@@ -293,19 +296,19 @@ public abstract class GenericPCEPSession extends Thread implements PCEPSession {
 						}else {
 							offset=offset+r;
 						}
-						
+
 					}
-					
+
 				}
 			} catch (IOException e){
 				log.severe("Error reading data: "+ e.getMessage());
 				throw e;
-		    }catch (Exception e) {
+			}catch (Exception e) {
 				log.severe("readMsg Oops: " + e.getMessage());
 				log.severe("FALLO POR : "+e.getStackTrace());
 				throw new IOException();
 			}
-		    
+
 		}
 		if (length > 0) {
 			ret = new byte[length];
@@ -313,8 +316,8 @@ public abstract class GenericPCEPSession extends Thread implements PCEPSession {
 		}		
 		return ret;
 	}
-	
-	
+
+
 	/**
 	 * <p>Close the PCE session</p>
 	 * <p>List of reasons (RFC 5440):</p>
@@ -343,7 +346,7 @@ public abstract class GenericPCEPSession extends Thread implements PCEPSession {
 	public void setOut(DataOutputStream out) {
 		this.out = out;
 	}
-	
+
 	/**
 	 * Starts the deadTimerThread
 	 */
@@ -375,14 +378,14 @@ public abstract class GenericPCEPSession extends Thread implements PCEPSession {
 			this.deadTimerT=null;
 		}
 	}
-	
+
 	/**
 	 * Starts the Keep Alive Thread
 	 */
 	public void startKeepAlive() {
 		this.keepAliveT.start();		
 	}
-	
+
 	/**
 	 * Ends the KeepAlive Thread
 	 */
@@ -394,12 +397,12 @@ public abstract class GenericPCEPSession extends Thread implements PCEPSession {
 			this.keepAliveT=null;	
 		}
 	}
-	
+
 	/**
 	 * Ends current connections
 	 */
 	protected void endConnections(){
-		
+
 		try {
 			if (in != null) {
 				in.close();
@@ -411,7 +414,7 @@ public abstract class GenericPCEPSession extends Thread implements PCEPSession {
 				log.warning("Closing socket");
 				this.socket.close();
 			}
-			
+
 		} catch (Exception e) {
 			log.warning("Error closing connections: " + e.getMessage());
 		}
@@ -424,7 +427,7 @@ public abstract class GenericPCEPSession extends Thread implements PCEPSession {
 	protected void setFSMstate(int fSMstate) {
 		FSMstate = fSMstate;
 	}
-	
+
 	public void killSession(){	
 		log.warning("Killing Session");
 		timer.cancel();
@@ -442,7 +445,7 @@ public abstract class GenericPCEPSession extends Thread implements PCEPSession {
 	 * STATISTICS, ETC
 	 */
 	protected abstract void endSession();
-	
+
 	/**
 	 * 
 	 * @param zeroDeadTimerAccepted
@@ -453,9 +456,9 @@ public abstract class GenericPCEPSession extends Thread implements PCEPSession {
 	 * @param domainId
 	 * @param pceId
 	 */
-	
+
 	protected void initializePCEPSession(boolean zeroDeadTimerAccepted, int minimumKeepAliveTimerAccepted, int maxDeadTimerAccepted, boolean isParentPCE, boolean requestsParentPCE, Inet4Address domainId, Inet4Address pceId, Long databaseVersion){
-		
+
 		//private void initializePCEPSession(){
 		/**
 		 * Byte array to store the last PCEP message read.
@@ -463,12 +466,12 @@ public abstract class GenericPCEPSession extends Thread implements PCEPSession {
 		byte[] msg = null;
 		//First get the input and output stream
 		try {
-		    out = new DataOutputStream(socket.getOutputStream());
-		    in = new DataInputStream(socket.getInputStream());
+			out = new DataOutputStream(socket.getOutputStream());
+			in = new DataInputStream(socket.getInputStream());
 		} catch (IOException e) {
 			log.warning("Problem in the sockets, ending PCEPSession");
-		    killSession();
-		    return;
+			killSession();
+			return;
 		}
 		//STARTING PCEP SESSION ESTABLISHMENT PHASE
 		//It begins in Open Wait State
@@ -500,18 +503,18 @@ public abstract class GenericPCEPSession extends Thread implements PCEPSession {
 		if (pcepSessionManager.isStateful())
 		{
 			StatefulCapabilityTLV stateful_capability_tlv = new StatefulCapabilityTLV();
-			
+
 			/*STATEFUL CAPABILITY TLV*/
 			//Means this PCE is capable of updating LSPs
 			stateful_capability_tlv.setuFlag(true);
 			stateful_capability_tlv.setsFlag(true);
 			p_open_snd.getOpen().setStateful_capability_tlv(stateful_capability_tlv);
-			
+
 			/*PCE REDUNDANCY GROUP IDENTIFIER TLV*/
 			PCE_Redundancy_Group_Identifier_TLV pce_redundancy_tlv = new PCE_Redundancy_Group_Identifier_TLV();
 			pce_redundancy_tlv.setRedundancyId(ObjectParameters.redundancyID);
 			p_open_snd.getOpen().setRedundancy_indetifier_tlv(pce_redundancy_tlv);
-			
+
 			/*LSP DATABASE VERSION TLV*/
 			//For the time being, we put a value but it's not used so synchronization
 			//won't be avoided.
@@ -521,10 +524,22 @@ public abstract class GenericPCEPSession extends Thread implements PCEPSession {
 			lsp_database_version.setLSPStateDBVersion(databaseVersion);
 			p_open_snd.getOpen().setLsp_database_version_tlv(lsp_database_version);
 		}
-	
+		if (pcepSessionManager.isSRCapable())
+		{
+			SRCapabilityTLV SR_capability_tlv = new SRCapabilityTLV();
+			//TODO: get?
+			SR_capability_tlv.setMSD(pcepSessionManager.getMSD());
+			p_open_snd.getOpen().setSR_capability_tlv(SR_capability_tlv);
+
+			log.info("SR: "+pcepSessionManager.isSRCapable()+" MSD: "+pcepSessionManager.getMSD());
+
+		}
+
+
+
 		//Send the OPEN message
 		sendPCEPMessage(p_open_snd);
-	
+
 		//Now, read messages until we are in SESSION UP
 		while (this.FSMstate!=PCEPValues.PCEP_STATE_SESSION_UP){
 			try {
@@ -537,78 +552,121 @@ public abstract class GenericPCEPSession extends Thread implements PCEPSession {
 			}
 			if (msg != null) {//If null, it is not a valid PCEP message								
 				switch(PCEPMessage.getMessageType(msg)) {
-					case PCEPMessageTypes.MESSAGE_OPEN:
-						log.info("OPEN Message Received");
-						if (this.FSMstate==PCEPValues.PCEP_STATE_OPEN_WAIT){
-							PCEPOpen p_open;
-							try {
-								p_open=new PCEPOpen(msg);
-								log.finest(p_open.toString());
-								owtt.cancel();
-								//Check parameters
-								if (openRetry==1){
-									boolean checkOK=true;
-									boolean stateFulOK = true;
-									boolean updateEffective = false;
-									
-									
-									this.deadTimerPeer=p_open.getDeadTimer();
-									this.keepAlivePeer=p_open.getKeepalive();
-									
-									if (this.deadTimerPeer>maxDeadTimerAccepted){
-										checkOK=false;
-									}	
-									if (this.deadTimerPeer==0){
-										if(zeroDeadTimerAccepted==false){
-											checkOK=false;
-										}
-									}
-									if (this.keepAlivePeer<minimumKeepAliveTimerAccepted){
+				case PCEPMessageTypes.MESSAGE_OPEN:
+					log.info("OPEN Message Received");
+					if (this.FSMstate==PCEPValues.PCEP_STATE_OPEN_WAIT){
+						PCEPOpen p_open;
+						try {
+							p_open=new PCEPOpen(msg);
+							log.finest(p_open.toString());
+							owtt.cancel();
+							//Check parameters
+							if (openRetry==1){
+								boolean checkOK=true;
+								boolean stateFulOK = true;
+								boolean SROK = true;
+								boolean updateEffective = false;
+								int MSD = -1;
+
+								this.deadTimerPeer=p_open.getDeadTimer();
+								this.keepAlivePeer=p_open.getKeepalive();
+
+								if (this.deadTimerPeer>maxDeadTimerAccepted){
+									checkOK=false;
+								}	
+								if (this.deadTimerPeer==0){
+									if(zeroDeadTimerAccepted==false){
 										checkOK=false;
 									}
-									//If PCE is stateless and there are statefull tlv send error
-									if ((!pcepSessionManager.isStateful())&&
-											((p_open.getOpen().getRedundancy_indetifier_tlv()!=null)||
-													(p_open.getOpen().getLsp_database_version_tlv()!=null)||
-													(p_open.getOpen().getStateful_capability_tlv()!=null)))
-									{
-										log.warning("I'm not expeting Stateful session");
-										stateFulOK = false;
-									}
-									if ((pcepSessionManager.isStateful())&&(p_open.getOpen().getStateful_capability_tlv()==null))
-									{
-										log.warning("I'm expeting Stateful session");
-										stateFulOK = false;
-									}
-									else
-									{
-										updateEffective = p_open.getOpen().getStateful_capability_tlv().isuFlag();
-										log.info("PCC is also stateful");
-									}
-									if (checkOK==false){
-										log.info("Dont accept deadTimerPeer "+deadTimerPeer+"keepAlivePeer "+keepAlivePeer);
-										PCEPError perror=new PCEPError();
-										PCEPErrorObject perrorObject=new PCEPErrorObject();
-										perrorObject.setErrorType(ObjectParameters.ERROR_ESTABLISHMENT);
-										perrorObject.setErrorValue(ObjectParameters.ERROR_ESTABLISHMENT_SECOND_OPEN_MESSAGE_UNACCEPTABLE_SESSION_CHARACTERISTICS);
-										ErrorConstruct error_c=new ErrorConstruct();
-										error_c.getErrorObjList().add(perrorObject);
-										perror.setError(error_c);
-										log.info("Sending Error and ending PCEPSession");
-										sendPCEPMessage(perror);										
-									}
-									else if (stateFulOK == false)
-									{
-										processNotStateful(p_open, kwtt);
-									}
-									else if ((pcepSessionManager.isStateful())&&(updateEffective == false))
-									{
-										log.warning("This PCE operates right now as if the LSPs are delegated");
-									}
-									else {
-										/**
-										 *  If no errors are detected, and the session characteristics are
-   										 *	acceptable to the local system, the system:
+								}
+								if (this.keepAlivePeer<minimumKeepAliveTimerAccepted){
+									checkOK=false;
+								}
+								//If PCE is stateless and there are statefull tlv send error
+								if ((!pcepSessionManager.isStateful())&&
+										((p_open.getOpen().getRedundancy_indetifier_tlv()!=null)||
+												(p_open.getOpen().getLsp_database_version_tlv()!=null)||
+												(p_open.getOpen().getStateful_capability_tlv()!=null)))
+								{
+									log.warning("I'm not expeting Stateful session");
+									stateFulOK = false;
+								}
+
+
+								if ((pcepSessionManager.isStateful())&&(p_open.getOpen().getStateful_capability_tlv()==null))
+								{
+									log.warning("I'm expeting Stateful session");
+									stateFulOK = false;
+								}
+								else
+								{
+									updateEffective = p_open.getOpen().getStateful_capability_tlv().isuFlag();
+									log.info("PCC is also stateful");
+								}
+
+								//TODO: 
+								/* if an SR path is established using SR-ERO,
+									   subsequent PCEP Update and Report messages for that path MUST NOT
+									   contain other ERO types*/
+								/* The "Maximum SID Depth" (1
+									   octet) field (MSD) specifies the maximum number of SIDs that a PCC is
+									   capable of imposing on a packet*/
+								/*    The SR Capability TLV is meaningful only in the OPEN message sent
+   										from a PCC to a PCE.  As such, a PCE does not need to set MSD value*/
+								/* pcepSessionManager mas o menos = pce y p_open.getOpen mas o menos igual pcc*/
+								//FIXME:quitar esto
+								if (!(pcepSessionManager.isSRCapable()) && (p_open.getOpen().getSR_capability_tlv()!=null))
+								{
+									log.warning("I'm not expecting SR session");
+									SROK = false;
+								}
+								else if ((pcepSessionManager.isSRCapable()) && (p_open.getOpen().getSR_capability_tlv()==null))
+								{
+									log.warning("I'm expeting SR capable session");
+									SROK = false;
+								}
+								else if ((pcepSessionManager.isSRCapable()) && (p_open.getOpen().getSR_capability_tlv()!=null))
+								{
+									MSD = p_open.getOpen().getSR_capability_tlv().getMSD();
+									this.sessionMSD = MSD; //We will only look at this value in the session of a PCE
+									//TODO: que hago con esto?
+									log.info("Other component is also SR capable with MSD= "+p_open.getOpen().getSR_capability_tlv().getMSD());
+								}									
+
+
+
+
+
+
+
+								if (checkOK==false){
+									log.info("Dont accept deadTimerPeer "+deadTimerPeer+"keepAlivePeer "+keepAlivePeer);
+									PCEPError perror=new PCEPError();
+									PCEPErrorObject perrorObject=new PCEPErrorObject();
+									perrorObject.setErrorType(ObjectParameters.ERROR_ESTABLISHMENT);
+									perrorObject.setErrorValue(ObjectParameters.ERROR_ESTABLISHMENT_SECOND_OPEN_MESSAGE_UNACCEPTABLE_SESSION_CHARACTERISTICS);
+									ErrorConstruct error_c=new ErrorConstruct();
+									error_c.getErrorObjList().add(perrorObject);
+									perror.setError(error_c);
+									log.info("Sending Error and ending PCEPSession");
+									sendPCEPMessage(perror);										
+								}
+								else if (stateFulOK == false)
+								{
+									processNotStateful(p_open, kwtt);
+								}
+								else if ((pcepSessionManager.isStateful())&&(updateEffective == false))
+								{
+									log.warning("This PCE operates right now as if the LSPs are delegated");
+								}
+								else if (SROK == false)
+								{
+									//TODO: que hacer aqui?
+								}
+								else {
+									/**
+									 *  If no errors are detected, and the session characteristics are
+									 *	acceptable to the local system, the system:
 
    												o  Sends a Keepalive message to the PCEP peer,
    												o  Starts the Keepalive timer,
@@ -617,136 +675,173 @@ public abstract class GenericPCEPSession extends Thread implements PCEPSession {
    											UP state.
    											If LocalOK=0, the system clears the OpenWait timer, starts the
    											KeepWait timer, and moves to the KeepWait state.
-										 */
-										log.info("Accept deadTimerPeer "+deadTimerPeer+"keepAlivePeer "+keepAlivePeer);
-										if (p_open.getOpen().getPce_id_tlv()!=null){
-											this.remotePCEId=p_open.getOpen().getPce_id_tlv().getPceId();	
-										}
-										if (p_open.getOpen().getDomain_id_tlv()!=null){
-											this.remoteDomainId=p_open.getOpen().getDomain_id_tlv().getDomainId();	
-										}
-										if (p_open.getOpen().getOf_list_tlv()!=null){
-											this.remoteOfCodes=p_open.getOpen().getOf_list_tlv().getOfCodes();
-										}
-										
-										log.fine("Sending KA to confirm");
-										PCEPKeepalive p_ka= new PCEPKeepalive();
-										log.fine("Sending Keepalive message");
-										sendPCEPMessage(p_ka);										//Creates the Keep Wait Timer to wait for a KA to acknowledge the OPEN sent
-										//FIXME: START KA TIMER!
-										this.deadTimerPeer=p_open.getDeadTimer();
-										this.keepAlivePeer=p_open.getKeepalive();
-										this.remoteOK=true;										
-										if(this.localOK==true){
-											log.info("Entering STATE_SESSION_UP");
-											this.setFSMstate(PCEPValues.PCEP_STATE_SESSION_UP);							
-										}
-										else {
-											log.info("Entering STATE_KEEP_WAIT");
-											log.fine("Scheduling KeepwaitTimer");
-											timer.schedule(kwtt, 60000);
-											this.setFSMstate(PCEPValues.PCEP_STATE_KEEP_WAIT);
-										}
-										
-										if (pcepSessionManager.isStateful())
-										{
-											this.open = p_open.getOpen();
-											isSessionStateful = true;
-										}
+									 */
+									log.info("Accept deadTimerPeer "+deadTimerPeer+"keepAlivePeer "+keepAlivePeer);
+									if (p_open.getOpen().getPce_id_tlv()!=null){
+										this.remotePCEId=p_open.getOpen().getPce_id_tlv().getPceId();	
+									}
+									if (p_open.getOpen().getDomain_id_tlv()!=null){
+										this.remoteDomainId=p_open.getOpen().getDomain_id_tlv().getDomainId();	
+									}
+									if (p_open.getOpen().getOf_list_tlv()!=null){
+										this.remoteOfCodes=p_open.getOpen().getOf_list_tlv().getOfCodes();
+									}
+
+									log.fine("Sending KA to confirm");
+									PCEPKeepalive p_ka= new PCEPKeepalive();
+									log.fine("Sending Keepalive message");
+									sendPCEPMessage(p_ka);										//Creates the Keep Wait Timer to wait for a KA to acknowledge the OPEN sent
+									//FIXME: START KA TIMER!
+									this.deadTimerPeer=p_open.getDeadTimer();
+									this.keepAlivePeer=p_open.getKeepalive();
+									this.remoteOK=true;										
+									if(this.localOK==true){
+										log.info("Entering STATE_SESSION_UP");
+										this.setFSMstate(PCEPValues.PCEP_STATE_SESSION_UP);							
+									}
+									else {
+										log.info("Entering STATE_KEEP_WAIT");
+										log.fine("Scheduling KeepwaitTimer");
+										timer.schedule(kwtt, 60000);
+										this.setFSMstate(PCEPValues.PCEP_STATE_KEEP_WAIT);
+									}
+
+									if (pcepSessionManager.isStateful())
+									{
+										this.open = p_open.getOpen();
+										isSessionStateful = true;
+									}
+									if (pcepSessionManager.isSRCapable())
+									{
+										this.open = p_open.getOpen();
+										isSessionSRCapable = true;		
+										sessionMSD = pcepSessionManager.getMSD();
 									}
 								}
-								else {//Open retry is 0
-									boolean dtOK=true;
-									boolean kaOK=true;
-									boolean stateFulOK = true;
-									boolean updateEffective = false;
-									
-									//If PCE is stateless and there are statefull tlv send error
-									log.info("pcepSessionManager.isStateful():"+pcepSessionManager.isStateful());
-									if ((!pcepSessionManager.isStateful())&&
-											((p_open.getOpen().getRedundancy_indetifier_tlv()!=null)||
-													(p_open.getOpen().getLsp_database_version_tlv()!=null)||
-													(p_open.getOpen().getStateful_capability_tlv()!=null)))
-									{
-										log.warning("I'm not expeting Stateful session");
-										stateFulOK = false;
-									}
-									if ((pcepSessionManager.isStateful())&&(p_open.getOpen().getStateful_capability_tlv()==null))
-									{
-										log.warning("I'm expeting Stateful session");
-										stateFulOK = false;
-									}
-									else if (pcepSessionManager.isStateful())
-									{
-										updateEffective = p_open.getOpen().getStateful_capability_tlv().isuFlag();
-										log.info("PCC is also stateful");
-									}
-									
-									if (p_open.getDeadTimer()>maxDeadTimerAccepted){
+							}
+							else {//Open retry is 0
+								boolean dtOK=true;
+								boolean kaOK=true;
+								boolean stateFulOK = true;
+								boolean SROK = true;
+								boolean updateEffective = false;
+								int MSD = -1;
+
+								//If PCE is stateless and there are statefull tlv send error
+								log.info("pcepSessionManager.isStateful():"+pcepSessionManager.isStateful());
+								if ((!pcepSessionManager.isStateful())&&
+										((p_open.getOpen().getRedundancy_indetifier_tlv()!=null)||
+												(p_open.getOpen().getLsp_database_version_tlv()!=null)||
+												(p_open.getOpen().getStateful_capability_tlv()!=null)))
+								{
+									log.warning("I'm not expeting Stateful session");
+									stateFulOK = false;
+								}
+								if ((pcepSessionManager.isStateful())&&(p_open.getOpen().getStateful_capability_tlv()==null))
+								{
+									log.warning("I'm expeting Stateful session");
+									stateFulOK = false;
+								}
+								else if (pcepSessionManager.isStateful())
+								{
+									updateEffective = p_open.getOpen().getStateful_capability_tlv().isuFlag();
+									log.info("PCC is also stateful");
+								}
+
+								if (!(pcepSessionManager.isSRCapable()) && (p_open.getOpen().getSR_capability_tlv()!=null))
+								{
+									log.warning("I'm not expecting SR session");
+									SROK = false;
+								}
+
+								if ((pcepSessionManager.isSRCapable()) && (p_open.getOpen().getSR_capability_tlv()==null))
+								{
+									log.warning("I'm expeting SR capable session");
+									SROK = false;
+								}
+								else if ((pcepSessionManager.isSRCapable()) && (p_open.getOpen().getSR_capability_tlv()!=null))
+								{
+									MSD = p_open.getOpen().getSR_capability_tlv().getMSD();
+									//TODO: que hago con esto?				
+									log.info("Other component is also SR capable with MSD= "+p_open.getOpen().getSR_capability_tlv().getMSD());
+								}									
+
+								
+								
+								
+								if (p_open.getDeadTimer()>maxDeadTimerAccepted){
+									dtOK=false;
+								}	
+								if (p_open.getDeadTimer()==0){
+									if(zeroDeadTimerAccepted==false){
 										dtOK=false;
-									}	
-									if (p_open.getDeadTimer()==0){
-										if(zeroDeadTimerAccepted==false){
-											dtOK=false;
-										}
 									}
-									if (p_open.getKeepalive()<minimumKeepAliveTimerAccepted){
-										kaOK=false;
+								}
+								if (p_open.getKeepalive()<minimumKeepAliveTimerAccepted){
+									kaOK=false;
+								}
+								if ((kaOK == false) || (dtOK == false)){
+									///Parameters are unacceptable but negotiable
+									log.info("PEER PCC Open parameters are unaccpetable, but negotiable");
+									PCEPError perror=new PCEPError();
+									PCEPErrorObject perrorObject=new PCEPErrorObject();
+									perrorObject.setErrorType(ObjectParameters.ERROR_ESTABLISHMENT);
+									perrorObject.setErrorValue(ObjectParameters.ERROR_ESTABLISHMENT_UNACCEPTABLE_NEGOTIABLE_SESSION_CHARACTERISTICS);
+									if (dtOK==false){
+										p_open.setDeadTimer(this.deadTimerLocal);	
 									}
-									if ((kaOK == false) || (dtOK == false)){
-										///Parameters are unacceptable but negotiable
-										log.info("PEER PCC Open parameters are unaccpetable, but negotiable");
-										PCEPError perror=new PCEPError();
-										PCEPErrorObject perrorObject=new PCEPErrorObject();
-										perrorObject.setErrorType(ObjectParameters.ERROR_ESTABLISHMENT);
-										perrorObject.setErrorValue(ObjectParameters.ERROR_ESTABLISHMENT_UNACCEPTABLE_NEGOTIABLE_SESSION_CHARACTERISTICS);
-										if (dtOK==false){
-											p_open.setDeadTimer(this.deadTimerLocal);	
-										}
-										if (kaOK==false) {
-											p_open.setKeepalive(this.keepAliveLocal);
-										}
-										if (stateFulOK==false) {
-											p_open.setKeepalive(this.keepAliveLocal);
-										}
-										LinkedList<PCEPErrorObject> perrobjlist=new LinkedList<PCEPErrorObject>(); 
-										perrobjlist.add(perrorObject);
-										perror.setErrorObjList(perrobjlist);
-										perror.setOpen(p_open.getOpen());
-										log.info("Sending Error with new proposal");
-										this.sendPCEPMessage(perror);
-										this.openRetry=this.openRetry+1;
-										/**
-										 * o  If LocalOK=1, the system restarts the OpenWait timer and stays in
+									if (kaOK==false) {
+										p_open.setKeepalive(this.keepAliveLocal);
+									}
+									if (stateFulOK==false) {
+										p_open.setKeepalive(this.keepAliveLocal);
+									}
+									if (SROK == false) {
+										p_open.setKeepalive(this.keepAliveLocal);
+									}
+									
+									LinkedList<PCEPErrorObject> perrobjlist=new LinkedList<PCEPErrorObject>(); 
+									perrobjlist.add(perrorObject);
+									perror.setErrorObjList(perrobjlist);
+									perror.setOpen(p_open.getOpen());
+									log.info("Sending Error with new proposal");
+									this.sendPCEPMessage(perror);
+									this.openRetry=this.openRetry+1;
+									/**
+									 * o  If LocalOK=1, the system restarts the OpenWait timer and stays in
      											the OpenWait state.
      											o  If LocalOK=0, the system clears the OpenWait timer, starts the
      											KeepWait timer, and moves to the KeepWait state.
-										 */
-										if (localOK==true){
-											log.info("Local ok esta a true, vamos a open wait");
-											owtt.cancel();
-											owtt= new OpenWaitTimerTask(this);
-											this.timer.schedule(owtt, 60000);
-											this.setFSMstate(PCEPValues.PCEP_STATE_OPEN_WAIT);
-										}
-										else {
-											log.info("Local ok esta a false, vamos a keep wait");
-											owtt.cancel();
-											this.setFSMstate(PCEPValues.PCEP_STATE_KEEP_WAIT);
-											this.timer.schedule(kwtt, 60000);
-										}
-									}
-									else if (stateFulOK == false)
-									{
-										processNotStateful(p_open, kwtt);
-									}
-									else if ((pcepSessionManager.isStateful())&&(updateEffective == false))
-									{
-										log.warning("This PCE operates right now as if the LSPs are delegated");
+									 */
+									if (localOK==true){
+										log.info("Local ok esta a true, vamos a open wait");
+										owtt.cancel();
+										owtt= new OpenWaitTimerTask(this);
+										this.timer.schedule(owtt, 60000);
+										this.setFSMstate(PCEPValues.PCEP_STATE_OPEN_WAIT);
 									}
 									else {
-										/*
-										 * If no errors are detected, and the session characteristics are
+										log.info("Local ok esta a false, vamos a keep wait");
+										owtt.cancel();
+										this.setFSMstate(PCEPValues.PCEP_STATE_KEEP_WAIT);
+										this.timer.schedule(kwtt, 60000);
+									}
+								}
+								else if (stateFulOK == false)
+								{
+									processNotStateful(p_open, kwtt);
+								}
+								else if ((pcepSessionManager.isStateful())&&(updateEffective == false))
+								{
+									log.warning("This PCE operates right now as if the LSPs are delegated");
+								}
+								else if (SROK == false)
+								{
+									//TODO: que hacer aqui?
+								}
+								else {
+									/*
+									 * If no errors are detected, and the session characteristics are
    											acceptable to the local system, the system:
    											o  Sends a Keepalive message to the PCEP peer,
    											o  Starts the Keepalive timer,
@@ -755,114 +850,121 @@ public abstract class GenericPCEPSession extends Thread implements PCEPSession {
    											UP state.
    											If LocalOK=0, the system clears the OpenWait timer, starts the
    											KeepWait timer, and moves to the KeepWait state.
-										 */
-										if (p_open.getOpen().getPce_id_tlv()!=null){
-											this.remotePCEId=p_open.getOpen().getPce_id_tlv().getPceId();	
-										}
-										if (p_open.getOpen().getDomain_id_tlv()!=null){
-											this.remoteDomainId=p_open.getOpen().getDomain_id_tlv().getDomainId();	
-										}
-										if (p_open.getOpen().getOf_list_tlv()!=null){
-											this.remoteOfCodes=p_open.getOpen().getOf_list_tlv().getOfCodes();
-										}
-										log.fine("Sending KA to confirm");
-										PCEPKeepalive p_ka= new PCEPKeepalive();
-										log.fine("Sending Keepalive message");
-										sendPCEPMessage(p_ka);										//Creates the Keep Wait Timer to wait for a KA to acknowledge the OPEN sent
-										//FIXME: START KA TIMER!
-										this.deadTimerPeer=p_open.getDeadTimer();
-										this.keepAlivePeer=p_open.getKeepalive();
-										this.remoteOK=true;										
-										if(this.localOK==true){
-											log.info("Entering STATE_SESSION_UP");
-											this.setFSMstate(PCEPValues.PCEP_STATE_SESSION_UP);							
-										}
-										else {
-											log.info("Entering STATE_KEEP_WAIT");
-											log.fine("Scheduling KeepwaitTimer");
-											timer.schedule(kwtt, 60000);
-											this.setFSMstate(PCEPValues.PCEP_STATE_KEEP_WAIT);
-										}
-										
-										if (pcepSessionManager.isStateful())
-										{
-											/* The open object is stored for later proccessing */
-											this.open = p_open.getOpen();
-											isSessionStateful = true;
-										}
+									 */
+									if (p_open.getOpen().getPce_id_tlv()!=null){
+										this.remotePCEId=p_open.getOpen().getPce_id_tlv().getPceId();	
 									}
-								}								
-							} catch (PCEPProtocolViolationException e1) {
-								log.warning("Malformed OPEN, INFORM ERROR and close");
-								e1.printStackTrace();
-								PCEPError perror=new PCEPError();
-								PCEPErrorObject perrorObject=new PCEPErrorObject();
-								perrorObject.setErrorType(ObjectParameters.ERROR_ESTABLISHMENT);
-								perrorObject.setErrorValue(ObjectParameters.ERROR_ESTABLISHMENT_INVALID_OPEN_MESSAGE);
-								ErrorConstruct error_c=new ErrorConstruct();
-								error_c.getErrorObjList().add(perrorObject);
-								perror.setError(error_c);
-								log.info("Sending Error and ending PCEPSession");
-								sendPCEPMessage(perror);						
-								killSession();
-							}//Fin del catch de la exception PCEP
+									if (p_open.getOpen().getDomain_id_tlv()!=null){
+										this.remoteDomainId=p_open.getOpen().getDomain_id_tlv().getDomainId();	
+									}
+									if (p_open.getOpen().getOf_list_tlv()!=null){
+										this.remoteOfCodes=p_open.getOpen().getOf_list_tlv().getOfCodes();
+									}
+									log.fine("Sending KA to confirm");
+									PCEPKeepalive p_ka= new PCEPKeepalive();
+									log.fine("Sending Keepalive message");
+									sendPCEPMessage(p_ka);										//Creates the Keep Wait Timer to wait for a KA to acknowledge the OPEN sent
+									//FIXME: START KA TIMER!
+									this.deadTimerPeer=p_open.getDeadTimer();
+									this.keepAlivePeer=p_open.getKeepalive();
+									this.remoteOK=true;										
+									if(this.localOK==true){
+										log.info("Entering STATE_SESSION_UP");
+										this.setFSMstate(PCEPValues.PCEP_STATE_SESSION_UP);							
+									}
+									else {
+										log.info("Entering STATE_KEEP_WAIT");
+										log.fine("Scheduling KeepwaitTimer");
+										timer.schedule(kwtt, 60000);
+										this.setFSMstate(PCEPValues.PCEP_STATE_KEEP_WAIT);
+									}
+
+									if (pcepSessionManager.isStateful())
+									{
+										/* The open object is stored for later proccessing */
+										this.open = p_open.getOpen();
+										isSessionStateful = true;
+									}
+									if (pcepSessionManager.isSRCapable())
+									{
+										/* The open object is stored for later proccessing */
+										this.open = p_open.getOpen();
+										isSessionSRCapable= true;
+										sessionMSD = pcepSessionManager.getMSD();
+									}
+								}
+							}								
+						} catch (PCEPProtocolViolationException e1) {
+							log.warning("Malformed OPEN, INFORM ERROR and close");
+							e1.printStackTrace();
+							PCEPError perror=new PCEPError();
+							PCEPErrorObject perrorObject=new PCEPErrorObject();
+							perrorObject.setErrorType(ObjectParameters.ERROR_ESTABLISHMENT);
+							perrorObject.setErrorValue(ObjectParameters.ERROR_ESTABLISHMENT_INVALID_OPEN_MESSAGE);
+							ErrorConstruct error_c=new ErrorConstruct();
+							error_c.getErrorObjList().add(perrorObject);
+							perror.setError(error_c);
+							log.info("Sending Error and ending PCEPSession");
+							sendPCEPMessage(perror);						
+							killSession();
+						}//Fin del catch de la exception PCEP
+					}
+					else{
+						log.info("Ignore OPEN message, already one received!!");
+					}
+
+					break;
+				case PCEPMessageTypes.MESSAGE_KEEPALIVE:
+					log.info("KeepAlive Message Received");
+					this.localOK=true;
+					if(this.FSMstate==PCEPValues.PCEP_STATE_KEEP_WAIT){
+						// If RemoteOK=1, the system clears the KeepWait timer and moves to
+						//  the UP state.
+						// If RemoteOK=0, the system clears the KeepWait timer, starts the
+						//  OpenWait timer, and moves to the OpenWait State. 
+
+						if (remoteOK==true){
+							kwtt.cancel();
+							log.info("Entering STATE_SESSION_UP");
+							this.setFSMstate(PCEPValues.PCEP_STATE_SESSION_UP);								
 						}
 						else{
-							log.info("Ignore OPEN message, already one received!!");
+							kwtt.cancel();
+							log.info("Entering OPEN WAIT STATE");
+							owtt=new OpenWaitTimerTask(this);
+							this.timer.schedule(owtt, 60000);
+							this.setFSMstate(PCEPValues.PCEP_STATE_OPEN_WAIT);
 						}
-					
-						break;
-					case PCEPMessageTypes.MESSAGE_KEEPALIVE:
-						log.info("KeepAlive Message Received");
-						this.localOK=true;
-						if(this.FSMstate==PCEPValues.PCEP_STATE_KEEP_WAIT){
-							// If RemoteOK=1, the system clears the KeepWait timer and moves to
-						    //  the UP state.
-							// If RemoteOK=0, the system clears the KeepWait timer, starts the
-						    //  OpenWait timer, and moves to the OpenWait State. 
 
-							if (remoteOK==true){
-								kwtt.cancel();
-								log.info("Entering STATE_SESSION_UP");
-								this.setFSMstate(PCEPValues.PCEP_STATE_SESSION_UP);								
+					}
+					//If not... seguimos igual que estabamos
+					//Mas KA no hacen mal...
+					break;
+				case PCEPMessageTypes.MESSAGE_ERROR:
+					log.info("ERROR Message Received");
+
+					try {
+						PCEPError msg_error=new PCEPError(msg);
+						if (this.FSMstate==PCEPValues.PCEP_STATE_KEEP_WAIT){
+							int errorValue;
+							if (msg_error.getError()!=null){
+								errorValue=msg_error.getError().getErrorObjList().get(0).getErrorValue();
 							}
-							else{
-								kwtt.cancel();
-								log.info("Entering OPEN WAIT STATE");
-								owtt=new OpenWaitTimerTask(this);
-								this.timer.schedule(owtt, 60000);
-								this.setFSMstate(PCEPValues.PCEP_STATE_OPEN_WAIT);
+							else {
+								errorValue=msg_error.getErrorObjList().get(0).getErrorValue();
 							}
-							
-						}
-						//If not... seguimos igual que estabamos
-						//Mas KA no hacen mal...
-						break;
-					case PCEPMessageTypes.MESSAGE_ERROR:
-						log.info("ERROR Message Received");
-						
-						try {
-							PCEPError msg_error=new PCEPError(msg);
-							if (this.FSMstate==PCEPValues.PCEP_STATE_KEEP_WAIT){
-								int errorValue;
-								if (msg_error.getError()!=null){
-									errorValue=msg_error.getError().getErrorObjList().get(0).getErrorValue();
-								}
-								else {
-									errorValue=msg_error.getErrorObjList().get(0).getErrorValue();
-								}
-								if (errorValue==ObjectParameters.ERROR_ESTABLISHMENT_UNACCEPTABLE_NEGOTIABLE_SESSION_CHARACTERISTICS)
-								{
-									log.info("ERROR_ESTABLISHMENT_UNACCEPTABLE_NEGOTIABLE_SESSION_CHARACTERISTICS");	
-									/**
-									 * If a PCErr message is received before the expiration of the KeepWait
+							if (errorValue==ObjectParameters.ERROR_ESTABLISHMENT_UNACCEPTABLE_NEGOTIABLE_SESSION_CHARACTERISTICS)
+							{
+								log.info("ERROR_ESTABLISHMENT_UNACCEPTABLE_NEGOTIABLE_SESSION_CHARACTERISTICS");	
+								/**
+								 * If a PCErr message is received before the expiration of the KeepWait
 								   timer:
-	
+
 									   1.  If the proposed values are unacceptable, the PCEP peer sends a
 									       PCErr message with Error-Type=1 and Error-value=6, and the system
 									       releases the PCEP resources for that PCEP peer, closes the TCP
 									       connection, and moves to the Idle state.
-	
+
 									   2.  If the proposed values are acceptable, the system adjusts its
 									       PCEP session characteristics according to the proposed values
 									       received in the PCErr message, restarts the KeepWait timer, and
@@ -870,90 +972,90 @@ public abstract class GenericPCEPSession extends Thread implements PCEPSession {
 									       KeepWait timer and stays in the KeepWait state.  If RemoteOK=0,
 									       the system clears the KeepWait timer, starts the OpenWait timer,
 									       and moves to the OpenWait state.
-	
-									 */
-									boolean checkOK=true;
-									if (msg_error.getOpen().getDeadtimer()>maxDeadTimerAccepted){
-										checkOK=false;
-									}	
-									if (msg_error.getOpen().getDeadtimer()==0){
-										if(zeroDeadTimerAccepted==false){
-											checkOK=false;
-										}
-									}
-									if (msg_error.getOpen().getKeepalive()<minimumKeepAliveTimerAccepted){
+
+								 */
+								boolean checkOK=true;
+								if (msg_error.getOpen().getDeadtimer()>maxDeadTimerAccepted){
+									checkOK=false;
+								}	
+								if (msg_error.getOpen().getDeadtimer()==0){
+									if(zeroDeadTimerAccepted==false){
 										checkOK=false;
 									}
-									if (checkOK==false){
-										//SendErrorAndClose
-										PCEPError perror=new PCEPError();
-										PCEPErrorObject perrorObject=new PCEPErrorObject();
-										perrorObject.setErrorType(ObjectParameters.ERROR_ESTABLISHMENT);
-										perrorObject.setErrorValue(ObjectParameters.ERROR_ESTABLISHMENT_PCERR_UNACCEPTABLE_SESSION_CHARACTERISTICS);
-										ErrorConstruct error_c=new ErrorConstruct();
-										error_c.getErrorObjList().add(perrorObject);
-										perror.setError(error_c);
-										log.info("Sending Error and ending PCEPSession");
-										sendPCEPMessage(perror);	
-										killSession();
-										return;
-									}
-									else{
-										this.deadTimerLocal=msg_error.getOpen().getDeadtimer();
-										this.keepAliveLocal=msg_error.getOpen().getKeepalive();
-										PCEPOpen p_open_snd2=new PCEPOpen();
-										p_open_snd2.setKeepalive(this.keepAliveLocal);
-										p_open_snd2.setDeadTimer(this.deadTimerLocal);
-										sendPCEPMessage(p_open_snd2);								
-										/**
-										 * If RemoteOK=1, the system restarts the
+								}
+								if (msg_error.getOpen().getKeepalive()<minimumKeepAliveTimerAccepted){
+									checkOK=false;
+								}
+								if (checkOK==false){
+									//SendErrorAndClose
+									PCEPError perror=new PCEPError();
+									PCEPErrorObject perrorObject=new PCEPErrorObject();
+									perrorObject.setErrorType(ObjectParameters.ERROR_ESTABLISHMENT);
+									perrorObject.setErrorValue(ObjectParameters.ERROR_ESTABLISHMENT_PCERR_UNACCEPTABLE_SESSION_CHARACTERISTICS);
+									ErrorConstruct error_c=new ErrorConstruct();
+									error_c.getErrorObjList().add(perrorObject);
+									perror.setError(error_c);
+									log.info("Sending Error and ending PCEPSession");
+									sendPCEPMessage(perror);	
+									killSession();
+									return;
+								}
+								else{
+									this.deadTimerLocal=msg_error.getOpen().getDeadtimer();
+									this.keepAliveLocal=msg_error.getOpen().getKeepalive();
+									PCEPOpen p_open_snd2=new PCEPOpen();
+									p_open_snd2.setKeepalive(this.keepAliveLocal);
+									p_open_snd2.setDeadTimer(this.deadTimerLocal);
+									sendPCEPMessage(p_open_snd2);								
+									/**
+									 * If RemoteOK=1, the system restarts the
 									       KeepWait timer and stays in the KeepWait state.  If RemoteOK=0,
 									       the system clears the KeepWait timer, starts the OpenWait timer,
 									       and moves to the OpenWait state.
-	
-										 */
-										if (remoteOK==true){
-											kwtt.cancel();
-											this.setFSMstate(PCEPValues.PCEP_STATE_KEEP_WAIT);
-										}
-										else {
-											kwtt.cancel();
-											this.timer.schedule(owtt, 60000);
-											this.setFSMstate(PCEPValues.PCEP_STATE_OPEN_WAIT);
-										}
-										
+
+									 */
+									if (remoteOK==true){
+										kwtt.cancel();
+										this.setFSMstate(PCEPValues.PCEP_STATE_KEEP_WAIT);
 									}
+									else {
+										kwtt.cancel();
+										this.timer.schedule(owtt, 60000);
+										this.setFSMstate(PCEPValues.PCEP_STATE_OPEN_WAIT);
+									}
+
 								}
 							}
-							else
-							{
-								log.info("Received PCErr and paramaters cant't be negotiated. PCEP Channel will be closed");
-							}
-							
-						} catch (PCEPProtocolViolationException e1) {
-							log.info("problem decoding error, finishing PCEPSession "+e1);
-							killSession();
 						}
-			
-						break;
-					default:
-						log.info("UNEXPECTED Message Received");
-						if (this.FSMstate!=PCEPValues.PCEP_STATE_OPEN_WAIT){
-							log.info("Ignore OPEN message, already one received!!");
+						else
+						{
+							log.info("Received PCErr and paramaters cant't be negotiated. PCEP Channel will be closed");
 						}
-						else {
-							log.info("Unexpected message RECEIVED, closing");
-							PCEPError perror=new PCEPError();
-							PCEPErrorObject perrorObject=new PCEPErrorObject();
-							perrorObject.setErrorType(ObjectParameters.ERROR_ESTABLISHMENT);
-							perrorObject.setErrorValue(ObjectParameters.ERROR_ESTABLISHMENT_INVALID_OPEN_MESSAGE);
-							log.info("Sending Error and ending PCEPSession");
-							ErrorConstruct error_c=new ErrorConstruct();
-							error_c.getErrorObjList().add(perrorObject);
-							perror.setError(error_c);
-							sendPCEPMessage(perror);							
-						}
-						break;
+
+					} catch (PCEPProtocolViolationException e1) {
+						log.info("problem decoding error, finishing PCEPSession "+e1);
+						killSession();
+					}
+
+					break;
+				default:
+					log.info("UNEXPECTED Message Received");
+					if (this.FSMstate!=PCEPValues.PCEP_STATE_OPEN_WAIT){
+						log.info("Ignore OPEN message, already one received!!");
+					}
+					else {
+						log.info("Unexpected message RECEIVED, closing");
+						PCEPError perror=new PCEPError();
+						PCEPErrorObject perrorObject=new PCEPErrorObject();
+						perrorObject.setErrorType(ObjectParameters.ERROR_ESTABLISHMENT);
+						perrorObject.setErrorValue(ObjectParameters.ERROR_ESTABLISHMENT_INVALID_OPEN_MESSAGE);
+						log.info("Sending Error and ending PCEPSession");
+						ErrorConstruct error_c=new ErrorConstruct();
+						error_c.getErrorObjList().add(perrorObject);
+						perror.setError(error_c);
+						sendPCEPMessage(perror);							
+					}
+					break;
 				}
 			}
 			else {
@@ -970,7 +1072,7 @@ public abstract class GenericPCEPSession extends Thread implements PCEPSession {
 					error_c.getErrorObjList().add(perrorObject);
 					perror.setError(error_c);
 					sendPCEPMessage(perror);		
-					}
+				}
 			}//Fin del else
 		}//Fin del WHILE
 	}
@@ -1000,7 +1102,7 @@ public abstract class GenericPCEPSession extends Thread implements PCEPSession {
 	public void setRemotePCEId(Inet4Address remotePCEId) {
 		this.remotePCEId = remotePCEId;
 	}
-	
+
 	public LinkedList<Integer> getRemoteOfCodes() {
 		return remoteOfCodes;
 	}
@@ -1024,22 +1126,22 @@ public abstract class GenericPCEPSession extends Thread implements PCEPSession {
 			}else {
 				sb.append("UNKNOWN");
 			}			
-			
+
 		}
-		
+
 		return sb.toString();
 	}
-	
+
 	public String toString(){
 		StringBuffer sb=new StringBuffer(1000);
 		return sb.toString();
 	}
-	
+
 	public void newSessionId(){
 		this.sessionId=GenericPCEPSession.sessionIdCounter+1;
 		sessionIdCounter=sessionIdCounter+1;
 	}
-	
+
 	private void processNotStateful(PCEPOpen p_open, KeepWaitTimerTask kwtt)
 	{
 		if (sendErrorStateful)
@@ -1076,4 +1178,12 @@ public abstract class GenericPCEPSession extends Thread implements PCEPSession {
 		}
 		isSessionStateful = false;
 	}
+	
+	
+	private void processNotSRCapable(PCEPOpen p_open, KeepWaitTimerTask kwtt)
+	{
+		//TODO: por hacer
+	}
+	
+	
 }

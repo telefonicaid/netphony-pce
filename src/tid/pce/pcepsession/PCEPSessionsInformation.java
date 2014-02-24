@@ -14,12 +14,15 @@ public class PCEPSessionsInformation {
 	
 	private boolean isStateful = false;
 	
+	private boolean isSRCapable = false;
+	private int MSD = 0;
+	
 	private boolean isActive = false;
 		
 	//FIXME: 
 	int rollSession;//PCEBackup, 
 	//Datos de la sesion que nos interesen
-	//FIXME: ya lo tenemos a trav�s de la lista de sesiones
+	//FIXME: ya lo tenemos a traves de la lista de sesiones
 	 DataOutputStream out;
 	
 	public PCEPSessionsInformation(){
@@ -76,9 +79,32 @@ public class PCEPSessionsInformation {
 		return isStateful;
 	}
 	
+	public boolean isSRCapable() {
+		return isSRCapable;
+	}
+	
+	public int getMSD() 
+	{
+		return MSD;
+	}
+	
 	public void setStateful(boolean isStateful) {
 		this.isStateful = isStateful;
 	}
+	
+	public void setSRCapable(boolean isSRCapable) {
+		this.isSRCapable = isSRCapable;
+	}
+	
+	public void setSRCapable(int MSD) {
+		this.isSRCapable = (MSD>=0);
+		this.MSD = MSD;
+	}
+	
+	public void setMSD(int MSD) {
+		this.MSD = MSD;
+	}
+	
 	
 	public boolean isActive() {
 		return isActive;

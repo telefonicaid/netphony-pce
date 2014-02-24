@@ -20,7 +20,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.logging.SimpleFormatter;
 
-import tid.bgp.bgp4Peer.pruebas.BGPPeer;
 import tid.pce.computingEngine.ReportDispatcher;
 import tid.pce.computingEngine.RequestDispatcher;
 import tid.pce.computingEngine.algorithms.ComputingAlgorithmManager;
@@ -39,7 +38,6 @@ import tid.pce.tedb.DomainTEDB;
 import tid.pce.tedb.MultiLayerTEDB;
 import tid.pce.tedb.SimpleITTEDB;
 import tid.pce.tedb.SimpleTEDB;
-import tid.provisioningManager.modules.PMController;
 
 
 public class PCEServer {
@@ -65,7 +63,6 @@ public class PCEServer {
 	public static void main(String[] args) {
 		
 		//First of all, read the parameters
-		System.out.println("Params:: args.length:"+args.length);
 		PCEServerParameters params;
 		if (args.length >=1 ){
 			params=new PCEServerParameters(args[0]);
@@ -132,6 +129,9 @@ public class PCEServer {
 		PCEPSessionsInformation pcepSessionsInformation = new PCEPSessionsInformation();
 		pcepSessionsInformation.setStateful(params.isStateful());
 		pcepSessionsInformation.setActive(params.isActive());
+		pcepSessionsInformation.setSRCapable(params.isSRCapable());
+		pcepSessionsInformation.setMSD(params.getMSD());
+		Log.info("PCEServer: PCE is SR capable with MSD="+pcepSessionsInformation.getMSD());
 	
 		//The Traffic Engineering Database
 		DomainTEDB ted;
@@ -153,7 +153,6 @@ public class PCEServer {
 		/***/
 		
 		TopologyManager topologyManager = new TopologyManager(params, ted, Log);
-		topologyManager.setBGPLS_config_file(args[0]);
 		topologyManager.initTopology();
 		
 		OPcounter = new OperationsCounter();
@@ -286,7 +285,7 @@ public class PCEServer {
 		}
 
 		try {
-			//FIXME: lo he cambiado aquÃ­
+			//FIXME: lo he cambiado aquí
 			//Registration of Algorithms
 			for (int i=0;i<params.algorithmRuleList.size();++i){
 				try {

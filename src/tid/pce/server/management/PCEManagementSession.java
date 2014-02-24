@@ -31,16 +31,19 @@ import tid.pce.pcep.messages.PCEPRequest;
 import tid.pce.pcep.messages.PCEPUpdate;
 import tid.pce.pcep.objects.Bandwidth;
 import tid.pce.pcep.objects.EndPointsIPv4;
-import tid.pce.pcep.objects.PCEPIntiatedLSP;
-import tid.pce.pcep.objects.XifiUniCastEndPoints;
 import tid.pce.pcep.objects.ExplicitRouteObject;
 import tid.pce.pcep.objects.LSP;
 import tid.pce.pcep.objects.ObjectParameters;
 import tid.pce.pcep.objects.ObjectiveFunction;
-import tid.pce.pcep.objects.SRP;
+import tid.pce.pcep.objects.PCEPIntiatedLSP;
 import tid.pce.pcep.objects.RequestParameters;
+import tid.pce.pcep.objects.SRERO;
+import tid.pce.pcep.objects.SRP;
+import tid.pce.pcep.objects.XifiUniCastEndPoints;
+import tid.pce.pcep.objects.subobjects.SREROSubobject;
 import tid.pce.pcep.objects.tlvs.LSPDatabaseVersionTLV;
 import tid.pce.pcep.objects.tlvs.LSPIdentifiersTLV;
+import tid.pce.pcep.objects.tlvs.PathSetupTLV;
 import tid.pce.pcep.objects.tlvs.SymbolicPathNameTLV;
 import tid.pce.server.DomainPCESession;
 import tid.pce.server.PCEServerParameters;
@@ -53,10 +56,6 @@ import tid.pce.tedb.DomainTEDB;
 import tid.pce.tedb.IntraDomainEdge;
 import tid.pce.tedb.SimpleTEDB;
 import tid.pce.tedb.TE_Information;
-import tid.provisioningManager.objects.RouterInfoPM;
-import tid.rsvp.objects.subobjects.GeneralizedLabelEROSubobject;
-import tid.rsvp.objects.subobjects.IPv4prefixEROSubobject;
-import tid.rsvp.objects.subobjects.WavebandLabelEROSubobject;
 import tid.util.UtilsFunctions;
 
 /**
@@ -226,6 +225,7 @@ public class PCEManagementSession extends Thread {
 				else if (command.equals("send initiate")){
 					out.println("Enjoy watching the LSPs the PCE has in his database");
 					out.println("Sending between 192.168.1.1 and 192.168.1.3");
+					out.println("Sending between 1001 and 1003");
 					//out.println("Choose origin IP:");
 					
 					//String string_ip_source = requestInput(br);
@@ -235,53 +235,88 @@ public class PCEManagementSession extends Thread {
 					//String string_ip_dest = requestInput(br);
 					String string_ip_source = "192.168.1.1";
 					String string_ip_dest = "192.168.1.3";
+					int sid_source = 1001;
+					int sid_dest = 1003;
 					
 					Inet4Address ip_source = (Inet4Address)InetAddress.getByName(string_ip_source);
 					Inet4Address ip_dest = (Inet4Address)InetAddress.getByName(string_ip_dest);
 					
 					PCEPInitiate pceInit = new PCEPInitiate();
 					
-					SRP rsp = new SRP();
+
+					
+					
 					LSP lsp = new LSP();
 
-					ExplicitRouteObject ero;
-					ero = new ExplicitRouteObject();
-					log.info("IP::"+ip_source);
-					log.info("IP::"+ip_dest);
 					
-					IPv4prefixEROSubobject ipv4SubO = new IPv4prefixEROSubobject();
-					ipv4SubO.setIpv4address(ip_source);
+
+//					ExplicitRouteObject ero;
+//					ero = new ExplicitRouteObject();
+
 					
-					GeneralizedLabelEROSubobject subwl=new GeneralizedLabelEROSubobject();
-					subwl.setLabel(new byte[4]);
+					SRP rsp = new SRP();
+					PathSetupTLV pstlv = new PathSetupTLV();
+					pstlv.setPST(PathSetupTLV.SR);
+					rsp.setPathSetupTLV(pstlv);
+					SRERO srero = new SRERO();
+					SREROSubobject srero1 = new SREROSubobject();
+					srero1.setSID(sid_source);
+					srero1.setfFlag(true);
 					
-					ero.addEROSubobject(ipv4SubO);
-					ero.addEROSubobject(subwl);
+					srero.addSREROSubobject(srero1);
 					
-					IPv4prefixEROSubobject ipv4SubO_end = new IPv4prefixEROSubobject();
-					ipv4SubO_end.setIpv4address(ip_dest);
+					SREROSubobject srero2 = new SREROSubobject();
+					srero2.setSID(sid_dest);
+					srero2.setfFlag(true);
 					
-					GeneralizedLabelEROSubobject subwl_end = new GeneralizedLabelEROSubobject();
-					subwl_end.setLabel(new byte[4]);
+					srero.addSREROSubobject(srero2);
 					
-					ero.addEROSubobject(ipv4SubO_end);
-					ero.addEROSubobject(subwl_end);
+					
+					
 					
 					PCEPIntiatedLSP pcepIntiatedLSPList = new PCEPIntiatedLSP();
-					pcepIntiatedLSPList.setEro(ero);
+					pcepIntiatedLSPList.setSrero(srero);
 					pcepIntiatedLSPList.setRsp(rsp);
 					pcepIntiatedLSPList.setLsp(lsp);
 					//pcepIntiatedLSPList.setEndPoint(endP);
-					
+					pceInit.getPcepIntiatedLSPList().add(pcepIntiatedLSPList);						
 					
 					EndPointsIPv4 endP_IP = new EndPointsIPv4();
 					endP_IP.setSourceIP(ip_source);
 					endP_IP.setDestIP(ip_dest);
+//					
+//					pcepIntiatedLSPList.setEndPoint(endP_IP);
+
 					
-					pcepIntiatedLSPList.setEndPoint(endP_IP);
+					/**************************************
 					
-					pceInit.getPcepIntiatedLSPList().add(pcepIntiatedLSPList);	
+					ExplicitRouteObject ero;
+					ero = new ExplicitRouteObject();
+					SREROSubobject srero1 = new SREROSubobject();
+					srero1.setSID(sid_source);
+					srero1.setfFlag(true);
 					
+					ero.addEROSubobject(srero1);
+					
+					SREROSubobject srero2 = new SREROSubobject();
+					srero2.setSID(sid_dest);
+					srero2.setfFlag(true);
+					
+					ero.addEROSubobject(srero2);					
+					PCEPIntiatedLSP pcepIntiatedLSPList = new PCEPIntiatedLSP();
+					pcepIntiatedLSPList.setEro(ero);
+					pcepIntiatedLSPList.setLsp(lsp);
+					//pcepIntiatedLSPList.setEndPoint(endP);
+					pceInit.getPcepIntiatedLSPList().add(pcepIntiatedLSPList);						
+					
+					EndPointsIPv4 endP_IP = new EndPointsIPv4();
+					endP_IP.setSourceIP(ip_source);
+					endP_IP.setDestIP(ip_dest);
+//					
+//					pcepIntiatedLSPList.setEndPoint(endP_IP);					
+
+					
+					*/
 					try 
 					{	
 						//Sending message to tn1
@@ -291,6 +326,7 @@ public class PCEManagementSession extends Thread {
 						DataOutputStream outToServer = new DataOutputStream(clientSocket.getOutputStream());
 						try 
 						{
+							log.info("Encoding pce");
 							pceInit.encode();
 							log.info("Sending message At LAST!");
 							outToServer.write(pceInit.getBytes());
@@ -298,6 +334,7 @@ public class PCEManagementSession extends Thread {
 						} 
 						catch (Exception e) 
 						{
+							log.info("woops");
 							log.info(UtilsFunctions.exceptionToString(e));
 						}
 					}

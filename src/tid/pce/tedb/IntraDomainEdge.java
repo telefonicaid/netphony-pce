@@ -16,6 +16,16 @@ public class IntraDomainEdge extends DefaultWeightedEdge {
 	private static final long serialVersionUID = 1L;
 	
 	/**
+	 * SID of the source node
+	 */
+	public int src_sid;
+	
+	/**
+	 * SID of the destination node
+	 */
+	public int dst_sid;
+	
+	/**
 	 * Unnumbered Interface ID of the outgoing interface from the source
 	 */
 	public long src_if_id;
@@ -51,6 +61,22 @@ public class IntraDomainEdge extends DefaultWeightedEdge {
 	public int numFibers;
 		
 	public IntraDomainEdge(){
+	}
+	
+	public int getSrc_SID(){
+		return this.src_sid;
+	}
+	
+	public int getDst_SID(){
+		return this.dst_sid;
+	}
+	
+	public void setSrc_SID(int src_sid){
+		this.src_sid = src_sid;
+	}
+	
+	public void setDst_SID(int dst_sid){
+		this.dst_sid = dst_sid;
 	}
 	
 	public Object getSource(){
@@ -125,6 +151,8 @@ public class IntraDomainEdge extends DefaultWeightedEdge {
 	
 	public String toString(){
 		String ret=this.getSource()+":"+this.getSrc_if_id()+"-->"+this.getTarget()+":"+this.getDst_if_id()+" NumFibers = "+numFibers;
+//		if (this.getSrc_SID() && this.getDst_SID())
+			ret+=" -->SIDS-> src: "+this.getSrc_SID()+" dst: "+this.getDst_SID();
 		if (TE_info==null){
 			return ret;
 		}
