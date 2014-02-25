@@ -499,7 +499,7 @@ public class PCEManagementSession extends Thread {
 					out.print("quit\r\n");					
 	
 				}
-				else if (command.equals("add xifi link")) {
+/*				else if (command.equals("add xifi link")) {
 					out.print("Format:switch_id_1-switch_id_2-source_port-dest_port\r\n");
 					log.info("Adding Xifi Link!");
 					String line;
@@ -592,7 +592,7 @@ public class PCEManagementSession extends Thread {
 						}
 					}
 					}
-				}
+				}*/
 
 				else{
 					out.print("invalid command\n");	
