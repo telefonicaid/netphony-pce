@@ -12,6 +12,8 @@ import java.util.logging.Logger;
 
 import org.jgrapht.graph.*;
 
+import java.util.Hashtable;
+
 import tid.ospf.ospfv2.lsa.tlv.subtlv.complexFields.BitmapLabelSet;
 import tid.pce.computingEngine.RequestDispatcher;
 import tid.pce.computingEngine.algorithms.ComputingAlgorithmPreComputation;
@@ -43,7 +45,7 @@ public class SimpleTEDB implements DomainTEDB{
 	/**
 	 * List of interdomain Links
 	 */
-	private LinkedList<InterDomainEdge> interDomainLinks; 
+	private LinkedList<InterDomainEdge> interDomainLinks = new LinkedList<InterDomainEdge>(); 
 
 	/**
 	 * Reachability information
@@ -62,6 +64,14 @@ public class SimpleTEDB implements DomainTEDB{
 	
 	private RequestDispatcher requestDispatcher;
 	
+	/**hashtable para guardar node identifier y sus atributos
+	 * 
+	 * De momento solo soporta ospf non pseudo-node (Inet4Address)
+	 * 
+	 *Quedaria por añadir el resto de posibles IGP-ids
+	 */
+	private Hashtable<Inet4Address , Node_Info> NodeTable;
+	
 	private boolean multidomain=false;//By default, the TED has only one domain
 	Logger log;
 	public SimpleTEDB(){
@@ -69,6 +79,7 @@ public class SimpleTEDB implements DomainTEDB{
 		registeredAlgorithms= new ArrayList<ComputingAlgorithmPreComputation>();
 		registeredAlgorithmssson= new ArrayList<ComputingAlgorithmPreComputationSSON>();
 		TEDBlock=new ReentrantLock();
+		NodeTable = new Hashtable<Inet4Address, Node_Info>();
 	}
 
 	public SimpleDirectedWeightedGraph<Object,IntraDomainEdge> getDuplicatedNetworkGraph(){
@@ -106,6 +117,7 @@ public class SimpleTEDB implements DomainTEDB{
 	}
 	
 	public void initializeFromFile(String file, String layer, boolean multidomain, int lambdaIni, int lambdaEnd, boolean isSSON,boolean readOnlyInterDomainLinks, boolean isWLAN){
+		Inet4Address domain=FileTEDBUpdater.getDomainIDfromSimpleDomain(file);
 		if (readOnlyInterDomainLinks){
 			log.info("Read Only Inter Domain Links");
 			networkGraph = new SimpleDirectedWeightedGraph<Object, IntraDomainEdge>(IntraDomainEdge.class);
@@ -142,8 +154,51 @@ public class SimpleTEDB implements DomainTEDB{
 			//		if (lambdaEnd!=Integer.MAX_VALUE){
 			//			notifyAlgorithms( lambdaIni, lambdaEnd);
 			//		}
-			log.info("EdgeSEt::"+networkGraph.edgeSet());
-			log.info("Red leida. Multidomain "+ multidomain);
+			Iterator<Object> itervertex=networkGraph.vertexSet().iterator();
+			
+			/** Se podrian sacar a una funcion externa ambos 'while'
+			 *  Rellenar info table
+			 *  Rellenar info edge
+			 *  Preguntar a Oscar
+			 */
+			while (itervertex.hasNext()) {
+				try {
+					Inet4Address ip = (Inet4Address) itervertex.next();
+					Node_Info ni = new Node_Info();
+					ni.setIpv4AddressLocalNode(ip);
+					ni.setIpv4Address(ip);//de momento asumimos que aprendemos ospf
+					ni.setAs_number(domain);
+					//ni.setSid(sid);
+					ni.setLearntFrom("Fom XML");
+					NodeTable.put(ip, ni);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+			
+			Iterator<IntraDomainEdge> iteredge=networkGraph.edgeSet().iterator();
+			while (iteredge.hasNext()) {
+					IntraDomainEdge id =  (IntraDomainEdge) iteredge.next();
+					Inet4Address ipSource = (Inet4Address) (id.getSource());
+					Inet4Address ipDest = (Inet4Address) (id.getTarget());
+					id.setLearntFrom("From XML");
+					Node_Info origin = new Node_Info();
+					Node_Info destination = new Node_Info();
+					origin.setIpv4AddressLocalNode(ipSource);
+					origin.setAs_number(domain);
+					origin.setLearntFrom("FromXML");
+					destination.setIpv4AddressLocalNode(ipDest);
+					destination.setAs_number(domain);
+					destination.setLearntFrom("FromXML");
+					id.setLocal_Node_Info(origin);
+					id.setRemote_Node_Info(destination);
+					NodeTable.get(ipSource).setSID(id.getSrc_sid());
+					NodeTable.get(ipDest).setSID(id.getDst_sid());
+			
+				}
+			}
+			
+			
 			if (!multidomain){
 				interDomainLinks = FileTEDBUpdater.readInterDomainLinks(file);	
 			}
@@ -154,9 +209,26 @@ public class SimpleTEDB implements DomainTEDB{
 			if (!multidomain){
 				FileTEDBUpdater.getDomainReachabilityFromFile(file,reachabilityEntry);
 			}
-		}
-	}
-	
+
+			Iterator<InterDomainEdge> edgeIt = interDomainLinks.iterator();
+			while (edgeIt.hasNext()) {
+				InterDomainEdge id =  (InterDomainEdge) edgeIt.next();
+				Inet4Address ipSource = (Inet4Address) (id.src_router_id);
+				Inet4Address ipDest = (Inet4Address) (id.dst_router_id);
+				id.setLearntFrom("From XML");
+				Node_Info origin = new Node_Info();
+				Node_Info destination = new Node_Info();
+				origin.setIpv4AddressLocalNode(ipSource);
+				origin.setAs_number(domain);
+				origin.setLearntFrom("FromXML");
+				destination.setIpv4AddressLocalNode(ipDest);
+				destination.setAs_number((Inet4Address) id.domain_dst_router);
+				destination.setLearntFrom("FromXML");
+				id.setLocal_Node_Info(origin);
+				id.setRemote_Node_Info(destination);
+			}
+
+		}	
 
 	public void notifyAlgorithms( int lambdaIni,int lambdaEnd){	
 		LinkedList<Object>  ipListScr = new  LinkedList<Object> ();
@@ -267,7 +339,7 @@ public class SimpleTEDB implements DomainTEDB{
 			Object vertex= vertexIterator.next();
 			topoString=topoString+"\t"+vertex.toString()+"\r\n";
 		}
-		
+		topoString=topoString+"Node Information Table::: \r\n"+NodeTable.toString()+"\r\n";
 		Set<IntraDomainEdge> edgeSet= networkGraph.edgeSet();
 		if (edgeSet != null){
 			Iterator <IntraDomainEdge> edgeIterator=edgeSet.iterator();
@@ -451,6 +523,22 @@ public class SimpleTEDB implements DomainTEDB{
 		return networkGraph.containsVertex(vertex);
 	}
 
+	public Hashtable<Inet4Address, Node_Info> getNodeTable() {
+		return NodeTable;
+	}
+
+	public void setNodeTable(Hashtable<Inet4Address, Node_Info> nodeTable) {
+		NodeTable = nodeTable;
+	}
+
+	public boolean isMultidomain() {
+		return multidomain;
+	}
+
+	public void setMultidomain(boolean multidomain) {
+		this.multidomain = multidomain;
+	}
+
 	public void registerSSON (ComputingAlgorithmPreComputationSSON algo){
 		registeredAlgorithmssson.add(algo);		
 	}
@@ -480,9 +568,7 @@ public class SimpleTEDB implements DomainTEDB{
 	
 	@Override
 	public void notifyNewEdge(Object source, Object destination) {
-		log.info("Beginning notifyNewEdge");
 		for (int i=0;i<registeredAlgorithms.size();++i){
-			log.info("Notifying : " + registeredAlgorithms.get(i));
 			registeredAlgorithms.get(i).notifyNewEdge(source,destination);
 		}	
 	}
@@ -556,7 +642,7 @@ public class SimpleTEDB implements DomainTEDB{
 		String topoString;
 		Set<Object> vetexSet= networkGraph.vertexSet();
 		Iterator <Object> vertexIterator=vetexSet.iterator();
-		topoString="Nodes: \r\n";
+		topoString="NodesFEO: \r\n";
 		while (vertexIterator.hasNext()){
 			Object vertex= vertexIterator.next();
 			topoString=topoString+"\t"+vertex.toString()+"\r\n";

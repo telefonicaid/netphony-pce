@@ -19,6 +19,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import tid.bgp.bgp4.update.tlv.linkstate_attribute_tlvs.DefaultTEMetricLinkAttribTLV;
 import tid.ospf.ospfv2.lsa.tlv.subtlv.AvailableLabels;
 import tid.ospf.ospfv2.lsa.tlv.subtlv.MaximumBandwidth;
 import tid.ospf.ospfv2.lsa.tlv.subtlv.UnreservedBandwidth;
@@ -103,11 +104,10 @@ public class FileTEDBUpdater {
 
 		File file = new File(fileName);
 		try {
-			HashMap<Inet4Address, Integer >SIDS = new HashMap<Inet4Address,Integer>();
-
-
+			String domain_id = "";
 			DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
 			Document doc = builder.parse(file);			
+			HashMap<Inet4Address, Integer >SIDS = new HashMap<Inet4Address,Integer>();
 
 			NodeList nodes_domains = doc.getElementsByTagName("domain");
 			if (layer!=null){
@@ -143,7 +143,7 @@ public class FileTEDBUpdater {
 					NodeList nodes_domain_id = element_domain.getElementsByTagName("domain_id");
 					for (int k = 0; k < nodes_domain_id.getLength(); k++) {
 						Element domain_id_e = (Element) nodes_domain_id.item(0);
-						String domain_id = getCharacterDataFromElement(domain_id_e);
+						domain_id = getCharacterDataFromElement(domain_id_e);
 						log.info("Looking for nodes in domain: " + domain_id);
 					}
 
@@ -156,12 +156,12 @@ public class FileTEDBUpdater {
 						log.info("Adding router_id " + router_id);
 						Inet4Address router_id_addr = (Inet4Address) Inet4Address.getByName(router_id);
 						graph.addVertex(router_id_addr);
-
 						log.info("About to look for SID");
+
 						NodeList SID_aux = element.getElementsByTagName("sid");
 						Element SID_e = (Element) SID_aux.item(0);
 						if (SID_e!=null)
-						{	
+						{ 
 							log.info("SID existe");
 							int SID = Integer.parseInt(getCharacterDataFromElement(SID_e));
 							SIDS.put(router_id_addr,SID);
@@ -171,7 +171,6 @@ public class FileTEDBUpdater {
 						{
 							log.info("SID not found");
 						}
-
 
 					}
 				}
@@ -204,7 +203,7 @@ public class FileTEDBUpdater {
 
 					for (int k = 0; k < nodes_domain_id.getLength(); k++) {
 						Element domain_id_e = (Element) nodes_domain_id.item(0);
-						String domain_id = getCharacterDataFromElement(domain_id_e);
+						domain_id = getCharacterDataFromElement(domain_id_e);
 						log.info("Looking for links in domain: " + domain_id);
 					}
 					int numLabels=0;
@@ -284,7 +283,7 @@ public class FileTEDBUpdater {
 							type=attr_type.getValue();
 							if (allDomains){
 								if (type.equals("interdomain")){
-									type="intradomain";
+									type="interdomain";
 								}
 							}
 
@@ -306,9 +305,6 @@ public class FileTEDBUpdater {
 							Element source_router_id_el = (Element) source_router_id.item(0);
 							String s_r_id = getCharacterDataFromElement(source_router_id_el);
 							Inet4Address s_router_id_addr = (Inet4Address) Inet4Address.getByName(s_r_id);
-
-
-
 							NodeList source_if_id_nl = source_router_el.getElementsByTagName("if_id");
 							Element source_if_id_el = (Element) source_if_id_nl.item(0);
 							String s_source_if_id;
@@ -336,6 +332,17 @@ public class FileTEDBUpdater {
 							String d_r_id = getCharacterDataFromElement(dest_router_id_el);
 							Inet4Address d_router_id_addr = (Inet4Address) Inet4Address.getByName(d_r_id);
 
+							
+							 //Anyadimos los SID
+						       if (SIDS.get(s_router_id_addr)!=null && SIDS.get(d_router_id_addr)!=null)
+						       {
+						        log.info("setting SIDS src: "+SIDS.get(s_router_id_addr)+" dst: "+SIDS.get(d_router_id_addr));
+						        edge.setSrc_sid(SIDS.get(s_router_id_addr));
+						        edge.setDst_sid(SIDS.get(d_router_id_addr));
+						       }							
+							
+
+
 							NodeList dest_if_id_nl = dest_el.getElementsByTagName("if_id");
 							Element dest_if_id_el= (Element) dest_if_id_nl.item(0);
 							String s_dest_if_id;
@@ -354,16 +361,7 @@ public class FileTEDBUpdater {
 								s_dest_Numif_id = getCharacterDataFromElement(dest_Numif_id_el);
 								dst_Numif_id = (Inet4Address) Inet4Address.getByName(s_dest_Numif_id);
 							}
-							//Anyadimos los SID
-							if (SIDS.get(s_router_id_addr)!=null && SIDS.get(d_router_id_addr)!=null)
-							{
-								log.info("setting SIDS src: "+SIDS.get(s_router_id_addr)+" dst: "+SIDS.get(d_router_id_addr));
-								edge.setSrc_SID(SIDS.get(s_router_id_addr));
-								edge.setDst_SID(SIDS.get(d_router_id_addr));
-							}
-
-
-							// Añadimos interfaces Numeradas
+							// AÃ±adimos interfaces Numeradas
 							if (src_Numif_id!=null){
 								edge.setSrc_Numif_id(src_Numif_id);
 							}if (dst_Numif_id!=null){
@@ -416,6 +414,39 @@ public class FileTEDBUpdater {
 									(edge.getTE_info()).setMaximumBandwidth(maximumBandwidth);
 
 								}
+							}
+							/**
+							 * NodeList SID_aux = element.getElementsByTagName("sid");
+						Element SID_e = (Element) SID_aux.item(0);
+						if (SID_e!=null)
+						{ 
+							log.info("SID existe");
+							int SID = Integer.parseInt(getCharacterDataFromElement(SID_e));
+							SIDS.put(router_id_addr,SID);
+							log.info("SID of node: "+SID);
+						}
+						else
+						{
+							log.info("SID not found");
+						}
+							 */
+							NodeList defaultmetric = element.getElementsByTagName("default_te_metric");
+							Element metric_aux = (Element) defaultmetric.item(0);
+							
+							if (metric_aux != null){
+							String s_metric_aux = getCharacterDataFromElement(metric_aux);
+								TE_Information tE_info;
+								int metric = Integer.parseInt(s_metric_aux);
+								DefaultTEMetricLinkAttribTLV defaultTeMetric= new DefaultTEMetricLinkAttribTLV();
+								if(edge.getTE_info()==null){
+									tE_info= new TE_Information();
+								}
+								else{
+									tE_info = edge.getTE_info();
+								}
+								defaultTeMetric.setLinkMetric((long)metric);
+								tE_info.setDefaultTEMetric(defaultTeMetric);
+								edge.setTE_info(tE_info);
 							}
 
 							NodeList unreserved_bandwidth_nl = element.getElementsByTagName("unreserved_bandwidth");
@@ -758,8 +789,8 @@ public class FileTEDBUpdater {
 						//Anyadimos los SID
 						if (SIDS.get(s_id_addr)!=null && SIDS.get(d_id_addr)!=null)
 						{
-							edge.setSrc_SID(SIDS.get(s_id_addr));
-							edge.setDst_SID(SIDS.get(d_id_addr));
+							edge.setSrc_sid(SIDS.get(s_id_addr));
+							edge.setSrc_sid(SIDS.get(d_id_addr));
 						}	
 
 						graph.addEdge(s_id_addr, d_id_addr,edge);		       
@@ -808,7 +839,7 @@ public class FileTEDBUpdater {
 		}
 	}
 	//FIXME: Sergio - mirar aqui para leer MD TEDB
-	//Función que ya estaba
+	//Funciï¿½n que ya estaba
 	public static DirectedWeightedMultigraph<Object, InterDomainEdge> readMDNetwork(
 			String fileName) {
 		Logger log = Logger.getLogger("PCEPServer");
@@ -1381,60 +1412,48 @@ public class FileTEDBUpdater {
 	public static void getDomainReachabilityFromFile(String fileName, ReachabilityEntry reachabilityEntry) {
 		FileTEDBUpdater.getDomainReachabilityFromFile(fileName, reachabilityEntry,null);
 	}
-	public static void getDomainReachabilityFromFile(String fileName, ReachabilityEntry reachabilityEntry,String layer) {
-		/*			DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
-			Document doc = builder.parse(file);			
+
+	public static Inet4Address getDomainIDfromSimpleDomain(String fileName) {
+		Logger log = Logger.getLogger("PCEPServer");
+		log.info("Initializng reachability from " + fileName);
+		File file = new File(fileName);
+		Inet4Address domain_id = null;
+		try {
+			DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+			Document doc = builder.parse(file);
 
 			NodeList nodes_domains = doc.getElementsByTagName("domain");
-			if (layer!=null){
-				log.info("Reading topology, looking for layer "+ layer);	
-			}
+			Element element_domain = (Element) nodes_domains.item(0);
+			NodeList nodes_domain_id = element_domain.getElementsByTagName("domain_id");
+			Element domain_id_e = (Element) nodes_domain_id.item(0);
+			String domain_id_str = getCharacterDataFromElement(domain_id_e);
+			domain_id = (Inet4Address) Inet4Address.getByName(domain_id_str);
+			log.info("El dominio leido es: " + domain_id);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 
+		return domain_id;
+	}
 
-			//First pass to get all the nodes
-			//If we need to read all the domains
-			for (int j = 0; j < nodes_domains.getLength(); j++) {
-				boolean readNetwork=false;
-				Element element1 = (Element) nodes_domains.item(j);
-
-				if (layer!=null){				
-					NodeList domain_layer = element1.getElementsByTagName("layer");					
-					if (domain_layer.getLength()==1){						
-						Element layer_type = (Element) domain_layer.item(0);
-						log.info("Layer: " + layer_type.getAttributeNode("type").getValue());
-						log.info("Reading network topology");
-						if (layer_type.getAttributeNode("type").getValue().equals(layer)){
-							readNetwork = true;
-
-						}
-						if (layer.equals("interlayer")){
-							readNetwork = true;
-						}
-					}															
-				}else {
-					readNetwork=true;
-				}*/
-		
+	public static void getDomainReachabilityFromFile(String fileName,
+			/*byte[] domainReachabilityIPv4Prefix,*/ ReachabilityEntry reachabilityEntry,String layer) {
 		Logger log = Logger.getLogger("PCEPServer");
 		log.info("Initializng reachability from " + fileName);
 		File file = new File(fileName);
 		try {
-
-			DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
-			Document doc = builder.parse(file);		
-
+			DocumentBuilder builder = DocumentBuilderFactory.newInstance()
+					.newDocumentBuilder();
+			Document doc = builder.parse(file);
 
 			NodeList nodes_domains = doc.getElementsByTagName("domain");
 			for (int j = 0; j < nodes_domains.getLength(); j++) {
 				boolean readNetwork=false;
-
 				if (layer!=null){
-					Element element1 = (Element) nodes_domains.item(0);
-					NodeList domain_layer = element1.getElementsByTagName("layer");	
-					for (int i = 0; i < domain_layer.getLength(); i++) {
-						Element element = (Element) domain_layer.item(i);
-						String layer2 =element.getAttributeNode("type").getValue();
-						log.info("layer 1: "+layer+" layer 2: "+layer2);
+					NodeList nodes_layer = doc.getElementsByTagName("layer");
+					for (int i = 0; i < nodes_layer.getLength(); i++) {
+						Element element = (Element) nodes_layer.item(i);
+						String layer2 =getCharacterDataFromElement(element);
 						if (layer2.equals(layer)){
 							readNetwork=true;
 						}
@@ -1455,7 +1474,6 @@ public class FileTEDBUpdater {
 							.getByName(domain_id_str);
 					reachabilityEntry.setDomainId(domain_id);
 					log.info("Network domain es: " + domain_id);
-
 					NodeList nodes = element_domain
 							.getElementsByTagName("reachability_entry");
 
@@ -1492,11 +1510,8 @@ public class FileTEDBUpdater {
 						//Meto la mascara
 						reachabilityEntry.setMask(mask);
 
+
 					}
-				}
-				else
-				{
-					log.info("no hay network");
 				}
 			}
 

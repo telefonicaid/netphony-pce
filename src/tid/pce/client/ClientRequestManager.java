@@ -4,6 +4,7 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.Hashtable;
 import java.util.logging.Logger;
+
 import tid.pce.pcep.PCEPProtocolViolationException;
 import tid.pce.pcep.messages.PCEPMessage;
 import tid.pce.pcep.messages.PCEPMonReq;
@@ -54,12 +55,11 @@ public class ClientRequestManager {
 		sendRequest(pcreq);
 		synchronized (object_lock) { 
 			try {				
-				log.fine("Request sent, waiting for response");
 				log.info("ESPERAREMOS "+maxTimeMs);
 				object_lock.wait(maxTimeMs);
 			} catch (InterruptedException e)
 			{
-			//	FIXME: Ver que hacer
+				UtilsFunctions.exceptionToString(e);
 			}
 		}
 		long timeIni2=System.nanoTime();
@@ -94,7 +94,6 @@ public class ClientRequestManager {
 			out.flush();
 		} catch (IOException e) {
 			log.warning("Error sending msg: " + e.getMessage());
-			log.info(UtilsFunctions.exceptionToString(e));
 		}
 	}
 	
