@@ -56,6 +56,7 @@ import tid.pce.tedb.DomainTEDB;
 import tid.pce.tedb.IntraDomainEdge;
 import tid.pce.tedb.SimpleTEDB;
 import tid.pce.tedb.TE_Information;
+import tid.provisioningManager.objects.RouterInfoPM;
 import tid.util.UtilsFunctions;
 
 /**
@@ -499,7 +500,7 @@ public class PCEManagementSession extends Thread {
 					out.print("quit\r\n");					
 	
 				}
-/*				else if (command.equals("add xifi link")) {
+			/*	else if (command.equals("add xifi link")) {
 					out.print("Format:switch_id_1-switch_id_2-source_port-dest_port\r\n");
 					log.info("Adding Xifi Link!");
 					String line;
