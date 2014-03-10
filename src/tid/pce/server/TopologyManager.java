@@ -15,7 +15,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
-//import tid.bgp.bgp4Peer.pruebas.BGPPeer;
+import tid.bgp.bgp4Peer.pruebas.BGPPeer;
 import tid.ospf.ospfv2.OSPFv2LinkStateUpdatePacket;
 import tid.pce.tedb.DomainTEDB;
 import tid.pce.tedb.SimpleTEDB;
@@ -34,7 +34,6 @@ public class TopologyManager
 	PCEServerParameters params;
 	DomainTEDB ted;
 	Logger log;
-	private String BGPLS_config_file;
 	
 	public TopologyManager(PCEServerParameters params,DomainTEDB ted, Logger log)
 	{
@@ -59,17 +58,18 @@ public class TopologyManager
 			initFromOSPF();
 		}
 		
-	/*	if (params.isActingAsBGP4Peer()) {//BGP
+		if (params.isActingAsBGP4Peer()) {//BGP
 			log.info("Acting as BGP Peer");
 			BGPPeer bgpPeer = new BGPPeer();		
-			bgpPeer.configure(BGPLS_config_file);			
+			bgpPeer.configure(params.getBGP4File());			
+			//bgpPeer.configure("PCEServerConfiguration.xml");			
 			bgpPeer.setReadDomainTEDB(ted);
 			bgpPeer.createUpdateDispatcher();
 			bgpPeer.startClient();		
 			bgpPeer.startServer();
 			bgpPeer.startManagementServer();
 			bgpPeer.startSendTopology();
-		}*/
+		}
 	}
 	
 	private void initFromFile() 
@@ -217,17 +217,5 @@ public class TopologyManager
 			log.info(UtilsFunctions.exceptionToString(e));
 		}	
 	}
-
-	public String getBGPLS_config_file() 
-	{
-		return BGPLS_config_file;
-	}
-
-	public void setBGPLS_config_file(String bGPLS_config_file) 
-	{
-		BGPLS_config_file = bGPLS_config_file;
-	}
-	
-	
 }
 

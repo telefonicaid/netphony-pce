@@ -141,7 +141,7 @@ public class ParentPCEServer {
 			if (params.isActingAsBGP4Peer()) {//BGP
 				log.info("Acting as BBGP peer");
 				BGPPeer bgpPeer = new BGPPeer();		
-				bgpPeer.configure("ParentPCEServerConfiguration.xml");
+				bgpPeer.configure(params.getBGP4File());
 				if (params.isMultiDomain())
 					bgpPeer.setWriteMultiTEDB((MultiDomainTEDB)ted);				
 				if (params.isKnowsWholeTopology())

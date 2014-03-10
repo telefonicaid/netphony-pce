@@ -155,14 +155,14 @@ public class ParentPCEManagementSession extends Thread {
 				else if (command.equals("show topology")&&(!isITcapable)){
 					out.print(mdtedb.printMDTopology());
 					if (simpleTedb != null){
-						out.print("\nSIMPLE TEDB:\n");
+						out.print("\nSIMPLE TEDB1:\n");
 						out.print(simpleTedb.printTopology()); 
 					}
 					
 				}else if (command.equals("show topology")&&(isITcapable)){
 					out.print(ITmdtedb.printTopology());
 					if (simpleTedb != null){
-						out.print("\nSIMPLE TEDB:\n");
+						out.print("\nSIMPLE TEDB2:\n");
 						out.print(simpleTedb.printTopology());
 					}
 					

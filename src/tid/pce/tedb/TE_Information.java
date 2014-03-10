@@ -5,6 +5,13 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.logging.Logger;
 
 //import sun.org.mozilla.javascript.internal.ast.ForInLoop;
+import org.eclipse.jetty.util.log.Log;
+
+import tid.bgp.bgp4.update.tlv.linkstate_attribute_tlvs.DefaultTEMetricLinkAttribTLV;
+import tid.bgp.bgp4.update.tlv.linkstate_attribute_tlvs.IPv4RouterIDLocalNodeLinkAttribTLV;
+import tid.bgp.bgp4.update.tlv.linkstate_attribute_tlvs.IPv4RouterIDRemoteNodeLinkAttribTLV;
+import tid.bgp.bgp4.update.tlv.linkstate_attribute_tlvs.LinkProtectionTypeLinkAttribTLV;
+import tid.bgp.bgp4.update.tlv.linkstate_attribute_tlvs.MetricLinkAttribTLV;
 import tid.ospf.ospfv2.lsa.tlv.subtlv.AdministrativeGroup;
 import tid.ospf.ospfv2.lsa.tlv.subtlv.AvailableLabels;
 import tid.ospf.ospfv2.lsa.tlv.subtlv.IPv4RemoteASBRID;
@@ -24,6 +31,8 @@ import tid.rsvp.constructs.gmpls.DWDMWavelengthLabel;
 public class TE_Information {
 	
 	private TrafficEngineeringMetric trafficEngineeringMetric;
+	
+	private DefaultTEMetricLinkAttribTLV defaultTEMetric;
 
 	private MaximumBandwidth maximumBandwidth; 
 
@@ -37,6 +46,8 @@ public class TE_Information {
 	
 	private LinkProtectionType linkProtectionType;
 	
+	private LinkProtectionTypeLinkAttribTLV linkProtectionBGPLS;
+	
 	private InterfaceSwitchingCapabilityDescriptor interfaceSwitchingCapabilityDescriptor;
 	
 	private SharedRiskLinkGroup sharedRiskLinkGroup;	
@@ -44,6 +55,12 @@ public class TE_Information {
 	private RemoteASNumber remoteASNumber;
 	
 	private IPv4RemoteASBRID iPv4RemoteASBRID;
+	
+	private IPv4RouterIDLocalNodeLinkAttribTLV iPv4LocalNode;
+	
+	private IPv4RouterIDRemoteNodeLinkAttribTLV iPv4RemoteNode;
+	
+	private MetricLinkAttribTLV metric;
 	
 	private AvailableLabels availableLabels;
 	
@@ -91,6 +108,14 @@ public class TE_Information {
 
 	public MaximumReservableBandwidth getMaximumReservableBandwidth() {
 		return maximumReservableBandwidth;
+	}
+
+	public IPv4RouterIDRemoteNodeLinkAttribTLV getiPv4RemoteNode() {
+		return iPv4RemoteNode;
+	}
+
+	public void setiPv4RemoteNode(IPv4RouterIDRemoteNodeLinkAttribTLV iPv4RemoteNode) {
+		this.iPv4RemoteNode = iPv4RemoteNode;
 	}
 
 	public void setMaximumReservableBandwidth(
@@ -379,7 +404,7 @@ public class TE_Information {
 		}
 		
 	}
-	public boolean isWavelengthUnreserved(int num_wavelength){
+	public boolean isWavelengthUnreserved(int num_wavelength){//si es true esta unreserved
 		if (withWLANs)
 		{
 			return (!reservedWLANs[num_wavelength]);
@@ -387,10 +412,13 @@ public class TE_Information {
 		else
 		{
 			int num_byte=num_wavelength/8;
-			if (((BitmapLabelSet)this.getAvailableLabels().getLabelSet()).getBytesBitmapReserved()==null)
+			if (((BitmapLabelSet)this.getAvailableLabels().getLabelSet()).getBytesBitmapReserved()==null){
 				return false;
-			return ((((BitmapLabelSet)this.getAvailableLabels().getLabelSet()).getBytesBitmapReserved()[num_byte]&(0x80>>>(num_wavelength%8)))==0);				
-		}
+			}
+			else{
+				return ((((BitmapLabelSet)this.getAvailableLabels().getLabelSet()).getBytesBitmapReserved()[num_byte]&(0x80>>>(num_wavelength%8)))==0);				
+			}
+		}	
 	}
 	
 	
@@ -435,6 +463,30 @@ public class TE_Information {
 		if (availableLabels!= null){
 			ret=ret+availableLabels.toString()+"\r\n";
 		}
+		
+		if (iPv4LocalNode!=null){
+			ret=ret+iPv4LocalNode.toString()+"\r\n";
+		}
+		
+		if (iPv4RemoteNode!=null){
+			ret=ret+iPv4RemoteNode.toString()+"\r\n";
+		}
+		
+		if(linkProtectionBGPLS!=null){
+			ret=ret+linkProtectionBGPLS.toString()+"\r\n";
+		}
+		
+		if(trafficEngineeringMetric!=null){
+			ret=ret+trafficEngineeringMetric.toString()+"\r\n";
+		}
+		
+		if(metric!=null){
+			ret=ret+metric.toString()+"\r\n";
+		}
+		
+		if(defaultTEMetric!=null){
+			ret=ret+defaultTEMetric.toString()+"\r\n";
+		}
 		return ret;
 	}
 
@@ -452,5 +504,36 @@ public class TE_Information {
 
 	public void setVlan(int vlan) {
 		this.vlan = vlan;
+	}
+
+	public void setiPv4LocalNode(IPv4RouterIDLocalNodeLinkAttribTLV iPv4RouterIDLocalNode) {	
+		this.iPv4LocalNode = iPv4RouterIDLocalNode;
+	}
+	public IPv4RouterIDLocalNodeLinkAttribTLV getiPv4LocalNode() {	
+		return iPv4LocalNode;
+	}
+
+	public MetricLinkAttribTLV getMetric() {
+		return metric;
+	}
+
+	public void setMetric(MetricLinkAttribTLV metric) {
+		this.metric = metric;
+	}
+
+	public LinkProtectionTypeLinkAttribTLV getLinkProtectionBGPLS() {
+		return linkProtectionBGPLS;
+	}
+
+	public void setLinkProtectionBGPLS(LinkProtectionTypeLinkAttribTLV linkProtectionBGPLS) {
+		this.linkProtectionBGPLS = linkProtectionBGPLS;
+	}
+
+	public DefaultTEMetricLinkAttribTLV getDefaultTEMetric() {
+		return defaultTEMetric;
+	}
+
+	public void setDefaultTEMetric(DefaultTEMetricLinkAttribTLV defaultTEMetric) {
+		this.defaultTEMetric = defaultTEMetric;
 	}
 }
