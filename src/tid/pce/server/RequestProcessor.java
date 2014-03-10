@@ -12,6 +12,7 @@ import org.jgrapht.GraphPath;
 import org.jgrapht.alg.DijkstraShortestPath;
 import org.jgrapht.graph.SimpleDirectedWeightedGraph;
 
+import tid.pce.computingEngine.ComputingResponse;
 import tid.pce.pcep.PCEPProtocolViolationException;
 import tid.pce.pcep.constructs.EndPoint;
 import tid.pce.pcep.constructs.EndPointAndRestrictions;
@@ -20,7 +21,6 @@ import tid.pce.pcep.constructs.P2PEndpoints;
 import tid.pce.pcep.constructs.Path;
 import tid.pce.pcep.constructs.Response;
 import tid.pce.pcep.messages.PCEPRequest;
-import tid.pce.pcep.messages.PCEPResponse;
 import tid.pce.pcep.objects.EndPoints;
 import tid.pce.pcep.objects.EndPointsIPv4;
 import tid.pce.pcep.objects.ExplicitRouteObject;
@@ -121,7 +121,7 @@ public class RequestProcessor implements Runnable {
 			if (childPCERequestManager!=null){
 				log.info("Source or destination are NOT in the TED, asking the parent PCE");
 				//PCEPRequest msg_req=new PCEPRequest();
-				PCEPResponse resp=childPCERequestManager.newRequest(req);
+				ComputingResponse resp=childPCERequestManager.newRequest(req);
 				try {
 					try {
 						resp.encode();
@@ -141,7 +141,7 @@ public class RequestProcessor implements Runnable {
 			}
 			else{
 				log.warning("Source or destination are NOT in the TED");
-				PCEPResponse m_resp=new PCEPResponse();
+				ComputingResponse m_resp=new ComputingResponse();
 				Response response=new Response();
 				RequestParameters rp = new RequestParameters();
 				rp.setRequestID(this.req.getRequest(0).getRequestParameters().getRequestID());
@@ -184,7 +184,7 @@ public class RequestProcessor implements Runnable {
 			
 		}
 		long tiempoini =System.currentTimeMillis();
-		PCEPResponse m_resp=new PCEPResponse();
+		ComputingResponse m_resp=new ComputingResponse();
 		Response response=new Response();
 		// check if src and dst are the same 
 		if (source_router_id_addr.equals(dest_router_id_addr)){

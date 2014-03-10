@@ -32,6 +32,7 @@ import tid.pce.computingEngine.algorithms.ComputingAlgorithm;
 import tid.pce.computingEngine.algorithms.ComputingAlgorithmManager;
 import tid.pce.computingEngine.algorithms.PCEPUtils;
 import tid.pce.computingEngine.ComputingRequest;
+import tid.pce.computingEngine.ComputingResponse;
 import tid.pce.pcep.constructs.EndPoint;
 import tid.pce.pcep.constructs.EndPointAndRestrictions;
 import tid.pce.pcep.constructs.P2MPEndpoints;
@@ -39,7 +40,6 @@ import tid.pce.pcep.constructs.P2PEndpoints;
 import tid.pce.pcep.constructs.Path;
 import tid.pce.pcep.constructs.Request;
 import tid.pce.pcep.constructs.Response;
-import tid.pce.pcep.messages.PCEPResponse;
 import tid.pce.pcep.objects.Bandwidth;
 import tid.pce.pcep.objects.EndPoints;
 import tid.pce.pcep.objects.EndPointsIPv4;
@@ -130,7 +130,7 @@ public class Multilayer_MinTH_Algorithm implements ComputingAlgorithm {
 	/**
 	 * Exectutes the path computation and returns the PCEP Response
 	 */
-	public PCEPResponse call(){ 
+	public ComputingResponse call(){ 
 		
 		log.info("Starting Multilayer Min Traffic Hops Algorithm, New Request!");
 		//Create the response message
@@ -144,7 +144,8 @@ public class Multilayer_MinTH_Algorithm implements ComputingAlgorithm {
 		///////////////////////
 		int u=0;
 		if (pathReq.getSvec()!=null){
-			PCEPResponse m_resp = new PCEPResponse();
+			ComputingResponse m_resp = new ComputingResponse();
+			m_resp.setEncodingType(pathReq.getEcodingType());
 			log.info("Request with SVEC!");
 			networkGraphs_precomp= new ArrayList <SimpleDirectedWeightedGraph <Object,IntraDomainEdge>>(preComp.getWSONInfo().getNumLambdas());
 			int t;
@@ -157,7 +158,7 @@ public class Multilayer_MinTH_Algorithm implements ComputingAlgorithm {
 				
 				//Time stamp of the start of the algorithm;
 				long tiempoini =System.nanoTime();
-				PCEPResponse m_resp_individual = new PCEPResponse();
+				ComputingResponse m_resp_individual = new ComputingResponse();
 				//The request that needs to be solved
 				Request req=pathReq.getRequestList().get(u);
 				//Request Id, needed for the response
@@ -544,7 +545,7 @@ public class Multilayer_MinTH_Algorithm implements ComputingAlgorithm {
 									// PETICION INDIVIDUAL //
 									/////////////////////////
 	
-			PCEPResponse m_resp = new PCEPResponse();
+			ComputingResponse m_resp = new ComputingResponse();
 			
 				
 			//Time stamp of the start of the algorithm;

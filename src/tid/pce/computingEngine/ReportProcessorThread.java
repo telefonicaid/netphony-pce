@@ -7,10 +7,8 @@ package tid.pce.computingEngine;
 
 import java.net.Inet4Address;
 import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.locks.ReentrantLock;
 import java.util.logging.Logger;
 
-import tid.pce.pcep.constructs.StateReport;
 import tid.pce.pcep.messages.PCEPReport;
 import tid.pce.server.lspdb.LSP_DB;
 
@@ -62,10 +60,8 @@ public class ReportProcessorThread extends Thread
 		
 		Boolean isSyncOver = false;
 		
-
 		log.info("Size LSP:"+pcepReport.getStateReportList().size());
 		isSyncOver = lspDB.isPCCSyncOver(pcepReport.getStateReportList().get(0).getLSP().getLspIdentifiers_tlv().getTunnelSenderIPAddress());
-
 		
 		log.info("Package received from adress: "+pcepReport.getStateReportList().get(0).getLSP().getLspIdentifiers_tlv().getTunnelSenderIPAddress());
 		

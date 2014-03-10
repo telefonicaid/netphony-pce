@@ -5,9 +5,8 @@ import java.util.logging.Logger;
 
 import tid.pce.computingEngine.algorithms.AlgorithmReservation;
 import tid.pce.computingEngine.algorithms.ComputingAlgorithm;
-import tid.pce.pcep.messages.PCEPResponse;
 
-public class ComputingTask extends FutureTask<PCEPResponse> {
+public class ComputingTask extends FutureTask<ComputingResponse> {
 	ComputingAlgorithm algorithm;
 	private Logger log;
 	
@@ -17,12 +16,12 @@ public class ComputingTask extends FutureTask<PCEPResponse> {
 		this.algorithm=algorithm;
 	}
 	
-	public PCEPResponse executeReservation(){
+	public ComputingResponse executeReservation(){
 		
 		AlgorithmReservation res=algorithm.getReserv();
 		if (res!=null){
 			log.info("Comienza la reserva");
-			PCEPResponse resp;
+			ComputingResponse resp;
 			try {
 				resp = algorithm.getReserv().call();
 			} catch (Exception e) {

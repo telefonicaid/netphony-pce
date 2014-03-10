@@ -21,12 +21,12 @@ import cern.jet.random.Exponential;
 
 import tid.pce.client.PCCPCEPSession;
 import tid.pce.client.emulator.AutomaticTesterStatistics;
+import tid.pce.computingEngine.ComputingResponse;
 
 import tid.pce.pcep.constructs.Request;
 import tid.pce.pcep.constructs.SVECConstruct;
 
 import tid.pce.pcep.messages.PCEPRequest;
-import tid.pce.pcep.messages.PCEPResponse;
 import tid.pce.pcep.objects.Bandwidth;
 import tid.pce.pcep.objects.EndPointsIPv4;
 import tid.pce.pcep.objects.Metric;
@@ -207,7 +207,7 @@ public class AutomaticClientTask  extends TimerTask {
 		thingsToDo.addRequest(request);
 		//Count one request
 		stats.addRequest();
-		PCEPResponse pr;
+		ComputingResponse pr;
 		//Measure initial time
 		long timeIni=System.nanoTime();	
 		//FIXME: COGER POSIBLES FALLOS EN EL REQUEST

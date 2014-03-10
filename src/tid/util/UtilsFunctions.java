@@ -9,7 +9,7 @@ import org.w3c.dom.CharacterData;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
-import tid.pce.pcep.messages.PCEPResponse;
+import tid.pce.computingEngine.ComputingResponse;
 import tid.rsvp.objects.subobjects.EROSubobject;
 import tid.rsvp.objects.subobjects.GeneralizedLabelEROSubobject;
 import tid.rsvp.objects.subobjects.SubObjectValues;
@@ -29,7 +29,7 @@ public class UtilsFunctions {
 		}
 	}
 
-	public static void imprimeLambdas(PCEPResponse rep, Logger log){
+	public static void imprimeLambdas(ComputingResponse rep, Logger log){
 		LinkedList<EROSubobject> erolist=rep.getResponseList().getFirst().getPathList().getFirst().geteRO().getEROSubobjectList();
 		int size = erolist.size();
 		for (int i=0;i< size-1;i++){
@@ -41,7 +41,7 @@ public class UtilsFunctions {
 		}
 	}
 
-	public static void imprimeRespuesta(PCEPResponse rep, Logger log, long id){
+	public static void imprimeRespuesta(ComputingResponse rep, Logger log, long id){
 		LinkedList<EROSubobject> erolist=rep.getResponseList().getFirst().getPathList().getFirst().geteRO().getEROSubobjectList();
 		int size = erolist.size();
 		int n=-1;

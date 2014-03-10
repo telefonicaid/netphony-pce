@@ -23,13 +23,13 @@ import java.util.logging.Logger;
 import tid.pce.client.ClientRequestManager;
 import tid.pce.client.PCCPCEPSession;
 import tid.pce.client.emulator.AutomaticTesterStatistics;
+import tid.pce.computingEngine.ComputingResponse;
 import tid.pce.pcep.PCEPProtocolViolationException;
 import tid.pce.pcep.constructs.Path;
 import tid.pce.pcep.constructs.Request;
 import tid.pce.pcep.messages.PCEPMessage;
 import tid.pce.pcep.messages.PCEPMonReq;
 import tid.pce.pcep.messages.PCEPRequest;
-import tid.pce.pcep.messages.PCEPResponse;
 import tid.pce.pcep.messages.PCEPTELinkSuggestion;
 import tid.pce.pcep.objects.EndPointsIPv4;
 import tid.pce.pcep.objects.ExplicitRouteObject;
@@ -87,7 +87,7 @@ public class AutomaticTesterMLNetworkRandomTask  extends TimerTask {
 		timer.schedule(exponentialTester,timeNextReq);
 		//Measure initial time
 		long timeIni=System.nanoTime();
-		PCEPResponse pr;
+		ComputingResponse pr;
 		
 		request.getRequestList().getFirst().getRequestParameters().setRequestID(requestID);
 		requestID=requestID+1;

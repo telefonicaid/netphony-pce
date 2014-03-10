@@ -10,9 +10,9 @@ import cern.jet.random.Exponential;
 import tid.netManager.NetworkLSPManager;
 import tid.pce.client.PCCPCEPSession;
 import tid.pce.client.emulator.AutomaticTesterStatistics;
+import tid.pce.computingEngine.ComputingResponse;
 import tid.pce.pcep.constructs.Path;
 import tid.pce.pcep.messages.PCEPRequest;
-import tid.pce.pcep.messages.PCEPResponse;
 import tid.pce.pcep.objects.ExplicitRouteObject;
 import tid.pce.pcep.objects.GeneralizedBandwidthSSON;
 import tid.rsvp.objects.subobjects.EROSubobject;
@@ -24,7 +24,7 @@ public class NetworkEmulatorActivity implements Activity{
 	private NetworkLSPManager networkLSPManager;
 	private AutomaticTesterStatistics stats;
 	private PCEPRequest request;
-	private PCEPResponse response;
+	private ComputingResponse response;
 	private Logger log;
 	private Exponential connectionTime;	
 	private Timer planificationTimer;	
@@ -52,7 +52,7 @@ public class NetworkEmulatorActivity implements Activity{
 //		logPrueba.info("ADDING REquest: "+this.request.getRequestList().getFirst().getRequestParameters().getRequestID()+"--->eroSubObjList.toString():"+request.getRequestList().get(0).toString());
 	}
 	
-	public void addResponse(PCEPResponse response){	
+	public void addResponse(ComputingResponse response){	
 		log.info("Añadimos la response para actualizar estadisticas");
 		this.response=response;
 	}

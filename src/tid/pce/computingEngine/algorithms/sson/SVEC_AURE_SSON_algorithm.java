@@ -13,6 +13,7 @@ import org.jgrapht.GraphPath;
 import org.jgrapht.alg.DijkstraShortestPath;
 import org.jgrapht.graph.SimpleDirectedWeightedGraph;
 import tid.pce.computingEngine.ComputingRequest;
+import tid.pce.computingEngine.ComputingResponse;
 import tid.pce.computingEngine.algorithms.AlgorithmReservation;
 import tid.pce.computingEngine.algorithms.ComputingAlgorithm;
 import tid.pce.computingEngine.algorithms.PCEPUtils;
@@ -23,7 +24,6 @@ import tid.pce.pcep.constructs.P2PEndpoints;
 import tid.pce.pcep.constructs.Path;
 import tid.pce.pcep.constructs.Request;
 import tid.pce.pcep.constructs.Response;
-import tid.pce.pcep.messages.PCEPResponse;
 import tid.pce.pcep.objects.Bandwidth;
 import tid.pce.pcep.objects.GeneralizedBandwidth;
 import tid.pce.pcep.objects.EndPoints;
@@ -126,7 +126,7 @@ public class SVEC_AURE_SSON_algorithm implements ComputingAlgorithm {
 	/**
 	 * Executes the path computation and returns the PCEP Response
 	 */
-	public PCEPResponse call(){ 
+	public ComputingResponse call(){ 
 		//Timestamp of the start of the algorithm;
 		long tiempoini =System.nanoTime();
 		int num_slots = 0;
@@ -138,7 +138,8 @@ public class SVEC_AURE_SSON_algorithm implements ComputingAlgorithm {
 		log.info("Starting SVEC AURE_SSON Algorithm");
 		//Create the response message
 		//It will contain either the path or noPath
-		PCEPResponse m_resp=new PCEPResponse();
+		ComputingResponse m_resp=new ComputingResponse();
+		m_resp.setEncodingType(pathReq.getEcodingType());
 		networkGraphs_precomp= new ArrayList <SimpleDirectedWeightedGraph <Object,IntraDomainEdge>>(preComp.getSSONInfo().getNumLambdas());
 		SimpleDirectedWeightedGraph<Object,IntraDomainEdge> networkGraph=new SimpleDirectedWeightedGraph<Object,IntraDomainEdge>(IntraDomainEdge.class);
 		for (t=0;t<=preComp.getSSONInfo().getNumLambdas()-1;t++){

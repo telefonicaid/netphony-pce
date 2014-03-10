@@ -15,6 +15,7 @@ import org.jgrapht.alg.KShortestPaths;
 import org.jgrapht.graph.DirectedWeightedMultigraph;
 
 import tid.pce.computingEngine.ComputingRequest;
+import tid.pce.computingEngine.ComputingResponse;
 import tid.pce.computingEngine.algorithms.multidomain.MDFunctions;
 import tid.pce.parentPCE.ChildPCERequestManager;
 import tid.pce.parentPCE.ParentPCESession;
@@ -27,7 +28,6 @@ import tid.pce.pcep.constructs.Path;
 import tid.pce.pcep.constructs.Request;
 import tid.pce.pcep.constructs.Response;
 import tid.pce.pcep.messages.PCEPRequest;
-import tid.pce.pcep.messages.PCEPResponse;
 import tid.pce.pcep.objects.EndPoints;
 import tid.pce.pcep.objects.EndPointsIPv4;
 import tid.pce.pcep.objects.ExcludeRouteObject;
@@ -77,7 +77,7 @@ public class MDHPCEMinNumberDomainsKSPAlgorithm implements ComputingAlgorithm{
 	
 	
 	
-	public PCEPResponse call()throws Exception{
+	public ComputingResponse call()throws Exception{
 
 		
 /*		try{
@@ -91,7 +91,9 @@ public class MDHPCEMinNumberDomainsKSPAlgorithm implements ComputingAlgorithm{
 			e.printStackTrace();			
 		}*/
 		long tiempoini =System.nanoTime();
-		PCEPResponse m_resp=new PCEPResponse();
+		ComputingResponse m_resp=new ComputingResponse();
+		m_resp.setReachabilityManager(reachabilityManager);
+		m_resp.setEncodingType(pathReq.getEcodingType());
 		Request req=pathReq.getRequestList().get(0);
 		long reqId=req.getRequestParameters().getRequestID();
 		log.info("Processing MD Path Computing with MDHPCEMinNumberDomainsAlgorithm (Minimum transit Domains)with Request id: "+reqId);
@@ -482,10 +484,10 @@ public class MDHPCEMinNumberDomainsKSPAlgorithm implements ComputingAlgorithm{
 			reqList.add(pcreqToLastDomain);
 			domainList.add(Last_domain);
 			
-			LinkedList <PCEPResponse> respList=null;
+			LinkedList <ComputingResponse> respList=null;
 			long tiempo3 =System.nanoTime();
 			try {
-				respList=new LinkedList <PCEPResponse>();
+				respList=new LinkedList <ComputingResponse>();
 				respList=childPCERequestManager.executeRequests(reqList, domainList);	
 			}catch (Exception e){
 				log.severe("PROBLEM SENDING THE REQUESTS");

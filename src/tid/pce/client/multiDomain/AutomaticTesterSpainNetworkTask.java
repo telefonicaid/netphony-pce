@@ -22,11 +22,11 @@ import org.xml.sax.helpers.DefaultHandler;
 import tid.pce.client.ClientRequestManager;
 import tid.pce.client.PCCPCEPSession;
 import tid.pce.computingEngine.AlgorithmRule;
+import tid.pce.computingEngine.ComputingResponse;
 import tid.pce.computingEngine.MapAlgoRule;
 import tid.pce.pcep.constructs.Request;
 import tid.pce.pcep.messages.PCEPMonReq;
 import tid.pce.pcep.messages.PCEPRequest;
-import tid.pce.pcep.messages.PCEPResponse;
 import tid.pce.pcep.objects.EndPointsIPv4;
 import tid.pce.pcep.objects.Monitoring;
 import tid.pce.pcep.objects.ObjectiveFunction;
@@ -120,12 +120,12 @@ public class AutomaticTesterSpainNetworkTask  extends TimerTask {
 		System.out.println(" Creating path between "+source.get(i).toString()+" and "+destination.get(i).toString());
 		if (PCMonReqBool){
 			PCEPRequest p_r = createRequestMessage(i);	
-			PCEPResponse pr=crm.newRequest(p_r);
+			ComputingResponse pr=crm.newRequest(p_r);
 			System.out.println("Respuesta "+pr.toString());
 		}
 		else{
 			PCEPMonReq p_m_r= createMonRequestMessage(i);
-			PCEPResponse pr=crm.newRequest(p_m_r);
+			ComputingResponse pr=crm.newRequest(p_m_r);
 			System.out.println("Respuesta "+pr.toString());
 		}
 		

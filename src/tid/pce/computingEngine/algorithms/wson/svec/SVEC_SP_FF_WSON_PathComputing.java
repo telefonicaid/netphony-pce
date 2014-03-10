@@ -10,6 +10,7 @@ import org.jgrapht.alg.DijkstraShortestPath;
 import org.jgrapht.graph.SimpleDirectedWeightedGraph;
 
 import tid.pce.computingEngine.ComputingRequest;
+import tid.pce.computingEngine.ComputingResponse;
 import tid.pce.computingEngine.algorithms.AlgorithmReservation;
 import tid.pce.computingEngine.algorithms.ComputingAlgorithm;
 import tid.pce.computingEngine.algorithms.PCEPUtils;
@@ -18,7 +19,6 @@ import tid.pce.computingEngine.algorithms.wson.wa.FirstFit;
 import tid.pce.pcep.constructs.Path;
 import tid.pce.pcep.constructs.Request;
 import tid.pce.pcep.constructs.Response;
-import tid.pce.pcep.messages.PCEPResponse;
 import tid.pce.pcep.objects.EndPointsIPv4;
 import tid.pce.pcep.objects.ExplicitRouteObject;
 import tid.pce.pcep.objects.NoPath;
@@ -52,8 +52,9 @@ public class SVEC_SP_FF_WSON_PathComputing implements ComputingAlgorithm {
 		this.pathReq=pathReq;
 	}
 	
-	public PCEPResponse call(){
-		PCEPResponse m_resp=new PCEPResponse();
+	public ComputingResponse call(){
+		ComputingResponse m_resp=new ComputingResponse();
+		m_resp.setEncodingType(pathReq.getEcodingType());
 		SimpleDirectedWeightedGraph<Object,IntraDomainEdge> networkGraph=PCEPUtils.duplicateTEDDB(networkGraphOrig);
 		log.info("Processing SVEC Path Computing Request: "+pathReq.getSvec().toString());
 		if (pathReq.getSvec().getSvec().islDiverseBit()|pathReq.getSvec().getSvec().isnDiverseBit()| pathReq.getSvec().getSvec().issRLGDiverseBit()){

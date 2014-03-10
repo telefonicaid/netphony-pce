@@ -122,7 +122,7 @@ public class PCEServer {
 			System.exit(1);
 		}
 
-		Log.info("Inizializing TID PCE Server");
+		Log.info("Inizializing TID PCE Server!!");
 		//Elements of the PCE Server
 
 		// Information about all the sessions of the PCE
@@ -285,7 +285,7 @@ public class PCEServer {
 		}
 
 		try {
-			//FIXME: lo he cambiado aquí
+			//FIXME: lo he cambiado aquï¿½
 			//Registration of Algorithms
 			for (int i=0;i<params.algorithmRuleList.size();++i){
 				try {

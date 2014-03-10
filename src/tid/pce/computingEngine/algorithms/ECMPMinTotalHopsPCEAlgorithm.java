@@ -11,6 +11,7 @@ import org.jgrapht.GraphPath;
 import org.jgrapht.graph.DirectedWeightedMultigraph;
 
 import tid.pce.computingEngine.ComputingRequest;
+import tid.pce.computingEngine.ComputingResponse;
 import tid.pce.parentPCE.ChildPCERequestManager;
 import tid.pce.parentPCE.ParentPCESession;
 import tid.pce.parentPCE.ReachabilityManager;
@@ -18,7 +19,6 @@ import tid.pce.pcep.constructs.Path;
 import tid.pce.pcep.constructs.Request;
 import tid.pce.pcep.constructs.Response;
 import tid.pce.pcep.messages.PCEPRequest;
-import tid.pce.pcep.messages.PCEPResponse;
 import tid.pce.pcep.objects.EndPointsIPv4;
 import tid.pce.pcep.objects.ExplicitRouteObject;
 import tid.pce.pcep.objects.Monitoring;
@@ -61,7 +61,7 @@ public class ECMPMinTotalHopsPCEAlgorithm implements ComputingAlgorithm{
 
 
 
-	public PCEPResponse call(){
+	public ComputingResponse call(){
 		srcDstPet= new Hashtable<SourceDest,Integer>();
 
 		listaPets2=new LinkedList<Integer>();
@@ -76,7 +76,7 @@ public class ECMPMinTotalHopsPCEAlgorithm implements ComputingAlgorithm{
 		// Start creating the response
 		// We create it now in case we need to send a NoPath later
 		// First, Create the response message
-		PCEPResponse m_resp=new PCEPResponse();
+		ComputingResponse m_resp=new ComputingResponse();
 		Response response=new Response();
 		RequestParameters rp = new RequestParameters();
 		//We include the id of the request in the response
@@ -374,7 +374,7 @@ public class ECMPMinTotalHopsPCEAlgorithm implements ComputingAlgorithm{
 				}
 			}
 
-			LinkedList <PCEPResponse> respList;
+			LinkedList <ComputingResponse> respList;
 			respList=childPCERequestManager.executeRequests(reqList, domainList);
 
 			int caminoOptimo=0;
@@ -386,7 +386,7 @@ public class ECMPMinTotalHopsPCEAlgorithm implements ComputingAlgorithm{
 				if (respList.get(i)==null){
 					childrenFailed=true;
 				}	else {
-					PCEPResponse resp=respList.get(i);
+					ComputingResponse resp=respList.get(i);
 					ExplicitRouteObject eroInternal =respList.get(i).getResponse(0).getPath(0).geteRO();
 					LinkedList<EROSubobject> eross =eroInternal.getEROSubobjectList();
 					for (int j=0;j<eross.size();j++){
@@ -407,7 +407,7 @@ public class ECMPMinTotalHopsPCEAlgorithm implements ComputingAlgorithm{
 					if (respList.get(numero)==null){
 						childrenFailed=true;
 					}	else {
-						PCEPResponse resp=respList.get(i);
+						ComputingResponse resp=respList.get(i);
 						ExplicitRouteObject eroInternal =respList.get(i).getResponse(0).getPath(0).geteRO();
 						LinkedList<EROSubobject> eross =eroInternal.getEROSubobjectList();
 						for (int j=0;j<eross.size();j++){

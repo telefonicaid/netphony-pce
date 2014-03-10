@@ -8,6 +8,7 @@ import java.net.UnknownHostException;
 import java.util.LinkedList;
 import java.util.logging.Logger;
 
+import tid.pce.computingEngine.ComputingResponse;
 import tid.pce.pcep.constructs.EndPoint;
 import tid.pce.pcep.constructs.ErrorConstruct;
 import tid.pce.pcep.constructs.P2PEndpoints;
@@ -16,7 +17,6 @@ import tid.pce.pcep.constructs.SVECConstruct;
 import tid.pce.pcep.messages.PCEPError;
 import tid.pce.pcep.messages.PCEPKeepalive;
 import tid.pce.pcep.messages.PCEPRequest;
-import tid.pce.pcep.messages.PCEPResponse;
 import tid.pce.pcep.objects.EndPointsIPv4;
 import tid.pce.pcep.objects.Bandwidth;
 import tid.pce.pcep.objects.GeneralizedEndPoints;
@@ -94,7 +94,7 @@ public class UserInterface extends Thread {
 				of.setOFcode(1100);
 				req.setObjectiveFunction(of);
 				p_r.addRequest(req);
-				PCEPResponse pr=crm.newRequest(p_r);
+				ComputingResponse pr=crm.newRequest(p_r);
 				System.out.println("Respuesta "+pr.toString());
 			}
 			
@@ -112,7 +112,7 @@ public class UserInterface extends Thread {
 				req.setBandwidth(bandwidth);
 				
 				p_r.addRequest(req);
-				PCEPResponse pr=crm.newRequest(p_r);
+				ComputingResponse pr=crm.newRequest(p_r);
 				System.out.println("Respuesta "+pr.toString());
 			}
 			
@@ -126,7 +126,7 @@ public class UserInterface extends Thread {
 				
 				
 				p_r.addRequest(req);
-				PCEPResponse pr=crm.newRequest(p_r);
+				ComputingResponse pr=crm.newRequest(p_r);
 				System.out.println("Respuesta "+pr.toString());
 			}
 			
@@ -144,7 +144,7 @@ public class UserInterface extends Thread {
 				bandwidth2.setBw(bw2);
 				req2.setBandwidth(bandwidth2);
 				p_r.addRequest(req2);
-				PCEPResponse pr=crm.newRequest(p_r,45000);
+				ComputingResponse pr=crm.newRequest(p_r,45000);
 				System.out.println("Respuesta "+pr.toString());
 				
 				PCEPRequest p_r2 = new PCEPRequest();
@@ -159,7 +159,7 @@ public class UserInterface extends Thread {
 				bandwidth_1.setBw(bw_1);
 				req_1.setBandwidth(bandwidth_1);
 				p_r2.addRequest(req_1);
-				PCEPResponse pr_2=crm.newRequest(p_r2,45000);
+				ComputingResponse pr_2=crm.newRequest(p_r2,45000);
 				System.out.println("Respuesta "+pr_2.toString());
 			}
 			
@@ -256,7 +256,7 @@ public class UserInterface extends Thread {
 					System.exit(1);
 				}
 				
-				PCEPResponse pr=crm.newRequest(p_r);
+				ComputingResponse pr=crm.newRequest(p_r);
 //				if (ps.sendRequest(params)) {
 //					System.out.println("Request sent OK");
 //				}
@@ -279,7 +279,7 @@ public class UserInterface extends Thread {
 				p_r.addRequest(req4);
 				p_r.addRequest(req5);
 				p_r.addRequest(req6);
-				PCEPResponse pr=crm.newRequest(p_r);
+				ComputingResponse pr=crm.newRequest(p_r);
 				System.out.println("Respuesta "+pr.toString());
 				}
 			if (command.equals("34")) {
@@ -297,7 +297,7 @@ public class UserInterface extends Thread {
 				p_r.addRequest(req);
 				p_r.addRequest(req2);
 				p_r.addSvec(sveco);
-				PCEPResponse pr=crm.newRequest(p_r);
+				ComputingResponse pr=crm.newRequest(p_r);
 				System.out.println("Respuesta "+pr.toString());
 				}
 			if (command.equals("36")) {
@@ -317,7 +317,7 @@ public class UserInterface extends Thread {
 				p_r.addRequest(req);
 				p_r.addRequest(req2);
 				p_r.addSvec(sveco);
-				PCEPResponse pr=crm.newRequest(p_r);
+				ComputingResponse pr=crm.newRequest(p_r);
 				System.out.println("Respuesta "+pr.toString());
 				}
 			if (command.equals("35")) {
@@ -361,7 +361,7 @@ public class UserInterface extends Thread {
 				p_r.addRequest(req10);
 				
 				p_r.addSvec(sveco);
-				PCEPResponse pr=crm.newRequest(p_r);
+				ComputingResponse pr=crm.newRequest(p_r);
 				System.out.println("Respuesta "+pr.toString());
 				}
 			if (command.equals("3")) {
@@ -369,7 +369,7 @@ public class UserInterface extends Thread {
 				PCEPRequest p_r = new PCEPRequest();
 				Request req = createRequest("172.16.101.101", "172.16.103.103");
 				p_r.addRequest(req);
-				PCEPResponse pr=crm.newRequest(p_r);
+				ComputingResponse pr=crm.newRequest(p_r);
 				System.out.println("Respuesta "+pr.toString());
 				}
 			
@@ -384,7 +384,7 @@ public class UserInterface extends Thread {
 				PCEPRequest p_r = new PCEPRequest();
 				Request req = createRequest("1.1.1.1", "127.16.101.102");
 				p_r.addRequest(req);
-				PCEPResponse pr=crm.newRequest(p_r);
+				ComputingResponse pr=crm.newRequest(p_r);
 				System.out.println("Respuesta "+pr.toString());
 				}
 			if (command.equals("32")) {
@@ -395,7 +395,7 @@ public class UserInterface extends Thread {
 				of.setOFcode(5);
 				req.setObjectiveFunction(of);
 				p_r.addRequest(req);
-				PCEPResponse pr=crm.newRequest(p_r);
+				ComputingResponse pr=crm.newRequest(p_r);
 				System.out.println("Respuesta "+pr.toString());
 				}
 			if (command.equals("322")) {
@@ -408,7 +408,7 @@ public class UserInterface extends Thread {
 				of.setPbit(true);
 				req.setObjectiveFunction(of);
 				p_r.addRequest(req);
-				PCEPResponse pr=crm.newRequest(p_r);
+				ComputingResponse pr=crm.newRequest(p_r);
 				System.out.println("Respuesta "+pr.toString());
 				}
 			if (command.equals("323")) {
@@ -421,7 +421,7 @@ public class UserInterface extends Thread {
 				of.setPbit(true);
 				req.setObjectiveFunction(of);
 				p_r.addRequest(req);
-				PCEPResponse pr=crm.newRequest(p_r);
+				ComputingResponse pr=crm.newRequest(p_r);
 				System.out.println("Respuesta "+pr.toString());
 				}
 			if (command.equals("324")) {
@@ -434,7 +434,7 @@ public class UserInterface extends Thread {
 				of.setPbit(true);
 				req.setObjectiveFunction(of);
 				p_r.addRequest(req);
-				PCEPResponse pr=crm.newRequest(p_r);
+				ComputingResponse pr=crm.newRequest(p_r);
 				System.out.println("Respuesta "+pr.toString());
 				}
 			if (command.equals("31")) {
@@ -447,7 +447,7 @@ public class UserInterface extends Thread {
 				metric.setBoundBit(false);
 				req.getMetricList().add(metric);
 				p_r.addRequest(req);
-				PCEPResponse pr=crm.newRequest(p_r);
+				ComputingResponse pr=crm.newRequest(p_r);
 				System.out.println("Respuesta "+pr.toString());
 				}
 
@@ -556,7 +556,7 @@ public class UserInterface extends Thread {
 				//EndPointsIPv4 ep=new EndPointsIPv4();				
 				req.setEndPoints(gep);
 				
-				PCEPResponse pr=crm.newRequest(p_r);
+				ComputingResponse pr=crm.newRequest(p_r);
 				
 			}
 			
@@ -616,7 +616,7 @@ public class UserInterface extends Thread {
 				//EndPointsIPv4 ep=new EndPointsIPv4();				
 				req.setEndPoints(gep);
 				
-				PCEPResponse pr=crm.newRequest(p_r);
+				ComputingResponse pr=crm.newRequest(p_r);
 				
 			}
 			

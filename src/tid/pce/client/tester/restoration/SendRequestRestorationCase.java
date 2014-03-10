@@ -10,9 +10,9 @@ import java.util.logging.Logger;
 
 import tid.netManager.NetworkLSPManager;
 import tid.pce.client.PCCPCEPSession;
+import tid.pce.computingEngine.ComputingResponse;
 import tid.pce.pcep.constructs.Path;
 import tid.pce.pcep.messages.PCEPRequest;
-import tid.pce.pcep.messages.PCEPResponse;
 import tid.pce.pcep.objects.ExplicitRouteObject;
 import tid.pce.pcep.objects.GeneralizedBandwidthSSON;
 import tid.rsvp.objects.subobjects.EROSubobject;
@@ -54,7 +54,7 @@ public class SendRequestRestorationCase  extends TimerTask {
 	public void run() {
 		// TODO Auto-generated method stub
 		/*Espero la respuesta*/		
-		PCEPResponse response = null; 
+		ComputingResponse response = null; 
 		boolean retry=true;
 		while (retry){
 			long timeSendResponse = System.nanoTime();

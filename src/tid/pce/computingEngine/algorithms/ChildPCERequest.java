@@ -1,13 +1,13 @@
 package tid.pce.computingEngine.algorithms;
 
-import java.net.Inet4Address;
 import java.util.concurrent.Callable;
 
+import tid.pce.computingEngine.ComputingResponse;
 import tid.pce.parentPCE.ChildPCERequestManager;
 import tid.pce.pcep.messages.PCEPRequest;
 import tid.pce.pcep.messages.PCEPResponse;
 
-public class ChildPCERequest implements Callable<PCEPResponse> {
+public class ChildPCERequest implements Callable<ComputingResponse> {
 	
 	private ChildPCERequestManager childPCERequestManager;
 	private PCEPRequest pcreq;
@@ -20,8 +20,11 @@ public class ChildPCERequest implements Callable<PCEPResponse> {
 	}
 
 	
-	public PCEPResponse call() throws Exception {
-		return childPCERequestManager.newRequest(pcreq, domain);
+	public ComputingResponse call() throws Exception {
+		ComputingResponse compResp = new ComputingResponse();
+		PCEPResponse p_rep = childPCERequestManager.newRequest(pcreq, domain);
+		compResp.setResponsetList(p_rep.getResponseList());
+		return compResp;
 	}
 
 }

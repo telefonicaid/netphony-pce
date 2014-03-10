@@ -12,6 +12,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.logging.Logger;
 
+import tid.pce.computingEngine.ComputingResponse;
 import tid.pce.computingEngine.algorithms.ChildPCERequest;
 import tid.pce.pcep.PCEPProtocolViolationException;
 import tid.pce.pcep.messages.PCEPRequest;
@@ -65,14 +66,14 @@ public class ChildPCERequestManager {
 		
 	}
 	
-	public LinkedList<PCEPResponse> executeRequests(LinkedList<PCEPRequest> requestList, LinkedList<Object> domainList){
-		LinkedList<PCEPResponse> response= new  LinkedList<PCEPResponse>();
+	public LinkedList<ComputingResponse> executeRequests(LinkedList<PCEPRequest> requestList, LinkedList<Object> domainList){
+		LinkedList<ComputingResponse> response= new  LinkedList<ComputingResponse>();
 		ChildPCERequest cpr;
-		LinkedList<FutureTask<PCEPResponse>> ftList=new LinkedList<FutureTask<PCEPResponse>>();
-		FutureTask<PCEPResponse> ft;
+		LinkedList<FutureTask<ComputingResponse>> ftList=new LinkedList<FutureTask<ComputingResponse>>();
+		FutureTask<ComputingResponse> ft;
 		for (int i=0;i<requestList.size();++i){
 			 cpr=new ChildPCERequest(this, requestList.get(i), domainList.get(i));
-			 ft=new FutureTask<PCEPResponse>(cpr);
+			 ft=new FutureTask<ComputingResponse>(cpr);
 			 ftList.add(ft);
 			 executor.execute(ft);
 		}
@@ -80,7 +81,7 @@ public class ChildPCERequestManager {
 		log.info("The time is "+time+" miliseconds");
 		long timeIni=System.currentTimeMillis();
 		long time2;
-		PCEPResponse resp;
+		ComputingResponse resp;
 		for (int i=0;i<requestList.size();++i){
 			
 			try {

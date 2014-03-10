@@ -3,8 +3,8 @@ package tid.pce.client.tester;
 import tid.netManager.NetworkLSPManager;
 import tid.pce.client.PCCPCEPSession;
 import tid.pce.client.emulator.AutomaticTesterStatistics;
+import tid.pce.computingEngine.ComputingResponse;
 import tid.pce.pcep.messages.PCEPRequest;
-import tid.pce.pcep.messages.PCEPResponse;
 import tid.vntm.LigthPathManagement;
 import tid.vntm.VNTMSession;
 
@@ -21,7 +21,7 @@ public interface Activity extends Runnable{
 	public void addNetworkEmulator(NetworkLSPManager networkLSPManager);
 	public void addStatistics(AutomaticTesterStatistics stats);
 	public void addRequest(PCEPRequest request);
-	public void addResponse(PCEPResponse response);
+	public void addResponse(ComputingResponse response);
 	public void addPCEsessionVNTM(PCCPCEPSession vNTMSession);
 	public void addLigthPathManagement(LigthPathManagement ligthPathManagement);
 	
