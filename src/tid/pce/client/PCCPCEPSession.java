@@ -402,7 +402,7 @@ public class PCCPCEPSession extends GenericPCEPSession{
 		     //Means this PCC owns this LSP and must send information to PCE
 		     if (lspte.getIdSource().equals(lspManager.getLocalIP()))
 		     {
-		    	 lspManager.getNotiLSP().notify(lspte, true, true, false, true);
+		    	 lspManager.getNotiLSP().notify(lspte, true, true, false, true, out);
 	    	 }
 	     }
 		log.info("Sending las PCEPReport to stop sync");
@@ -412,7 +412,7 @@ public class PCCPCEPSession extends GenericPCEPSession{
 		ero.setEroSubobjects(new LinkedList<EROSubobject>());
 		lspte.setEro(ero);
 		
-		lspManager.getNotiLSP().notify(lspte, true, true, false, true);
+		lspManager.getNotiLSP().notify(lspte, true, true, false, true, out);
 		 
 	}
 	
