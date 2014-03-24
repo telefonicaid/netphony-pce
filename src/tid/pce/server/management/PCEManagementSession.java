@@ -21,12 +21,14 @@ import tid.emulator.node.transport.lsp.LSPKey;
 import tid.pce.computingEngine.RequestDispatcher;
 import tid.pce.computingEngine.RequestProcessorThread;
 import tid.pce.computingEngine.algorithms.ComputingAlgorithmManager;
+import tid.pce.pcep.PCEPProtocolViolationException;
 import tid.pce.pcep.constructs.Path;
 import tid.pce.pcep.constructs.Request;
 import tid.pce.pcep.constructs.SVECConstruct;
 import tid.pce.pcep.constructs.StateReport;
 import tid.pce.pcep.constructs.UpdateRequest;
 import tid.pce.pcep.messages.PCEPInitiate;
+import tid.pce.pcep.messages.PCEPReport;
 import tid.pce.pcep.messages.PCEPRequest;
 import tid.pce.pcep.messages.PCEPUpdate;
 import tid.pce.pcep.objects.Bandwidth;
@@ -346,6 +348,30 @@ public class PCEManagementSession extends Thread {
 					}
 					
 				}
+				else if (command.equals("send report")){
+					
+					
+					log.info("Sending Repoooort");
+					log.info("Sending to :"+oneSession.get(0).getSocket().getInetAddress());
+					
+					PCEPReport rpt= new PCEPReport();
+					rpt.setStateReportList(new LinkedList<StateReport>());
+					rpt.getStateReportList().add(new StateReport());
+					rpt.getStateReportList().get(0).setLSP(new LSP());
+					rpt.getStateReportList().get(0).setRSP(new SRP());
+					rpt.getStateReportList().get(0).setPath(new Path());
+					rpt.getStateReportList().get(0).getPath().seteRO(new ExplicitRouteObject());
+
+					try {
+						rpt.encode();
+						
+						oneSession.get(0).sendPCEPMessage(rpt);
+
+					} catch (PCEPProtocolViolationException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
 				else if (command.equals("send update")){
 					out.println("Choose an available IP to send the update");
 					for (int i = 0; i < oneSession.size(); i++)
@@ -497,6 +523,7 @@ public class PCEManagementSession extends Thread {
 					out.print("show lsps\r\n");
 					out.print("send initiate\r\n");
 					out.print("add xifi link\r\n");
+					out.print("send report\r\n");
 					out.print("quit\r\n");					
 	
 				}

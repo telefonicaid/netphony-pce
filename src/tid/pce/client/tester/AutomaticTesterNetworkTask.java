@@ -7,10 +7,10 @@ import java.util.logging.Logger;
 
 import tid.pce.client.ClientRequestManager;
 import tid.pce.client.PCCPCEPSession;
-import tid.pce.computingEngine.ComputingResponse;
 import tid.pce.pcep.messages.PCEPMessage;
 import tid.pce.pcep.messages.PCEPMonReq;
 import tid.pce.pcep.messages.PCEPRequest;
+import tid.pce.pcep.messages.PCEPResponse;
 
 
 public class AutomaticTesterNetworkTask  extends TimerTask {
@@ -35,7 +35,7 @@ public class AutomaticTesterNetworkTask  extends TimerTask {
 	@Override
 	public void run() {
 		log.info("Starting Automatic Client Interface");
-		ComputingResponse pr;
+		PCEPResponse pr;
 		if (PCMonReqBool){
 			pr=crm.newRequest((PCEPMonReq)this.request);
 		}else {	

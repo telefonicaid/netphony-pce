@@ -21,6 +21,7 @@ import tid.pce.pcep.constructs.P2PEndpoints;
 import tid.pce.pcep.constructs.Path;
 import tid.pce.pcep.constructs.Response;
 import tid.pce.pcep.messages.PCEPRequest;
+import tid.pce.pcep.messages.PCEPResponse;
 import tid.pce.pcep.objects.EndPoints;
 import tid.pce.pcep.objects.EndPointsIPv4;
 import tid.pce.pcep.objects.ExplicitRouteObject;
@@ -121,7 +122,7 @@ public class RequestProcessor implements Runnable {
 			if (childPCERequestManager!=null){
 				log.info("Source or destination are NOT in the TED, asking the parent PCE");
 				//PCEPRequest msg_req=new PCEPRequest();
-				ComputingResponse resp=childPCERequestManager.newRequest(req);
+				PCEPResponse resp=childPCERequestManager.newRequest(req);
 				try {
 					try {
 						resp.encode();

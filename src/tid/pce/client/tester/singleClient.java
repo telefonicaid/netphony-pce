@@ -27,6 +27,7 @@ import tid.pce.pcep.PCEPProtocolViolationException;
 import tid.pce.pcep.constructs.Path;
 import tid.pce.pcep.constructs.Request;
 import tid.pce.pcep.messages.PCEPRequest;
+import tid.pce.pcep.messages.PCEPResponse;
 import tid.pce.pcep.messages.PCEPTELinkSuggestion;
 import tid.pce.pcep.objects.Bandwidth;
 import tid.pce.pcep.objects.EndPointsIPv4;
@@ -113,7 +114,7 @@ public class singleClient {
 					e1.printStackTrace();
 				}
 				//Measure initial time
-				ComputingResponse response;
+				PCEPResponse response;
 				request.getRequestList().getFirst().getRequestParameters().setRequestID(requestID);
 				requestID=requestID+1;
 				//Count one request
@@ -318,7 +319,7 @@ static int createEROList(LinkedList<EROSubobject> eroSubObjList,LinkedList<Expli
 	return numNewLinks;
 }
 
-static void handleResponse(PCEPRequest request,ComputingResponse response,NetworkLSPManager networkLSPManager ){
+static void handleResponse(PCEPRequest request,PCEPResponse response,NetworkLSPManager networkLSPManager ){
 	if (response == null){
 		log.warning("Response null");			
 		return;

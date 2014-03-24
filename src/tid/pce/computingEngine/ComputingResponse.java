@@ -133,6 +133,7 @@ public class ComputingResponse
 					{
 						log.info(UtilsFunctions.exceptionToString(e));
 					}
+					setMessageBytes(pInit.getBytes());
 				}
 				else
 				{
@@ -155,6 +156,8 @@ public class ComputingResponse
 					pInit.setPcepIntiatedLSPList(pcepIntiatedLSPList);
 					pInit.encode();
 					
+					
+					log.info("Encoding Son Finished, pInit.getBytes(): " + pInit.getBytes());
 					setMessageBytes(pInit.getBytes());
 				}
 
@@ -209,6 +212,7 @@ public class ComputingResponse
 			{
 				UnnumberIfIDEROSubobject unAux = (UnnumberIfIDEROSubobject)ero.getEROSubobjectList().get(i);
 				firstID = reachabilityManager.getDomain(unAux.getRouterID());
+				break;
 			}
 		}
 		
@@ -224,6 +228,12 @@ public class ComputingResponse
 			subERO = new ExplicitRouteObject();
 			boolean hasDomainChanged = false;
 			
+			
+			if (offset >= ero.getEROSubobjectList().size())
+			{
+				return null;
+			}
+			
 			while(offset < ero.getEROSubobjectList().size() && !hasDomainChanged)
 			{
 				EROSubobject currentERO = ero.getEROSubobjectList().get(offset);
@@ -232,24 +242,29 @@ public class ComputingResponse
 				{
 					UnnumberIfIDEROSubobject unAux = (UnnumberIfIDEROSubobject)ero.getEROSubobjectList().get(i);
 					currentID = reachabilityManager.getDomain(unAux.getRouterID());
-				}
-				
-				if (currentID!=null && firstID.equals(currentID))
-				{
-					subERO.addEROSubobject(currentERO);
+					
+					
+					if (currentID!=null && firstID.equals(currentID))
+					{
+						subERO.addEROSubobject(currentERO);
+					}
+					else
+					{
+						hasDomainChanged = true;
+					}
 				}
 				else
 				{
-					hasDomainChanged = true;
+					subERO.addEROSubobject(currentERO);
 				}
 				
-				offset++;			
+				
+				
+				offset++;		
 			}
 			
-			if (offset == ero.getEROSubobjectList().size())
-			{
-				return null;
-			}
+			
+			
 			
 			try 
 			{

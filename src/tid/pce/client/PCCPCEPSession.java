@@ -1,5 +1,6 @@
 package tid.pce.client;
 
+import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
 import java.util.Calendar;
@@ -18,6 +19,7 @@ import tid.pce.computingEngine.ComputingResponse;
 import tid.pce.pcep.PCEPProtocolViolationException;
 import tid.pce.pcep.messages.PCEPMessage;
 import tid.pce.pcep.messages.PCEPMessageTypes;
+import tid.pce.pcep.messages.PCEPReport;
 import tid.pce.pcep.messages.PCEPResponse;
 import tid.pce.pcep.messages.PCEPTELinkConfirmation;
 import tid.pce.pcep.messages.PCEPUpdate;
@@ -248,6 +250,21 @@ public class PCCPCEPSession extends GenericPCEPSession{
 					
 				case PCEPMessageTypes.MESSAGE_NOTIFY:
 					log.info("Received NOTIFY message");
+					break;
+					
+				case PCEPMessageTypes.MESSAGE_REPORT:
+					log.info("Received Report message");			
+					
+					try {
+						PCEPReport m_report = null;
+						log.info("Decoding PCEP Report");
+						m_report=new PCEPReport(this.msg);
+						
+					} catch (PCEPProtocolViolationException e1) {
+						log.warning("Problem decoding report message, ignoring message"+e1.getMessage());
+						e1.printStackTrace();
+					}
+					
 					break;
 					
 				case PCEPMessageTypes.MESSAGE_UPDATE:

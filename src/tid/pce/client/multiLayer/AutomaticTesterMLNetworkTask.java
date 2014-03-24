@@ -12,21 +12,17 @@ import java.util.LinkedList;
 import java.util.TimerTask;
 import java.util.logging.Logger;
 
-
-
 import tid.pce.client.ClientRequestManager;
 import tid.pce.client.PCCPCEPSession;
-import tid.pce.computingEngine.ComputingResponse;
 import tid.pce.pcep.PCEPProtocolViolationException;
 import tid.pce.pcep.constructs.Path;
-import tid.pce.pcep.messages.PCEPMessage;
-import tid.pce.pcep.messages.PCEPMonReq;
 import tid.pce.pcep.messages.PCEPRequest;
+import tid.pce.pcep.messages.PCEPResponse;
 import tid.pce.pcep.messages.PCEPTELinkSuggestion;
 import tid.pce.pcep.objects.ExplicitRouteObject;
 import tid.rsvp.objects.subobjects.EROSubobject;
-import tid.rsvp.objects.subobjects.SubObjectValues;
 import tid.rsvp.objects.subobjects.IPv4prefixEROSubobject;
+import tid.rsvp.objects.subobjects.SubObjectValues;
 
 
 public class AutomaticTesterMLNetworkTask  extends TimerTask {
@@ -53,7 +49,7 @@ public class AutomaticTesterMLNetworkTask  extends TimerTask {
 	@Override
 	public void run() {
 		log.info("Starting Automatic Client Interface");
-		ComputingResponse pr;
+		PCEPResponse pr;
 		request.getRequestList().getFirst().getRequestParameters().setRequestID(requestID);
 		requestID=requestID+1;
 		pr=crm.newRequest(this.request);

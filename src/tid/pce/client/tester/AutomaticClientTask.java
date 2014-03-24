@@ -1,32 +1,19 @@
 package tid.pce.client.tester;
 
 
-import java.io.BufferedReader;
-import java.io.DataInputStream;
-import java.io.EOFException;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
+import java.util.Hashtable;
 import java.util.Random;
-import java.util.StringTokenizer;
 import java.util.TimerTask;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
-import java.util.logging.FileHandler;
 import java.util.logging.Logger;
-
-import cern.jet.random.Exponential;
 
 import tid.pce.client.PCCPCEPSession;
 import tid.pce.client.emulator.AutomaticTesterStatistics;
-import tid.pce.computingEngine.ComputingResponse;
-
 import tid.pce.pcep.constructs.Request;
 import tid.pce.pcep.constructs.SVECConstruct;
-
 import tid.pce.pcep.messages.PCEPRequest;
+import tid.pce.pcep.messages.PCEPResponse;
 import tid.pce.pcep.objects.Bandwidth;
 import tid.pce.pcep.objects.EndPointsIPv4;
 import tid.pce.pcep.objects.Metric;
@@ -37,7 +24,7 @@ import tid.pce.pcep.objects.RequestParameters;
 import tid.pce.pcep.objects.Reservation;
 import tid.pce.pcep.objects.Svec;
 import tid.vntm.VNTMSession;
-import java.util.Hashtable;
+import cern.jet.random.Exponential;
 
 /**
  * Client task.
@@ -207,7 +194,7 @@ public class AutomaticClientTask  extends TimerTask {
 		thingsToDo.addRequest(request);
 		//Count one request
 		stats.addRequest();
-		ComputingResponse pr;
+		PCEPResponse pr;
 		//Measure initial time
 		long timeIni=System.nanoTime();	
 		//FIXME: COGER POSIBLES FALLOS EN EL REQUEST

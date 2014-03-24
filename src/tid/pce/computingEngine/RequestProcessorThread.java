@@ -469,16 +469,29 @@ public class RequestProcessorThread extends Thread{
 				//FIXME: hay que poner un nuevo requestID, si no... la podemos liar
 				pcreq.addRequest(request);
 				PCEPResponse p_rep = cpcerm.newRequest(pcreq);
-				ComputingResponse pcepresp =  new ComputingResponse();
-				pcepresp.setResponsetList(p_rep.getResponseList());
 				
-				if (pcepresp==null){
+				
+				if (p_rep==null){
 					log.warning("Parent doesn't answer");
 					this.sendNoPath(pathCompReq);
 				}
+				
+				ComputingResponse pcepresp =  new ComputingResponse();
+				pcepresp.setResponsetList(p_rep.getResponseList());
+				try 
+				{
+					log.info("Encoding Computing Request");
+					pcepresp.encode();
+				} 
+				catch (PCEPProtocolViolationException e1)
+				{
+					log.info(UtilsFunctions.exceptionToString(e1));
+				}
+				
+				
 				try {
-					log.info("oNE OF THE NODES IS NOT IN THE DOMAIN. Send Request to parent PCE");
-					pathCompReq.getOut().write(pcepresp.getBytes());
+					log.info("oNE OF THE NODES IS NOT IN THE DOMAIN. Send Request to parent PCE,pcepresp:"+pcepresp+",pathCompReq.getOut():"+pathCompReq.getOut());
+					pathCompReq.getOut().write(p_rep.getBytes());
 					pathCompReq.getOut().flush();
 				} catch (IOException e) {
 					log.warning("Parent doesn't answer");
