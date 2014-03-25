@@ -16,6 +16,11 @@ public class PCEPSessionsInformation {
 	
 	private boolean isSRCapable = false;
 	private int MSD = 0;
+
+	
+	private boolean statefulDFlag =false;
+	private boolean statefulTFlag = false;
+	private boolean statefulSFlag = false;
 	
 	private boolean isActive = false;
 		
@@ -113,4 +118,29 @@ public class PCEPSessionsInformation {
 	public void setActive(boolean isActive) {
 		this.isActive = isActive;
 	}
+	
+	public boolean isStatefulDFlag() {
+		return statefulDFlag;
+	}
+
+	public void setStatefulDFlag(boolean statefulDFlag) {
+		this.statefulDFlag = statefulDFlag;
+	}
+
+	public boolean isStatefulTFlag() {
+		return statefulTFlag;
+	}
+
+	public void setStatefulTFlag(boolean statefulTFlag) {
+		this.statefulTFlag = statefulTFlag;
+	}
+
+	public boolean isStatefulSFlag() {
+		return statefulSFlag;
+	}
+
+	public void setStatefulSFlag(boolean statefulSFlag) {
+		this.statefulSFlag = statefulSFlag;
+	}	
+	
 }

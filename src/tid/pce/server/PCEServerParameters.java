@@ -209,6 +209,10 @@ public class PCEServerParameters {
 	
 	private boolean isStateful=false;
 	
+	private boolean statefulDFlag =false;
+	private boolean statefulTFlag = false;
+	private boolean statefulSFlag = false;
+	
 	private boolean isSRCapable=false;
 	
 	private int MSD=0;
@@ -453,6 +457,15 @@ public class PCEServerParameters {
 					}
 					else if (qName.equalsIgnoreCase("isStateful")) {
 						isStateful=Boolean.parseBoolean(tempVal.trim());
+					}
+					else if (qName.equalsIgnoreCase("statefulDFlag")) {
+						statefulDFlag=Boolean.parseBoolean(tempVal.trim());
+					}
+					else if (qName.equalsIgnoreCase("statefulSFlag")) {
+						statefulSFlag=Boolean.parseBoolean(tempVal.trim());
+					}
+					else if (qName.equalsIgnoreCase("statefulTFlag")) {
+						statefulTFlag=Boolean.parseBoolean(tempVal.trim());
 					}
 					else if (qName.equalsIgnoreCase("isSRCapable")) {
 						isSRCapable=Boolean.parseBoolean(tempVal.trim());
@@ -987,6 +1000,30 @@ public class PCEServerParameters {
 
 	public void setControllerListFile(String controllerListFile) {
 		this.controllerListFile = controllerListFile;
+	}
+
+	public boolean isStatefulDFlag() {
+		return statefulDFlag;
+	}
+
+	public void setStatefulDFlag(boolean statefulDFlag) {
+		this.statefulDFlag = statefulDFlag;
+	}
+
+	public boolean isStatefulTFlag() {
+		return statefulTFlag;
+	}
+
+	public void setStatefulTFlag(boolean statefulTFlag) {
+		this.statefulTFlag = statefulTFlag;
+	}
+
+	public boolean isStatefulSFlag() {
+		return statefulSFlag;
+	}
+
+	public void setStatefulSFlag(boolean statefulSFlag) {
+		this.statefulSFlag = statefulSFlag;
 	}	
 	
 }

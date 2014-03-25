@@ -130,10 +130,16 @@ public class PCEServer {
 		// Information about all the sessions of the PCE
 		PCEPSessionsInformation pcepSessionsInformation = new PCEPSessionsInformation();
 		pcepSessionsInformation.setStateful(params.isStateful());
+		pcepSessionsInformation.setStatefulDFlag(params.isStatefulDFlag());
+		pcepSessionsInformation.setStatefulSFlag(params.isStatefulSFlag());
+		pcepSessionsInformation.setStatefulTFlag(params.isStatefulTFlag());
+		
+		
 		pcepSessionsInformation.setActive(params.isActive());
 		pcepSessionsInformation.setSRCapable(params.isSRCapable());
 		pcepSessionsInformation.setMSD(params.getMSD());
-		Log.info("PCEServer: PCE is SR capable with MSD="+pcepSessionsInformation.getMSD());
+		if (params.isSRCapable())
+			Log.info("PCEServer: PCE is SR capable with MSD="+pcepSessionsInformation.getMSD());
 	
 		//The Traffic Engineering Database
 		DomainTEDB ted;
@@ -151,6 +157,11 @@ public class PCEServer {
 				ted=new SimpleTEDB();
 			}
 		}
+		if (params.isStateful())
+		{
+			Log.info("Stateful PCE with T="+params.isStatefulTFlag()+" D="+params.isStatefulDFlag()+" S="+params.isStatefulSFlag());
+		}
+		
 		
 		/***/
 		

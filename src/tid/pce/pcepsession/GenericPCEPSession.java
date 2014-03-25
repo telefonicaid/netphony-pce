@@ -176,6 +176,8 @@ public abstract class GenericPCEPSession extends Thread implements PCEPSession {
 	protected boolean isSessionStateful = false;
 	protected boolean isSessionSRCapable = false;
 	protected int sessionMSD = 0;
+	
+	private long dbVersion;
 
 
 	public GenericPCEPSession(PCEPSessionsInformation pcepSessionManager){
@@ -502,27 +504,38 @@ public abstract class GenericPCEPSession extends Thread implements PCEPSession {
 		}
 		if (pcepSessionManager.isStateful())
 		{
+			log.info("Statefull: "+pcepSessionManager.isStateful()+" Active: "+pcepSessionManager.isActive()+
+					 " Trigger sync: "+pcepSessionManager.isStatefulTFlag()+ " Incremental sync: "+pcepSessionManager.isStatefulDFlag()+
+					 " include the LSP-DB-VERSION: "+pcepSessionManager.isStatefulSFlag());
+			
+			
 			StatefulCapabilityTLV stateful_capability_tlv = new StatefulCapabilityTLV();
 
 			/*STATEFUL CAPABILITY TLV*/
 			//Means this PCE is capable of updating LSPs
 			stateful_capability_tlv.setuFlag(true);
 			stateful_capability_tlv.setsFlag(true);
+			stateful_capability_tlv.setdFlag(pcepSessionManager.isStatefulDFlag());
+			stateful_capability_tlv.settFlag(pcepSessionManager.isStatefulTFlag());
+			stateful_capability_tlv.setsFlag(pcepSessionManager.isStatefulSFlag());
 			p_open_snd.getOpen().setStateful_capability_tlv(stateful_capability_tlv);
-
+			
 			/*PCE REDUNDANCY GROUP IDENTIFIER TLV*/
 			PCE_Redundancy_Group_Identifier_TLV pce_redundancy_tlv = new PCE_Redundancy_Group_Identifier_TLV();
 			pce_redundancy_tlv.setRedundancyId(ObjectParameters.redundancyID);
 			p_open_snd.getOpen().setRedundancy_indetifier_tlv(pce_redundancy_tlv);
 
+			
 			/*LSP DATABASE VERSION TLV*/
 			//For the time being, we put a value but it's not used so synchronization
 			//won't be avoided.
-			LSPDatabaseVersionTLV lsp_database_version = new LSPDatabaseVersionTLV();
-
-			log.info("Statefull: "+pcepSessionManager.isStateful()+" Active: "+pcepSessionManager.isActive());
-			lsp_database_version.setLSPStateDBVersion(databaseVersion);
-			p_open_snd.getOpen().setLsp_database_version_tlv(lsp_database_version);
+			//Only send database version if S flag is active
+			if (pcepSessionManager.isStatefulSFlag())
+			{
+				LSPDatabaseVersionTLV lsp_database_version = new LSPDatabaseVersionTLV();
+				lsp_database_version.setLSPStateDBVersion(databaseVersion);
+				p_open_snd.getOpen().setLsp_database_version_tlv(lsp_database_version);
+			}
 		}
 		if (pcepSessionManager.isSRCapable())
 		{
@@ -601,7 +614,7 @@ public abstract class GenericPCEPSession extends Thread implements PCEPSession {
 								else
 								{
 									updateEffective = p_open.getOpen().getStateful_capability_tlv().isuFlag();
-									log.info("PCC is also stateful");
+									log.info("Other PCEP speaker is also stateful");
 								}
 
 								//TODO: 
@@ -745,7 +758,7 @@ public abstract class GenericPCEPSession extends Thread implements PCEPSession {
 								else if (pcepSessionManager.isStateful())
 								{
 									updateEffective = p_open.getOpen().getStateful_capability_tlv().isuFlag();
-									log.info("PCC is also stateful");
+									log.info("Other PCEP speaker is also stateful");
 								}
 
 								if (!(pcepSessionManager.isSRCapable()) && (p_open.getOpen().getSR_capability_tlv()!=null))
@@ -1177,6 +1190,16 @@ public abstract class GenericPCEPSession extends Thread implements PCEPSession {
 			}
 		}
 		isSessionStateful = false;
+	}
+	
+	private boolean checkLSPsync(PCEPOpen p_open)
+	{
+		if (pcepSessionManager.isStatefulSFlag() && p_open.getOpen().getStateful_capability_tlv().issFlag())
+		{
+			//if (data)
+		}
+		return false;
+		
 	}
 	
 	
