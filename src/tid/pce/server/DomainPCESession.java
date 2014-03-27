@@ -88,7 +88,6 @@ public class DomainPCESession extends GenericPCEPSession{
 		try {
 			s.setTcpNoDelay(params.isNodelay());
 		} catch (SocketException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		this.requestDispatcher=requestDispatcher;
@@ -120,7 +119,6 @@ public class DomainPCESession extends GenericPCEPSession{
 		try {
 			s.setTcpNoDelay(params.isNodelay());
 		} catch (SocketException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		this.requestDispatcher=requestDispatcher;

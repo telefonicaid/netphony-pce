@@ -91,8 +91,9 @@ public class ClientRequestManager {
 			log.info("Sending message ::"+msg.getBytes());
 			out.write(msg.getBytes());
 			out.flush();
+			log.info("Sending message finish");
 		} catch (IOException e) {
-			log.warning("Error sending msg: " + e.getMessage());
+			log.info("Error sending msg: " + e.getMessage());
 		}
 	}
 	

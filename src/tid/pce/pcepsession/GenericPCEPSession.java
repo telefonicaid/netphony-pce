@@ -532,6 +532,7 @@ public abstract class GenericPCEPSession extends Thread implements PCEPSession {
 			//Only send database version if S flag is active
 			if (pcepSessionManager.isStatefulSFlag())
 			{
+				
 				LSPDatabaseVersionTLV lsp_database_version = new LSPDatabaseVersionTLV();
 				lsp_database_version.setLSPStateDBVersion(databaseVersion);
 				p_open_snd.getOpen().setLsp_database_version_tlv(lsp_database_version);
@@ -604,30 +605,21 @@ public abstract class GenericPCEPSession extends Thread implements PCEPSession {
 									log.warning("I'm not expeting Stateful session");
 									stateFulOK = false;
 								}
-
-
-								if ((pcepSessionManager.isStateful())&&(p_open.getOpen().getStateful_capability_tlv()==null))
+								else if ((pcepSessionManager.isStateful())&&(p_open.getOpen().getStateful_capability_tlv()==null))
 								{
 									log.warning("I'm expeting Stateful session");
 									stateFulOK = false;
 								}
-								else
+								else if (pcepSessionManager.isStateful() && p_open.getOpen().getStateful_capability_tlv()!=null)
 								{
 									updateEffective = p_open.getOpen().getStateful_capability_tlv().isuFlag();
 									log.info("Other PCEP speaker is also stateful");
 								}
+								else
+								{
+									log.info("Both PCEP speakers aren't stateful");									
+								}
 
-								//TODO: 
-								/* if an SR path is established using SR-ERO,
-									   subsequent PCEP Update and Report messages for that path MUST NOT
-									   contain other ERO types*/
-								/* The "Maximum SID Depth" (1
-									   octet) field (MSD) specifies the maximum number of SIDs that a PCC is
-									   capable of imposing on a packet*/
-								/*    The SR Capability TLV is meaningful only in the OPEN message sent
-   										from a PCC to a PCE.  As such, a PCE does not need to set MSD value*/
-								/* pcepSessionManager mas o menos = pce y p_open.getOpen mas o menos igual pcc*/
-								//FIXME:quitar esto
 								if (!(pcepSessionManager.isSRCapable()) && (p_open.getOpen().getSR_capability_tlv()!=null))
 								{
 									log.warning("I'm not expecting SR session");
@@ -644,11 +636,22 @@ public abstract class GenericPCEPSession extends Thread implements PCEPSession {
 									this.sessionMSD = MSD; //We will only look at this value in the session of a PCE
 									//TODO: que hago con esto?
 									log.info("Other component is also SR capable with MSD= "+p_open.getOpen().getSR_capability_tlv().getMSD());
-								}									
+								}				
+								else
+								{
+									log.info("Neither of us are SR capable :(");									
+								}
 
 
-
-
+								//TODO: Hay que cambiar esto
+								if (stateFulOK == false)
+								{
+									//processNotStateful(p_open, kwtt);
+								}
+								if ((pcepSessionManager.isStateful())&&(updateEffective == false))
+								{
+								//	log.warning("This PCE operates right now as if the LSPs are delegated");
+								}
 
 
 
@@ -663,18 +666,6 @@ public abstract class GenericPCEPSession extends Thread implements PCEPSession {
 									perror.setError(error_c);
 									log.info("Sending Error and ending PCEPSession");
 									sendPCEPMessage(perror);										
-								}
-								else if (stateFulOK == false)
-								{
-									processNotStateful(p_open, kwtt);
-								}
-								else if ((pcepSessionManager.isStateful())&&(updateEffective == false))
-								{
-									log.warning("This PCE operates right now as if the LSPs are delegated");
-								}
-								else if (SROK == false)
-								{
-									//TODO: que hacer aqui?
 								}
 								else {
 									/**
@@ -721,12 +712,14 @@ public abstract class GenericPCEPSession extends Thread implements PCEPSession {
 
 									if (pcepSessionManager.isStateful())
 									{
+
+										log.info("open object saved: "+p_open.getOpen());
 										this.open = p_open.getOpen();
 										isSessionStateful = true;
 									}
 									if (pcepSessionManager.isSRCapable())
 									{
-										this.open = p_open.getOpen();
+									//	this.open = p_open.getOpen();
 										isSessionSRCapable = true;		
 										sessionMSD = pcepSessionManager.getMSD();
 									}
@@ -741,7 +734,6 @@ public abstract class GenericPCEPSession extends Thread implements PCEPSession {
 								int MSD = -1;
 
 								//If PCE is stateless and there are statefull tlv send error
-								log.info("pcepSessionManager.isStateful():"+pcepSessionManager.isStateful());
 								if ((!pcepSessionManager.isStateful())&&
 										((p_open.getOpen().getRedundancy_indetifier_tlv()!=null)||
 												(p_open.getOpen().getLsp_database_version_tlv()!=null)||
@@ -750,15 +742,19 @@ public abstract class GenericPCEPSession extends Thread implements PCEPSession {
 									log.warning("I'm not expeting Stateful session");
 									stateFulOK = false;
 								}
-								if ((pcepSessionManager.isStateful())&&(p_open.getOpen().getStateful_capability_tlv()==null))
+								else if ((pcepSessionManager.isStateful())&&(p_open.getOpen().getStateful_capability_tlv()==null))
 								{
 									log.warning("I'm expeting Stateful session");
 									stateFulOK = false;
 								}
-								else if (pcepSessionManager.isStateful())
+								else if (pcepSessionManager.isStateful() && p_open.getOpen().getStateful_capability_tlv()!=null)
 								{
 									updateEffective = p_open.getOpen().getStateful_capability_tlv().isuFlag();
 									log.info("Other PCEP speaker is also stateful");
+								}
+								else
+								{
+									log.info("Both PCEP speakers aren't stateful");									
 								}
 
 								if (!(pcepSessionManager.isSRCapable()) && (p_open.getOpen().getSR_capability_tlv()!=null))
@@ -766,8 +762,7 @@ public abstract class GenericPCEPSession extends Thread implements PCEPSession {
 									log.warning("I'm not expecting SR session");
 									SROK = false;
 								}
-
-								if ((pcepSessionManager.isSRCapable()) && (p_open.getOpen().getSR_capability_tlv()==null))
+								else if ((pcepSessionManager.isSRCapable()) && (p_open.getOpen().getSR_capability_tlv()==null))
 								{
 									log.warning("I'm expeting SR capable session");
 									SROK = false;
@@ -775,10 +770,25 @@ public abstract class GenericPCEPSession extends Thread implements PCEPSession {
 								else if ((pcepSessionManager.isSRCapable()) && (p_open.getOpen().getSR_capability_tlv()!=null))
 								{
 									MSD = p_open.getOpen().getSR_capability_tlv().getMSD();
-									//TODO: que hago con esto?				
+									this.sessionMSD = MSD; //We will only look at this value in the session of a PCE
+									//TODO: que hago con esto?
 									log.info("Other component is also SR capable with MSD= "+p_open.getOpen().getSR_capability_tlv().getMSD());
-								}									
+								}				
+								else
+								{
+									log.info("Neither of us are SR capable :(");									
+								}
 
+
+								//TODO: Hay que cambiar esto
+								if (stateFulOK == false)
+								{
+									//processNotStateful(p_open, kwtt);
+								}
+								if ((pcepSessionManager.isStateful())&&(updateEffective == false))
+								{
+								//	log.warning("This PCE operates right now as if the LSPs are delegated");
+								}
 								
 								
 								
@@ -840,18 +850,6 @@ public abstract class GenericPCEPSession extends Thread implements PCEPSession {
 										this.timer.schedule(kwtt, 60000);
 									}
 								}
-								else if (stateFulOK == false)
-								{
-									processNotStateful(p_open, kwtt);
-								}
-								else if ((pcepSessionManager.isStateful())&&(updateEffective == false))
-								{
-									log.warning("This PCE operates right now as if the LSPs are delegated");
-								}
-								else if (SROK == false)
-								{
-									//TODO: que hacer aqui?
-								}
 								else {
 									/*
 									 * If no errors are detected, and the session characteristics are
@@ -895,13 +893,14 @@ public abstract class GenericPCEPSession extends Thread implements PCEPSession {
 									if (pcepSessionManager.isStateful())
 									{
 										/* The open object is stored for later proccessing */
+										log.info("open object saved: "+p_open.getOpen());
 										this.open = p_open.getOpen();
 										isSessionStateful = true;
 									}
 									if (pcepSessionManager.isSRCapable())
 									{
 										/* The open object is stored for later proccessing */
-										this.open = p_open.getOpen();
+										//this.open = p_open.getOpen();
 										isSessionSRCapable= true;
 										sessionMSD = pcepSessionManager.getMSD();
 									}

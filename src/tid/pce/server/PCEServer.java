@@ -47,7 +47,7 @@ public class PCEServer {
 	/**
 	 * Logger
 	 */
-	public static final Logger Log =Logger.getLogger("PCEServer");
+	public static final Logger log =Logger.getLogger("PCEServer");
 	public static Logger log5;
 	private static OperationsCounter OPcounter;
 	
@@ -94,7 +94,7 @@ public class PCEServer {
 			Logger log4=Logger.getLogger("TEDBParser");
 			//Logger log6=Logger.getLogger("BGPParser");
 			log5=Logger.getLogger("OpMultiLayer");
-			Log.addHandler(fh);
+			log.addHandler(fh);
 			log2.addHandler(fh2);
 			log3.addHandler(fh3);
 			log4.addHandler(fh4);
@@ -103,7 +103,7 @@ public class PCEServer {
 			log5.addHandler(fh5);
 			log5.setLevel(Level.ALL);
 			if (params.isSetTraces() == false){		    	
-				Log.setLevel(Level.SEVERE);
+				log.setLevel(Level.SEVERE);
 				log2.setLevel(Level.SEVERE);	
 				log3.setLevel(Level.SEVERE);
 				log4.setLevel(Level.SEVERE);
@@ -112,7 +112,7 @@ public class PCEServer {
 			}
 			
 			else{
-				Log.setLevel(Level.ALL);
+				log.setLevel(Level.ALL);
 				log2.setLevel(Level.ALL);
 				log3.setLevel(Level.ALL);
 				log4.setLevel(Level.ALL);
@@ -124,7 +124,7 @@ public class PCEServer {
 			System.exit(1);
 		}
 
-		Log.info("Inizializing TID PCE Server!!");
+		log.info("Inizializing TID PCE Server!!");
 		//Elements of the PCE Server
 
 		// Information about all the sessions of the PCE
@@ -139,33 +139,33 @@ public class PCEServer {
 		pcepSessionsInformation.setSRCapable(params.isSRCapable());
 		pcepSessionsInformation.setMSD(params.getMSD());
 		if (params.isSRCapable())
-			Log.info("PCEServer: PCE is SR capable with MSD="+pcepSessionsInformation.getMSD());
+			log.info("PCEServer: PCE is SR capable with MSD="+pcepSessionsInformation.getMSD());
 	
 		//The Traffic Engineering Database
 		DomainTEDB ted;
 		if(params.ITcapable==true){
 			//IT CAPABLE PCE
-			Log.info("IT capable Domain PCE");
+			log.info("IT capable Domain PCE");
 			ted=new SimpleITTEDB();
 		}else{
 			//GENERIC PCE
-			Log.info("GENERIC PCE");
+			log.info("GENERIC PCE");
 			if (params.isMultilayer()){
 				ted=new MultiLayerTEDB();
-				Log.info("is multilayer");
+				log.info("is multilayer");
 			}else{
 				ted=new SimpleTEDB();
 			}
 		}
 		if (params.isStateful())
 		{
-			Log.info("Stateful PCE with T="+params.isStatefulTFlag()+" D="+params.isStatefulDFlag()+" S="+params.isStatefulSFlag());
+			log.info("Stateful PCE with T="+params.isStatefulTFlag()+" D="+params.isStatefulDFlag()+" S="+params.isStatefulSFlag());
 		}
 		
 		
 		/***/
 		
-		TopologyManager topologyManager = new TopologyManager(params, ted, Log);
+		TopologyManager topologyManager = new TopologyManager(params, ted, log);
 		topologyManager.initTopology();
 		
 		OPcounter = new OperationsCounter();
@@ -176,21 +176,21 @@ public class PCEServer {
 		if (params.getParentPCEAddress()!=null){
 			//ChildPCERequestDispatcherParentPCE childPCERequestDispatcherParentPCE = new ChildPCERequestDispatcherParentPCE();
 			//For the session between the Domain (Child) PCE and the parent PCE
-			Log.info("Initializing Manager of the ChildPCE - Parent PCE Session");	
+			log.info("Initializing Manager of the ChildPCE - Parent PCE Session");	
 			PCCRequestDispatcherChild=new  RequestDispatcher(1,ted,null,params.isAnalyzeRequestTime());
 			pcm=new ChildPCESessionManager(PCCRequestDispatcherChild, params,ted,ted.getReachabilityEntry().getDomainId(),pcepSessionsInformation);
 		}else {
-			Log.info("There is no parent PCE");
+			log.info("There is no parent PCE");
 		
 		}
 		
 		//The Request Dispatcher, needed to dispatch the requests coming from the PCCs
-		Log.info("Initializing Request Dispatcher");
+		log.info("Initializing Request Dispatcher");
 		RequestDispatcher PCCRequestDispatcher;
 		
 		ReservationManager reservationManager=null;
 		if (params.isReservation()){
-			Log.info("Launching Reservation Manager");
+			log.info("Launching Reservation Manager");
 			reservationManager= new ReservationManager(ted);//FIXME: he hecho el casting
 		}
 		CollaborationPCESessionManager	collaborationPCESessionManager=null;
@@ -226,7 +226,7 @@ public class PCEServer {
 		
 		if(params.algorithmRuleList.size()==0){
 			
-		Log.warning("No hay algoritmos registrados!");
+		log.warning("No hay algoritmos registrados!");
 			System.exit(1);
 			
 		}
@@ -235,7 +235,7 @@ public class PCEServer {
 		
 		Timer timer=new Timer();
 		if (params.getParentPCEAddress()!=null){
-			Log.info("Inizializing Session with Parent PCE");
+			log.info("Inizializing Session with Parent PCE");
 			timer.schedule(pcm, 0, 1000000);
 		}	
 		
@@ -250,7 +250,7 @@ public class PCEServer {
 
 				Timer timer2=new Timer();
 				if (params.getParentPCEAddress()!=null){
-					Log.info("Changing topology");
+					log.info("Changing topology");
 					timer2.schedule(ITstg, 0, 100000);
 				}
 			}else if (!(params.isActingAsBGP4Peer())){
@@ -258,7 +258,7 @@ public class PCEServer {
 
 				Timer timer2=new Timer();
 				if (params.getParentPCEAddress()!=null){
-					Log.info("Changing topology");
+					log.info("Changing topology");
 					timer2.schedule(stg, 0, 100000);
 				}
 			}
@@ -276,21 +276,21 @@ public class PCEServer {
 				backupSessionTask= new BackupSessionManagerTask(params,ted,collaborationPCESessionManager,nd,pcepSessionsInformation);
 				//backupSessionTask.manageBackupPCESession();
 				Timer timerBackupSession=new Timer();
-				Log.info("Inizializing Session with Primary PCE");
+				log.info("Inizializing Session with Primary PCE");
 				timerBackupSession.schedule(backupSessionTask, 0, 100000);
 			}		
 		}
 		else
-			Log.info("There are no collaborative PCEs");
+			log.info("There are no collaborative PCEs");
 		
 		ServerSocket serverSocket = null;
 		boolean listening = true;
 		try {
-			Log.info("Listening on port: "+params.getPCEServerPort());
+			log.info("Listening on port: "+params.getPCEServerPort());
 			
 			// Local PCE address for multiple network interfaces in a single computer
 			
-			Log.info("Listening on address: "+params.getLocalPceAddress());
+			log.info("Listening on address: "+params.getLocalPceAddress());
 			serverSocket = new ServerSocket(params.getPCEServerPort(),0,(Inet4Address) InetAddress.getByName(params.getLocalPceAddress()));
 		} catch (IOException e) {
 			System.err.println("Could not listen on port: "+params.getPCEServerPort());
@@ -303,7 +303,7 @@ public class PCEServer {
 			for (int i=0;i<params.algorithmRuleList.size();++i){
 				try {
 					Class<?> aClass = Class.forName("tid.pce.computingEngine.algorithms."+params.algorithmRuleList.get(i).algoName+"Manager");
-					Log.info("Registering algorithm "+ params.algorithmRuleList.get(i).algoName+" for of = "+params.algorithmRuleList.get(i).ar.of+" and svec = "+params.algorithmRuleList.get(i).ar.svec);            
+					log.info("Registering algorithm "+ params.algorithmRuleList.get(i).algoName+" for of = "+params.algorithmRuleList.get(i).ar.of+" and svec = "+params.algorithmRuleList.get(i).ar.svec);            
 					if (params.algorithmRuleList.get(i).isParentPCEAlgorithm==false){
 						if(params.algorithmRuleList.get(i).isSSSONAlgorithm==false){
 							ComputingAlgorithmManager cam= ( ComputingAlgorithmManager)aClass.newInstance();
@@ -323,7 +323,7 @@ public class PCEServer {
 							}
 							catch (Exception e2){
 							e2.printStackTrace();
-							Log.warning("No precomputation in "+"tid.pce.computingEngine.algorithms."+params.algorithmRuleList.get(i).algoName+"PreComputation");						
+							log.warning("No precomputation in "+"tid.pce.computingEngine.algorithms."+params.algorithmRuleList.get(i).algoName+"PreComputation");						
 							}
 						}
 						else{
@@ -344,7 +344,7 @@ public class PCEServer {
 							}
 							catch (Exception e2){
 								e2.printStackTrace();
-								Log.warning("No precomputation in "+"tid.pce.computingEngine.algorithms."+params.algorithmRuleList.get(i).algoName+"PreComputation");						
+								log.warning("No precomputation in "+"tid.pce.computingEngine.algorithms."+params.algorithmRuleList.get(i).algoName+"PreComputation");						
 							}
 						}
 					}
@@ -364,8 +364,6 @@ public class PCEServer {
 			if ((params.getLambdaEnd()!=Integer.MAX_VALUE)&&(params.ITcapable==false)&&((params.isMultilayer())==false))
 				((SimpleTEDB)ted).notifyAlgorithms( params.getLambdaIni(),params.getLambdaEnd());
 
-			//pcepSessionsInformation.setStateful(true);
-			//pcepSessionsInformation.setActive(true);
 			
 			lspDB = new SimpleLSP_DB();
 			params.setLspDB(lspDB);
@@ -374,11 +372,16 @@ public class PCEServer {
 			// In better future times sync should be implemented
 			
 			ReportDispatcher PCCReportDispatcher = null;
+			//
 			if (pcepSessionsInformation.isStateful())
 			{
+				log.info("Creando dispatchers para el LSP DB");
 				PCCReportDispatcher = new ReportDispatcher(false, lspDB, 2);
 			}
-			
+			else
+			{
+				log.info("No creando dispatcher para el LSP DB..");
+			}
 			/*
 			(new Thread()
 			{

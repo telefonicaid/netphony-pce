@@ -146,6 +146,7 @@ public class SimpleLSP_DB implements LSP_DB
 			if ((lspDB = lsp.getLspDBVersion_tlv())!=null)
 			{
 				pccInfo.dataBaseVersion = lspDB.getLSPStateDBVersion();
+				log.info("updated database version of PCC: "+PCCList.get(pccInfo)+" to v."+lspDB.getLSPStateDBVersion());
 			}
 			
 			LSPTEInfo lspInfo = LSPTEList.get(new LSPKey(adress,lspId));
