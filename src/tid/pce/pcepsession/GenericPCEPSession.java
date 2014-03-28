@@ -210,10 +210,10 @@ public abstract class GenericPCEPSession extends Thread implements PCEPSession {
 					r = in.read(hdr, offset, 1);
 				}
 			} catch (IOException e){
-				log.warning("Mistake reading data: "+ e.getMessage());
+				log.info("Mistake reading data: "+ e.getMessage());
 				throw e;
 			}catch (Exception e) {
-				log.warning("readMsg Oops: " + e.getMessage());
+				log.info("readMsg Oops: " + e.getMessage());
 				throw new IOException();
 			}
 
@@ -233,7 +233,7 @@ public abstract class GenericPCEPSession extends Thread implements PCEPSession {
 				offset++;
 			}
 			else if (r==-1){
-				log.warning("End of stream has been reached");
+				log.info("End of stream has been reached");
 				throw new IOException();
 			}
 		}
@@ -413,12 +413,12 @@ public abstract class GenericPCEPSession extends Thread implements PCEPSession {
 				out.close();
 			}
 			if (this.socket != null) {
-				log.warning("Closing socket");
+				log.info("Closing socket");
 				this.socket.close();
 			}
 
 		} catch (Exception e) {
-			log.warning("Error closing connections: " + e.getMessage());
+			log.info("Error closing connections: " + e.getMessage());
 		}
 	}
 
@@ -431,14 +431,14 @@ public abstract class GenericPCEPSession extends Thread implements PCEPSession {
 	}
 
 	public void killSession(){	
-		log.warning("Killing Session");
+		log.info("Killing Session");
 		timer.cancel();
 		this.endConnections();
 		this.cancelDeadTimer();
 		this.cancelKeepAlive();
 		this.endSession();
 		this.pcepSessionManager.deleteSession(this.sessionId);
-		log.warning("Interrupting thread!!!!");
+		log.info("Interrupting thread!!!!");
 		this.interrupt();				
 	}
 
@@ -471,7 +471,7 @@ public abstract class GenericPCEPSession extends Thread implements PCEPSession {
 			out = new DataOutputStream(socket.getOutputStream());
 			in = new DataInputStream(socket.getInputStream());
 		} catch (IOException e) {
-			log.warning("Problem in the sockets, ending PCEPSession");
+			log.info("Problem in the sockets, ending PCEPSession");
 			killSession();
 			return;
 		}
@@ -560,7 +560,7 @@ public abstract class GenericPCEPSession extends Thread implements PCEPSession {
 				//Read a new message
 				msg = readMsg(in);
 			}catch (IOException e){
-				log.warning("Error reading message, ending session"+e.getMessage());
+				log.info("Error reading message, ending session"+e.getMessage());
 				killSession();
 				return;
 			}
@@ -602,12 +602,12 @@ public abstract class GenericPCEPSession extends Thread implements PCEPSession {
 												(p_open.getOpen().getLsp_database_version_tlv()!=null)||
 												(p_open.getOpen().getStateful_capability_tlv()!=null)))
 								{
-									log.warning("I'm not expeting Stateful session");
+									log.info("I'm not expeting Stateful session");
 									stateFulOK = false;
 								}
 								else if ((pcepSessionManager.isStateful())&&(p_open.getOpen().getStateful_capability_tlv()==null))
 								{
-									log.warning("I'm expeting Stateful session");
+									log.info("I'm expeting Stateful session");
 									stateFulOK = false;
 								}
 								else if (pcepSessionManager.isStateful() && p_open.getOpen().getStateful_capability_tlv()!=null)
@@ -622,12 +622,12 @@ public abstract class GenericPCEPSession extends Thread implements PCEPSession {
 
 								if (!(pcepSessionManager.isSRCapable()) && (p_open.getOpen().getSR_capability_tlv()!=null))
 								{
-									log.warning("I'm not expecting SR session");
+									log.info("I'm not expecting SR session");
 									SROK = false;
 								}
 								else if ((pcepSessionManager.isSRCapable()) && (p_open.getOpen().getSR_capability_tlv()==null))
 								{
-									log.warning("I'm expeting SR capable session");
+									log.info("I'm expeting SR capable session");
 									SROK = false;
 								}
 								else if ((pcepSessionManager.isSRCapable()) && (p_open.getOpen().getSR_capability_tlv()!=null))
@@ -650,7 +650,7 @@ public abstract class GenericPCEPSession extends Thread implements PCEPSession {
 								}
 								if ((pcepSessionManager.isStateful())&&(updateEffective == false))
 								{
-								//	log.warning("This PCE operates right now as if the LSPs are delegated");
+								//	log.info("This PCE operates right now as if the LSPs are delegated");
 								}
 
 
@@ -739,12 +739,12 @@ public abstract class GenericPCEPSession extends Thread implements PCEPSession {
 												(p_open.getOpen().getLsp_database_version_tlv()!=null)||
 												(p_open.getOpen().getStateful_capability_tlv()!=null)))
 								{
-									log.warning("I'm not expeting Stateful session");
+									log.info("I'm not expeting Stateful session");
 									stateFulOK = false;
 								}
 								else if ((pcepSessionManager.isStateful())&&(p_open.getOpen().getStateful_capability_tlv()==null))
 								{
-									log.warning("I'm expeting Stateful session");
+									log.info("I'm expeting Stateful session");
 									stateFulOK = false;
 								}
 								else if (pcepSessionManager.isStateful() && p_open.getOpen().getStateful_capability_tlv()!=null)
@@ -759,12 +759,12 @@ public abstract class GenericPCEPSession extends Thread implements PCEPSession {
 
 								if (!(pcepSessionManager.isSRCapable()) && (p_open.getOpen().getSR_capability_tlv()!=null))
 								{
-									log.warning("I'm not expecting SR session");
+									log.info("I'm not expecting SR session");
 									SROK = false;
 								}
 								else if ((pcepSessionManager.isSRCapable()) && (p_open.getOpen().getSR_capability_tlv()==null))
 								{
-									log.warning("I'm expeting SR capable session");
+									log.info("I'm expeting SR capable session");
 									SROK = false;
 								}
 								else if ((pcepSessionManager.isSRCapable()) && (p_open.getOpen().getSR_capability_tlv()!=null))
@@ -787,7 +787,7 @@ public abstract class GenericPCEPSession extends Thread implements PCEPSession {
 								}
 								if ((pcepSessionManager.isStateful())&&(updateEffective == false))
 								{
-								//	log.warning("This PCE operates right now as if the LSPs are delegated");
+								//	log.info("This PCE operates right now as if the LSPs are delegated");
 								}
 								
 								
@@ -907,7 +907,7 @@ public abstract class GenericPCEPSession extends Thread implements PCEPSession {
 								}
 							}								
 						} catch (PCEPProtocolViolationException e1) {
-							log.warning("Malformed OPEN, INFORM ERROR and close");
+							log.info("Malformed OPEN, INFORM ERROR and close");
 							e1.printStackTrace();
 							PCEPError perror=new PCEPError();
 							PCEPErrorObject perrorObject=new PCEPErrorObject();

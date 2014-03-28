@@ -75,7 +75,7 @@ public class PCCPCEPSession extends GenericPCEPSession{
 	private PCEPSessionsInformation pcepSessionManager;
 	
 	private LSPManager lspManager;
-	
+		
 	
 	/**
 	 * Constructor of the PCE Session
@@ -151,22 +151,31 @@ public class PCCPCEPSession extends GenericPCEPSession{
 	 * Then, it launches the Keepalive process, the Deadtimer process and
 	 * the listener of PCC messages. 
 	 */
-	public void run() {
+	public void run() 
+	{
 		running=true;
 		log.info("Opening new PCEP Session with host "+ peerPCE_IPaddress + " on port " + peerPCE_port);
-		try {
-			this.socket = new Socket(peerPCE_IPaddress, peerPCE_port);
-			if (no_delay){
-				this.socket.setTcpNoDelay(true);
-				log.info("No delay activated");
-			}
-			log.info("Socket opened");
-		} catch (IOException e) {
-			log.info(UtilsFunctions.exceptionToString(e));
-			log.severe("Couldn't get I/O for connection to " + peerPCE_IPaddress + " in port "+ peerPCE_port);
-			//FIXME: Salir de manera limpia
-			System.exit(1);
-		} 
+		
+		if (socket == null)
+		{
+			try 
+			{
+				this.socket = new Socket(peerPCE_IPaddress, peerPCE_port);
+				if (no_delay)
+				{
+					this.socket.setTcpNoDelay(true);
+					log.info("No delay activated");
+				}
+				log.info("Socket opened");
+			} 
+			catch (IOException e) 
+			{
+				log.info(UtilsFunctions.exceptionToString(e));
+				log.severe("Couldn't get I/O for connection to " + peerPCE_IPaddress + " in port "+ peerPCE_port);
+				//FIXME: Salir de manera limpia
+				System.exit(1);
+			} 
+		}
 
 		initializePCEPSession(false, 15, 200,false,false,null,null, pcepSessionManager.isStateful()?lspManager.getDataBaseVersion():((long)0));
 		
@@ -198,6 +207,7 @@ public class PCCPCEPSession extends GenericPCEPSession{
 					out.close();
 				} catch (IOException e1) {
 				}
+				manageEndSession();
 				log.warning("Finishing PCEP Session abruptly!");
 				return;
 			}
@@ -332,6 +342,35 @@ public class PCCPCEPSession extends GenericPCEPSession{
 		}
 	}
 	
+	private void manageEndSession() 
+	{
+		while(true)
+		{
+			try 
+			{
+				Thread.sleep(1000);
+			} 
+			catch (InterruptedException e)
+			{
+				log.info(UtilsFunctions.exceptionToString(e));
+			}
+			
+			try 
+			{
+				this.socket = new Socket(peerPCE_IPaddress, peerPCE_port);
+				log.info("Socket opened in retry after connection went down");
+				//socket.close();
+				run();
+				return;
+			} 
+			catch (IOException e)
+			{
+				log.info("Wasn't able to connect this time");
+			} 
+			
+		}	
+	}
+
 	public int getPeerPCE_port() {
 		return peerPCE_port;
 	}
@@ -378,7 +417,9 @@ public class PCCPCEPSession extends GenericPCEPSession{
 		return newReqId;
 	}
 	
-	public void endSession(){
+	public void endSession()
+	{
+		log.info("Ending PCC session, abruptly?, who knows");
 	}
 
 	@Override
@@ -419,16 +460,24 @@ public class PCCPCEPSession extends GenericPCEPSession{
 	private boolean avoidSync(OPEN open) 
 	{
 		log.info("Open :"+open.toString());
-		long dataBaseId = open.getLsp_database_version_tlv().getLSPStateDBVersion();
-		log.info("dataBaseId:"+dataBaseId);
-		log.info("lspManager.getDataBaseVersion() :"+lspManager.getDataBaseVersion() );
-		if ((lspManager.getDataBaseVersion() == dataBaseId)&&(lspManager.getDataBaseVersion()!=0))
+
+		if (open.getStateful_capability_tlv() == null)
 		{
 			return true;
 		}
-		else
+		
+		long dataBaseId = open.getLsp_database_version_tlv().getLSPStateDBVersion();
+		log.info("dataBaseId:"+dataBaseId);
+		log.info("lspManager.getDataBaseVersion() :"+lspManager.getDataBaseVersion() );
+		boolean PCESyncFlag = open.getStateful_capability_tlv().issFlag();
+		boolean mySyncFlag = pcepSessionManager.isStatefulSFlag();
+		if (PCESyncFlag && mySyncFlag && lspManager.getDataBaseVersion() != dataBaseId)
 		{
 			return false;
+		}
+		else
+		{
+			return true;
 		}
 	}
 }

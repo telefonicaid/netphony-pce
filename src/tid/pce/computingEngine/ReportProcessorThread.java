@@ -3,13 +3,17 @@ package tid.pce.computingEngine;
 /**
  * Class made for managing report messages from PCCs. It only adds them to
  * the database
+ * 
+ * @author jimbo
  */
 
 import java.net.Inet4Address;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.logging.Logger;
 
+import tid.abno.modules.PCEParameters;
 import tid.pce.pcep.messages.PCEPReport;
+import tid.pce.server.PCEServerParameters;
 import tid.pce.server.lspdb.LSP_DB;
 
 public class ReportProcessorThread extends Thread
@@ -24,12 +28,15 @@ public class ReportProcessorThread extends Thread
 		
 	Logger log;
 	
-	public ReportProcessorThread(LinkedBlockingQueue<PCEPReport> reportMessageQueue, LSP_DB lspDB) 
+	PCEServerParameters params;
+	
+	public ReportProcessorThread(PCEServerParameters params, LinkedBlockingQueue<PCEPReport> reportMessageQueue, LSP_DB lspDB) 
 	{
 		log=Logger.getLogger("PCEServer");
 		running = true;
 		this.lspDB = lspDB;
 		this.reportMessageQueue = reportMessageQueue;
+		this.params = params;
 	}
 	
 	public void run()
