@@ -334,6 +334,12 @@ public class PCCPCEPSession extends GenericPCEPSession{
 					pceMsg = false;
 				}
 				
+				
+				
+				
+				
+				
+				
 				if (pceMsg) {
 					log.info("Reseting Dead Timer as PCEP Message has arrived");
 					resetDeadTimer();
@@ -360,6 +366,13 @@ public class PCCPCEPSession extends GenericPCEPSession{
 				this.socket = new Socket(peerPCE_IPaddress, peerPCE_port);
 				log.info("Socket opened in retry after connection went down");
 				//socket.close();
+				
+			//	crm= new ClientRequestManager();
+			//	timer=new Timer();
+			//	this.lspManager.setOut((DataOutputStream)socket.getOutputStream());
+				
+				
+				
 				run();
 				return;
 			} 
@@ -453,7 +466,8 @@ public class PCCPCEPSession extends GenericPCEPSession{
 		ero.setEroSubobjects(new LinkedList<EROSubobject>());
 		lspte.setEro(ero);
 		
-		lspManager.getNotiLSP().notify(lspte, true, true, false, true, out);
+		//Sync flag to 0 cause it's the last pcrpt to notify end of sync
+		lspManager.getNotiLSP().notify(lspte, true, true, false, false, out);
 		 
 	}
 	
