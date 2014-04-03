@@ -32,6 +32,7 @@ import tid.pce.pcepsession.PCEPSessionsInformation;
 import tid.pce.server.communicationpce.BackupSessionManagerTask;
 import tid.pce.server.communicationpce.CollaborationPCESessionManager;
 import tid.pce.server.lspdb.LSP_DB;
+import tid.pce.server.lspdb.RedisLSP_DB;
 import tid.pce.server.lspdb.SimpleLSP_DB;
 import tid.pce.server.management.PCEManagementSever;
 import tid.pce.server.wson.ReservationManager;
@@ -374,10 +375,19 @@ public class PCEServer {
 			//
 			if (pcepSessionsInformation.isStateful())
 			{
-				lspDB = new SimpleLSP_DB();
+//				lspDB = new SimpleLSP_DB();
+//				params.setLspDB(lspDB);
+//				log.info("Creando dispatchers para el LSP DB");
+//				PCCReportDispatcher = new ReportDispatcher(params, lspDB, 2);
+				lspDB = new RedisLSP_DB("PRUEBA");
 				params.setLspDB(lspDB);
 				log.info("Creando dispatchers para el LSP DB");
 				PCCReportDispatcher = new ReportDispatcher(params, lspDB, 2);
+
+			
+			
+			
+			
 			}
 			/*
 			(new Thread()
