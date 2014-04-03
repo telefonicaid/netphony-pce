@@ -190,10 +190,18 @@ public class VLAN_Multicast_algorithmPreComputation implements ComputingAlgorith
 	public void notifyNewEdge(Object source, Object destination)
 	{
 		SimpleDirectedWeightedGraph<Object,IntraDomainEdge> graph_lambda;
-		log.info("Adding graph of lambda "+0);			
+		log.info("Adding graph of lambda " + 0 + ", source: " + source + "dest: " + destination + "baseSimplegraph.getEdge(source, destination): " + baseSimplegraph.getEdge(source, destination));			
 		graph_lambda=networkGraphs.get(0);
-		graph_lambda.addEdge(source,destination,baseSimplegraph.getEdge(source, destination));
-		
+		if (baseSimplegraph.getEdge(source, destination) != null)
+		{
+			graph_lambda.addEdge(source, destination, baseSimplegraph.getEdge(source, destination));
+		}
+		else
+		{
+			log.info("Ejem Ejem, null");
+			IntraDomainEdge ie = new IntraDomainEdge();
+			graph_lambda.addEdge(source, destination, ie);
+		}
 	}
 
 	

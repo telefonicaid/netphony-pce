@@ -527,7 +527,7 @@ public class PCEManagementSession extends Thread {
 					out.print("quit\r\n");					
 	
 				}
-			/*	else if (command.equals("add xifi link")) {
+				else if (command.equals("add xifi link")) {
 					out.print("Format:switch_id_1-switch_id_2-source_port-dest_port\r\n");
 					log.info("Adding Xifi Link!");
 					String line;
@@ -545,6 +545,10 @@ public class PCEManagementSession extends Thread {
 					out.print(parts[1]+"\r\n");
 					out.print(parts[2]+"\r\n");
 					out.print(parts[3]+"\r\n");
+//					log.info("Part:" + parts[0]+"\r\n");
+//					log.info("Part:" + parts[1]+"\r\n");
+//					log.info("Part:" + parts[2]+"\r\n");
+//					log.info("Part:" + parts[3]+"\r\n");
 					edge.setSrc_if_id(Long.parseLong(parts[2]));
 					edge.setDst_if_id(Long.parseLong(parts[3]));
 					
@@ -620,7 +624,7 @@ public class PCEManagementSession extends Thread {
 						}
 					}
 					}
-				}*/
+				}
 
 				else{
 					out.print("invalid command\n");	

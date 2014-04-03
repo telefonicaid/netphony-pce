@@ -80,7 +80,9 @@ public class IntraDomainEdge extends DefaultWeightedEdge {
 	private int dst_sid;
 	
 	
-	public IntraDomainEdge(){
+	public IntraDomainEdge()
+	{
+		TE_info = new TE_Information();
 	}
 	
 	public Object getSource(){

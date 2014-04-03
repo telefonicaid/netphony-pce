@@ -25,13 +25,13 @@ import tid.pce.pcep.objects.ExplicitRouteObject;
 import tid.pce.pcep.objects.GeneralizedEndPoints;
 import tid.pce.pcep.objects.NoPath;
 import tid.pce.pcep.objects.ObjectParameters;
+import tid.pce.pcep.objects.P2MPEndPointsDataPathID;
 import tid.pce.pcep.objects.RequestParameters;
 import tid.pce.pcep.objects.tlvs.NoPathTLV;
 import tid.pce.server.wson.ReservationManager;
 import tid.pce.tedb.DomainTEDB;
 import tid.pce.tedb.IntraDomainEdge;
 import tid.pce.tedb.TEDB;
-import tid.pce.tedb.TE_Information;
 import tid.protocol.commons.ByteHandler;
 import tid.provisioningManager.objects.RouterInfoPM;
 import tid.rsvp.objects.subobjects.GeneralizedLabelEROSubobject;
@@ -164,6 +164,23 @@ public class VLAN_Multicast_algorithm implements ComputingAlgorithm
 			source = new RouterInfoPM(endP.getP2MPEndpoints().getEndPointAndRestrictions().getEndPoint().getXifiEndPointTLV().getSwitchID());
 			source_mac = endP.getP2MPEndpoints().getEndPointAndRestrictions().getEndPoint().getXifiEndPointTLV().getMac();
 		}
+		else if (EP.getOT() == ObjectParameters.PCEP_OBJECT_TYPE_P2MP_ENDPOINTS_DATAPATHID)
+		{
+			log.info("OK : PCEP_OBJECT_TYPE_P2MP_ENDPOINTS_DATAPATHID");
+			switchList = new ArrayList<RouterInfoPM>();
+			portList = new ArrayList<Integer>();
+			
+			P2MPEndPointsDataPathID endP = (P2MPEndPointsDataPathID)req.getEndPoints();
+			
+			for (int i = 0; i < endP.getDestDatapathIDList().size(); i++)
+			{
+				switchList.add(new RouterInfoPM(endP.getDestDatapathIDList().get(i)));
+				portList.add(0);
+			}
+			
+			source = new RouterInfoPM(endP.getSourceDatapathID());
+			source_mac = "00:00:00:00:00:00";
+		}
 		else if (EP.getOT()==ObjectParameters.PCEP_OBJECT_TYPE_ENDPOINTS_MAC)
 		{
 			log.info("Error : PCEP_OBJECT_TYPE_ENDPOINTS_MAC");
@@ -185,8 +202,11 @@ public class VLAN_Multicast_algorithm implements ComputingAlgorithm
 			SimpleDirectedWeightedGraph<Object,IntraDomainEdge> graphLambda = preComp.getNetworkGraphs().get(0); 
 			KruskalMinimumSpanningTree<Object,IntraDomainEdge>  kmst = new KruskalMinimumSpanningTree<Object,IntraDomainEdge> (graphLambda);
 			edges = kmst.getEdgeSet();
+			
+			
+			log.info("graphLambda::::"+graphLambda);
 				
-			if (edges==null)
+			if ((edges==null) || (edges.size() == 0))
 			{				
 				return sendNoPath(response, m_resp);	
 			}
@@ -199,6 +219,7 @@ public class VLAN_Multicast_algorithm implements ComputingAlgorithm
 			for (IntraDomainEdge ide : edges) 
 			{	
 				log.info("ide.getSource():"+ide.getSource()+",ide.getTarget():"+ide.getTarget());
+				log.info("graphLambda.getEdge(ide.getTarget(), ide.getSource()):"+graphLambda.getEdge(ide.getTarget(), ide.getSource()));
 				sdwg.addVertex(ide.getSource());
 				sdwg.addVertex(ide.getTarget());
 				sdwg.addEdge(ide.getSource(), ide.getTarget(), ide);
@@ -335,7 +356,7 @@ public class VLAN_Multicast_algorithm implements ComputingAlgorithm
 	
 	private ComputingResponse sendNoPath(Response response, ComputingResponse m_resp)
 	{
-		log.warning("Error: Source or destination are NOT in the TED");
+		log.warning("Big Warning: Source or destination are NOT in the TED, sending NO PATH");
 		NoPath noPath= new NoPath();
 		noPath.setNatureOfIssue(ObjectParameters.NOPATH_NOPATH_SAT_CONSTRAINTS);
 		NoPathTLV noPathTLV=new NoPathTLV();

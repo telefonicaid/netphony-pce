@@ -3,13 +3,22 @@ package tid.pce.client;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.Hashtable;
+import java.util.Random;
 import java.util.logging.Logger;
+
 import tid.pce.pcep.PCEPProtocolViolationException;
 import tid.pce.pcep.messages.PCEPMessage;
 import tid.pce.pcep.messages.PCEPMonReq;
 import tid.pce.pcep.messages.PCEPRequest;
 import tid.pce.pcep.messages.PCEPResponse;
 import tid.util.UtilsFunctions;
+
+/**
+ * 
+ * Valors i humiltat
+ *
+ */
+
 
 public class ClientRequestManager {
 	//private PCCPCEPSession session;
@@ -36,14 +45,67 @@ public class ClientRequestManager {
 		}
 	}
 
-	public void setDataOutputStream(DataOutputStream out){
+	public void setDataOutputStream(DataOutputStream out)
+	{
 		this.out=out;
 	}
-	public PCEPResponse newRequest( PCEPRequest pcreq){
+	
+	public PCEPMessage newRequest( PCEPMessage pcreq)
+	{
 		return newRequest(pcreq,30000);
 	}
 	
-	public PCEPResponse newRequest( PCEPRequest pcreq, long maxTimeMs){
+	
+	//Generic function in case instead of PCEPRequest/PCEPResponse it's PCEPInitate/PCEPReport
+	//Fmdo: la humiltat
+	public PCEPResponse newRequest( PCEPRequest pcreq)
+	{
+		return newRequest(pcreq,30000);
+	}
+	
+	
+	
+	//Generic function in case instead of PCEPRequest/PCEPResponse it's PCEPInitate/PCEPReport
+	//Fmdo: la humiltat
+	public PCEPMessage newRequest( PCEPMessage pcreq, long maxTimeMs)
+	{
+		log.info("New Request. Request:"+pcreq.toString());
+		Object object_lock = new Object();		
+		long idRequest = generateRandomID();
+
+		Long idReqLong = new Long(idRequest);
+		long timeIni = System.nanoTime();
+		locks.put(idReqLong, object_lock);
+		sendPCEPMessage(pcreq);
+		
+		synchronized (object_lock) 
+		{ 
+			try 
+			{				
+				log.info("ESPERAREMOS "+maxTimeMs);
+				object_lock.wait(maxTimeMs);
+			} 
+			catch (InterruptedException e)
+			{
+				UtilsFunctions.exceptionToString(e);
+			}
+		}
+		
+		long timeIni2=System.nanoTime();
+		double reqTime_ms=(timeIni2-timeIni)/1000000;
+		log.fine("Request or timeout");
+		
+		PCEPMessage resp = responses.remove(new Long(idRequest));
+		if (resp==null)
+		{
+			log.warning("NO RESPONSE!!!!! me deshago del lock... con idReqLong "+idRequest);
+			locks.remove(idReqLong);
+		}
+		return resp;
+	}
+	
+	public PCEPResponse newRequest( PCEPRequest pcreq, long maxTimeMs)
+	{
 		log.info("New Request. Request:"+pcreq.toString());
 		Object object_lock=new Object();		
 		long idRequest=pcreq.getRequest(0).getRequestParameters().getRequestID();
@@ -52,11 +114,14 @@ public class ClientRequestManager {
 		long timeIni=System.nanoTime();
 		locks.put(idReqLong, object_lock);
 		sendRequest(pcreq);
-		synchronized (object_lock) { 
-			try {				
+		synchronized (object_lock) 
+		{ 
+			try 
+			{				
 				log.info("ESPERAREMOS "+maxTimeMs);
 				object_lock.wait(maxTimeMs);
-			} catch (InterruptedException e)
+			} 
+			catch (InterruptedException e)
 			{
 				UtilsFunctions.exceptionToString(e);
 			}
@@ -74,8 +139,9 @@ public class ClientRequestManager {
 		return resp;
 	}
 	
-	public void sendRequest(PCEPRequest req){
-		log.fine("Sending Request");
+	public void sendRequest(PCEPRequest req)
+	{
+		log.fine("Sending Request: :" + req);
 		log.info("Sending PCEP Request");
 		sendPCEPMessage(req);
 	}
@@ -88,7 +154,7 @@ public class ClientRequestManager {
 			log.info(UtilsFunctions.exceptionToString(e1));
 		}
 		try {
-			log.info("Sending message ::"+msg.getBytes());
+			log.info("Sending message ::"+msg);
 			out.write(msg.getBytes());
 			out.flush();
 		} catch (IOException e) {
@@ -137,5 +203,11 @@ public class ClientRequestManager {
 		} catch (IOException e) {
 			log.warning("Error sending REQ: " + e.getMessage());
 		}
+	}
+	
+	private int generateRandomID()
+	{
+		Random generator = new Random(); 
+		return generator.nextInt(Integer.MAX_VALUE);
 	}
 }

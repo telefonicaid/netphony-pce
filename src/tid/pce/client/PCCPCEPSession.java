@@ -1,6 +1,5 @@
 package tid.pce.client;
 
-import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
 import java.util.Calendar;
@@ -15,7 +14,6 @@ import tid.emulator.node.transport.lsp.LSPKey;
 import tid.emulator.node.transport.lsp.LSPManager;
 import tid.emulator.node.transport.lsp.te.LSPTE;
 import tid.pce.client.tester.LSPConfirmationDispatcher;
-import tid.pce.computingEngine.ComputingResponse;
 import tid.pce.pcep.PCEPProtocolViolationException;
 import tid.pce.pcep.messages.PCEPMessage;
 import tid.pce.pcep.messages.PCEPMessageTypes;
@@ -120,6 +118,7 @@ public class PCCPCEPSession extends GenericPCEPSession{
 		this.no_delay=no_delay;
 		this.pcepSessionManager=pcepSessionManager;
 		this.lspManager = lspManager;
+		log.info("this.lspManager.getOut(out):"+this.lspManager.getOut());
 		this.lspManager.setOut(out);
 		
 	}
@@ -169,6 +168,11 @@ public class PCCPCEPSession extends GenericPCEPSession{
 		} 
 
 		initializePCEPSession(false, 15, 200,false,false,null,null, pcepSessionManager.isStateful()?lspManager.getDataBaseVersion():((long)0));
+		
+		if (lspManager != null)
+		{
+			lspManager.setOut(out);
+		}
 		
 		crm.setDataOutputStream(out);
 		log.info("PCE Session "+this.toString()+" succesfully established!!");
@@ -378,7 +382,9 @@ public class PCCPCEPSession extends GenericPCEPSession{
 		return newReqId;
 	}
 	
-	public void endSession(){
+	public void endSession()
+	{
+		log.info("Ending Session!");
 	}
 
 	@Override
