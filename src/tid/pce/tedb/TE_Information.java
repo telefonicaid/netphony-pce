@@ -64,7 +64,7 @@ public class TE_Information {
 	
 	private AvailableLabels availableLabels;
 	
-	private int NumberWLANs;
+	private int NumberWLANs = 15;
 	
 	private boolean withWLANs = false;
 	
@@ -78,7 +78,9 @@ public class TE_Information {
 	/**
 	 * TEDB logger
 	 */
-	public TE_Information(){			
+	public TE_Information()
+	{
+		initWLANs();
 	}
 
 	public AvailableLabels getAvailableLabels() {

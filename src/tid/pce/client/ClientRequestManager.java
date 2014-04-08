@@ -158,6 +158,7 @@ public class ClientRequestManager {
 			out.write(msg.getBytes());
 			out.flush();
 		} catch (IOException e) {
+			log.info(UtilsFunctions.exceptionToString(e));
 			log.warning("Error sending msg: " + e.getMessage());
 		}
 	}

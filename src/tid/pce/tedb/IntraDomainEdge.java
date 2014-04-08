@@ -38,7 +38,7 @@ public class IntraDomainEdge extends DefaultWeightedEdge {
 	/**
 	 * Traffic engineering information, as defined in IETF
 	 */
-	public TE_Information TE_info;
+	public TE_Information TE_info = new TE_Information();
 	
 	/**
 	 * Transmission delay of the link (just transmission) 

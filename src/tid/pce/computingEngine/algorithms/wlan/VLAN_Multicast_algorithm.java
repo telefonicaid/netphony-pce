@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Logger;
 
 import org.jgrapht.GraphPath;
@@ -46,6 +47,7 @@ import tid.rsvp.objects.subobjects.SwitchIDEROSubobjectEdge;
 
 public class VLAN_Multicast_algorithm implements ComputingAlgorithm 
 {
+	static AtomicInteger atI = new AtomicInteger(0);
 	static public String BYTE_TAG = "1111000011110001";
 
 	/**
@@ -105,6 +107,9 @@ public class VLAN_Multicast_algorithm implements ComputingAlgorithm
 	 */
 	public ComputingResponse call()
 	{ 
+		
+		
+		
 		//Timestamp of the start of the algorithm;
 		long tiempoini =System.nanoTime();
 		//Create the response message
@@ -186,6 +191,14 @@ public class VLAN_Multicast_algorithm implements ComputingAlgorithm
 			log.info("Error : PCEP_OBJECT_TYPE_ENDPOINTS_MAC");
 		}
 		
+		if (atI.intValue() % 2 == 0)
+		{
+			atI.incrementAndGet();
+			return sendNoPath(response, m_resp);		
+		}
+		
+		atI.incrementAndGet();
+		
 		//Check if all vertex are in graph
 		for (int i = 0; i < switchList.size(); i++) 
 		{
@@ -205,6 +218,7 @@ public class VLAN_Multicast_algorithm implements ComputingAlgorithm
 			
 			
 			log.info("graphLambda::::"+graphLambda);
+			log.info("kmst.getEdgeSet()::::"+kmst.getEdgeSet());
 				
 			if ((edges==null) || (edges.size() == 0))
 			{				
@@ -241,6 +255,12 @@ public class VLAN_Multicast_algorithm implements ComputingAlgorithm
 				log.info("switchList.get(i)::"+switchList.get(i));
 				DijkstraShortestPath<Object,IntraDomainEdge>  dsp = new DijkstraShortestPath<Object,IntraDomainEdge> (sdwg, source, switchList.get(i));
 				GraphPath<Object,IntraDomainEdge> result = dsp.getPath();
+				
+				if (result == null)
+				{
+					log.info("Sending No Paath");
+				}
+				
 				log.info("Iteration i: "+i);
 				for (IntraDomainEdge ide_result : result.getEdgeList())
 				{
