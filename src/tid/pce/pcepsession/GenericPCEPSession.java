@@ -459,7 +459,7 @@ public abstract class GenericPCEPSession extends Thread implements PCEPSession {
 	 * @param pceId
 	 */
 
-	protected void initializePCEPSession(boolean zeroDeadTimerAccepted, int minimumKeepAliveTimerAccepted, int maxDeadTimerAccepted, boolean isParentPCE, boolean requestsParentPCE, Inet4Address domainId, Inet4Address pceId, Long databaseVersion){
+	protected void initializePCEPSession(boolean zeroDeadTimerAccepted, int minimumKeepAliveTimerAccepted, int maxDeadTimerAccepted, boolean isParentPCE, boolean requestsParentPCE, Inet4Address domainId, Inet4Address pceId, int databaseVersion){
 
 		//private void initializePCEPSession(){
 		/**

@@ -11,9 +11,9 @@ import java.net.Inet4Address;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.logging.Logger;
 
-import tid.abno.modules.PCEParameters;
 import tid.pce.pcep.messages.PCEPReport;
 import tid.pce.server.PCEServerParameters;
+import tid.pce.server.lspdb.LSPDB_Handler;
 import tid.pce.server.lspdb.LSP_DB;
 
 public class ReportProcessorThread extends Thread
@@ -24,13 +24,13 @@ public class ReportProcessorThread extends Thread
 	LinkedBlockingQueue<PCEPReport> reportMessageQueue;
 	
 	
-	LSP_DB lspDB;
+	LSPDB_Handler lspDB;
 		
 	Logger log;
 	
 	PCEServerParameters params;
 	
-	public ReportProcessorThread(PCEServerParameters params, LinkedBlockingQueue<PCEPReport> reportMessageQueue, LSP_DB lspDB) 
+	public ReportProcessorThread(PCEServerParameters params, LinkedBlockingQueue<PCEPReport> reportMessageQueue, LSPDB_Handler lspDB) 
 	{
 		log=Logger.getLogger("PCEServer");
 		running = true;
@@ -68,7 +68,7 @@ public class ReportProcessorThread extends Thread
 		Boolean isSyncOver = false;
 		
 		log.info("Size LSP:"+pcepReport.getStateReportList().size());
-		isSyncOver = lspDB.isPCCSyncOver(pcepReport.getStateReportList().get(0).getLSP().getLspIdentifiers_tlv().getTunnelSenderIPAddress());
+		//isSyncOver = lspDB.isPCCSyncOver(pcepReport.getStateReportList().get(0).getLSP().getLspIdentifiers_tlv().getTunnelSenderIPAddress());
 		
 		log.info("Package received from adress: "+pcepReport.getStateReportList().get(0).getLSP().getLspIdentifiers_tlv().getTunnelSenderIPAddress());
 		
@@ -84,14 +84,14 @@ public class ReportProcessorThread extends Thread
 				{
 					isSyncOver = true;
 					log.info("Sync is over");
-					lspDB.setPCCSyncOver(addres);
+		//			lspDB.setPCCSyncOver(addres);
 				}
 			}
 		}
 		
 		for (int i = 0; i < pcepReport.getStateReportList().size(); i++)
 		{			
-			lspDB.addMessageToDatabase(pcepReport);
+			lspDB.processReport(pcepReport);
 		}
 	}
 }

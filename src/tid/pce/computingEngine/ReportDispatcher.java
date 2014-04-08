@@ -1,24 +1,11 @@
 package tid.pce.computingEngine;
 
-import java.io.DataOutputStream;
-import java.net.Inet4Address;
-import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.Hashtable;
-import java.util.LinkedList;
 import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
 import java.util.logging.Logger;
 
-import tid.abno.modules.PCEParameters;
-import tid.pce.pcep.constructs.Request;
-import tid.pce.pcep.constructs.SVECConstruct;
 import tid.pce.pcep.messages.PCEPReport;
-import tid.pce.pcep.messages.PCEPRequest;
-import tid.pce.pcep.objects.tlvs.MaxRequestTimeTLV;
 import tid.pce.server.PCEServerParameters;
-import tid.pce.server.lspdb.LSP_DB;
+import tid.pce.server.lspdb.LSPDB_Handler;
 
 /**
  * The ReportDispatcher receives PCEPReport messages and decides what to do with:
@@ -54,7 +41,7 @@ public class ReportDispatcher
 	private Logger log;
 	
 			
-	public ReportDispatcher(PCEServerParameters params, LSP_DB lspDB, int nThreads)
+	public ReportDispatcher(PCEServerParameters params, LSPDB_Handler lspDB, int nThreads)
 	{
 		log=Logger.getLogger("PCEServer");
 		

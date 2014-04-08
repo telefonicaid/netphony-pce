@@ -144,7 +144,7 @@ public class DomainPCESession extends GenericPCEPSession{
 	
 		remotePCEId = (Inet4Address) socket.getInetAddress();
 		
-		log.info("Database version we are concerned right now: "+params.getLspDB().getPCCDatabaseVersion(remotePCEId)+"destIp address:"+socket.getRemoteSocketAddress());
+		//log.info("Database version we are concerned right now: "+params.getLspDB().getPCCDatabaseVersion(remotePCEId)+"destIp address:"+socket.getRemoteSocketAddress());
 		initializePCEPSession(params.isZeroDeadTimerPCCAccepted(),params.getMinKeepAliveTimerPCCAccepted(),params.getMaxDeadTimerPCCAccepted(),false,false,null,null, params.getLspDB().getPCCDatabaseVersion(remotePCEId));
 		
 		if (isSessionStateful && pcepSessionManager.isStateful())

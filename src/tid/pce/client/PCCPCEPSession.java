@@ -177,7 +177,7 @@ public class PCCPCEPSession extends GenericPCEPSession{
 			} 
 		}
 
-		initializePCEPSession(false, 15, 200,false,false,null,null, pcepSessionManager.isStateful()?lspManager.getDataBaseVersion():((long)0));
+		initializePCEPSession(false, 15, 200,false,false,null,null, pcepSessionManager.isStateful()?lspManager.getDataBaseVersion():(0));
 		
 		crm.setDataOutputStream(out);
 		log.info("PCE Session "+this.toString()+" succesfully established!!");

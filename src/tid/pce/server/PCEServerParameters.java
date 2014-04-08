@@ -7,14 +7,13 @@ import java.util.LinkedList;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
-import org.eclipse.jetty.util.log.Log;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
 import tid.pce.computingEngine.AlgorithmRule;
 import tid.pce.computingEngine.MapAlgoRule;
-import tid.pce.server.lspdb.LSP_DB;
+import tid.pce.server.lspdb.LSPDB_Handler;
 import tid.pce.tedb.Layer;
 
 /**
@@ -28,7 +27,7 @@ public class PCEServerParameters {
 	 * TCP port where the PCE is listening for incoming pcep connections
 	 */
 	private int PCEServerPort = 4189;
-	
+
 	/**
 	 * TCP port to connect to manage the PCE
 	 */
@@ -38,13 +37,13 @@ public class PCEServerParameters {
 	 * Time betweeen updates to parent PCE. NOT USED NOW!!!!
 	 */
 	private long timerOSPFupdatesToParentPCE = 10000;
-	
+
 	private boolean isCompletedAuxGraph=false;
 	/**
 	 * Paramter meaning SSON network computation
 	 */
 	private boolean isSSOn= false;
-	
+
 	/**
 	 * Paramter meaning WLAN network computation
 	 */
@@ -54,7 +53,7 @@ public class PCEServerParameters {
 	 * Time between updates of reachability information to parent PCE. NOT USED NOW!!!!
 	 */
 	private long timeSendReachabilityTime = 100000;
-	
+
 	/**
 	 * Objective Function code for the Partent PCE Algorithm
 	 */
@@ -95,9 +94,9 @@ public class PCEServerParameters {
 	 * Log file
 	 */
 	private String TEDBParserLogFile = "TEDBParser.log"; 
-	
+
 	private String OSPFParserLogFile = "OSPFParser.log";
-	
+
 	private String networkDescriptionFile="network_101.xml";
 
 	/**
@@ -169,7 +168,7 @@ public class PCEServerParameters {
 	 * If OSPF with raw socket is used to receive topology.
 	 */
 	private boolean OSPFSession=false;
-	
+
 	/**
 	 * If a TCP socket, sending OSPF packets over it is used to receive topology.
 	 */
@@ -190,7 +189,7 @@ public class PCEServerParameters {
 	 * If the request Time is analyzed (for statistics only)
 	 */
 	private boolean analyzeRequestTime=false;
-	
+
 	private boolean setTraces=true;
 
 	/**
@@ -204,32 +203,32 @@ public class PCEServerParameters {
 	private boolean useMaxQueingTime=false;
 
 	private boolean multilayer=false;
-	
+
 	private boolean multidomain=false;
-	
+
 	private boolean isStateful=false;
-	
+
 	private boolean statefulDFlag =false;
 	private boolean statefulTFlag = false;
 	private boolean statefulSFlag = false;
-	
+
 	private boolean isSRCapable=false;
-	
+
 	private int MSD=0;
-	
-	private LSP_DB lspDB;
-	
+
+	private LSPDB_Handler lspDB;
+
 	private String controllerIP;
-	
+
 	private String controllerPORT;
-	
+
 	private String topologyPath;
-	
+
 	private String interDomainFile;
-	
+
 	private String controllerListFile;
-	
-	
+
+
 	public boolean isSSOn() {
 		return isSSOn;
 	}
@@ -244,7 +243,7 @@ public class PCEServerParameters {
 	 */
 	private int lambdaIni=0;
 	private int lambdaEnd=Integer.MAX_VALUE;
-	
+
 	/**
 	 * STRONGEST: collabotarive PCEs
 	 */
@@ -254,9 +253,9 @@ public class PCEServerParameters {
 	//Solo si estan los dos PCEs en el mismo equipo!! es para pruebas!!
 	private int portPrimaryPCE=4191;
 	private Inet4Address IPBackupPCE;
-	
+
 	private int idAlgo;
-	
+
 	/**
 	 * ONE: Topology Module
 	 */
@@ -269,27 +268,46 @@ public class PCEServerParameters {
 	 * File where read the BGP parameters to configure
 	 */
 	private String BGP4File = "BGP4Parameters.xml";
-	
+
 	/**
 	 * PCE Address if located in machine with more than one network interface
 	 */
-	
+
 	private String localPceAddress = "127.0.0.1";
-	
+
 	/**
 	 * If PCE is stateful
 	 */
 	//boolean isStatefulPCE = false;
-	
+
 	/**
 	 * Initialize TED from file
 	 */
-	
+
 	public boolean initFromFile = true;
 
 	protected boolean isActive = false;
-	
-	
+
+	private String dbType="_";
+	private String dbName="_";
+
+
+	public String getDbType() {
+		return dbType;
+	}
+
+	public void setDbType(String dbType) {
+		this.dbType = dbType;
+	}
+
+	public String getDbName() {
+		return dbName;
+	}
+
+	public void setDbName(String dbName) {
+		this.dbName = dbName;
+	}
+
 	/**
 	 * Default Constructor. The configuration file is PCEServerConfiguration.xml.
 	 */
@@ -365,7 +383,7 @@ public class PCEServerParameters {
 						isWLAN = mar.isWLANAlgorithm;
 						algorithmRuleList.add(mar);
 					}
-					
+
 					else if (qName.equalsIgnoreCase("controller")) {
 						controllerIP = attributes.getValue("ip");
 						controllerPORT = attributes.getValue("port");
@@ -423,13 +441,13 @@ public class PCEServerParameters {
 					}else if (qName.equalsIgnoreCase("OSPFSession")) {
 						OSPFSession=Boolean.parseBoolean(tempVal.trim());
 					}else if (qName.equalsIgnoreCase("OSPFListenerIP")){
-							OSPFListenerIP=tempVal.trim();							
+						OSPFListenerIP=tempVal.trim();							
 					}
 					else if (qName.equalsIgnoreCase("OSPFMulticast")){
-							OSPFMulticast=Boolean.parseBoolean(tempVal.trim());						
+						OSPFMulticast=Boolean.parseBoolean(tempVal.trim());						
 					}
 					else if (qName.equalsIgnoreCase("OSPFUnicast")){
-							OSPFUnicast=Boolean.parseBoolean(tempVal.trim());					
+						OSPFUnicast=Boolean.parseBoolean(tempVal.trim());					
 					}
 					else if (qName.equalsIgnoreCase("OSPFTCPSession")) {
 						OSPFTCPSession=Boolean.parseBoolean(tempVal.trim());
@@ -493,7 +511,7 @@ public class PCEServerParameters {
 					}
 					else if (qName.equalsIgnoreCase("BGP4File")) {					
 						BGP4File=tempVal.trim();					
-						}					
+					}					
 					else if (isCompletedAuxGraph==true){
 						if (qName.equalsIgnoreCase("idAlgo")) {
 							idAlgo=Integer.parseInt(tempVal.trim());
@@ -506,11 +524,11 @@ public class PCEServerParameters {
 					else if (qName.equalsIgnoreCase("isPrimaryPCE")) {		
 						primary=Boolean.parseBoolean(tempVal.trim());
 						collaborativePCEs=true;
-											
+
 					}
 					else if (qName.equalsIgnoreCase("portPrimaryPCE")) {							
 						portPrimaryPCE=Integer.parseInt(tempVal.trim());
-											
+
 					}
 					else if (qName.equalsIgnoreCase("IPBackupPCE")){
 						try {
@@ -519,6 +537,12 @@ public class PCEServerParameters {
 							// TODO Auto-generated catch block
 							e.printStackTrace();
 						}
+					}
+					else if (qName.equalsIgnoreCase("dbType")){
+						dbType=(tempVal.trim());						
+					}	
+					else if (qName.equalsIgnoreCase("dbName")){
+						dbName=(tempVal.trim());						
 					}
 					/*else if(qName.equalsIgnoreCase("isStatefulPCE")) {		
 						isStatefulPCE=Boolean.parseBoolean(tempVal.trim());
@@ -539,11 +563,11 @@ public class PCEServerParameters {
 		}
 
 	}
-	
+
 	//////////////////////////////////////////////
 	//  GETTERS AND SETTERS						// 
 	//////////////////////////////////////////////
-	
+
 	public String getTEDBParserLogFile() {
 		return TEDBParserLogFile;
 	}
@@ -731,8 +755,8 @@ public class PCEServerParameters {
 	public void setUseMaxReqTime(boolean useMaxReqTime) {
 		this.useMaxQueingTime = useMaxReqTime;
 	}
-	
-/** OSPF **/
+
+	/** OSPF **/
 	public boolean isOSPFSession() {
 		return OSPFSession;
 	}
@@ -771,7 +795,7 @@ public class PCEServerParameters {
 	public void setOSPFUnicast(boolean oSPFUnicast) {
 		OSPFUnicast = oSPFUnicast;
 	}
-	
+
 	public boolean isAnalyzeRequestTime() {
 		return analyzeRequestTime;
 	}
@@ -823,7 +847,7 @@ public class PCEServerParameters {
 	public void setLambdaEnd(int lambdaEnd) {
 		this.lambdaEnd = lambdaEnd;
 	}
-	
+
 	/**** STRONGEST: Collaborative PCEs ****/
 	public boolean isCollaborativePCEs() {
 		return collaborativePCEs;
@@ -852,7 +876,7 @@ public class PCEServerParameters {
 	public int getPortPrimaryPCE() {
 		return portPrimaryPCE;
 	}
-	
+
 	public void setPortPrimaryPCE(int portPrimaryPCE) {
 		this.portPrimaryPCE = portPrimaryPCE;
 	}
@@ -861,7 +885,7 @@ public class PCEServerParameters {
 		return IPBackupPCE;
 	}
 
-	
+
 
 	/**
 	 * ONE
@@ -885,7 +909,7 @@ public class PCEServerParameters {
 	public void setIdAlgo(int idAlgo) {
 		this.idAlgo = idAlgo;
 	}
-	
+
 	public boolean isStateful() {
 		return isStateful;
 	}
@@ -897,23 +921,23 @@ public class PCEServerParameters {
 	public boolean isSRCapable() {
 		return isSRCapable;
 	}
-	
+
 	public int getMSD() 
 	{
 		return MSD;
 	}
-	
+
 
 	public void setSRCapable(boolean isSRCapable) {
 		this.isSRCapable = isSRCapable;
 	}
-	
+
 	public void setSRCapable(int MSD) {
 		this.isSRCapable = (MSD>=0);
 		this.MSD = MSD;
 	}
-	
-	
+
+
 	public boolean isActive() {
 		return isActive;
 	}
@@ -946,11 +970,11 @@ public class PCEServerParameters {
 		this.isStatefulPCE = isStatefulPCE;
 	}*/
 
-	public LSP_DB getLspDB() {
+	public LSPDB_Handler getLspDB() {
 		return lspDB;
 	}
 
-	public void setLspDB(LSP_DB lspDB) {
+	public void setLspDB(LSPDB_Handler lspDB) {
 		this.lspDB = lspDB;
 	}
 
@@ -1025,5 +1049,5 @@ public class PCEServerParameters {
 	public void setStatefulSFlag(boolean statefulSFlag) {
 		this.statefulSFlag = statefulSFlag;
 	}	
-	
+
 }

@@ -20,7 +20,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.logging.SimpleFormatter;
 
-import tid.bgp.bgp4Peer.pruebas.BGPPeer;
 import tid.pce.computingEngine.ReportDispatcher;
 import tid.pce.computingEngine.RequestDispatcher;
 import tid.pce.computingEngine.algorithms.ComputingAlgorithmManager;
@@ -31,16 +30,13 @@ import tid.pce.computingEngine.algorithms.multiLayer.OperationsCounter;
 import tid.pce.pcepsession.PCEPSessionsInformation;
 import tid.pce.server.communicationpce.BackupSessionManagerTask;
 import tid.pce.server.communicationpce.CollaborationPCESessionManager;
-import tid.pce.server.lspdb.LSP_DB;
-import tid.pce.server.lspdb.RedisLSP_DB;
-import tid.pce.server.lspdb.SimpleLSP_DB;
+import tid.pce.server.lspdb.LSPDB_Handler;
 import tid.pce.server.management.PCEManagementSever;
 import tid.pce.server.wson.ReservationManager;
 import tid.pce.tedb.DomainTEDB;
 import tid.pce.tedb.MultiLayerTEDB;
 import tid.pce.tedb.SimpleITTEDB;
 import tid.pce.tedb.SimpleTEDB;
-import tid.provisioningManager.modules.PMController;
 
 
 public class PCEServer {
@@ -52,7 +48,7 @@ public class PCEServer {
 	public static Logger log5;
 	private static OperationsCounter OPcounter;
 
-	private static LSP_DB lspDB;
+	private static LSPDB_Handler lspDB;
 
 	/**
 	 * LSP database. It should only be necessary if PCE is stateful
@@ -375,33 +371,23 @@ public class PCEServer {
 			//
 			if (pcepSessionsInformation.isStateful())
 			{
-//				lspDB = new SimpleLSP_DB();
-//				params.setLspDB(lspDB);
-//				log.info("Creando dispatchers para el LSP DB");
-//				PCCReportDispatcher = new ReportDispatcher(params, lspDB, 2);
-				lspDB = new RedisLSP_DB("PRUEBA");
-				params.setLspDB(lspDB);
+			log.info("redis: "+params.getDbType() + " "+params.getDbName());
+				if (params.getDbType().equals("redis") && params.getDbName().length() > 0)
+				{
+					log.info("redis: redis db with id: "+ params.getDbName());
+					lspDB = new LSPDB_Handler(params.getDbName(),"localhost");	
+					lspDB.fillFromDB();
+				}
+				else
+				{
+					lspDB = new LSPDB_Handler();
+				
+				}
+				params.setLspDB(lspDB);	
 				log.info("Creando dispatchers para el LSP DB");
 				PCCReportDispatcher = new ReportDispatcher(params, lspDB, 2);
-
-			
-			
-			
-			
 			}
-			/*
-			(new Thread()
-			{
-				@Override
-				public void run()
-				{
-					String []args = new String[0];
-					PMController.main(args);
-				}
-
-			}).start();
-			 */
-
+			
 
 			while (listening) {
 				//new PCESession(serverSocket.accept(),params, PCCRequestsQueue,ted,pcm.getChildPCERequestManager()).start();

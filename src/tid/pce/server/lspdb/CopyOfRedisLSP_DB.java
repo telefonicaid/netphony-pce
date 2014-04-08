@@ -29,7 +29,7 @@ import com.google.gson.Gson;
  * @author jaume
  */
 
-public class RedisLSP_DB implements LSP_DB
+public class CopyOfRedisLSP_DB implements LSP_DB
 {
 	
 	
@@ -48,7 +48,7 @@ public class RedisLSP_DB implements LSP_DB
 	private ReentrantLock PCCListLock;
 	private Hashtable<Inet4Address, PCCInfo> PCCList;
 	
-	private Hashtable<LSPKey, LSP> LSPList;
+	private Hashtable<LSPKey, LSPTEInfo> LSPTEList;
 	
 	private Logger log;
 	
@@ -68,7 +68,7 @@ public class RedisLSP_DB implements LSP_DB
 		return dbId+"_"+PCCId+"_LSP";
 	}
 	
-	public RedisLSP_DB(String id)
+	public CopyOfRedisLSP_DB(String id)
 	{
 
 
@@ -77,11 +77,11 @@ public class RedisLSP_DB implements LSP_DB
    	 	dbId = id;
 		log = Logger.getLogger("PCEPParser");
 		PCCList = new Hashtable<Inet4Address, PCCInfo>();
-		LSPList = new Hashtable<LSPKey, LSP>();
+		LSPTEList = new Hashtable<LSPKey, LSPTEInfo>();
 		DBVersion = new AtomicLong();
 		PCCListLock = new ReentrantLock();
 		
-   	 	jedis = new Jedis("10.95.164.222",6379);
+   	 	jedis = new Jedis("localhost");
    	 	jedis.connect();		
    	 	if (jedis.isConnected())
    	 	{
@@ -122,10 +122,8 @@ public class RedisLSP_DB implements LSP_DB
 						try {
 							LSP lsp = new LSP(lspBytes,0);
 							log.info("redis: LSP:::with Id"+lsp.getLspId()+" flags: "+lsp.getObjectClass()+" "+lsp.issFlag());
-							
-							LSPList.put(new LSPKey(address,lsp.getLspId()),lsp);
-							
 						} catch (MalformedPCEPObjectException e) {
+							// TODO Auto-generated catch block
 							e.printStackTrace();
 						}
 					}				
@@ -134,7 +132,13 @@ public class RedisLSP_DB implements LSP_DB
 					
 				} catch (UnknownHostException e) {
 					e.printStackTrace();
-				}	
+				}
+				
+
+				
+
+
+				
 			}
    	 	}
    	 	else
@@ -186,7 +190,27 @@ public class RedisLSP_DB implements LSP_DB
 		}
 	}
 	
-
+	@Override
+	synchronized public Boolean isPCCSyncOver(Inet4Address adrss) 
+	{
+		PCCInfo info = PCCList.get(adrss);
+		if (info == null)
+		{
+			log.warning("This should never be executed");
+			return false;
+		}
+		else
+		{
+			return PCCList.get(adrss).isSyncOver;
+		}
+	}
+	
+	@Override
+	synchronized public void setPCCSyncOver(Inet4Address adrss) 
+	{
+		PCCInfo info = PCCList.get(adrss);
+		info.isSyncOver = true;
+	}
 	@Override
 	synchronized public void addLSP(LSPTE lsp) 
 	{
@@ -231,14 +255,14 @@ public class RedisLSP_DB implements LSP_DB
 				log.info("redis: updated database version of PCC: "+PCCList.get(adress)+" to v."+lspDB.getLSPStateDBVersion());
 			}
 			
-			LSP lspFromDB = LSPList.get(new LSPKey(adress,lspId));
+			LSPTEInfo lspInfo = LSPTEList.get(new LSPKey(adress,lspId));
 			
 			boolean rFlag = lsp.isrFlag();
 			
-			if ((lspFromDB!=null)&&(rFlag == false))
+			if ((lspInfo!=null)&&(rFlag == false))
 			{
 				log.info("Overriding previous information from database");
-				LSPList.put(new LSPKey(adress,lspId), lsp);
+				lspInfo.pcepReport = pcepReport;
 				
 				/******REDIS*************/
 				Gson gson = new Gson();
@@ -251,7 +275,7 @@ public class RedisLSP_DB implements LSP_DB
 			{
 				if (rFlag)
 				{
-					LSPList.remove(new LSPKey(adress,lspId));
+					LSPTEList.remove(new LSPKey(adress,lspId));
 					
 					/****REDIS*********/
 					log.info("redis: Removing from database lsp with id "+lspId +" and adress "+adress);				
@@ -263,7 +287,10 @@ public class RedisLSP_DB implements LSP_DB
 					log.info("Address"+adress);
 					log.info("lspId"+lspId);
 					//log.info();
-					LSPList.put(new LSPKey(adress,lspId),lsp);
+					LSPTEList.remove(new LSPKey(adress,lspId));
+					lspInfo = new LSPTEInfo(pcepReport);
+					
+					LSPTEList.put(new LSPKey(adress,lspId),lspInfo);
 					
 					
 					/****REDIS*****/
@@ -293,26 +320,13 @@ public class RedisLSP_DB implements LSP_DB
 		}
 	}
 	
-	@Override
-	synchronized public Boolean isPCCSyncOver(Inet4Address adrss) 
+	public class LSPTEInfo
 	{
-		PCCInfo info = PCCList.get(adrss);
-		if (info == null)
+		public PCEPReport pcepReport;
+		LSPTEInfo( PCEPReport pcepReport)
 		{
-			log.warning("This should never be executed");
-			return false;
+			this.pcepReport = pcepReport;
 		}
-		else
-		{
-			return PCCList.get(adrss).isSyncOver;
-		}
-	}
-	
-	@Override
-	synchronized public void setPCCSyncOver(Inet4Address adrss) 
-	{
-		PCCInfo info = PCCList.get(adrss);
-		info.isSyncOver = true;
 	}
 	
 	private class PCCInfo
@@ -328,8 +342,6 @@ public class RedisLSP_DB implements LSP_DB
 	}
 	
 	
-	
-	
 
 	@Override
 	public LSPTE getLSP(LSPKey keyLSP)
@@ -337,14 +349,14 @@ public class RedisLSP_DB implements LSP_DB
 		return null;
 	}
 
-	public Hashtable<LSPKey, LSP> getLSPList() 
+	public Hashtable<LSPKey, LSPTEInfo> getLSPTEList() 
 	{
-		return LSPList;
+		return LSPTEList;
 	}
 
-	public void setLSPTEList(Hashtable<LSPKey, LSP> lSPTEList) 
+	public void setLSPTEList(Hashtable<LSPKey, LSPTEInfo> lSPTEList) 
 	{
-		LSPList = lSPTEList;
+		LSPTEList = lSPTEList;
 	}
 
 	public Jedis getJedis() {
