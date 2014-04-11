@@ -1,7 +1,7 @@
 package tid.pce.client;
 
-import java.io.DataOutputStream;
 import java.io.IOException;
+import java.net.Inet4Address;
 import java.net.Socket;
 import java.util.Calendar;
 import java.util.Enumeration;
@@ -15,16 +15,25 @@ import tid.emulator.node.transport.lsp.LSPKey;
 import tid.emulator.node.transport.lsp.LSPManager;
 import tid.emulator.node.transport.lsp.te.LSPTE;
 import tid.pce.client.tester.LSPConfirmationDispatcher;
-import tid.pce.computingEngine.ComputingResponse;
 import tid.pce.pcep.PCEPProtocolViolationException;
+import tid.pce.pcep.constructs.Path;
+import tid.pce.pcep.constructs.StateReport;
+import tid.pce.pcep.messages.PCEPInitiate;
 import tid.pce.pcep.messages.PCEPMessage;
 import tid.pce.pcep.messages.PCEPMessageTypes;
 import tid.pce.pcep.messages.PCEPReport;
 import tid.pce.pcep.messages.PCEPResponse;
 import tid.pce.pcep.messages.PCEPTELinkConfirmation;
 import tid.pce.pcep.messages.PCEPUpdate;
+import tid.pce.pcep.objects.EndPointsIPv4;
+import tid.pce.pcep.objects.ExplicitRouteObject;
+import tid.pce.pcep.objects.LSP;
 import tid.pce.pcep.objects.OPEN;
 import tid.pce.pcep.objects.ObjectParameters;
+import tid.pce.pcep.objects.PCEPIntiatedLSP;
+import tid.pce.pcep.objects.SRERO;
+import tid.pce.pcep.objects.SRP;
+import tid.pce.pcep.objects.tlvs.PathSetupTLV;
 import tid.pce.pcepsession.DeadTimerThread;
 import tid.pce.pcepsession.GenericPCEPSession;
 import tid.pce.pcepsession.KeepAliveThread;
@@ -324,6 +333,71 @@ public class PCCPCEPSession extends GenericPCEPSession{
 						break;
 					}					
 					break;
+					
+				case PCEPMessageTypes.MESSAGE_INTIATE:
+					log.info("Received INITIATE message");
+					timeIni=System.nanoTime();
+					try {
+						PCEPInitiate p_init = new PCEPInitiate(msg);
+						//LSPTE lsp = new LSPTE(lsp_id, lspManager.getLocalIP(), ((EndPointsIPv4)p_init.getPcepIntiatedLSPList().get(0).getEndPoint()).getDestIP(), false, 1001, 10000, PathStateParameters.creatingLPS);
+						PathSetupTLV pstlv = p_init.getPcepIntiatedLSPList().get(0).getRsp().getPathSetupTLV();
+						if (pstlv != null && pstlv.isSR())
+						{
+							log.info("Found initiate message with segment routing..sending report");
+							SRERO srero = p_init.getPcepIntiatedLSPList().get(0).getSrero();					
+							SRP rsp = p_init.getPcepIntiatedLSPList().get(0).getRsp();
+							LSP lsp = p_init.getPcepIntiatedLSPList().get(0).getLsp();
+							PCEPReport pcrep = new PCEPReport();
+							StateReport srep = new StateReport();
+
+							Path path = new Path();
+							path.setSRERO(srero);
+							
+							srep.setRSP(rsp);
+							srep.setLSP(lsp);
+							srep.setPath(path);
+							
+							pcrep.addStateReport(srep);
+							log.info("Sending message to pce...");
+							sendPCEPMessage(pcrep);
+							log.info("Message sent!");
+							
+						}
+						else
+						{
+							log.info("Found initiate message without segment routing.");
+							ExplicitRouteObject ero = p_init.getPcepIntiatedLSPList().get(0).getEro();
+
+							ERO eroOther = new ERO();
+
+							eroOther.setEroSubobjects(ero.getEROSubobjectList());
+
+							//lspManager.startLSP(lsp, eroOther);
+
+
+							Inet4Address destinationId=((EndPointsIPv4)p_init.getPcepIntiatedLSPList().get(0).getEndPoint()).getDestIP();
+							long lsp_id = lspManager.addnewLSP(destinationId, 1000, false, 1002,eroOther);
+							log.info("LSPList: "+lspManager.getLSPList().size()+" "+(new LSPKey(lspManager.getLocalIP(), lsp_id)).toString());
+							long time1= System.nanoTime();
+							lspManager.waitForLSPaddition(lsp_id, 1000);
+							log.info("notifying established lsp...");
+							//lspManager.notifyLPSEstablished(lsp_id, lspManager.getLocalIP());
+							
+							//UpdateRequest ur =p_init.getUpdateRequestList().getFirst();		
+							//log.info(p_req.toString());
+
+						}				
+						
+						
+
+						
+					} catch (Exception e) {
+						log.severe("PROBLEMON");
+						e.printStackTrace();
+						break;
+					}								
+					
+					break;					
 					
 				case PCEPMessageTypes.MESSAGE_PCREQ:
 					log.info("PCREQ message received");

@@ -30,7 +30,7 @@ import tid.pce.computingEngine.algorithms.multiLayer.OperationsCounter;
 import tid.pce.pcepsession.PCEPSessionsInformation;
 import tid.pce.server.communicationpce.BackupSessionManagerTask;
 import tid.pce.server.communicationpce.CollaborationPCESessionManager;
-import tid.pce.server.lspdb.LSPDB_Handler;
+import tid.pce.server.lspdb.ReportDB_Handler;
 import tid.pce.server.management.PCEManagementSever;
 import tid.pce.server.wson.ReservationManager;
 import tid.pce.tedb.DomainTEDB;
@@ -48,7 +48,7 @@ public class PCEServer {
 	public static Logger log5;
 	private static OperationsCounter OPcounter;
 
-	private static LSPDB_Handler lspDB;
+	private static ReportDB_Handler rptdb;
 
 	/**
 	 * LSP database. It should only be necessary if PCE is stateful
@@ -375,17 +375,16 @@ public class PCEServer {
 				if (params.getDbType().equals("redis") && params.getDbName().length() > 0)
 				{
 					log.info("redis: redis db with id: "+ params.getDbName());
-					lspDB = new LSPDB_Handler(params.getDbName(),"localhost");	
-					lspDB.fillFromDB();
+					rptdb = new ReportDB_Handler(params.getDbName(),"localhost");	
+					rptdb.fillFromDB();
 				}
 				else
 				{
-					lspDB = new LSPDB_Handler();
-				
+					rptdb = new ReportDB_Handler();
 				}
-				params.setLspDB(lspDB);	
+				params.setLspDB(rptdb);	
 				log.info("Creando dispatchers para el LSP DB");
-				PCCReportDispatcher = new ReportDispatcher(params, lspDB, 2);
+				PCCReportDispatcher = new ReportDispatcher(params, rptdb, 2);
 			}
 			
 

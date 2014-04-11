@@ -13,7 +13,7 @@ import java.util.logging.Logger;
 
 import tid.pce.pcep.messages.PCEPReport;
 import tid.pce.server.PCEServerParameters;
-import tid.pce.server.lspdb.LSPDB_Handler;
+import tid.pce.server.lspdb.ReportDB_Handler;
 import tid.pce.server.lspdb.LSP_DB;
 
 public class ReportProcessorThread extends Thread
@@ -24,13 +24,13 @@ public class ReportProcessorThread extends Thread
 	LinkedBlockingQueue<PCEPReport> reportMessageQueue;
 	
 	
-	LSPDB_Handler lspDB;
+	ReportDB_Handler lspDB;
 		
 	Logger log;
 	
 	PCEServerParameters params;
 	
-	public ReportProcessorThread(PCEServerParameters params, LinkedBlockingQueue<PCEPReport> reportMessageQueue, LSPDB_Handler lspDB) 
+	public ReportProcessorThread(PCEServerParameters params, LinkedBlockingQueue<PCEPReport> reportMessageQueue, ReportDB_Handler lspDB) 
 	{
 		log=Logger.getLogger("PCEServer");
 		running = true;

@@ -13,7 +13,7 @@ import org.xml.sax.helpers.DefaultHandler;
 
 import tid.pce.computingEngine.AlgorithmRule;
 import tid.pce.computingEngine.MapAlgoRule;
-import tid.pce.server.lspdb.LSPDB_Handler;
+import tid.pce.server.lspdb.ReportDB_Handler;
 import tid.pce.tedb.Layer;
 
 /**
@@ -216,7 +216,7 @@ public class PCEServerParameters {
 
 	private int MSD=0;
 
-	private LSPDB_Handler lspDB;
+	private ReportDB_Handler lspDB;
 
 	private String controllerIP;
 
@@ -970,11 +970,11 @@ public class PCEServerParameters {
 		this.isStatefulPCE = isStatefulPCE;
 	}*/
 
-	public LSPDB_Handler getLspDB() {
+	public ReportDB_Handler getLspDB() {
 		return lspDB;
 	}
 
-	public void setLspDB(LSPDB_Handler lspDB) {
+	public void setLspDB(ReportDB_Handler lspDB) {
 		this.lspDB = lspDB;
 	}
 

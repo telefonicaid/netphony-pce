@@ -5,7 +5,7 @@ import java.util.logging.Logger;
 
 import tid.pce.pcep.messages.PCEPReport;
 import tid.pce.server.PCEServerParameters;
-import tid.pce.server.lspdb.LSPDB_Handler;
+import tid.pce.server.lspdb.ReportDB_Handler;
 
 /**
  * The ReportDispatcher receives PCEPReport messages and decides what to do with:
@@ -41,7 +41,7 @@ public class ReportDispatcher
 	private Logger log;
 	
 			
-	public ReportDispatcher(PCEServerParameters params, LSPDB_Handler lspDB, int nThreads)
+	public ReportDispatcher(PCEServerParameters params, ReportDB_Handler lspDB, int nThreads)
 	{
 		log=Logger.getLogger("PCEServer");
 		

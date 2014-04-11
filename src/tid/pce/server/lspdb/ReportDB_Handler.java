@@ -13,8 +13,8 @@ import tid.pce.pcep.objects.LSP;
 import tid.pce.pcep.objects.OPEN;
 
 
-public class LSPDB_Handler {
-	protected Hashtable<String, LSPDB> moduleList;
+public class ReportDB_Handler {
+	protected Hashtable<String, ReportDB> moduleList;
 
 	private Logger log;
 
@@ -25,17 +25,17 @@ public class LSPDB_Handler {
 
 	protected String handlerId="";
 
-	public static final String DEF_MODULE = "DEFAULT";
 
-	public LSPDB_Handler ()
+
+	public ReportDB_Handler ()
 	{   
 
 		log = Logger.getLogger("PCEPParser");
-		moduleList = new Hashtable<String, LSPDB>();
+		moduleList = new Hashtable<String, ReportDB>();
 	}
 
 
-	public LSPDB_Handler(String handlerId, String dbHost)
+	public ReportDB_Handler(String handlerId, String dbHost)
 	{
 		this();
 		this.dbHost = dbHost;
@@ -63,9 +63,9 @@ public class LSPDB_Handler {
 			{
 				String modId = (String) iterator.next();	
 				log.info("redis: module found: "+modId);
-				LSPDB_Redis lspdb = new LSPDB_Redis(modId,dbHost);
-				lspdb.fillFromDB();
-				moduleList.put(modId, lspdb);
+				ReportDB_Redis rptdb = new ReportDB_Redis(modId,dbHost);
+				rptdb.fillFromDB();
+				moduleList.put(modId, rptdb);
 			}
 		}
 		else
@@ -85,11 +85,11 @@ public class LSPDB_Handler {
 		log.info("redis: modules: "+modules.toString());
 		for (Iterator iterator = modules.iterator(); iterator.hasNext();) 
 		{
-			String modId = ((String) iterator.next()).replace("_LSP","");	
+			String modId = ((String) iterator.next()).replace("_StateReport","");	
 			log.info("redis: module found: "+modId);
-			LSPDB_Redis lspdb = new LSPDB_Redis(modId,dbHost);
-			lspdb.fillFromDB();
-			moduleList.put(modId, lspdb);
+			ReportDB_Redis rptdb = new ReportDB_Redis(modId,dbHost);
+			rptdb.fillFromDB();
+			moduleList.put(modId, rptdb);
 		}		
 	}
 
@@ -100,10 +100,10 @@ public class LSPDB_Handler {
 
 	public String getModuleList(String handlerId)
 	{
-		return handlerId+"_*_LSP";
+		return handlerId+"_*_StateReport";
 	}
 
-	public String getLSPDBList(Inet4Address ad)
+	public String getStateReportDBList(Inet4Address ad)
 	{
 		return handlerId+"_"+ad.toString();
 	}
@@ -113,20 +113,20 @@ public class LSPDB_Handler {
 		return handlerId+"_"+"MODULES";
 	}
 
-	public LSPDB getLSPDB(String key)
+	public ReportDB getStateReportDB(String key)
 	{
 		return moduleList.get(key);
 	}
 
-	public void setLSPDB(String key, LSPDB lspdb)
+	public void setStateReportDB(String key, ReportDB rptdb)
 	{
-		moduleList.put(key, lspdb);
+		moduleList.put(key, rptdb);
 	}
 
 
 	synchronized public void processReport(PCEPReport pcepReport)
 	{
-		log.info("Adding PCEPReport to database,lsps:"+pcepReport.getStateReportList().size());
+		log.info("Adding PCEPReport to database,rpts:"+pcepReport.getStateReportList().size());
 
 
 		for (int i = 0; i < pcepReport.getStateReportList().size(); i++)
@@ -139,31 +139,31 @@ public class LSPDB_Handler {
 				return; 
 			}
 			Inet4Address adress = lsp.getLspIdentifiers_tlv().getTunnelSenderIPAddress();
-			String dbId = getLSPDBList(adress);
-			LSPDB lspdb = moduleList.get(dbId);
-			if (lspdb == null)
+			String dbId = getStateReportDBList(adress);
+			ReportDB rptdb = moduleList.get(dbId);
+			if (rptdb == null)
 			{
 
 				if (dbActive)
 				{
-					log.info("redis: created new redis lspdb: "+dbId);
-					lspdb = new LSPDB_Redis(dbId, dbHost);
+					log.info("redis: created new redis rptdb: "+dbId);
+					rptdb = new ReportDB_Redis(dbId, dbHost);
 					//jedis.hset(getModuleList(), adress.toString(), "0");
 				}
 				else
 				{
-					log.info("created new simple lspdb: "+dbId);
-					lspdb = new LSPDB_Simple(dbId);
+					log.info("created new simple rptdb: "+dbId);
+					rptdb = new ReportDB_Simple(dbId);
 				}
-				moduleList.put(adress.toString(),lspdb);
+				moduleList.put(adress.toString(),rptdb);
 			}
 			if (lsp.isrFlag())
 			{
-				lspdb.removeLSP(lsp);
+				rptdb.remove(stateReport);
 			}
 			else
 			{
-				lspdb.addLSP(lsp);
+				rptdb.add(stateReport);
 			}
 		}
 	}
@@ -172,8 +172,8 @@ public class LSPDB_Handler {
 	{
 		log.info("PCC database sync");
 		long dataBaseId = open.getLsp_database_version_tlv().getLSPStateDBVersion();
-		LSPDB 	lspdb = new LSPDB_Simple(address.toString());
-		//moduleList.put(address.toString(),lspdb);
+		ReportDB 	rptdb = new ReportDB_Simple(address.toString());
+		//moduleList.put(address.toString(),rptdb);
 	}
 
 
@@ -193,11 +193,11 @@ public class LSPDB_Handler {
 
 	public int getPCCDatabaseVersion(Inet4Address address)
 	{
-		LSPDB lspdb = moduleList.get(address.toString());
-		if (lspdb != null)
-			return lspdb.getVersion();
+		ReportDB rptdb = moduleList.get(getStateReportDBList(address));
+		if (rptdb != null)
+			return rptdb.getVersion();
 		else
-			return -1;
+			return 0;
 	}
 
 }
