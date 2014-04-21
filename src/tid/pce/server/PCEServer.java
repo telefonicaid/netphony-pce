@@ -125,6 +125,7 @@ public class PCEServer {
 		}
 
 		Log.info("Inizializing TID PCE Server!!");
+		Log.info("Configuration file: " + args[0]);
 		//Elements of the PCE Server
 
 		// Information about all the sessions of the PCE
