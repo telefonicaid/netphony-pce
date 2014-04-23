@@ -150,7 +150,7 @@ public class ChildPCESession  extends GenericPCEPSession{
 			killSession();
 			return;			
 		} 
-		initializePCEPSession(false, 15, 200,false,true,domainId,pceId,null);
+		initializePCEPSession(false, 15, 200,false,true,domainId,pceId,0);
 		log.info("PCE Session succesfully established!!");				
 		this.deadTimerT=new DeadTimerThread(this, this.deadTimerLocal);
 		startDeadTimer();	

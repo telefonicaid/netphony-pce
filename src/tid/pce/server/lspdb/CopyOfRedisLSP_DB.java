@@ -1,20 +1,26 @@
 package tid.pce.server.lspdb;
 
 import java.net.Inet4Address;
+import java.net.UnknownHostException;
 import java.util.Hashtable;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.logging.Logger;
 
+import redis.clients.jedis.Jedis;
 import tid.emulator.node.transport.lsp.LSPKey;
 import tid.emulator.node.transport.lsp.te.LSPTE;
 import tid.pce.pcep.constructs.StateReport;
 import tid.pce.pcep.messages.PCEPReport;
 import tid.pce.pcep.objects.LSP;
+import tid.pce.pcep.objects.MalformedPCEPObjectException;
 import tid.pce.pcep.objects.OPEN;
 import tid.pce.pcep.objects.tlvs.LSPDatabaseVersionTLV;
-import tid.pce.pcep.objects.tlvs.LSPIdentifiersTLV;
 
+import com.google.gson.Gson;
 /**
  * LSP_DB implementation.
  * 
@@ -23,7 +29,7 @@ import tid.pce.pcep.objects.tlvs.LSPIdentifiersTLV;
  * @author jaume
  */
 
-public class SimpleLSP_DB implements LSP_DB
+public class CopyOfRedisLSP_DB implements LSP_DB
 {
 	
 	
@@ -46,17 +52,102 @@ public class SimpleLSP_DB implements LSP_DB
 	
 	private Logger log;
 	
+	private Jedis jedis;
+	
+	private String dbId;
 	
 	AtomicLong DBVersion;
 	
-	public SimpleLSP_DB()
+	public String getPCCListKey()
 	{
+		return dbId+"_PCC";
+	}
+	
+	public String getPCCLSPListKey(String PCCId)
+	{
+		return dbId+"_"+PCCId+"_LSP";
+	}
+	
+	public CopyOfRedisLSP_DB(String id)
+	{
+
+
+		
+   	 	
+   	 	dbId = id;
 		log = Logger.getLogger("PCEPParser");
 		PCCList = new Hashtable<Inet4Address, PCCInfo>();
 		LSPTEList = new Hashtable<LSPKey, LSPTEInfo>();
 		DBVersion = new AtomicLong();
 		PCCListLock = new ReentrantLock();
+		
+   	 	jedis = new Jedis("localhost");
+   	 	jedis.connect();		
+   	 	if (jedis.isConnected())
+   	 	{
+   	 		log.info("redis: connection stablished");
+   	 		fillFromDB();
+   	 	}
 	}
+	
+	
+	public void fillFromDB() 
+	{
+		log.info("redis: filling from DB");
+   	 	if (jedis.isConnected())
+   	 	{
+   	 		log.info("redis: connection stablished");
+   	 		Set<String> PCCs = jedis.hkeys(getPCCListKey());
+   	 		for (Iterator iterator = PCCs.iterator(); iterator.hasNext();) {
+				String PCCId = ((String) iterator.next());
+				log.info("redis: PCC found: "+PCCId);
+				try {
+					Inet4Address address =(Inet4Address) Inet4Address.getByName(PCCId.replace("/", ""));
+					List<String> LSPs = jedis.hvals(getPCCLSPListKey(PCCId));
+					
+					int PCCDBVersion = Integer.parseInt(jedis.hget(getPCCListKey(),PCCId));//= LSPs.size();
+					
+					
+					
+					log.info("redis: found PCC: "+PCCId+" with db version: "+PCCDBVersion +"==? "+LSPs.size());
+					//TODO: issyncover??
+					addPCC(address,false,PCCDBVersion);
+					
+					for (Iterator iterator2 = LSPs.iterator(); iterator2.hasNext();) {
+						String LSPString = (String) iterator2.next();
+						log.info("redis: found LSP: "+LSPString);
+						//TODO: transformar y meter
+						Gson gson = new Gson();
+						byte[] lspBytes = gson.fromJson(LSPString,byte[].class);
+						try {
+							LSP lsp = new LSP(lspBytes,0);
+							log.info("redis: LSP:::with Id"+lsp.getLspId()+" flags: "+lsp.getObjectClass()+" "+lsp.issFlag());
+						} catch (MalformedPCEPObjectException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+					}				
+					
+					
+					
+				} catch (UnknownHostException e) {
+					e.printStackTrace();
+				}
+				
+
+				
+
+
+				
+			}
+   	 	}
+   	 	else
+   	 	{
+   	 		log.info("redis: couldn't stablish connection, aborting...");
+   	 		//TODO: terminar de alguna forma
+   	 	}
+	}
+	
 	
 	@Override
 	synchronized public long getDBIdentifier(Inet4Address address)
@@ -75,7 +166,13 @@ public class SimpleLSP_DB implements LSP_DB
 	@Override
 	synchronized public void addPCC(Inet4Address adrss, boolean isSyncOver ,long dataBaseVersion) 
 	{
+		
 		PCCList.put(adrss, new PCCInfo(isSyncOver, dataBaseVersion));
+		
+		log.info("redis: added new PCC");
+		/***REDIS***/
+		jedis.hset(getPCCListKey(), adrss.toString(), Long.toString(dataBaseVersion));
+		
 	}
 	
 	@Override
@@ -130,6 +227,11 @@ public class SimpleLSP_DB implements LSP_DB
 		{
 			StateReport stateReport = pcepReport.getStateReportList().get(i);
 			LSP lsp = stateReport.getLSP();
+			lsp.encode();
+			byte[] lspBytes = lsp.getBytes();
+			
+			
+			
 			int lspId = new Long(lsp.getLspId()).intValue();
 			
 			if (lspId == 0)
@@ -146,7 +248,11 @@ public class SimpleLSP_DB implements LSP_DB
 			if ((lspDB = lsp.getLspDBVersion_tlv())!=null)
 			{
 				pccInfo.dataBaseVersion = lspDB.getLSPStateDBVersion();
-				log.info("updated database version of PCC: "+PCCList.get(pccInfo)+" to v."+lspDB.getLSPStateDBVersion());
+				
+				/*********REDIS*********/
+				jedis.hset(getPCCListKey(), adress.toString(), Long.toString(lspDB.getLSPStateDBVersion()));
+				
+				log.info("redis: updated database version of PCC: "+PCCList.get(adress)+" to v."+lspDB.getLSPStateDBVersion());
 			}
 			
 			LSPTEInfo lspInfo = LSPTEList.get(new LSPKey(adress,lspId));
@@ -157,13 +263,23 @@ public class SimpleLSP_DB implements LSP_DB
 			{
 				log.info("Overriding previous information from database");
 				lspInfo.pcepReport = pcepReport;
+				
+				/******REDIS*************/
+				Gson gson = new Gson();
+				String lspInfoString = gson.toJson(lspBytes);
+				
+				jedis.hset(getPCCLSPListKey(adress.toString()),Integer.toString(lspId),lspInfoString);
+				
 			}
 			else
 			{
 				if (rFlag)
 				{
-					log.info("Removing from database lsp with id "+lspId +" and adress "+adress);
 					LSPTEList.remove(new LSPKey(adress,lspId));
+					
+					/****REDIS*********/
+					log.info("redis: Removing from database lsp with id "+lspId +" and adress "+adress);				
+					jedis.hdel(getPCCLSPListKey(adress.toString()), Integer.toString(lspId));
 				}
 				else
 				{
@@ -175,6 +291,13 @@ public class SimpleLSP_DB implements LSP_DB
 					lspInfo = new LSPTEInfo(pcepReport);
 					
 					LSPTEList.put(new LSPKey(adress,lspId),lspInfo);
+					
+					
+					/****REDIS*****/
+					Gson gson = new Gson();
+					String lspInfoString = gson.toJson(lspBytes);					
+					log.info("redis: adding PCEReport");					
+					jedis.hset(getPCCLSPListKey(adress.toString()),Integer.toString(lspId),lspInfoString);					
 				}
 			}
 		}
@@ -183,6 +306,7 @@ public class SimpleLSP_DB implements LSP_DB
 	@Override
 	synchronized public void proccessOpen(OPEN open, Inet4Address address) 
 	{
+		log.info("PCC database sync");
 		long dataBaseId = open.getLsp_database_version_tlv().getLSPStateDBVersion();
 		PCCInfo info = PCCList.get(address);
 		if ((info == null) || (info.dataBaseVersion != dataBaseId))
@@ -222,7 +346,6 @@ public class SimpleLSP_DB implements LSP_DB
 	@Override
 	public LSPTE getLSP(LSPKey keyLSP)
 	{
-		// TODO Auto-generated method stub
 		return null;
 	}
 
@@ -234,6 +357,22 @@ public class SimpleLSP_DB implements LSP_DB
 	public void setLSPTEList(Hashtable<LSPKey, LSPTEInfo> lSPTEList) 
 	{
 		LSPTEList = lSPTEList;
+	}
+
+	public Jedis getJedis() {
+		return jedis;
+	}
+
+	public void setJedis(Jedis jedis) {
+		this.jedis = jedis;
+	}
+
+	public String getDbId() {
+		return dbId;
+	}
+
+	public void setDbId(String dbId) {
+		this.dbId = dbId;
 	}
 
 	

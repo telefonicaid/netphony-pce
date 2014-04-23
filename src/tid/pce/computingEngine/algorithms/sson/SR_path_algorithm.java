@@ -229,7 +229,7 @@ public class SR_path_algorithm implements ComputingAlgorithm {
 			for (i=0;i<edge_list.size();i++){
 				SREROSubobject sreroso = new SREROSubobject();
 				log.info("SRERO edge: "+edge_list.get(i));
-				sreroso.setSID(edge_list.get(i).getDst_SID());
+				sreroso.setSID(edge_list.get(i).getDst_sid());
 				sreroso.setLoosehop(false);
 				//TODO: anyadir muchas mas variables
 				srero.addSREROSubobject(sreroso);

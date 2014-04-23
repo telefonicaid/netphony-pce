@@ -59,6 +59,7 @@ public class TopologyManager
 		}
 		if (params.isOSPFSession())
 		{
+			log.info("Initializing from OSPF");
 			initFromOSPF();
 		}
 		

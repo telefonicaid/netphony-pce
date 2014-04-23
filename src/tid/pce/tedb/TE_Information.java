@@ -350,15 +350,15 @@ public class TE_Information {
 		{
 			int num_byte=num_wavelength/8;
 			if ( this.getAvailableLabels()==null){
-				PCEServer.Log.info("AvailableLabels ES NULL");
+				PCEServer.log.info("AvailableLabels ES NULL");
 				
 			}
 			if ( this.getAvailableLabels().getLabelSet()==null){
-				PCEServer.Log.info("AvailableLabels LABEL SET ES NULL");
+				PCEServer.log.info("AvailableLabels LABEL SET ES NULL");
 				
 			}
 			if (((BitmapLabelSet)this.getAvailableLabels().getLabelSet()).getBytesBitmapReserved()==null){
-				PCEServer.Log.info("BytesBitmapReserved ES NULL");
+				PCEServer.log.info("BytesBitmapReserved ES NULL");
 				
 			}
 	

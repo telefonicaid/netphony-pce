@@ -74,8 +74,8 @@ public class SR_path_algorithmPreComputation  implements ComputingAlgorithmPreCo
 					edge.setDelay_ms(fiberEdge.getDelay_ms());
 					edge.setSrc_if_id(fiberEdge.getSrc_if_id());
 					edge.setDst_if_id(fiberEdge.getDst_if_id());
-					edge.setSrc_SID(fiberEdge.getSrc_SID());
-					edge.setDst_SID(fiberEdge.getDst_SID());
+					edge.setSrc_sid(fiberEdge.getSrc_sid());
+					edge.setDst_sid(fiberEdge.getDst_sid());
 					graph_lambda.addEdge(fiberEdge.getSource(),fiberEdge.getTarget(),edge);			
 				}
 			}	
