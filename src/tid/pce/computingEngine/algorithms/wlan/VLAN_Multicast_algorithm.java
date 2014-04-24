@@ -190,7 +190,7 @@ public class VLAN_Multicast_algorithm implements ComputingAlgorithm
 		{
 			log.info("Error : PCEP_OBJECT_TYPE_ENDPOINTS_MAC");
 		}
-		
+		/*
 		if (atI.intValue() % 2 == 0)
 		{
 			atI.incrementAndGet();
@@ -198,6 +198,9 @@ public class VLAN_Multicast_algorithm implements ComputingAlgorithm
 		}
 		
 		atI.incrementAndGet();
+		*/
+		
+		log.info("ted::" + ted.printTopology());
 		
 		//Check if all vertex are in graph
 		for (int i = 0; i < switchList.size(); i++) 
@@ -253,6 +256,12 @@ public class VLAN_Multicast_algorithm implements ComputingAlgorithm
 			for (int i = 0; i < switchList.size() && edges.size() > 0; i++) 
 			{
 				log.info("switchList.get(i)::"+switchList.get(i));
+				//Case with only one node
+				if (!(sdwg.containsVertex(source)))
+				{
+					break;
+				}
+				
 				DijkstraShortestPath<Object,IntraDomainEdge>  dsp = new DijkstraShortestPath<Object,IntraDomainEdge> (sdwg, source, switchList.get(i));
 				GraphPath<Object,IntraDomainEdge> result = dsp.getPath();
 				
