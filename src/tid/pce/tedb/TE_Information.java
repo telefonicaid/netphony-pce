@@ -80,7 +80,7 @@ public class TE_Information {
 	 */
 	public TE_Information()
 	{
-		initWLANs();
+		//initWLANs();
 	}
 
 	public AvailableLabels getAvailableLabels() {
@@ -281,6 +281,7 @@ public class TE_Information {
 				bytesBitMap[i]= (byte) 0xff;
 				
 			}
+			System.out.println("Setting Bytes:\n\rBytes: "+numberBytes+"\n\rLambdaIni: "+numberBytesLambdaIni+"\n\rLambdaEnd: "+numberBytesLambdaEnd);
 			//FuncionesUtiles.printByte(bytesBitMap, "bytesBitMap",log);
 			bitmapLabelSet.setBytesBitmapReserved(bytesBitMapRes);
 			bitmapLabelSet.setNumLabels(numLabels);

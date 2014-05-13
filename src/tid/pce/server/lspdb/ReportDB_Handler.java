@@ -171,7 +171,7 @@ public class ReportDB_Handler {
 	synchronized public void proccessOpen(OPEN open, Inet4Address address) 
 	{
 		log.info("PCC database sync");
-		long dataBaseId = open.getLsp_database_version_tlv().getLSPStateDBVersion();
+		//long dataBaseId = open.getLsp_database_version_tlv().getLSPStateDBVersion();
 		ReportDB 	rptdb = new ReportDB_Simple(address.toString());
 		//moduleList.put(address.toString(),rptdb);
 	}

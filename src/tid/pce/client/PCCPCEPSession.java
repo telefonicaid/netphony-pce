@@ -95,7 +95,7 @@ public class PCCPCEPSession extends GenericPCEPSession{
 		super(pcepSessionManager);
 		this.setFSMstate(PCEPValues.PCEP_STATE_IDLE);
 		log=Logger.getLogger("PCCClient");
-		log.setLevel(Level.ALL);
+		log.setLevel(Level.OFF);
 		this.peerPCE_IPaddress=ip;
 		this.peerPCE_port=port;
 		crm= new ClientRequestManager();

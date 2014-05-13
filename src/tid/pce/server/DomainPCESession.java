@@ -302,6 +302,7 @@ public class DomainPCESession extends GenericPCEPSession{
 						}
 					case PCEPMessageTypes.MESSAGE_INTIATE:
 						
+						log.info("INITIATE RECEIVED");
 						PCEPInitiate pcepInitiate = null;
 						try 
 						{
@@ -315,12 +316,15 @@ public class DomainPCESession extends GenericPCEPSession{
 						//In this case there is not an LSP in the PCEPInitiate
 						//It must be resolved in the PCE, afterwards the PCEPInitiate is completed and
 						//sent to the corresponding node
-						if ((pcepInitiate.getPcepIntiatedLSPList() == null) || (pcepInitiate.getPcepIntiatedLSPList().get(0) == null) || (pcepInitiate.getPcepIntiatedLSPList().get(0).getLsp() == null))
+						if ((pcepInitiate.getPcepIntiatedLSPList() == null) || (pcepInitiate.getPcepIntiatedLSPList().get(0) == null) || (pcepInitiate.getPcepIntiatedLSPList().get(0).getLsp() == null) || (pcepInitiate.getPcepIntiatedLSPList().get(0).getEro()==null) || (pcepInitiate.getPcepIntiatedLSPList().get(0).getEro().getEROSubobjectList().size()==0))
 						{
+							log.info("INITIATE with no info, looking for path");
 							EndPointsIPv4 endP_IP = (EndPointsIPv4)pcepInitiate.getPcepIntiatedLSPList().get(0).getEndPoint();
 							Socket clientSocket;
 							try 
 							{
+								log.info("Getting conection with: "+endP_IP.getSourceIP().toString());
+
 								clientSocket = new Socket(endP_IP.getSourceIP(), 2222);
 							
 								DataOutputStream out_to_node = new DataOutputStream(clientSocket.getOutputStream());
@@ -331,11 +335,14 @@ public class DomainPCESession extends GenericPCEPSession{
 							catch (IOException e) 
 							{
 								log.info(UtilsFunctions.exceptionToString(e));
+								e.printStackTrace();
 							}
 							
 						}
 						else
 						{
+							log.info("INITIATE with info, sending to node");
+
 							EndPointsIPv4 endP_IP = (EndPointsIPv4)pcepInitiate.getPcepIntiatedLSPList().get(0).getEndPoint();
 
 							try 

@@ -164,7 +164,7 @@ public class InterDomainEdge extends DefaultWeightedEdge {
 		//TODO: he cambiado esta linea,...porq no me funcionaba super.getSource...Hayq ue mirarlo!!
 		//ideString=src_router_id.toString()+":"+src_if_id+" ("+((Object)super.getSource()).toString()+")  --> "+dst_router_id.toString()+":"+dst_if_id+" ("+((Object)super.getTarget()).toString()+")";
 		ideString=src_router_id.toString()+": "+src_if_id+" --> "+dst_router_id.toString()+": "+dst_if_id;
-		if (TE_info==null){
+		/*if (TE_info==null){
 			return ideString;
 		}
 		else		
@@ -183,10 +183,10 @@ public class InterDomainEdge extends DefaultWeightedEdge {
 				ideString = ideString + "\r\n TED: " + this.TE_info.toString() + "\r\n";
 				return ideString;	
 				
-			}else {
+			}else {*/
 				return ideString + "\r\n TED: " + this.TE_info.toString() + "\r\n";
-			}	
-		}
+		//	}	
+		//}
 	}
 
 }

@@ -474,6 +474,8 @@ public class RequestProcessorThread extends Thread{
 				if (p_rep==null){
 					log.warning("Parent doesn't answer");
 					this.sendNoPath(pathCompReq);
+				}else {
+					log.info("RESP: "+p_rep.toString());
 				}
 				
 				ComputingResponse pcepresp =  new ComputingResponse();
