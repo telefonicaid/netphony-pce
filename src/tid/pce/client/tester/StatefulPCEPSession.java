@@ -15,6 +15,7 @@ import java.util.logging.Logger;
 import tid.pce.pcep.messages.PCEPInitiate;
 import tid.pce.pcep.messages.PCEPMessage;
 import tid.pce.pcep.messages.PCEPReport;
+import tid.pce.pcep.objects.Bandwidth;
 import tid.pce.pcep.objects.EndPointsIPv4;
 import tid.pce.pcep.objects.ExplicitRouteObject;
 import tid.pce.pcep.objects.LSP;
@@ -36,7 +37,7 @@ public class StatefulPCEPSession extends GenericPCEPSession
 	private PCEPReport telink;
 	private int messagetype;
 	private String operation;
-	private long lspid;
+	private long lspid=1;
 	
 	
 	
@@ -60,6 +61,7 @@ public class StatefulPCEPSession extends GenericPCEPSession
 		this.keepAliveLocal=30;
 		this.deadTimerLocal=180;
 		this.messagetype=message_type;
+		this.operation="add";
 	}
 	
 	
@@ -82,7 +84,7 @@ public class StatefulPCEPSession extends GenericPCEPSession
 			
 		      String op = null;
 		      try {
-		         dest = br.readLine();
+		         op = br.readLine();
 		      } catch (IOException ioe) {
 		         System.out.println("IO error");
 		         System.exit(1);
@@ -106,11 +108,23 @@ public class StatefulPCEPSession extends GenericPCEPSession
 			      System.out.print("Source: ");
 			      String source = null;
 			      try {
-			         dest = br.readLine();
+			         source = br.readLine();
 			      } catch (IOException ioe) {
 			         System.out.println("IO error");
 			         System.exit(1);
 			      }
+			      
+			      System.out.print("BW: ");
+			      String bwth = null;
+			      try {
+			    	  bwth = br.readLine();
+			      } catch (IOException ioe) {
+			         System.out.println("IO error");
+			         System.exit(1);
+			      }
+			      float bandwidth=Float.parseFloat(bwth);
+			      
+			      
 				try {
 					IPv4prefixEROSubobject eroSubSource = new IPv4prefixEROSubobject();
 					eroSubSource.setIpv4address((Inet4Address)Inet4Address.getByName(source == null ? "10.95.73.72" : source));
@@ -131,6 +145,9 @@ public class StatefulPCEPSession extends GenericPCEPSession
 					} else {
 						log.warning("Tipo de operacion no soportada");
 					}
+					Bandwidth bw= new Bandwidth();
+					bw.setBw(bandwidth);
+					pr.getPcepIntiatedLSPList().get(0).setBandwidth(bw);
 					pr.getPcepIntiatedLSPList().get(0).getLsp().setLspId((int)lspid);			
 					EndPointsIPv4 ep=new EndPointsIPv4();
 					ep.setDestIP((Inet4Address)Inet4Address.getByName(dest == null ? "10.95.73.73": dest));
@@ -148,14 +165,18 @@ public class StatefulPCEPSession extends GenericPCEPSession
 									
 				} catch (Exception e)
 				{
+					e.printStackTrace();
 					System.out.println("something happens");
 					log.info(UtilsFunctions.exceptionToString(e));
 				} 
 		      }else if (op.equals("2") || op.equals("quit") || op.equals("q")){
 					endConnections();
+					end=true;
 		      } else {
 		    	  System.out.println("\n\nUnknown command. Please, try again!\n\n");
 		      }
+		      System.out.print("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n");
+
 		}
 	}
 

@@ -71,7 +71,10 @@ public class StatefulSession {
 			
 			try {
 				Socket s = new Socket(ip, portnumber);
-				vntmsession = new StatefulPCEPSession( s,new PCEPSessionsInformation(), PCEPMessageTypes.MESSAGE_INTIATE);
+				PCEPSessionsInformation pcepsessioninfo=new PCEPSessionsInformation();
+				pcepsessioninfo.setActive(true);
+				pcepsessioninfo.setStateful(false);
+				vntmsession = new StatefulPCEPSession( s,pcepsessioninfo, PCEPMessageTypes.MESSAGE_INTIATE);
 				vntmsession.start();
 				}
 			catch(Exception e){
@@ -79,76 +82,6 @@ public class StatefulSession {
 			}
 	      
 	   }
-	private static void sendRequest(DataOutputStream out, PCEPMessage telinkconf) {
-		try 
-		{  
-			if (out==null)
-				System.out.println("El out es null!!!");
-			else{
-			out.write(telinkconf.getBytes());
-			out.flush();
-			}
-		} catch (IOException e)
-		{
-e.printStackTrace();		}   
-	}
-
-
-	protected void endSession() {
-		// TODO Auto-generated method stub
-		
-	}
-	
-	protected static byte[] readMsg(DataInputStream in) throws IOException{
-		byte[] ret = null;
-		
-		byte[] hdr = new byte[4];
-		byte[] temp = null;
-		boolean endHdr = false;
-		int r = 0;
-		int length = 0;
-		boolean endMsg = false;
-		int offset = 0;
-		
-		while (!endMsg) {
-			try {
-				if (endHdr) {
-					r = in.read(temp, offset, 1);
-				}
-				else {
-					r = in.read(hdr, offset, 1);
-				}
-			} catch (IOException e){
-				throw e;
-		    }catch (Exception e) {
-				throw new IOException();
-			}
-		    
-			if (r > 0) {
-				if (offset == 2) {
-					length = ((int)hdr[offset]&0xFF) << 8;
-				}
-				if (offset == 3) {
-					length = length | (((int)hdr[offset]&0xFF));
-					temp = new byte[length];
-					endHdr = true;
-					System.arraycopy(hdr, 0, temp, 0, 4);
-				}
-				if ((length > 0) && (offset == length - 1)) {
-					endMsg = true;
-				}
-				offset++;
-			}
-			else if (r==-1){
-				throw new IOException();
-			}
-		}
-		if (length > 0) {
-			ret = new byte[length];
-			System.arraycopy(temp, 0, ret, 0, length);
-		}		
-		return ret;
-	}
 
 	}
 
