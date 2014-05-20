@@ -1,5 +1,7 @@
 package tid.pce.tedb;
 
+import one.topology.elements.Bandwidth;
+
 import org.jgrapht.graph.DefaultWeightedEdge;
 
 
@@ -79,7 +81,53 @@ public class IntraDomainEdge extends DefaultWeightedEdge {
 	 */
 	private int dst_sid;
 	
+	private String linkID=null;
+	private boolean isDirectional;
+	private String type=null;
+	private double temetric;
 	
+	private Bandwidth bw=null;
+	
+	public String getLinkID() {
+		return linkID;
+	}
+
+	public void setLinkID(String linkID) {
+		this.linkID = linkID;
+	}
+
+	public boolean isDirectional() {
+		return isDirectional;
+	}
+
+	public void setDirectional(boolean isDirectional) {
+		this.isDirectional = isDirectional;
+	}
+
+	public String getType() {
+		return type;
+	}
+
+	public void setType(String type) {
+		this.type = type;
+	}
+
+	public double getTemetric() {
+		return temetric;
+	}
+
+	public void setTemetric(double temetric) {
+		this.temetric = temetric;
+	}
+
+	public Bandwidth getBw() {
+		return bw;
+	}
+
+	public void setBw(Bandwidth bw) {
+		this.bw = bw;
+	}
+
 	public IntraDomainEdge()
 	{
 		TE_info = new TE_Information();
