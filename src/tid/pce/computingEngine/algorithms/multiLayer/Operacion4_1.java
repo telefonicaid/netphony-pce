@@ -73,7 +73,7 @@ public class Operacion4_1  {
 			try {
 				s = new Socket("localhost", 4190);
 
-				PCEPClientSession vntmsession = new PCEPClientSession( s,new PCEPSessionsInformation(), srcaux, dstaux, 0, 0, "add");
+				PCEPClientSession vntmsession = new PCEPClientSession( s,new PCEPSessionsInformation(), srcaux, dstaux, 0, 0, "add", PCEPMessageTypes.MESSAGE_INTIATE);
 				vntmsession.start();
 				while(vntmsession.isAlive()){
 					System.out.println("Waiting for response...");

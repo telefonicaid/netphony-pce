@@ -25,7 +25,7 @@ import tid.pce.tedb.TE_Information;
 import tid.provisioningManager.objects.RouterInfoPM;
 import tid.util.UtilsFunctions;
 
-import com.sun.org.apache.xml.internal.security.utils.Base64;
+
 
 /**
  * Thread that reads topology from Openflow controller and from XML if there are intradomain links
@@ -277,7 +277,7 @@ public class TEDUpdaterODL extends TEDUpdaterController
 		try
 		{
 			String credentials = "admin:admin";
-			String credentialsEncoded = Base64.encode(credentials.getBytes());
+			String credentialsEncoded = "YWRtaW46YWRtaW4=";
 
 			URL topoplogyURL = new URL(url);
 			URLConnection yc = topoplogyURL.openConnection();
