@@ -22,15 +22,16 @@ import org.jgrapht.graph.SimpleDirectedWeightedGraph;
 
 import tid.pce.computingEngine.algorithms.multiLayer.Multilayer_MinTH_AlgorithmPreComputation.InfoNodo;
 import tid.pce.pcep.messages.PCEPMessageTypes;
+import tid.pce.pcep.messages.PCEPReport;
 import tid.pce.pcep.objects.ExplicitRouteObject;
 import tid.pce.pcepsession.PCEPSessionsInformation;
 import tid.pce.server.comunicationvntm.PCEPClientSession;
 import tid.pce.tedb.IntraDomainEdge;
 import tid.rsvp.objects.subobjects.OpenFlowUnnumberIfIDEROSubobject;
 import tid.vntm.client.VNTMClientSession;
-public class Operacion4_1  {
+public class Operacion34_Initiate  {
 	
-	public Operacion4_1(){
+	public Operacion34_Initiate(){
 		
 	}
 	
@@ -44,24 +45,44 @@ public class Operacion4_1  {
 	
 	private static Logger log=Logger.getLogger("PCEServer");
 	
-	ExplicitRouteObject get_op4mas1 
-	(SimpleDirectedWeightedGraph<Inet4Address,IntraDomainEdge> graph, 
-		SimpleDirectedWeightedGraph<Inet4Address,IntraDomainEdge> interlayer,
-		ArrayList<SimpleDirectedWeightedGraph<Inet4Address, IntraDomainEdge>> networkGraphs, 
-		String src, String dst, int maxHops, GraphPath<Inet4Address,IntraDomainEdge> gp,
-		int numLambdas){
+	public static ExplicitRouteObject get_op43 
+	(SimpleDirectedWeightedGraph<Object,IntraDomainEdge> graph, 
+		String src, String dst, int maxHops){
 				
 		//There's no way to go from source to destination, let's play with VNTM
 		LinkedList<String> srcneighborhood=new LinkedList<String>(); 
 		LinkedList<String> dstneighborhood=new LinkedList<String>();
+		
+		//We take the neighbor nodes
 		srcneighborhood=getNodeNeighborhood(src, graph);
 		dstneighborhood=getNodeNeighborhood(dst, graph);
+		srcneighborhood.addFirst(src);
+		dstneighborhood.addFirst(dst);
+		
 		boolean end=false;
 		boolean error=false;
 		ExplicitRouteObject ero=null;
 		
 		if (srcneighborhood.size()==0 || dstneighborhood.size()==0)
 			return null;
+		
+		
+		Socket s1=null;
+		try {
+			s1 = new Socket("localhost", 4190);
+			PCEPClientSession vntmsessionil = new PCEPClientSession( s1,new PCEPSessionsInformation(), "00:00:00:00:00:00:00:00", "00:00:00:00:00:00:00:00", 0, 0, "add", PCEPMessageTypes.MESSAGE_INTIATE);
+			vntmsessionil.start();
+			while(vntmsessionil.isAlive()){
+				System.out.println("Waiting for response...");
+				Thread.sleep(100);
+			}
+			System.out.println("Response: "+vntmsessionil.getReport().toString());
+			s1.close();
+			deleteNotInterLayerNodes(srcneighborhood, dstneighborhood, vntmsessionil.getReport());
+		}
+		catch(Exception e){
+			e.printStackTrace();
+		}
 		
 		while (!end){
 			
@@ -105,34 +126,87 @@ public class Operacion4_1  {
 		
 		
 		
-		return null;
+		return ero;
 		
 	}
 
-	private ExplicitRouteObject buildero(String src, String srcaux, String dst,
+	private static void deleteNotInterLayerNodes(LinkedList<String> srcneighborhood,
+			LinkedList<String> dstneighborhood, PCEPReport report) {
+
+		for (int i=0; i<srcneighborhood.size(); i++){
+			if (!isInReport(srcneighborhood.get(i), report)){
+				srcneighborhood.remove(i);
+				i--;
+			}
+		}
+
+		for (int i=0; i<dstneighborhood.size(); i++){
+			if (!isInReport(dstneighborhood.get(i), report)){
+				dstneighborhood.remove(i);
+				i--;
+			}
+		}
+		
+	}
+
+	private static boolean isInReport(String node, PCEPReport report) {
+		for (int i=0; i<report.getStateReportList().get(0).getPath().geteRO().getEROSubobjectList().size();i++){
+			if (node.equals(((OpenFlowUnnumberIfIDEROSubobject)report.getStateReportList().get(0).getPath().geteRO().getEROSubobjectList().get(i)).getSwitchID())){
+				return true;
+			}
+		}
+		return false;
+	}
+
+	private static ExplicitRouteObject buildero(String src, String srcaux, String dst,
 			String dstaux) {
 		ExplicitRouteObject ero=new ExplicitRouteObject();
 
-		OpenFlowUnnumberIfIDEROSubobject erosubobj=new OpenFlowUnnumberIfIDEROSubobject();
-		erosubobj.setSwitchID(src); 
-		//Get interface
+		if (src.equals(srcaux)){
+			OpenFlowUnnumberIfIDEROSubobject erosubobj=new OpenFlowUnnumberIfIDEROSubobject();
+			erosubobj.setSwitchID(src); 
+			//Get interface
 
-		OpenFlowUnnumberIfIDEROSubobject erosubobj1=new OpenFlowUnnumberIfIDEROSubobject();
-		erosubobj1.setSwitchID(srcaux);
-		//Get interface
-		
-		OpenFlowUnnumberIfIDEROSubobject erosubobj2=new OpenFlowUnnumberIfIDEROSubobject();
-		erosubobj2.setSwitchID(dst);
-		//Get interface
-		
-		OpenFlowUnnumberIfIDEROSubobject erosubobj3=new OpenFlowUnnumberIfIDEROSubobject();
-		erosubobj3.setSwitchID(dstaux);
-		//No interface???
-		
+			ero.getEROSubobjectList().add(erosubobj);
+		} else {
+			OpenFlowUnnumberIfIDEROSubobject erosubobj=new OpenFlowUnnumberIfIDEROSubobject();
+			erosubobj.setSwitchID(src); 
+			//Get interface
+	
+			
+			
+			OpenFlowUnnumberIfIDEROSubobject erosubobj1=new OpenFlowUnnumberIfIDEROSubobject();
+			erosubobj1.setSwitchID(srcaux);
+			//Get interface
+			
+			ero.getEROSubobjectList().add(erosubobj);
+			ero.getEROSubobjectList().add(erosubobj1);
+
+			
+		}if (dst.equals(dstaux)){
+			OpenFlowUnnumberIfIDEROSubobject erosubobj2=new OpenFlowUnnumberIfIDEROSubobject();
+			erosubobj2.setSwitchID(dst);
+			//Get interface
+			
+			ero.getEROSubobjectList().add(erosubobj2);
+
+		} else {
+			OpenFlowUnnumberIfIDEROSubobject erosubobj2=new OpenFlowUnnumberIfIDEROSubobject();
+			erosubobj2.setSwitchID(dst);
+			//Get interface
+			
+			OpenFlowUnnumberIfIDEROSubobject erosubobj3=new OpenFlowUnnumberIfIDEROSubobject();
+			erosubobj3.setSwitchID(dstaux);
+			//No interface???
+			
+			ero.getEROSubobjectList().add(erosubobj2);
+			ero.getEROSubobjectList().add(erosubobj3);
+
+		}
 		return ero;
 	}
 
-	private LinkedList<String> getNodeNeighborhood(String node, SimpleDirectedWeightedGraph<Inet4Address, IntraDomainEdge> graph) {
+	private static LinkedList<String> getNodeNeighborhood(String node, SimpleDirectedWeightedGraph<Object, IntraDomainEdge> graph) {
 
 		LinkedList<String> neighborhood=new LinkedList<String>();
 		Iterator<IntraDomainEdge> edgeiter=graph.edgeSet().iterator();

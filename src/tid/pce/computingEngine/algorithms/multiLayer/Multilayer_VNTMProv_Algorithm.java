@@ -246,22 +246,23 @@ public class Multilayer_VNTMProv_Algorithm implements ComputingAlgorithm {
 				
 						
 				float bwt_req = req.getBandwidth().getBw(); // ancho de banda de la request
-	
-				System.out.println("ESTAMOS DENTRO DEL ALGORITMO VAMOS A CALCULAR LA RUTA -->" + "numLambdas:"+numLambdas);
-				
-				GraphPath<Object,IntraDomainEdge> gp = Operacion1.get_op1(graph, source_router_id_addr, dest_router_id_addr
+					
+				GraphPath<Object,IntraDomainEdge> gp = Operacion12.get_op1(graph, source_router_id_addr, dest_router_id_addr
 						, graphLock, bwt_req);
 					
 				if (gp != null)
 				{
-					if (gp.getEdgeList().size() == 1)   // Path correctly found at operation 1 --> 1 hop
-					{
+				//	if (gp.getEdgeList().size() == 1)   // Path correctly found at operation 1 --> 1 hop
+				//	{
 						nopath = false;
 						gp_chosen = gp;
 						terminado = true;
 						NoLambda = true;
 						OP_Counter.setNum_op1();
-					}
+				//	}
+				} else {
+					ExplicitRouteObject eroml=Operacion34_Initiate.get_op43(graph, (String)source_router_id_addr, (String)dest_router_id_addr, 0);
+					
 				}
 							
 				

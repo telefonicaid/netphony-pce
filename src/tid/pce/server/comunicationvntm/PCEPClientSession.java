@@ -113,7 +113,7 @@ public class PCEPClientSession extends GenericPCEPSession
 		 */
 		PCEPInitiate pr = new PCEPInitiate();
 
-		pr.setMessageType(PCEPMessageTypes.MESSAGE_INTIATE);
+		pr.setMessageType(this.messagetype);
 	
 		try {
 			OpenFlowUnnumberIfIDEROSubobject eroSubSource = new OpenFlowUnnumberIfIDEROSubobject();
