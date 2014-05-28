@@ -47,17 +47,17 @@ public class Operacion34_Initiate  {
 	
 	public static ExplicitRouteObject get_op43 
 	(SimpleDirectedWeightedGraph<Object,IntraDomainEdge> graph, 
-		String src, String dst, int maxHops){
+		Object src, Object dst, int maxHops){
 				
 		//There's no way to go from source to destination, let's play with VNTM
 		LinkedList<String> srcneighborhood=new LinkedList<String>(); 
 		LinkedList<String> dstneighborhood=new LinkedList<String>();
 		
 		//We take the neighbor nodes
-		srcneighborhood=getNodeNeighborhood(src, graph);
-		dstneighborhood=getNodeNeighborhood(dst, graph);
-		srcneighborhood.addFirst(src);
-		dstneighborhood.addFirst(dst);
+		srcneighborhood=getNodeNeighborhood((String)src, graph);
+		dstneighborhood=getNodeNeighborhood((String)dst, graph);
+		srcneighborhood.addFirst((String)src);
+		dstneighborhood.addFirst((String)dst);
 		
 		boolean end=false;
 		boolean error=false;
@@ -104,7 +104,7 @@ public class Operacion34_Initiate  {
 				if (vntmsession.getReport().getStateReportList().get(0).getPath()!=null) {
 					
 					//BUILD ERO!!!!!!!!!!!!!!!!!!!
-					ero=buildero(src,srcaux,dst,dstaux);
+					ero=buildero((String)src,srcaux,(String)dst,dstaux);
 					
 					end=true;
 					break;
@@ -112,7 +112,6 @@ public class Operacion34_Initiate  {
 					end=true;
 					error=true;
 				}
-			
 			
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
@@ -124,8 +123,10 @@ public class Operacion34_Initiate  {
 		}	
 		}
 		
-		
-		
+		if (error){
+			log.info("OP_3/4: No path found. There's no lightpath.");
+			return null;
+		}
 		return ero;
 		
 	}
