@@ -22,6 +22,7 @@ import tid.netManager.emulated.SimpleEmulatedNetworkLSPManager;
 import tid.ospf.ospfv2.OSPFv2LinkStateUpdatePacket;
 import tid.pce.client.PCCPCEPSession;
 import tid.pce.client.multiLayer.RealiseMLCapacityTask;
+import tid.pce.computingEngine.ComputingResponse;
 import tid.pce.pcep.PCEPProtocolViolationException;
 import tid.pce.pcep.constructs.Path;
 import tid.pce.pcep.constructs.Request;
@@ -373,7 +374,7 @@ static void handleResponse(PCEPRequest request,PCEPResponse response,NetworkLSPM
 
 			
 	
-	static void handleResponse(PCEPRequest request,PCEPResponse response,PCCPCEPSession VNTMSession ){
+	static void handleResponse(PCEPRequest request,ComputingResponse response,PCCPCEPSession VNTMSession ){
 		if (response.getResponseList().isEmpty()){
 			log.severe("ERROR in response");
 			//stats.addNoPathResponse();

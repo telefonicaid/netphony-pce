@@ -1,6 +1,7 @@
 package tid.pce.client;
 
 import java.io.IOException;
+import java.net.Inet4Address;
 import java.net.Socket;
 import java.util.Calendar;
 import java.util.Enumeration;
@@ -15,13 +16,24 @@ import tid.emulator.node.transport.lsp.LSPManager;
 import tid.emulator.node.transport.lsp.te.LSPTE;
 import tid.pce.client.tester.LSPConfirmationDispatcher;
 import tid.pce.pcep.PCEPProtocolViolationException;
+import tid.pce.pcep.constructs.Path;
+import tid.pce.pcep.constructs.StateReport;
+import tid.pce.pcep.messages.PCEPInitiate;
 import tid.pce.pcep.messages.PCEPMessage;
 import tid.pce.pcep.messages.PCEPMessageTypes;
+import tid.pce.pcep.messages.PCEPReport;
 import tid.pce.pcep.messages.PCEPResponse;
 import tid.pce.pcep.messages.PCEPTELinkConfirmation;
 import tid.pce.pcep.messages.PCEPUpdate;
+import tid.pce.pcep.objects.EndPointsIPv4;
+import tid.pce.pcep.objects.ExplicitRouteObject;
+import tid.pce.pcep.objects.LSP;
 import tid.pce.pcep.objects.OPEN;
 import tid.pce.pcep.objects.ObjectParameters;
+import tid.pce.pcep.objects.PCEPIntiatedLSP;
+import tid.pce.pcep.objects.SRERO;
+import tid.pce.pcep.objects.SRP;
+import tid.pce.pcep.objects.tlvs.PathSetupTLV;
 import tid.pce.pcepsession.DeadTimerThread;
 import tid.pce.pcepsession.GenericPCEPSession;
 import tid.pce.pcepsession.KeepAliveThread;
@@ -72,7 +84,7 @@ public class PCCPCEPSession extends GenericPCEPSession{
 	private PCEPSessionsInformation pcepSessionManager;
 	
 	private LSPManager lspManager;
-	
+		
 	
 	/**
 	 * Constructor of the PCE Session
@@ -83,7 +95,7 @@ public class PCCPCEPSession extends GenericPCEPSession{
 		super(pcepSessionManager);
 		this.setFSMstate(PCEPValues.PCEP_STATE_IDLE);
 		log=Logger.getLogger("PCCClient");
-		log.setLevel(Level.ALL);
+		log.setLevel(Level.OFF);
 		this.peerPCE_IPaddress=ip;
 		this.peerPCE_port=port;
 		crm= new ClientRequestManager();
@@ -117,6 +129,7 @@ public class PCCPCEPSession extends GenericPCEPSession{
 		this.no_delay=no_delay;
 		this.pcepSessionManager=pcepSessionManager;
 		this.lspManager = lspManager;
+		log.info("this.lspManager.getOut(out):"+this.lspManager.getOut());
 		this.lspManager.setOut(out);
 		
 	}
@@ -148,24 +161,33 @@ public class PCCPCEPSession extends GenericPCEPSession{
 	 * Then, it launches the Keepalive process, the Deadtimer process and
 	 * the listener of PCC messages. 
 	 */
-	public void run() {
+	public void run() 
+	{
 		running=true;
 		log.info("Opening new PCEP Session with host "+ peerPCE_IPaddress + " on port " + peerPCE_port);
-		try {
-			this.socket = new Socket(peerPCE_IPaddress, peerPCE_port);
-			if (no_delay){
-				this.socket.setTcpNoDelay(true);
-				log.info("No delay activated");
-			}
-			log.info("Socket opened");
-		} catch (IOException e) {
-			log.info(UtilsFunctions.exceptionToString(e));
-			log.severe("Couldn't get I/O for connection to " + peerPCE_IPaddress + " in port "+ peerPCE_port);
-			//FIXME: Salir de manera limpia
-			System.exit(1);
-		} 
+		
+		if (socket == null)
+		{
+			try 
+			{
+				this.socket = new Socket(peerPCE_IPaddress, peerPCE_port);
+				if (no_delay)
+				{
+					this.socket.setTcpNoDelay(true);
+					log.info("No delay activated");
+				}
+				log.info("Socket opened");
+			} 
+			catch (IOException e) 
+			{
+				log.info(UtilsFunctions.exceptionToString(e));
+				log.severe("Couldn't get I/O for connection to " + peerPCE_IPaddress + " in port "+ peerPCE_port);
+				//FIXME: Salir de manera limpia
+				System.exit(1);
+			} 
+		}
 
-		initializePCEPSession(false, 15, 200,false,false,null,null, pcepSessionManager.isStateful()?lspManager.getDataBaseVersion():((long)0));
+		initializePCEPSession(false, 15, 200,false,false,null,null, pcepSessionManager.isStateful()?(int)lspManager.getDataBaseVersion():(0));
 		
 		crm.setDataOutputStream(out);
 		log.info("PCE Session "+this.toString()+" succesfully established!!");
@@ -195,6 +217,7 @@ public class PCCPCEPSession extends GenericPCEPSession{
 					out.close();
 				} catch (IOException e1) {
 				}
+				manageEndSession();
 				log.warning("Finishing PCEP Session abruptly!");
 				return;
 			}
@@ -249,6 +272,21 @@ public class PCCPCEPSession extends GenericPCEPSession{
 					log.info("Received NOTIFY message");
 					break;
 					
+				case PCEPMessageTypes.MESSAGE_REPORT:
+					log.info("Received Report message");			
+					
+					try {
+						PCEPReport m_report = null;
+						log.info("Decoding PCEP Report");
+						m_report=new PCEPReport(this.msg);
+						
+					} catch (PCEPProtocolViolationException e1) {
+						log.warning("Problem decoding report message, ignoring message"+e1.getMessage());
+						e1.printStackTrace();
+					}
+					
+					break;
+					
 				case PCEPMessageTypes.MESSAGE_UPDATE:
 					log.info("Received Message Update");
 					if (pcepSessionManager.isStateful())
@@ -297,6 +335,71 @@ public class PCCPCEPSession extends GenericPCEPSession{
 					}					
 					break;
 					
+				case PCEPMessageTypes.MESSAGE_INTIATE:
+					log.info("Received INITIATE message");
+					timeIni=System.nanoTime();
+					try {
+						PCEPInitiate p_init = new PCEPInitiate(msg);
+						//LSPTE lsp = new LSPTE(lsp_id, lspManager.getLocalIP(), ((EndPointsIPv4)p_init.getPcepIntiatedLSPList().get(0).getEndPoint()).getDestIP(), false, 1001, 10000, PathStateParameters.creatingLPS);
+						PathSetupTLV pstlv = p_init.getPcepIntiatedLSPList().get(0).getRsp().getPathSetupTLV();
+						if (pstlv != null && pstlv.isSR())
+						{
+							log.info("Found initiate message with segment routing..sending report");
+							SRERO srero = p_init.getPcepIntiatedLSPList().get(0).getSrero();					
+							SRP rsp = p_init.getPcepIntiatedLSPList().get(0).getRsp();
+							LSP lsp = p_init.getPcepIntiatedLSPList().get(0).getLsp();
+							PCEPReport pcrep = new PCEPReport();
+							StateReport srep = new StateReport();
+
+							Path path = new Path();
+							path.setSRERO(srero);
+							
+							srep.setRSP(rsp);
+							srep.setLSP(lsp);
+							srep.setPath(path);
+							
+							pcrep.addStateReport(srep);
+							log.info("Sending message to pce...");
+							sendPCEPMessage(pcrep);
+							log.info("Message sent!");
+							
+						}
+						else
+						{
+							log.info("Found initiate message without segment routing.");
+							ExplicitRouteObject ero = p_init.getPcepIntiatedLSPList().get(0).getEro();
+
+							ERO eroOther = new ERO();
+
+							eroOther.setEroSubobjects(ero.getEROSubobjectList());
+
+							//lspManager.startLSP(lsp, eroOther);
+
+
+							Inet4Address destinationId=((EndPointsIPv4)p_init.getPcepIntiatedLSPList().get(0).getEndPoint()).getDestIP();
+							long lsp_id = lspManager.addnewLSP(destinationId, 1000, false, 1002,eroOther);
+							log.info("LSPList: "+lspManager.getLSPList().size()+" "+(new LSPKey(lspManager.getLocalIP(), lsp_id)).toString());
+							long time1= System.nanoTime();
+							lspManager.waitForLSPaddition(lsp_id, 1000);
+							log.info("notifying established lsp...");
+							//lspManager.notifyLPSEstablished(lsp_id, lspManager.getLocalIP());
+							
+							//UpdateRequest ur =p_init.getUpdateRequestList().getFirst();		
+							//log.info(p_req.toString());
+
+						}				
+						
+						
+
+						
+					} catch (Exception e) {
+						log.severe("PROBLEMON");
+						e.printStackTrace();
+						break;
+					}								
+					
+					break;					
+					
 				case PCEPMessageTypes.MESSAGE_PCREQ:
 					log.info("PCREQ message received");
 					break;
@@ -306,6 +409,12 @@ public class PCCPCEPSession extends GenericPCEPSession{
 					pceMsg = false;
 				}
 				
+				
+				
+				
+				
+				
+				
 				if (pceMsg) {
 					log.info("Reseting Dead Timer as PCEP Message has arrived");
 					resetDeadTimer();
@@ -314,6 +423,42 @@ public class PCCPCEPSession extends GenericPCEPSession{
 		}
 	}
 	
+	private void manageEndSession() 
+	{
+		while(true)
+		{
+			try 
+			{
+				Thread.sleep(1000);
+			} 
+			catch (InterruptedException e)
+			{
+				log.info(UtilsFunctions.exceptionToString(e));
+			}
+			
+			try 
+			{
+				this.socket = new Socket(peerPCE_IPaddress, peerPCE_port);
+				log.info("Socket opened in retry after connection went down");
+				//socket.close();
+				
+			//	crm= new ClientRequestManager();
+			//	timer=new Timer();
+			//	this.lspManager.setOut((DataOutputStream)socket.getOutputStream());
+				
+				
+				
+				run();
+				return;
+			} 
+			catch (IOException e)
+			{
+				log.info("Wasn't able to connect this time");
+			} 
+			
+		}	
+	}
+
 	public int getPeerPCE_port() {
 		return peerPCE_port;
 	}
@@ -360,7 +505,11 @@ public class PCCPCEPSession extends GenericPCEPSession{
 		return newReqId;
 	}
 	
-	public void endSession(){
+	public void endSession()
+	{
+
+		log.info("Ending PCC session, abruptly?, who knows");
+
 	}
 
 	@Override
@@ -384,7 +533,7 @@ public class PCCPCEPSession extends GenericPCEPSession{
 		     //Means this PCC owns this LSP and must send information to PCE
 		     if (lspte.getIdSource().equals(lspManager.getLocalIP()))
 		     {
-		    	 lspManager.getNotiLSP().notify(lspte, true, true, false, true);
+		    	 lspManager.getNotiLSP().notify(lspte, true, true, false, true, out);
 	    	 }
 	     }
 		log.info("Sending las PCEPReport to stop sync");
@@ -394,23 +543,32 @@ public class PCCPCEPSession extends GenericPCEPSession{
 		ero.setEroSubobjects(new LinkedList<EROSubobject>());
 		lspte.setEro(ero);
 		
-		lspManager.getNotiLSP().notify(lspte, true, true, false, true);
+		//Sync flag to 0 cause it's the last pcrpt to notify end of sync
+		lspManager.getNotiLSP().notify(lspte, true, true, false, false, out);
 		 
 	}
 	
 	private boolean avoidSync(OPEN open) 
 	{
 		log.info("Open :"+open.toString());
-		long dataBaseId = open.getLsp_database_version_tlv().getLSPStateDBVersion();
-		log.info("dataBaseId:"+dataBaseId);
-		log.info("lspManager.getDataBaseVersion() :"+lspManager.getDataBaseVersion() );
-		if ((lspManager.getDataBaseVersion() == dataBaseId)&&(lspManager.getDataBaseVersion()!=0))
+
+		if (open.getStateful_capability_tlv() == null)
 		{
 			return true;
 		}
-		else
+		
+		long dataBaseId = open.getLsp_database_version_tlv().getLSPStateDBVersion();
+		log.info("dataBaseId:"+dataBaseId);
+		log.info("lspManager.getDataBaseVersion() :"+lspManager.getDataBaseVersion() );
+		boolean PCESyncFlag = open.getStateful_capability_tlv().issFlag();
+		boolean mySyncFlag = pcepSessionManager.isStatefulSFlag();
+		if (PCESyncFlag && mySyncFlag && lspManager.getDataBaseVersion() != dataBaseId)
 		{
 			return false;
+		}
+		else
+		{
+			return true;
 		}
 	}
 }

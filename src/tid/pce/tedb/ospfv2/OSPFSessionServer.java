@@ -59,13 +59,20 @@ public class OSPFSessionServer extends Thread {
 	}
 	
 	public void run(){
-
+		log.info("run ruun");
 		int tipo = 1;
 		RawSocket socket = new RawSocket();        
 		try{
-			socket.open(PF_INET, 89);
+			if (socket.isOpen())
+			{
+				log.info("el socket YA esta abierto");
+			}
+			else
+			{
+				socket.open(PF_INET, 89);
+			}
 			if (!(socket.isOpen())){
-				log.severe("Error el socket no se ha abierto");
+				log.info("Error el socket no se ha abierto");
 			}
 			socket.setUseSelectTimeout(true);
 			socket.setSendTimeout(TIMEOUT);

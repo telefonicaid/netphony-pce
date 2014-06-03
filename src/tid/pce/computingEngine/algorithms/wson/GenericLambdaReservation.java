@@ -3,15 +3,15 @@ package tid.pce.computingEngine.algorithms.wson;
 import java.util.LinkedList;
 import java.util.logging.Logger;
 
+import tid.pce.computingEngine.ComputingResponse;
 import tid.pce.computingEngine.algorithms.AlgorithmReservation;
-import tid.pce.pcep.messages.PCEPResponse;
 import tid.pce.pcep.objects.Reservation;
 import tid.pce.pcep.objects.ReservationConf;
 import tid.pce.server.wson.ReservationManager;
 
 public class GenericLambdaReservation implements AlgorithmReservation{
 
-	private PCEPResponse resp;
+	private ComputingResponse resp;
 	private LinkedList<Object> sourceVertexList=new LinkedList<Object>();
 	private LinkedList<Object> targetVertexList=new LinkedList<Object>();
 	private Reservation reservation;
@@ -32,7 +32,7 @@ public class GenericLambdaReservation implements AlgorithmReservation{
 		log=Logger.getLogger("PCEServer");
 	}
 	
-	public PCEPResponse call() throws Exception {
+	public ComputingResponse call() throws Exception {
 		if (reservation!=null){
 			//log.info("Reserving lambda "+lambda_chosen);
 			long reservationID=reservationManager.reserve(sourceVertexList, targetVertexList, lambda_chosen, reservation.getTimer(), bidirectional);
@@ -46,11 +46,11 @@ public class GenericLambdaReservation implements AlgorithmReservation{
 			
 	}
 
-	public PCEPResponse getResp() {
+	public ComputingResponse getResp() {
 		return resp;
 	}
 
-	public void setResp(PCEPResponse resp) {
+	public void setResp(ComputingResponse resp) {
 		
 		this.resp = resp;
 	}

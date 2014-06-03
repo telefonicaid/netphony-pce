@@ -1,19 +1,14 @@
 package tid.pce.tedb;
 
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.UnknownHostException;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.Set;
 import java.util.logging.Logger;
 
-import org.jgrapht.*;
-import org.jgrapht.alg.DijkstraShortestPath;
-import org.jgrapht.graph.*;
+import org.jgrapht.graph.DirectedWeightedMultigraph;
+import org.jgrapht.graph.SimpleDirectedWeightedGraph;
 
 import tid.pce.pcep.objects.tlvs.subtlvs.CostSubTLV;
 
@@ -49,6 +44,7 @@ public class ITMDTEDB implements MultiDomainTEDB {
 		it_site_id_domain_ed=new Hashtable <Object,Object>();
 		resource_id_domain_ed=new Hashtable <Object,Object>();
 		addBidirectional=true;//FIXME: ESTO ES UN APA�O TEMPORAL
+		//Estoy viendo el FIXME este tres años despues y no ha sido tan temporal al final
 	}
 	
 	public DirectedWeightedMultigraph<Object,InterDomainEdge> getDuplicatedMDNetworkGraph(){

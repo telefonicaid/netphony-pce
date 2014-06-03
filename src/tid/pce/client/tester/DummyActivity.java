@@ -7,15 +7,16 @@ import java.util.LinkedList;
 import java.util.Timer;
 import java.util.logging.Logger;
 
-import tid.emulator.node.transport.lsp.LSP;
 import tid.netManager.NetworkLSPManager;
 import tid.pce.client.PCCPCEPSession;
 import tid.pce.client.emulator.AutomaticTesterStatistics;
+import tid.pce.computingEngine.ComputingResponse;
 import tid.pce.pcep.constructs.Path;
 import tid.pce.pcep.messages.PCEPRequest;
 import tid.pce.pcep.messages.PCEPResponse;
 import tid.pce.pcep.objects.ExplicitRouteObject;
 import tid.pce.pcep.objects.GeneralizedBandwidthSSON;
+import tid.pce.pcep.objects.LSP;
 import tid.rsvp.objects.subobjects.SubObjectValues;
 import tid.rsvp.objects.subobjects.UnnumberIfIDEROSubobject;
 import tid.vntm.LigthPathManagement;
@@ -24,7 +25,7 @@ import cern.jet.random.Exponential;
 public class DummyActivity implements Activity{
 	private AutomaticTesterStatistics stats;
 	private PCEPRequest request;
-	private PCEPResponse response;
+	private ComputingResponse response;
 	private Logger log;
 	private Exponential connectionTime;	
 	private Timer planificationTimer;
@@ -70,7 +71,8 @@ public class DummyActivity implements Activity{
 					LinkedList <ExplicitRouteObject> eroList = new LinkedList <ExplicitRouteObject>();
 					ExplicitRouteObject ero = path.geteRO();
 					eroList.add(ero);
-					lsp.setLspTLV(eroList);
+					//FIXME: Esta linea reventaba
+					//lsp.set LspTLV(eroList);
 					listLSP.add(lsp);
 				
 					
@@ -168,8 +170,8 @@ public class DummyActivity implements Activity{
 		
 	}
 
-	@Override
-	public void addResponse(PCEPResponse response) {
+
+	public void addResponse(ComputingResponse response) {
 		log.info("Añadimos la response para actualizar estadisticas");
 		this.response=response;
 	}
@@ -182,6 +184,12 @@ public class DummyActivity implements Activity{
 
 	@Override
 	public void addLigthPathManagement(LigthPathManagement ligthPathManagement) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void addResponse(PCEPResponse response) {
 		// TODO Auto-generated method stub
 		
 	}

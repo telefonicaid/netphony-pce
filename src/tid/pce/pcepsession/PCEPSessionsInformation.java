@@ -14,12 +14,20 @@ public class PCEPSessionsInformation {
 	
 	private boolean isStateful = false;
 	
+	private boolean isSRCapable = false;
+	private int MSD = 0;
+
+	
+	private boolean statefulDFlag =false;
+	private boolean statefulTFlag = false;
+	private boolean statefulSFlag = false;
+	
 	private boolean isActive = false;
 		
 	//FIXME: 
 	int rollSession;//PCEBackup, 
 	//Datos de la sesion que nos interesen
-	//FIXME: ya lo tenemos a trav�s de la lista de sesiones
+	//FIXME: ya lo tenemos a traves de la lista de sesiones
 	 DataOutputStream out;
 	
 	public PCEPSessionsInformation(){
@@ -76,9 +84,32 @@ public class PCEPSessionsInformation {
 		return isStateful;
 	}
 	
+	public boolean isSRCapable() {
+		return isSRCapable;
+	}
+	
+	public int getMSD() 
+	{
+		return MSD;
+	}
+	
 	public void setStateful(boolean isStateful) {
 		this.isStateful = isStateful;
 	}
+	
+	public void setSRCapable(boolean isSRCapable) {
+		this.isSRCapable = isSRCapable;
+	}
+	
+	public void setSRCapable(int MSD) {
+		this.isSRCapable = (MSD>=0);
+		this.MSD = MSD;
+	}
+	
+	public void setMSD(int MSD) {
+		this.MSD = MSD;
+	}
+	
 	
 	public boolean isActive() {
 		return isActive;
@@ -87,4 +118,29 @@ public class PCEPSessionsInformation {
 	public void setActive(boolean isActive) {
 		this.isActive = isActive;
 	}
+	
+	public boolean isStatefulDFlag() {
+		return statefulDFlag;
+	}
+
+	public void setStatefulDFlag(boolean statefulDFlag) {
+		this.statefulDFlag = statefulDFlag;
+	}
+
+	public boolean isStatefulTFlag() {
+		return statefulTFlag;
+	}
+
+	public void setStatefulTFlag(boolean statefulTFlag) {
+		this.statefulTFlag = statefulTFlag;
+	}
+
+	public boolean isStatefulSFlag() {
+		return statefulSFlag;
+	}
+
+	public void setStatefulSFlag(boolean statefulSFlag) {
+		this.statefulSFlag = statefulSFlag;
+	}	
+	
 }

@@ -17,10 +17,10 @@ import org.jgrapht.alg.DijkstraShortestPath;
 import org.jgrapht.graph.SimpleDirectedWeightedGraph;
 
 import tid.pce.computingEngine.ComputingRequest;
+import tid.pce.computingEngine.ComputingResponse;
 import tid.pce.pcep.constructs.Path;
 import tid.pce.pcep.constructs.Request;
 import tid.pce.pcep.constructs.Response;
-import tid.pce.pcep.messages.PCEPResponse;
 import tid.pce.pcep.objects.EndPointsIPv4;
 import tid.pce.pcep.objects.ExplicitRouteObject;
 import tid.pce.pcep.objects.NoPath;
@@ -47,8 +47,8 @@ public class CPLEXOptimizedPathComputing implements  ComputingAlgorithm{
 	
 	
 	
-	public PCEPResponse call(){
-		PCEPResponse m_resp=new PCEPResponse();
+	public ComputingResponse call(){
+		ComputingResponse m_resp=new ComputingResponse();
 			
 		log.info("CPLEX OPTIMIZED Processing SVEC Path Computing Request: "+pathReq.getSvec().toString());
 		Iterator<IntraDomainEdge> iteIDE=networkGraph.edgeSet().iterator();

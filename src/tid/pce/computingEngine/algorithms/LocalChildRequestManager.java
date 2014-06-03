@@ -1,30 +1,19 @@
 package tid.pce.computingEngine.algorithms;
 
 import java.io.DataOutputStream;
-import java.io.IOException;
 import java.net.Inet4Address;
 import java.util.Hashtable;
 import java.util.LinkedList;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.FutureTask;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.logging.Logger;
-
-import TEDB.DomainTEDB;
-
-import tid.pce.computingEngine.algorithms.sson.Dynamic_RSA;
-import tid.pce.client.ClientRequestManager;
 import tid.pce.computingEngine.ComputingRequest;
-import tid.pce.computingEngine.algorithms.ChildPCERequest;
-import tid.pce.computingEngine.algorithms.sson.AURE_SSON_algorithm;
-import tid.pce.pcep.PCEPProtocolViolationException;
+import tid.pce.computingEngine.ComputingResponse;
 import tid.pce.pcep.constructs.Request;
 import tid.pce.pcep.messages.PCEPRequest;
-import tid.pce.pcep.messages.PCEPResponse;
 import tid.pce.tedb.TEDB;
 
 /**
@@ -47,7 +36,7 @@ public class LocalChildRequestManager {
 	private Hashtable<Inet4Address,Inet4Address> domainIdpceId;
 	
 	public Hashtable<Long,Object> locks;
-	private Hashtable<Long,PCEPResponse> responses;
+	private Hashtable<Long,ComputingResponse> responses;
 	
 	
 	private ThreadPoolExecutor executor;
@@ -61,7 +50,7 @@ public class LocalChildRequestManager {
 	
 	public LocalChildRequestManager(){
 		locks = new Hashtable<Long, Object>();	
-		responses=new Hashtable<Long, PCEPResponse>();
+		responses=new Hashtable<Long, ComputingResponse>();
 		domainIdOutputStream=new Hashtable<Inet4Address,DataOutputStream>();
 		domainIdpceId=new Hashtable<Inet4Address,Inet4Address>();
 		int corePoolSize=5;
@@ -75,18 +64,18 @@ public class LocalChildRequestManager {
 		
 	}
 	
-	public LinkedList<PCEPResponse> executeRequests(LinkedList<PCEPRequest> requestList, LinkedList<Inet4Address> domainList, ComputingAlgorithmManagerSSON cam_sson, TEDB ted){
-		LinkedList<PCEPResponse> response= new  LinkedList<PCEPResponse>();
+	public LinkedList<ComputingResponse> executeRequests(LinkedList<PCEPRequest> requestList, LinkedList<Inet4Address> domainList, ComputingAlgorithmManagerSSON cam_sson, TEDB ted){
+		LinkedList<ComputingResponse> response= new  LinkedList<ComputingResponse>();
 		int mf=0;
-		LinkedList<FutureTask<PCEPResponse>> ftList=new LinkedList<FutureTask<PCEPResponse>>();
-		FutureTask<PCEPResponse> ft;
+		LinkedList<FutureTask<ComputingResponse>> ftList=new LinkedList<FutureTask<ComputingResponse>>();
+		FutureTask<ComputingResponse> ft;
 		for (int i=0;i<requestList.size();++i){
 			ComputingRequest compRquest = new ComputingRequest();
 			LinkedList<Request> requestList2=new LinkedList<Request>();
 			compRquest.setRequestList(requestList2);
 			compRquest.getRequestList().add(requestList.get(i).getRequestList().get(0));
 			ComputingAlgorithm cpr=cam_sson.getComputingAlgorithm(compRquest,ted,mf);
-			 ft=new FutureTask<PCEPResponse>(cpr);
+			 ft=new FutureTask<ComputingResponse>(cpr);
 			 ftList.add(ft);
 			 executor.execute(ft);
 		}
@@ -94,7 +83,7 @@ public class LocalChildRequestManager {
 		System.out.println("The time is "+time+" miliseconds");
 		long timeIni=System.currentTimeMillis();
 		long time2;
-		PCEPResponse resp;
+		ComputingResponse resp;
 		for (int i=0;i<requestList.size();++i){
 			
 			try {

@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Logger;
 
 import org.jgrapht.GraphPath;
@@ -13,25 +14,25 @@ import org.jgrapht.alg.KruskalMinimumSpanningTree;
 import org.jgrapht.graph.SimpleDirectedWeightedGraph;
 
 import tid.pce.computingEngine.ComputingRequest;
+import tid.pce.computingEngine.ComputingResponse;
 import tid.pce.computingEngine.algorithms.AlgorithmReservation;
 import tid.pce.computingEngine.algorithms.ComputingAlgorithm;
 import tid.pce.pcep.constructs.EndPointAndRestrictions;
 import tid.pce.pcep.constructs.Path;
 import tid.pce.pcep.constructs.Request;
 import tid.pce.pcep.constructs.Response;
-import tid.pce.pcep.messages.PCEPResponse;
 import tid.pce.pcep.objects.EndPoints;
 import tid.pce.pcep.objects.ExplicitRouteObject;
 import tid.pce.pcep.objects.GeneralizedEndPoints;
 import tid.pce.pcep.objects.NoPath;
 import tid.pce.pcep.objects.ObjectParameters;
+import tid.pce.pcep.objects.P2MPEndPointsDataPathID;
 import tid.pce.pcep.objects.RequestParameters;
 import tid.pce.pcep.objects.tlvs.NoPathTLV;
 import tid.pce.server.wson.ReservationManager;
 import tid.pce.tedb.DomainTEDB;
 import tid.pce.tedb.IntraDomainEdge;
 import tid.pce.tedb.TEDB;
-import tid.pce.tedb.TE_Information;
 import tid.protocol.commons.ByteHandler;
 import tid.provisioningManager.objects.RouterInfoPM;
 import tid.rsvp.objects.subobjects.GeneralizedLabelEROSubobject;
@@ -46,6 +47,7 @@ import tid.rsvp.objects.subobjects.SwitchIDEROSubobjectEdge;
 
 public class VLAN_Multicast_algorithm implements ComputingAlgorithm 
 {
+	static AtomicInteger atI = new AtomicInteger(0);
 	static public String BYTE_TAG = "1111000011110001";
 
 	/**
@@ -103,13 +105,17 @@ public class VLAN_Multicast_algorithm implements ComputingAlgorithm
 	/**
 	 * Exectutes the path computation and returns the PCEP Response
 	 */
-	public PCEPResponse call()
+	public ComputingResponse call()
 	{ 
+		
+		
+		
 		//Timestamp of the start of the algorithm;
 		long tiempoini =System.nanoTime();
 		//Create the response message
 		//It will contain either the path or noPath
-		PCEPResponse m_resp=new PCEPResponse();
+		ComputingResponse m_resp=new ComputingResponse();
+		m_resp.setEncodingType(pathReq.getEcodingType());
 		//The request that needs to be solved
 		Request req=pathReq.getRequestList().get(0);
 		//Request Id, needed for the response
@@ -163,10 +169,38 @@ public class VLAN_Multicast_algorithm implements ComputingAlgorithm
 			source = new RouterInfoPM(endP.getP2MPEndpoints().getEndPointAndRestrictions().getEndPoint().getXifiEndPointTLV().getSwitchID());
 			source_mac = endP.getP2MPEndpoints().getEndPointAndRestrictions().getEndPoint().getXifiEndPointTLV().getMac();
 		}
+		else if (EP.getOT() == ObjectParameters.PCEP_OBJECT_TYPE_P2MP_ENDPOINTS_DATAPATHID)
+		{
+			log.info("OK : PCEP_OBJECT_TYPE_P2MP_ENDPOINTS_DATAPATHID");
+			switchList = new ArrayList<RouterInfoPM>();
+			portList = new ArrayList<Integer>();
+			
+			P2MPEndPointsDataPathID endP = (P2MPEndPointsDataPathID)req.getEndPoints();
+			
+			for (int i = 0; i < endP.getDestDatapathIDList().size(); i++)
+			{
+				switchList.add(new RouterInfoPM(endP.getDestDatapathIDList().get(i)));
+				portList.add(0);
+			}
+			
+			source = new RouterInfoPM(endP.getSourceDatapathID());
+			source_mac = "00:00:00:00:00:00";
+		}
 		else if (EP.getOT()==ObjectParameters.PCEP_OBJECT_TYPE_ENDPOINTS_MAC)
 		{
 			log.info("Error : PCEP_OBJECT_TYPE_ENDPOINTS_MAC");
 		}
+		/*
+		if (atI.intValue() % 2 == 0)
+		{
+			atI.incrementAndGet();
+			return sendNoPath(response, m_resp);		
+		}
+		
+		atI.incrementAndGet();
+		*/
+		
+		log.info("ted::" + ted.printTopology());
 		
 		//Check if all vertex are in graph
 		for (int i = 0; i < switchList.size(); i++) 
@@ -184,12 +218,16 @@ public class VLAN_Multicast_algorithm implements ComputingAlgorithm
 			SimpleDirectedWeightedGraph<Object,IntraDomainEdge> graphLambda = preComp.getNetworkGraphs().get(0); 
 			KruskalMinimumSpanningTree<Object,IntraDomainEdge>  kmst = new KruskalMinimumSpanningTree<Object,IntraDomainEdge> (graphLambda);
 			edges = kmst.getEdgeSet();
-				
-			if (edges==null)
+			
+			
+			log.info("graphLambda::::"+graphLambda);
+			log.info("kmst.getEdgeSet()::::"+kmst.getEdgeSet());
+			/*	
+			if ((edges==null) || (edges.size() == 0))
 			{				
 				return sendNoPath(response, m_resp);	
 			}
-			
+			*/
 			SimpleDirectedWeightedGraph<Object,IntraDomainEdge> sdwg = new SimpleDirectedWeightedGraph<Object,IntraDomainEdge>(IntraDomainEdge.class);
 			
 			log.info("edges.size():1::"+edges.size());
@@ -198,6 +236,7 @@ public class VLAN_Multicast_algorithm implements ComputingAlgorithm
 			for (IntraDomainEdge ide : edges) 
 			{	
 				log.info("ide.getSource():"+ide.getSource()+",ide.getTarget():"+ide.getTarget());
+				log.info("graphLambda.getEdge(ide.getTarget(), ide.getSource()):"+graphLambda.getEdge(ide.getTarget(), ide.getSource()));
 				sdwg.addVertex(ide.getSource());
 				sdwg.addVertex(ide.getTarget());
 				sdwg.addEdge(ide.getSource(), ide.getTarget(), ide);
@@ -217,8 +256,27 @@ public class VLAN_Multicast_algorithm implements ComputingAlgorithm
 			for (int i = 0; i < switchList.size() && edges.size() > 0; i++) 
 			{
 				log.info("switchList.get(i)::"+switchList.get(i));
+				
+				if (!sdwg.containsVertex(switchList.get(i)))
+				{
+					log.info("Probably only one switch in the query");
+					break;
+				}
+				
+				//Case with only one node
+				if (!(sdwg.containsVertex(source)))
+				{
+					break;
+				}
+				
 				DijkstraShortestPath<Object,IntraDomainEdge>  dsp = new DijkstraShortestPath<Object,IntraDomainEdge> (sdwg, source, switchList.get(i));
 				GraphPath<Object,IntraDomainEdge> result = dsp.getPath();
+				
+				if (result == null)
+				{
+					log.info("Sending No Paath");
+				}
+				
 				log.info("Iteration i: "+i);
 				for (IntraDomainEdge ide_result : result.getEdgeList())
 				{
@@ -332,9 +390,9 @@ public class VLAN_Multicast_algorithm implements ComputingAlgorithm
 		return reserv;
 	}
 	
-	private PCEPResponse sendNoPath(Response response, PCEPResponse m_resp)
+	private ComputingResponse sendNoPath(Response response, ComputingResponse m_resp)
 	{
-		log.warning("Error: Source or destination are NOT in the TED");
+		log.warning("Big Warning: Source or destination are NOT in the TED, sending NO PATH");
 		NoPath noPath= new NoPath();
 		noPath.setNatureOfIssue(ObjectParameters.NOPATH_NOPATH_SAT_CONSTRAINTS);
 		NoPathTLV noPathTLV=new NoPathTLV();

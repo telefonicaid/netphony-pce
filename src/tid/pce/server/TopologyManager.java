@@ -11,6 +11,7 @@ import java.util.logging.Logger;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
+import org.jgrapht.graph.SimpleDirectedWeightedGraph;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -18,7 +19,10 @@ import org.w3c.dom.NodeList;
 import tid.bgp.bgp4Peer.pruebas.BGPPeer;
 import tid.ospf.ospfv2.OSPFv2LinkStateUpdatePacket;
 import tid.pce.tedb.DomainTEDB;
+import tid.pce.tedb.IntraDomainEdge;
 import tid.pce.tedb.SimpleTEDB;
+import tid.pce.tedb.controllers.TEDUpdaterController;
+import tid.pce.tedb.controllers.TEDUpdaterFloodlight;
 import tid.pce.tedb.ospfv2.OSPFSessionServer;
 import tid.pce.tedb.ospfv2.OSPFTCPSessionServer;
 import tid.util.UtilsFunctions;
@@ -26,7 +30,7 @@ import tid.util.UtilsFunctions;
 
 /**
  * Topology server, receives a TED, initializes it and maintains it
- *
+ * Valors
  */
 
 public class TopologyManager 
@@ -34,7 +38,6 @@ public class TopologyManager
 	PCEServerParameters params;
 	DomainTEDB ted;
 	Logger log;
-	private String BGPLS_config_file;
 	
 	public TopologyManager(PCEServerParameters params,DomainTEDB ted, Logger log)
 	{
@@ -56,13 +59,15 @@ public class TopologyManager
 		}
 		if (params.isOSPFSession())
 		{
+			log.info("Initializing from OSPF");
 			initFromOSPF();
 		}
 		
 		if (params.isActingAsBGP4Peer()) {//BGP
 			log.info("Acting as BGP Peer");
 			BGPPeer bgpPeer = new BGPPeer();		
-			bgpPeer.configure(BGPLS_config_file);			
+			bgpPeer.configure(params.getBGP4File());			
+			//bgpPeer.configure("PCEServerConfiguration.xml");			
 			bgpPeer.setReadDomainTEDB(ted);
 			bgpPeer.createUpdateDispatcher();
 			bgpPeer.startClient();		
@@ -178,19 +183,73 @@ public class TopologyManager
 	
 	private void initFromWLANController()
 	{
-		log.info("Initializing TED from WLAN Controller");
+		log.info("Initializing TED from WLAN Controller. New");
 		
 		ArrayList<String> ips = new ArrayList<String>();
 		ArrayList<String> ports = new ArrayList<String>();
+		ArrayList<String> types = new ArrayList<String>();
 		
-		parseControllerFile(params.getControllerListFile(), ips, ports);
+		TopologyManager.parseControllerFile(params.getControllerListFile(), ips, ports, types);
 		
-		TopologyUpdaterVLAN thread = new TopologyUpdaterVLAN(ips, ports, params.getTopologyPath(),"/wm/core/controller/switches/json", ted, log);
-		thread.setInterDomainFile(params.getInterDomainFile());
-		thread.run();		
+		SimpleDirectedWeightedGraph<Object, IntraDomainEdge> networkGraph = new SimpleDirectedWeightedGraph<Object, IntraDomainEdge>(IntraDomainEdge.class);
+		((SimpleTEDB)ted).setNetworkGraph(networkGraph);
+		
+		TopologyManager.updateTopology( ips, ports, types, ted, params.getInterDomainFile(), log);
 	}
 	
-	private void parseControllerFile(String controllerFile, ArrayList<String> ips, ArrayList<String> ports)
+	public static void updateTopology(ArrayList<String> ips, ArrayList<String> ports, ArrayList<String> types,DomainTEDB ted, String interDomainFile, Logger log)
+	{
+		for (int i = 0; i < ips.size(); i++)
+		{
+		
+			try 
+			{
+				Class<?> act = Class.forName("tid.pce.tedb.controllers.TEDUpdater" + types.get(i));
+				
+				Class[] cArg = new Class[6];
+				//(ArrayList<String> ips, ArrayList<String>ports , String topologyPathLinks, 
+				//String topologyPathNodes,DomainTEDB ted, Logger log)
+				cArg[0] = String.class;
+				cArg[1] = String.class;
+				cArg[2] = String.class;
+				cArg[3] = String.class;
+				cArg[4] = DomainTEDB.class;
+				cArg[5] = Logger.class;
+				
+				Object[] args = new Object[6];
+				args[0] = ips.get(i);
+				args[1] = ports.get(i);
+				args[2] = "";
+				args[3] = "/wm/core/controller/switches/json";
+				args[4] = ted;
+				args[5] = log;
+				
+				TEDUpdaterController topUpdater = (TEDUpdaterController)act.getDeclaredConstructor(cArg).newInstance(args);
+				topUpdater.setInterDomainFile(interDomainFile);
+				topUpdater.run();
+			}
+			catch (Exception e1)
+			{
+				log.info("BBooOOoOOOooOOOOooOOOooooOoOooOoOooOooooOOOOOooOOOOOoooMMMM");
+				log.info("chica chica BBooOOoOOOooOOOOooOOOooooOoOooOoOooOooooOOOOOooOOOOOoooMMMM");
+				log.info("chica chica BBooOOoOOOooOOOOooOOOooooOoOooOoOooOooooOOOOOooOOOOOoooMMMM");
+				log.info("BBooOOoOOOooOOOOooOOOooooOoOooOoOooOooooOOOOOooOOOOOoooMMMM");
+				log.info(UtilsFunctions.exceptionToString(e1));			
+				return;
+			}
+			
+			log.info(i+ ":i + TED" + ted.printTopology());
+			//TEDUpdaterFloodlight thread = new TEDUpdaterFloodlight(ips.get(i), ports.get(i), params.getTopologyPath(),"/wm/core/controller/switches/json", ted, log);
+			/*
+			TopologyUpdaterFloodlight thread = new TopologyUpdaterFloodlight(ips, ports, params.getTopologyPath(),"/wm/core/controller/switches/json", ted, log);
+			thread.setInterDomainFile(params.getInterDomainFile());
+			thread.run();
+			*/	
+		}
+		TEDUpdaterController.parseRemainingLinksFromXML(ted, interDomainFile);
+	}
+	
+	public static void parseControllerFile(String controllerFile, ArrayList<String> ips, ArrayList<String> ports, ArrayList<String> types)
 	{		
 		try 
 		{
@@ -205,29 +264,19 @@ public class TopologyManager
 				Element nodes_servers = (Element) list_nodes_Edges.item(i);
 				String ip = UtilsFunctions.getCharacterDataFromElement((Element) nodes_servers.getElementsByTagName("ip").item(0));
 				String port = UtilsFunctions.getCharacterDataFromElement((Element) nodes_servers.getElementsByTagName("port").item(0));
+				String type = UtilsFunctions.getCharacterDataFromElement((Element) nodes_servers.getElementsByTagName("type").item(0));
 				
 				ips.add(ip);
 				ports.add(port);
+				types.add(type);
 				
-				log.info("Adding controller with IP: " + ip + " and port: "+port);
+				System.out.print("Adding controller with IP: " + ip + " and port: " + port + "and type: " + type);
 			}
 		} 
 		catch (Exception e) 
 		{
-			log.info(UtilsFunctions.exceptionToString(e));
+			System.out.print(UtilsFunctions.exceptionToString(e));
 		}	
 	}
-
-	public String getBGPLS_config_file() 
-	{
-		return BGPLS_config_file;
-	}
-
-	public void setBGPLS_config_file(String bGPLS_config_file) 
-	{
-		BGPLS_config_file = bGPLS_config_file;
-	}
-	
-	
 }
 

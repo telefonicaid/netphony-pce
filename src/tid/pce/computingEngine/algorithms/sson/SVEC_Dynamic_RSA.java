@@ -16,6 +16,7 @@ import org.jgrapht.graph.SimpleDirectedWeightedGraph;
 
 import tid.ospf.ospfv2.lsa.tlv.subtlv.complexFields.BitmapLabelSet;
 import tid.pce.computingEngine.ComputingRequest;
+import tid.pce.computingEngine.ComputingResponse;
 import tid.pce.computingEngine.algorithms.AlgorithmReservation;
 import tid.pce.computingEngine.algorithms.ComputingAlgorithm;
 import tid.pce.computingEngine.algorithms.PCEPUtils;
@@ -26,7 +27,6 @@ import tid.pce.pcep.constructs.P2PEndpoints;
 import tid.pce.pcep.constructs.Path;
 import tid.pce.pcep.constructs.Request;
 import tid.pce.pcep.constructs.Response;
-import tid.pce.pcep.messages.PCEPResponse;
 import tid.pce.pcep.objects.Bandwidth;
 import tid.pce.pcep.objects.EndPoints;
 import tid.pce.pcep.objects.EndPointsIPv4;
@@ -117,7 +117,7 @@ public class SVEC_Dynamic_RSA implements ComputingAlgorithm{
 	/**
 	 * Exectutes the path computation and returns the PCEP Response
 	 */
-	public PCEPResponse call(){ 
+	public ComputingResponse call(){ 
 		//Timestamp of the start of the algorithm;
 		long tiempoini =System.nanoTime();
 		long tiempoMSPtotal = 0;
@@ -127,7 +127,8 @@ public class SVEC_Dynamic_RSA implements ComputingAlgorithm{
 		log.finest("Starting Dynamic_RSA Algorithm");
 		//Create the response message
 		//It will contain either the path or noPath
-		PCEPResponse m_resp=new PCEPResponse();
+		ComputingResponse m_resp=new ComputingResponse();
+		m_resp.setEncodingType(pathReq.getEcodingType());
 		
 		networkGraph=PCEPUtils.duplicateTEDDB(((SimpleTEDB)ted).getNetworkGraph());
 		

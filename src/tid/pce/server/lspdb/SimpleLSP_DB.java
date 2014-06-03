@@ -146,6 +146,7 @@ public class SimpleLSP_DB implements LSP_DB
 			if ((lspDB = lsp.getLspDBVersion_tlv())!=null)
 			{
 				pccInfo.dataBaseVersion = lspDB.getLSPStateDBVersion();
+				log.info("updated database version of PCC: "+PCCList.get(pccInfo)+" to v."+lspDB.getLSPStateDBVersion());
 			}
 			
 			LSPTEInfo lspInfo = LSPTEList.get(new LSPKey(adress,lspId));
@@ -186,8 +187,7 @@ public class SimpleLSP_DB implements LSP_DB
 		PCCInfo info = PCCList.get(address);
 		if ((info == null) || (info.dataBaseVersion != dataBaseId))
 		{
-			PCCInfo addInfo = new PCCInfo(false,dataBaseId);
-			PCCList.put(address, addInfo);
+			addPCC(address,false,dataBaseId);
 		}
 		else
 		{
@@ -220,7 +220,8 @@ public class SimpleLSP_DB implements LSP_DB
 	
 
 	@Override
-	public LSPTE getLSP(LSPKey keyLSP) {
+	public LSPTE getLSP(LSPKey keyLSP)
+	{
 		// TODO Auto-generated method stub
 		return null;
 	}

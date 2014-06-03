@@ -9,7 +9,6 @@ import java.util.LinkedList;
 import java.util.logging.Logger;
 
 import tid.pce.pcep.constructs.EndPoint;
-import tid.pce.pcep.constructs.ErrorConstruct;
 import tid.pce.pcep.constructs.P2PEndpoints;
 import tid.pce.pcep.constructs.Request;
 import tid.pce.pcep.constructs.SVECConstruct;
@@ -17,19 +16,17 @@ import tid.pce.pcep.messages.PCEPError;
 import tid.pce.pcep.messages.PCEPKeepalive;
 import tid.pce.pcep.messages.PCEPRequest;
 import tid.pce.pcep.messages.PCEPResponse;
-import tid.pce.pcep.objects.EndPointsIPv4;
 import tid.pce.pcep.objects.Bandwidth;
+import tid.pce.pcep.objects.EndPointsIPv4;
 import tid.pce.pcep.objects.GeneralizedEndPoints;
 import tid.pce.pcep.objects.Metric;
-import tid.pce.pcep.objects.NetQuotationIPv4.EPQuotationIPv4;
 import tid.pce.pcep.objects.ObjectParameters;
+import tid.pce.pcep.objects.ObjectiveFunction;
 import tid.pce.pcep.objects.PCEPErrorObject;
 import tid.pce.pcep.objects.RequestParameters;
 import tid.pce.pcep.objects.Reservation;
 import tid.pce.pcep.objects.Svec;
-import tid.pce.pcep.objects.ObjectiveFunction;
 import tid.pce.pcep.objects.tlvs.EndPointIPv4TLV;
-import tid.pce.pcep.objects.tlvs.EndPointsIPv4TLV;
 
 public class UserInterface extends Thread {
 	

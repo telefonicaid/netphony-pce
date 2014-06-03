@@ -12,6 +12,7 @@ import org.jgrapht.GraphPath;
 import org.jgrapht.alg.DijkstraShortestPath;
 import org.jgrapht.graph.SimpleDirectedWeightedGraph;
 
+import tid.pce.computingEngine.ComputingResponse;
 import tid.pce.pcep.PCEPProtocolViolationException;
 import tid.pce.pcep.constructs.EndPoint;
 import tid.pce.pcep.constructs.EndPointAndRestrictions;
@@ -141,7 +142,7 @@ public class RequestProcessor implements Runnable {
 			}
 			else{
 				log.warning("Source or destination are NOT in the TED");
-				PCEPResponse m_resp=new PCEPResponse();
+				ComputingResponse m_resp=new ComputingResponse();
 				Response response=new Response();
 				RequestParameters rp = new RequestParameters();
 				rp.setRequestID(this.req.getRequest(0).getRequestParameters().getRequestID());
@@ -184,7 +185,7 @@ public class RequestProcessor implements Runnable {
 			
 		}
 		long tiempoini =System.currentTimeMillis();
-		PCEPResponse m_resp=new PCEPResponse();
+		ComputingResponse m_resp=new ComputingResponse();
 		Response response=new Response();
 		// check if src and dst are the same 
 		if (source_router_id_addr.equals(dest_router_id_addr)){

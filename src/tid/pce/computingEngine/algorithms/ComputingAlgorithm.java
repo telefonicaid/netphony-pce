@@ -6,10 +6,10 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.Callable;
 
-import tid.pce.pcep.messages.PCEPResponse;
+import tid.pce.computingEngine.ComputingResponse;
 import tid.pce.tedb.IntraDomainEdge;
 
-public interface ComputingAlgorithm extends Callable<PCEPResponse> {
+public interface ComputingAlgorithm extends Callable<ComputingResponse> {
 
 	public AlgorithmReservation getReserv();
 	

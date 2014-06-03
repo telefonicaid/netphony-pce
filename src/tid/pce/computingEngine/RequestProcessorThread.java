@@ -468,18 +468,36 @@ public class RequestProcessorThread extends Thread{
 				Request request=pathCompReq.getRequestList().get(0).duplicate();
 				//FIXME: hay que poner un nuevo requestID, si no... la podemos liar
 				pcreq.addRequest(request);
-				PCEPResponse pcepresp=cpcerm.newRequest(pcreq);
-				if (pcepresp==null){
+				PCEPResponse p_rep = cpcerm.newRequest(pcreq);
+				
+				
+				if (p_rep==null){
 					log.warning("Parent doesn't answer");
 					this.sendNoPath(pathCompReq);
+				}else {
+					log.info("RESP: "+p_rep.toString());
 				}
+				
+				ComputingResponse pcepresp =  new ComputingResponse();
+				pcepresp.setResponsetList(p_rep.getResponseList());
+				try 
+				{
+					log.info("Encoding Computing Request");
+					pcepresp.encode();
+				} 
+				catch (PCEPProtocolViolationException e1)
+				{
+					log.info(UtilsFunctions.exceptionToString(e1));
+				}
+				
+				
 				try {
-					log.info("oNE OF THE NODES IS NOT IN THE DOMAIN. Send Request to parent PCE");
-					pathCompReq.getOut().write(pcepresp.getBytes());
+					log.info("oNE OF THE NODES IS NOT IN THE DOMAIN. Send Request to parent PCE,pcepresp:"+pcepresp+",pathCompReq.getOut():"+pathCompReq.getOut());
+					pathCompReq.getOut().write(p_rep.getBytes());
 					pathCompReq.getOut().flush();
 				} catch (IOException e) {
 					log.warning("Parent doesn't answer");
-					PCEPResponse m_resp=new PCEPResponse();
+					ComputingResponse m_resp=new ComputingResponse();
 					Response response=new Response();
 					RequestParameters rp = new RequestParameters();
 					rp.setRequestID(request.getRequestParameters().requestID);
@@ -658,7 +676,7 @@ public class RequestProcessorThread extends Thread{
 			}
 			if (ft!=null)	{
 				//Here the task will be executed. n
-				PCEPResponse rep;
+				ComputingResponse rep;
 				try {
 					ft.run();
 					rep=ft.get(pathCompReq.getMaxTimeInPCE(),TimeUnit.MILLISECONDS);
@@ -678,7 +696,7 @@ public class RequestProcessorThread extends Thread{
 					//FIXME: 				
 					if (rep!=null){
 						//log.info("rep.getPathList().get(0)"+rep.getResponse(0).getPathList().get(0));
-						PCEPResponse repRes=ft.executeReservation();
+						ComputingResponse repRes=ft.executeReservation();
 						if (repRes!=null){
 							rep=repRes;							
 						}
@@ -831,7 +849,7 @@ public class RequestProcessorThread extends Thread{
 		this.procTime = procTime;
 	}
 
-	private void trappingResponse(PCEPResponse resp, long sourceIF, long destIF){
+	private void trappingResponse(ComputingResponse resp, long sourceIF, long destIF){
 		//Ancora no fa niente
 		
 		log.info("First ERO SubObject type "+resp.getResponseList().get(0).getPath(0).geteRO().getEROSubobjectList().getFirst().getClass());
@@ -862,7 +880,7 @@ public class RequestProcessorThread extends Thread{
 
 	private void sendNoPath(ComputingRequest pathCompReq){
 		log.info("SENDInd no path ID"+pathCompReq.getRequestList().getFirst().getRequestParameters().requestID);
-		PCEPResponse m_resp=new PCEPResponse();
+		ComputingResponse m_resp=new ComputingResponse();
 		Response response=new Response();
 		RequestParameters rp = new RequestParameters();
 		rp.setRequestID(pathCompReq.getRequestList().getFirst().getRequestParameters().requestID);
@@ -896,7 +914,7 @@ public class RequestProcessorThread extends Thread{
 	
 	/*** STRONGEST: Collaborative PCEs ***/
 	
-	public PCEPNotification createNotificationMessage(PCEPResponse resp,long timer ){
+	public PCEPNotification createNotificationMessage(ComputingResponse resp,long timer ){
 		log.info("Timer "+timer);
 		PCEPNotification notificationMsg = new PCEPNotification();
 		Notify notify=new Notify();

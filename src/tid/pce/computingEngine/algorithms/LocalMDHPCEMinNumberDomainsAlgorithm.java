@@ -19,6 +19,7 @@ import org.jgrapht.graph.DirectedWeightedMultigraph;
 import org.jgrapht.graph.SimpleDirectedWeightedGraph;
 
 import tid.pce.computingEngine.ComputingRequest;
+import tid.pce.computingEngine.ComputingResponse;
 import tid.pce.computingEngine.algorithms.multidomain.MDFunctions;
 import tid.pce.parentPCE.ChildPCERequestManager;
 import tid.pce.parentPCE.ParentPCESession;
@@ -31,7 +32,6 @@ import tid.pce.pcep.constructs.Path;
 import tid.pce.pcep.constructs.Request;
 import tid.pce.pcep.constructs.Response;
 import tid.pce.pcep.messages.PCEPRequest;
-import tid.pce.pcep.messages.PCEPResponse;
 import tid.pce.pcep.objects.Bandwidth;
 import tid.pce.pcep.objects.EndPoints;
 import tid.pce.pcep.objects.EndPointsIPv4;
@@ -127,10 +127,12 @@ public class LocalMDHPCEMinNumberDomainsAlgorithm implements ComputingAlgorithm{
 	
 	
 	
-	public PCEPResponse call()throws Exception{
+	public ComputingResponse call()throws Exception{
 
 		long tiempoini =System.nanoTime();
-		PCEPResponse m_resp=new PCEPResponse();
+		ComputingResponse m_resp=new ComputingResponse();
+		m_resp.setReachabilityManager(reachabilityManager);
+		m_resp.setEncodingType(pathReq.getEcodingType());
 		Request req=pathReq.getRequestList().get(0);
 		long reqId=req.getRequestParameters().getRequestID();
 		log.info("Processing MD Path Computing with LocalMDHPCEMinNumberDomainsAlgorithm (Minimum transit Domains without child PCEs)with Request id: "+reqId);
@@ -510,8 +512,8 @@ public class LocalMDHPCEMinNumberDomainsAlgorithm implements ComputingAlgorithm{
 //		int mf=0;
 //		ComputingAlgorithm cpr = cam_sson.getComputingAlgorithm(compRquest, ted, mf);
 //		log.info("Se envia la request al algoritmo");
-		PCEPResponse resp = null;
-		LinkedList<PCEPResponse> respList;
+		ComputingResponse resp = null;
+		LinkedList<ComputingResponse> respList;
 		long tiempo3 =System.nanoTime();
 		try {
 			respList= localChildRequestManager.executeRequests(reqList, domainList,cam_sson, ted);	

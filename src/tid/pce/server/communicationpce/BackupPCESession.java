@@ -99,7 +99,7 @@ public void run (){
 	} 
 
 	//Inicialize session
-	initializePCEPSession(false, 15, 200,false,false,null,null,null);
+	initializePCEPSession(false, 15, 200,false,false,null,null,0);
 
 	collaborationPCESessionManager.getOpenedSessionsManager().registerNewSession(out, RollSessionType.COLLABORATIVE_PCE);
 	this.deadTimerT=new DeadTimerThread(this, this.deadTimerLocal);

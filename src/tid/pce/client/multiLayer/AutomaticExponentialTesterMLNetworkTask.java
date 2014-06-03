@@ -2,38 +2,29 @@ package tid.pce.client.multiLayer;
 
 import java.io.BufferedWriter;
 import java.io.DataOutputStream;
-
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
-import java.util.Calendar;
-
-import java.util.GregorianCalendar;
 import java.util.LinkedList;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.logging.Logger;
-
-
 
 import tid.pce.client.ClientRequestManager;
 import tid.pce.client.PCCPCEPSession;
 import tid.pce.client.emulator.AutomaticTesterStatistics;
 import tid.pce.pcep.PCEPProtocolViolationException;
 import tid.pce.pcep.constructs.Path;
-import tid.pce.pcep.messages.PCEPMessage;
-import tid.pce.pcep.messages.PCEPMonReq;
 import tid.pce.pcep.messages.PCEPRequest;
 import tid.pce.pcep.messages.PCEPResponse;
 import tid.pce.pcep.messages.PCEPTELinkSuggestion;
 import tid.pce.pcep.objects.ExplicitRouteObject;
 import tid.rsvp.objects.subobjects.EROSubobject;
-import tid.rsvp.objects.subobjects.SubObjectValues;
 import tid.rsvp.objects.subobjects.IPv4prefixEROSubobject;
-import cern.jet.random.engine.MersenneTwister;
+import tid.rsvp.objects.subobjects.SubObjectValues;
 import cern.jet.random.Exponential;
 
 public class AutomaticExponentialTesterMLNetworkTask  extends TimerTask {

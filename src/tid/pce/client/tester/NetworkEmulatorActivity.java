@@ -4,12 +4,10 @@ import java.util.LinkedList;
 import java.util.Timer;
 import java.util.logging.Logger;
 
-import cern.jet.random.Exponential;
-
-
 import tid.netManager.NetworkLSPManager;
 import tid.pce.client.PCCPCEPSession;
 import tid.pce.client.emulator.AutomaticTesterStatistics;
+import tid.pce.computingEngine.ComputingResponse;
 import tid.pce.pcep.constructs.Path;
 import tid.pce.pcep.messages.PCEPRequest;
 import tid.pce.pcep.messages.PCEPResponse;
@@ -17,7 +15,7 @@ import tid.pce.pcep.objects.ExplicitRouteObject;
 import tid.pce.pcep.objects.GeneralizedBandwidthSSON;
 import tid.rsvp.objects.subobjects.EROSubobject;
 import tid.vntm.LigthPathManagement;
-import tid.vntm.VNTMSession;
+import cern.jet.random.Exponential;
 
 public class NetworkEmulatorActivity implements Activity{
 	private PCCPCEPSession VNTMSession;

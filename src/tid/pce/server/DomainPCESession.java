@@ -1,10 +1,11 @@
 package tid.pce.server;
 
+import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Inet4Address;
 import java.net.Socket;
 import java.net.SocketException;
-import java.net.UnknownHostException;
+import java.util.HashMap;
 import java.util.Timer;
 import java.util.logging.Logger;
 
@@ -12,12 +13,14 @@ import tid.pce.computingEngine.ReportDispatcher;
 import tid.pce.computingEngine.RequestDispatcher;
 import tid.pce.pcep.PCEPProtocolViolationException;
 import tid.pce.pcep.messages.PCEPClose;
+import tid.pce.pcep.messages.PCEPInitiate;
 import tid.pce.pcep.messages.PCEPMessage;
 import tid.pce.pcep.messages.PCEPMessageTypes;
 import tid.pce.pcep.messages.PCEPMonReq;
 import tid.pce.pcep.messages.PCEPNotification;
 import tid.pce.pcep.messages.PCEPReport;
 import tid.pce.pcep.messages.PCEPRequest;
+import tid.pce.pcep.objects.EndPointsIPv4;
 import tid.pce.pcep.objects.OPEN;
 import tid.pce.pcepsession.DeadTimerThread;
 import tid.pce.pcepsession.GenericPCEPSession;
@@ -29,6 +32,7 @@ import tid.pce.server.communicationpce.RollSessionType;
 import tid.pce.server.management.PCEManagementSession;
 import tid.pce.server.wson.ReservationManager;
 import tid.pce.tedb.TEDB;
+import tid.util.UtilsFunctions;
 
 /** Thread that maintains a PCEP Session with one PCC Client. 
  * <p> Reads the first message, and if it is a valid OPEN Message, initiates a new 
@@ -42,6 +46,9 @@ import tid.pce.tedb.TEDB;
  */
 public class DomainPCESession extends GenericPCEPSession{
 
+	private static HashMap<DataOutputStream,DataOutputStream> initiate_report_pair = new HashMap<DataOutputStream,DataOutputStream>();
+	
+	
 	/**
 	 * Timer to schedule KeepWait and OpenWait Timers
 	 */
@@ -81,7 +88,6 @@ public class DomainPCESession extends GenericPCEPSession{
 		try {
 			s.setTcpNoDelay(params.isNodelay());
 		} catch (SocketException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		this.requestDispatcher=requestDispatcher;
@@ -113,7 +119,6 @@ public class DomainPCESession extends GenericPCEPSession{
 		try {
 			s.setTcpNoDelay(params.isNodelay());
 		} catch (SocketException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		this.requestDispatcher=requestDispatcher;
@@ -139,8 +144,8 @@ public class DomainPCESession extends GenericPCEPSession{
 	
 		remotePCEId = (Inet4Address) socket.getInetAddress();
 		
-		log.info("Database version we are concerned right now: "+params.getLspDB().getPCCDatabaseVersion(remotePCEId)+"destIp address:"+socket.getRemoteSocketAddress());
-		initializePCEPSession(params.isZeroDeadTimerPCCAccepted(),params.getMinKeepAliveTimerPCCAccepted(),params.getMaxDeadTimerPCCAccepted(),false,false,null,null, params.getLspDB().getPCCDatabaseVersion(remotePCEId));
+		//log.info("Database version we are concerned right now: "+params.getLspDB().getPCCDatabaseVersion(remotePCEId)+"destIp address:"+socket.getRemoteSocketAddress());
+		initializePCEPSession(params.isZeroDeadTimerPCCAccepted(),params.getMinKeepAliveTimerPCCAccepted(),params.getMaxDeadTimerPCCAccepted(),false,false,null,null, params.getLspDB()==null ? 0 : params.getLspDB().getPCCDatabaseVersion(remotePCEId));
 		
 		if (isSessionStateful && pcepSessionManager.isStateful())
 		{
@@ -233,7 +238,7 @@ public class DomainPCESession extends GenericPCEPSession{
 						
 					case PCEPMessageTypes.MESSAGE_REPORT:
 						log.info("Received Report message");			
-						PCEPReport m_report;
+						PCEPReport m_report = null;
 						try {
 							m_report=new PCEPReport(this.msg);
 							if (reportDispatcher != null)
@@ -249,6 +254,22 @@ public class DomainPCESession extends GenericPCEPSession{
 							e1.printStackTrace();
 						}
 						log.info("Report message decoded!");
+						//This means it was a report received from an initiate
+						//and that a report to the sender should be send
+						//This is the whole point of the initiate_report_pair variable
+						if (initiate_report_pair.get(out) != null)
+						{
+							DataOutputStream out_master = initiate_report_pair.get(out);
+							try 
+							{
+								m_report.encode();
+								out_master.write(m_report.getBytes());
+								out_master.flush();
+							} catch (Exception e) {
+								log.severe(UtilsFunctions.exceptionToString(e));
+								killSession();
+							}
+						}
 						break;
 
 					case PCEPMessageTypes.MESSAGE_PCREP:
@@ -279,6 +300,78 @@ public class DomainPCESession extends GenericPCEPSession{
 							e.printStackTrace();
 							break;
 						}
+					case PCEPMessageTypes.MESSAGE_INTIATE:
+						
+						log.info("INITIATE RECEIVED");
+						PCEPInitiate pcepInitiate = null;
+						try 
+						{
+							pcepInitiate = new PCEPInitiate(msg);
+						} 
+						catch (PCEPProtocolViolationException e) 
+						{
+							log.info(UtilsFunctions.exceptionToString(e));
+						}
+						
+						//In this case there is not an LSP in the PCEPInitiate
+						//It must be resolved in the PCE, afterwards the PCEPInitiate is completed and
+						//sent to the corresponding node
+						if ((pcepInitiate.getPcepIntiatedLSPList() == null) || (pcepInitiate.getPcepIntiatedLSPList().get(0) == null) || (pcepInitiate.getPcepIntiatedLSPList().get(0).getLsp() == null) || (pcepInitiate.getPcepIntiatedLSPList().get(0).getEro()==null) || (pcepInitiate.getPcepIntiatedLSPList().get(0).getEro().getEROSubobjectList().size()==0))
+						{
+							log.info("INITIATE with no info, looking for path");
+							EndPointsIPv4 endP_IP = (EndPointsIPv4)pcepInitiate.getPcepIntiatedLSPList().get(0).getEndPoint();
+							Socket clientSocket;
+							try 
+							{
+								log.info("Getting conection with: "+endP_IP.getSourceIP().toString());
+
+								clientSocket = new Socket(endP_IP.getSourceIP(), 2222);
+							
+								DataOutputStream out_to_node = new DataOutputStream(clientSocket.getOutputStream());
+								initiate_report_pair.put(out_to_node, out);
+								
+								requestDispatcher.dispathRequests(pcepInitiate, out_to_node);
+							}
+							catch (IOException e) 
+							{
+								log.info(UtilsFunctions.exceptionToString(e));
+								e.printStackTrace();
+							}
+							
+						}
+						else
+						{
+							log.info("INITIATE with info, sending to node");
+
+							EndPointsIPv4 endP_IP = (EndPointsIPv4)pcepInitiate.getPcepIntiatedLSPList().get(0).getEndPoint();
+
+							try 
+							{	
+								//Sending message to tn1
+								Socket clientSocket = new Socket(endP_IP.getSourceIP(), 2222);			
+								log.info("Socket opened");	
+								DataOutputStream outToServer = new DataOutputStream(clientSocket.getOutputStream());
+								try 
+								{
+									pcepInitiate.encode();
+									log.info("Sending message At LAST!");
+									outToServer.write(pcepInitiate.getBytes());
+									outToServer.flush();
+								} 
+								catch (Exception e) 
+								{
+									log.info(UtilsFunctions.exceptionToString(e));
+								}
+							} 
+							catch (IOException e) 
+							{
+								log.info(UtilsFunctions.exceptionToString(e));
+								log.severe("Couldn't get I/O for connection to port" + 2222);
+							}
+							
+						}
+						
+						break;
 					case PCEPMessageTypes.MESSAGE_PCMONREP:
 						log.info("PCMonREP message received");
 						break;	

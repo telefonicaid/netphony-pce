@@ -3,15 +3,17 @@ package tid.pce.computingEngine;
 /**
  * Class made for managing report messages from PCCs. It only adds them to
  * the database
+ * 
+ * @author jimbo
  */
 
 import java.net.Inet4Address;
 import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.locks.ReentrantLock;
 import java.util.logging.Logger;
 
-import tid.pce.pcep.constructs.StateReport;
 import tid.pce.pcep.messages.PCEPReport;
+import tid.pce.server.PCEServerParameters;
+import tid.pce.server.lspdb.ReportDB_Handler;
 import tid.pce.server.lspdb.LSP_DB;
 
 public class ReportProcessorThread extends Thread
@@ -22,16 +24,19 @@ public class ReportProcessorThread extends Thread
 	LinkedBlockingQueue<PCEPReport> reportMessageQueue;
 	
 	
-	LSP_DB lspDB;
+	ReportDB_Handler lspDB;
 		
 	Logger log;
 	
-	public ReportProcessorThread(LinkedBlockingQueue<PCEPReport> reportMessageQueue, LSP_DB lspDB) 
+	PCEServerParameters params;
+	
+	public ReportProcessorThread(PCEServerParameters params, LinkedBlockingQueue<PCEPReport> reportMessageQueue, ReportDB_Handler lspDB) 
 	{
 		log=Logger.getLogger("PCEServer");
 		running = true;
 		this.lspDB = lspDB;
 		this.reportMessageQueue = reportMessageQueue;
+		this.params = params;
 	}
 	
 	public void run()
@@ -62,10 +67,8 @@ public class ReportProcessorThread extends Thread
 		
 		Boolean isSyncOver = false;
 		
-
 		log.info("Size LSP:"+pcepReport.getStateReportList().size());
-		isSyncOver = lspDB.isPCCSyncOver(pcepReport.getStateReportList().get(0).getLSP().getLspIdentifiers_tlv().getTunnelSenderIPAddress());
-
+		//isSyncOver = lspDB.isPCCSyncOver(pcepReport.getStateReportList().get(0).getLSP().getLspIdentifiers_tlv().getTunnelSenderIPAddress());
 		
 		log.info("Package received from adress: "+pcepReport.getStateReportList().get(0).getLSP().getLspIdentifiers_tlv().getTunnelSenderIPAddress());
 		
@@ -81,14 +84,14 @@ public class ReportProcessorThread extends Thread
 				{
 					isSyncOver = true;
 					log.info("Sync is over");
-					lspDB.setPCCSyncOver(addres);
+		//			lspDB.setPCCSyncOver(addres);
 				}
 			}
 		}
 		
 		for (int i = 0; i < pcepReport.getStateReportList().size(); i++)
 		{			
-			lspDB.addMessageToDatabase(pcepReport);
+			lspDB.processReport(pcepReport);
 		}
 	}
 }

@@ -6,8 +6,8 @@ import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.logging.Logger;
 
+import tid.pce.computingEngine.ComputingResponse;
 import tid.pce.computingEngine.algorithms.AlgorithmReservation;
-import tid.pce.pcep.messages.PCEPResponse;
 import tid.pce.pcep.objects.Reservation;
 import tid.pce.pcep.objects.ReservationConf;
 import tid.pce.server.wson.ReservationManager;
@@ -21,7 +21,7 @@ import tid.pce.server.wson.ReservationManager;
 public class GenericWLANReservation implements AlgorithmReservation
 {
 
-	private PCEPResponse resp;
+	private ComputingResponse resp;
 	private LinkedList<Object> sourceVertexList=new LinkedList<Object>();
 	private LinkedList<Object> targetVertexList=new LinkedList<Object>();
 	private LinkedList<Integer> WLANList = new LinkedList<Integer>();
@@ -44,7 +44,7 @@ public class GenericWLANReservation implements AlgorithmReservation
 		log=Logger.getLogger("PCEServer");
 	}
 	
-	public PCEPResponse call() throws Exception 
+	public ComputingResponse call() throws Exception 
 	{
 		if (reservation!=null){
 			
@@ -93,12 +93,12 @@ public class GenericWLANReservation implements AlgorithmReservation
 			
 	}
 
-	public PCEPResponse getResp() 
+	public ComputingResponse getResp() 
 	{
 		return resp;
 	}
 
-	public void setResp(PCEPResponse resp) 
+	public void setResp(ComputingResponse resp) 
 	{
 		
 		this.resp = resp;

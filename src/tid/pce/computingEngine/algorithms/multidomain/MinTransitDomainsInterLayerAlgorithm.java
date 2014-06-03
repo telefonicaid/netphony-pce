@@ -18,6 +18,7 @@ import org.jgrapht.alg.DijkstraShortestPath;
 import org.jgrapht.graph.DirectedWeightedMultigraph;
 
 import tid.pce.computingEngine.ComputingRequest;
+import tid.pce.computingEngine.ComputingResponse;
 import tid.pce.computingEngine.algorithms.AlgorithmReservation;
 import tid.pce.computingEngine.algorithms.ComputingAlgorithm;
 import tid.pce.parentPCE.ChildPCERequestManager;
@@ -33,7 +34,6 @@ import tid.pce.pcep.constructs.Request;
 import tid.pce.pcep.constructs.Response;
 import tid.pce.pcep.constructs.SwitchEncodingType;
 import tid.pce.pcep.messages.PCEPRequest;
-import tid.pce.pcep.messages.PCEPResponse;
 import tid.pce.pcep.objects.EndPoints;
 import tid.pce.pcep.objects.EndPointsIPv4;
 import tid.pce.pcep.objects.ExcludeRouteObject;
@@ -86,12 +86,13 @@ public class MinTransitDomainsInterLayerAlgorithm implements ComputingAlgorithm{
 	
 	
 	
-	public PCEPResponse call()throws Exception{
+	public ComputingResponse call()throws Exception{
 		//For performance monitoring, first get initial time.
 		//Oscar: ver si se puede quitar despues!!! Asi se deja toda la parte del monitoring fuera
 		long tiempoini =System.nanoTime();
 		//Create PCEP Response message
-		PCEPResponse m_resp=new PCEPResponse();
+		ComputingResponse m_resp=new ComputingResponse();
+		m_resp.setEncodingType(pathReq.getEcodingType());
 		//Get the request
 		Request req=pathReq.getRequestList().get(0);
 		//Get the request ID
@@ -506,7 +507,7 @@ public class MinTransitDomainsInterLayerAlgorithm implements ComputingAlgorithm{
 		reqList.add(pcreqToLastDomain);
 		domainList.add(Last_domain);
 		
-		LinkedList <PCEPResponse> respList;
+		LinkedList <ComputingResponse> respList;
 		long tiempo3 =System.nanoTime();
 		try {
 			respList=childPCERequestManager.executeRequests(reqList, domainList);	
@@ -601,7 +602,7 @@ public class MinTransitDomainsInterLayerAlgorithm implements ComputingAlgorithm{
 		req.setXro(xro);
 	}
 	
-	private void createNoPath(PCEPResponse m_resp){
+	private void createNoPath(ComputingResponse m_resp){
 		
 		NoPath noPath= new NoPath();
 		noPath.setNatureOfIssue(ObjectParameters.NOPATH_NOPATH_SAT_CONSTRAINTS);

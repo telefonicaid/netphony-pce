@@ -1,4 +1,6 @@
-package tid.pce.server;
+package tid.pce.tedb.controllers;
+
+import static tid.pce.tedb.controllers.TEDUpdaterController.readInterDomainFile;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -38,125 +40,39 @@ import tid.util.UtilsFunctions;
  *
  */
 
-
-public class TopologyUpdaterVLAN extends Thread
+public class TEDUpdaterFloodlight extends TEDUpdaterController
 {
-	private ArrayList<String> ips = null;
-	private ArrayList<String> ports = null;
-	private String topologyPathNodes = "";
-	private String topologyPathLinks = "";
-	private SimpleTEDB TEDB;
-	private Logger log;
-	private Lock lock = null;
-	private String interDomainFile = null;
+	public static String controllerName = "Floodlight";
 	
-	private Hashtable<Integer,MyEdge> interDomainLinks = new Hashtable<Integer,MyEdge>();
 	
-	public TopologyUpdaterVLAN(String ip,String port, String topologyPathLinks, String topologyPathNodes,DomainTEDB ted, Logger log)
+	private String topologyPathLinks = "/wm/topology/links/json";
+	private String topologyPathNodes = "/wm/core/controller/switches/json";
+	
+	public TEDUpdaterFloodlight(String ip,String port, String topologyPathLinks, String topologyPathNodes,DomainTEDB ted, Logger log)
 	{
+		super();
 		ips = new ArrayList<String>();
 		ports = new ArrayList<String>();
 		
 		ips.add(ip);
 		ports.add(port);
-
-		this.topologyPathLinks = topologyPathLinks;
-		this.topologyPathNodes = topologyPathNodes;
 		this.TEDB = (SimpleTEDB)ted;
 		this.log = log;
 	}
 	
-	public TopologyUpdaterVLAN(String ip, String port, String topologyPathLinks, String topologyPathNodes,DomainTEDB ted, Logger log, Lock lock)
+	public TEDUpdaterFloodlight(String ip, String port, String topologyPathLinks, String topologyPathNodes,DomainTEDB ted, Logger log, Lock lock)
 	{
-		ips = new ArrayList<String>();
-		ports = new ArrayList<String>();
-		
-		ips.add(ip);
-		ports.add(port);
-		
-		this.topologyPathLinks = topologyPathLinks;
-		this.topologyPathNodes = topologyPathNodes;
-		this.TEDB = (SimpleTEDB)ted;
-		this.log = log;
-		this.lock = lock;
+		super( ip,  port,  topologyPathLinks,  topologyPathNodes, ted,  log,  lock);
 	}
 	
-	public TopologyUpdaterVLAN(ArrayList<String> ips, ArrayList<String>ports , String topologyPathLinks, String topologyPathNodes,DomainTEDB ted, Logger log)
+	public TEDUpdaterFloodlight(ArrayList<String> ips, ArrayList<String>ports , String topologyPathLinks, String topologyPathNodes,DomainTEDB ted, Logger log)
 	{
-		this.ips = ips;
-		this.ports = ports;
-		this.topologyPathLinks = topologyPathLinks;
-		this.topologyPathNodes = topologyPathNodes;
-		this.TEDB = (SimpleTEDB)ted;
-		this.log = log;
+		super(ips, ports ,  topologyPathLinks,  topologyPathNodes, ted,  log);
 	}
 	
 	
 	
-	private class MyEdge
-	{
-		String source;
-		String dest;
-		Integer source_port;
-		Integer dest_port;
-		Integer vlan;
-		
-		MyEdge(String source, String dest)
-		{
-			this.source = source;
-			this.dest = dest;
-		}
-		
-		MyEdge(String source, String dest, Integer vlan, Integer source_port, Integer dest_port)
-		{
-			this.source = source;
-			this.dest = dest;
-			this.source_port = source_port;
-			this.dest_port = dest_port; 
-			this.vlan = vlan;
-		}
-
-		@Override
-		public int hashCode() {
-			final int prime = 31;
-			int result = 1;
-			result = prime * result + getOuterType().hashCode();
-			result = prime * result + ((dest == null) ? 0 : dest.hashCode());
-			result = prime * result
-					+ ((source == null) ? 0 : source.hashCode());
-			return result;
-		}
-
-		@Override
-		public boolean equals(Object obj) {
-			if (this == obj)
-				return true;
-			if (obj == null)
-				return false;
-			if (getClass() != obj.getClass())
-				return false;
-			MyEdge other = (MyEdge) obj;
-			if (!getOuterType().equals(other.getOuterType()))
-				return false;
-			if (dest == null) {
-				if (other.dest != null)
-					return false;
-			} else if (!dest.equals(other.dest))
-				return false;
-			if (source == null) {
-				if (other.source != null)
-					return false;
-			} else if (!source.equals(other.source))
-				return false;
-			return true;
-		}
-
-		private TopologyUpdaterVLAN getOuterType() {
-			return TopologyUpdaterVLAN.this;
-		}		
-		
-		
-	}
+	
 	
 	
 	@Override
@@ -165,7 +81,7 @@ public class TopologyUpdaterVLAN extends Thread
 		
 		if(interDomainFile != null)
 		{
-			interDomainLinks = readInterDomainFile();
+			interDomainLinks = TEDUpdaterController.readInterDomainFile(interDomainFile);
 		}
 		
 		String responseLinks = "";
@@ -174,10 +90,11 @@ public class TopologyUpdaterVLAN extends Thread
 		try
 		{
 			//log.info("TopologyUpdaterWLAN thread, Updating TEDB");
-			SimpleDirectedWeightedGraph<Object, IntraDomainEdge> networkGraph = new SimpleDirectedWeightedGraph<Object, IntraDomainEdge>(IntraDomainEdge.class);
-			TEDB.setNetworkGraph(networkGraph);
 			
 			Hashtable<String,RouterInfoPM> nodes = new Hashtable<String,RouterInfoPM>();
+			
+			
+			log.info("ips.size():"+ips.size());
 			
 			for (int i = 0; i < ips.size(); i++)
 			{
@@ -197,9 +114,8 @@ public class TopologyUpdaterVLAN extends Thread
 		        unlock();
 	        
 			}
-	        
-	        parseRemainingLinksFromXML(nodes);
 			
+	        			
 	        //parseJSON("[{\"src-switch\":\"00:14:2c:59:e5:5e:2b:00\",\"src-port\":20,\"src-port-state\":0,\"dst-switch\":\"00:14:2c:59:e5:64:21:00\",\"dst-port\":19,\"dst-port-state\":0,\"type\":\"internal\"},{\"src-switch\":\"00:14:2c:59:e5:64:21:00\",\"src-port\":19,\"src-port-state\":0,\"dst-switch\":\"00:14:2c:59:e5:5e:2b:00\",\"dst-port\":20,\"dst-port-state\":0,\"type\":\"internal\"},{\"src-switch\":\"00:14:2c:59:e5:66:ed:00\",\"src-port\":9,\"src-port-state\":0,\"dst-switch\":\"00:14:2c:59:e5:64:21:00\",\"dst-port\":20,\"dst-port-state\":0,\"type\":\"internal\"},{\"src-switch\":\"00:14:2c:59:e5:64:21:00\",\"src-port\":20,\"src-port-state\":0,\"dst-switch\":\"00:14:2c:59:e5:66:ed:00\",\"dst-port\":9,\"dst-port-state\":0,\"type\":\"internal\"}]");
 	        //System.out.println(response);
 		}
@@ -209,47 +125,7 @@ public class TopologyUpdaterVLAN extends Thread
 		}
 	}
 	
-	private Hashtable<Integer, MyEdge> readInterDomainFile() 
-	{
-		log.info("Parsing intradomain File");
-		interDomainLinks = new Hashtable<Integer,MyEdge>();
-		try 
-		{
-			DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
-			File confFile = new File(this.interDomainFile);		
-			Document doc = builder.parse(confFile);
-			
-			NodeList list_nodes_Edges = doc.getElementsByTagName("edge");
-			log.info("num edges: " + list_nodes_Edges.getLength());
-			for (int i = 0; i < list_nodes_Edges.getLength(); i++) 
-			{
-				Element nodes_servers = (Element) list_nodes_Edges.item(i);
-				String source = getCharacterDataFromElement((Element) nodes_servers.getElementsByTagName("source").item(0));
-				String dest = getCharacterDataFromElement((Element) nodes_servers.getElementsByTagName("dest").item(0));
-				Integer vlan = Integer.parseInt(getCharacterDataFromElement((Element) nodes_servers.getElementsByTagName("vlan").item(0)));
-				String direction = getCharacterDataFromElement((Element) nodes_servers.getElementsByTagName("direction").item(0));
-				int source_port = Integer.parseInt(getCharacterDataFromElement((Element) nodes_servers.getElementsByTagName("source_port").item(0)));
-				int dest_port = Integer.parseInt(getCharacterDataFromElement((Element) nodes_servers.getElementsByTagName("dest_port").item(0)));
-				
-				log.info("Adding IntraDomain Link! source: "+source+", dest: "+dest+", source_port: "+source_port+", dest_port: "+dest_port);
-				
-				MyEdge auxEdge = new MyEdge(source, dest, vlan, source_port, dest_port);
-				interDomainLinks.put(auxEdge.hashCode(), auxEdge);
-				
-				if (direction.equals("bidirectional"))
-				{
-					MyEdge reverseEdge = new MyEdge(dest, source, vlan, source_port, dest_port);
-					interDomainLinks.put(reverseEdge.hashCode(), reverseEdge);
-				}
-			}
-		} 
-		catch (Exception e) 
-		{
-			log.info(UtilsFunctions.exceptionToString(e));
-		}
-		
-		return interDomainLinks;
-	}
+	
 
 	private void parseNodes(String response, Hashtable<String,RouterInfoPM> routerInfoList, String ip, String port)
 	{	
@@ -266,8 +142,8 @@ public class TopologyUpdaterVLAN extends Thread
 				
 				RouterInfoPM rInfo = new RouterInfoPM();
 				rInfo.setMacAddress((String)jsonObject.get("mac"));
-				
 				rInfo.setRouterID((String)jsonObject.get("dpid"));
+				rInfo.setControllerType(TEDUpdaterFloodlight.controllerName);
 				
 				
 				JSONArray ports = (JSONArray) jsonObject.get("ports");
@@ -390,39 +266,6 @@ public class TopologyUpdaterVLAN extends Thread
 			log.info(UtilsFunctions.exceptionToString(e));
 		}
 	}
-	
-	private void parseRemainingLinksFromXML(Hashtable<String,RouterInfoPM> nodes) 
-	{
-		Map<Integer, MyEdge> map = interDomainLinks;
-		Iterator<Map.Entry<Integer, MyEdge>> it = map.entrySet().iterator();
-		while (it.hasNext()) 
-		{
-			Map.Entry<Integer, MyEdge> entry = it.next();
-
-			MyEdge edgeAux = entry.getValue(); 
-			
-			IntraDomainEdge edge= new IntraDomainEdge();
-			edge.setSrc_if_id(new Long(edgeAux.source_port));
-			edge.setDst_if_id(new Long(edgeAux.dest_port));
-			
-			TE_Information tE_info = new TE_Information();
-			tE_info.setNumberWLANs(15);
-			tE_info.initWLANs();
-			
-			tE_info.setVlanLink(true);
-			tE_info.setVlan(edgeAux.vlan);
-			
-			edge.setTE_info(tE_info);
-			
-			log.info("nodes.get(edgeAux.source)::"+nodes.get(edgeAux.source));
-			log.info("edgeAux.source::"+edgeAux.source);
-			log.info("nodes.get(edgeAux.dest)::"+nodes.get(edgeAux.dest));
-			log.info("edgeAux.dest::"+edgeAux.dest);
-			
-			log.info("Adding InterDomain Edge!!::Vlan::"+edgeAux.vlan);
-			((SimpleTEDB)TEDB).getNetworkGraph().addEdge(nodes.get(edgeAux.source), nodes.get(edgeAux.dest), edge);
-		}
-	}
 
 	private void completeTE_Information(TE_Information tE_info, String source, String dest) 
 	{
@@ -491,17 +334,6 @@ public class TopologyUpdaterVLAN extends Thread
 		}
         return response;
 	}
-	
-	public String getInterDomainFile() 
-	{
-		return interDomainFile;
-	}
-
-	public void setInterDomainFile(String interDomainFile) 
-	{
-		this.interDomainFile = interDomainFile;
-	}
-	
 	
 	private void lock()
 	{

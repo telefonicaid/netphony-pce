@@ -2,7 +2,6 @@ package tid.pce.client.multiLayer;
 
 import java.io.BufferedWriter;
 import java.io.DataOutputStream;
-
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
@@ -10,15 +9,10 @@ import java.net.Inet4Address;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
-import java.util.Calendar;
-
-import java.util.GregorianCalendar;
 import java.util.LinkedList;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.logging.Logger;
-
-
 
 import tid.pce.client.ClientRequestManager;
 import tid.pce.client.PCCPCEPSession;
@@ -26,8 +20,6 @@ import tid.pce.client.emulator.AutomaticTesterStatistics;
 import tid.pce.pcep.PCEPProtocolViolationException;
 import tid.pce.pcep.constructs.Path;
 import tid.pce.pcep.constructs.Request;
-import tid.pce.pcep.messages.PCEPMessage;
-import tid.pce.pcep.messages.PCEPMonReq;
 import tid.pce.pcep.messages.PCEPRequest;
 import tid.pce.pcep.messages.PCEPResponse;
 import tid.pce.pcep.messages.PCEPTELinkSuggestion;
@@ -35,10 +27,10 @@ import tid.pce.pcep.objects.EndPointsIPv4;
 import tid.pce.pcep.objects.ExplicitRouteObject;
 import tid.pce.pcep.objects.RequestParameters;
 import tid.rsvp.objects.subobjects.EROSubobject;
-import tid.rsvp.objects.subobjects.SubObjectValues;
 import tid.rsvp.objects.subobjects.IPv4prefixEROSubobject;
-import cern.jet.random.engine.MersenneTwister;
+import tid.rsvp.objects.subobjects.SubObjectValues;
 import cern.jet.random.Exponential;
+import cern.jet.random.engine.MersenneTwister;
 
 public class AutomaticTesterMLNetworkRandomTask  extends TimerTask {
 	private static int counter=0;

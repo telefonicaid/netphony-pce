@@ -7,6 +7,7 @@ import java.util.LinkedList;
 import java.util.Timer;
 import java.util.logging.Logger;
 
+import tid.pce.computingEngine.ComputingResponse;
 import tid.pce.computingEngine.ReportDispatcher;
 import tid.pce.computingEngine.RequestDispatcher;
 import tid.pce.pcep.PCEPProtocolViolationException;
@@ -83,7 +84,7 @@ public class ParentPCESession extends GenericPCEPSession{
 	 * Initiates a Session between the Parent PCE and the peer PCE
 	 */
 	public void run() {
-		initializePCEPSession(params.isZeroDeadTimerPCCAccepted(),params.getMinKeepAliveTimerPCCAccepted(),params.getMaxDeadTimerPCCAccepted(),true,false,null,null,null);
+		initializePCEPSession(params.isZeroDeadTimerPCCAccepted(),params.getMinKeepAliveTimerPCCAccepted(),params.getMaxDeadTimerPCCAccepted(),true,false,null,null,0);
 		String domain ="hola";//FIXME de donde saco el domain?... SOLO SE puede sacar de la sesion...
 		childPCERequestManager.registerDomainSession(this.remoteDomainId,this.remotePCEId, out);
 		//Session is UP now, start timers

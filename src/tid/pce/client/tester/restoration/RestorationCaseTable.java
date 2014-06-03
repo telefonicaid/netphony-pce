@@ -3,8 +3,8 @@ package tid.pce.client.tester.restoration;
 import java.net.Inet4Address;
 import java.util.ArrayList;
 
+import tid.pce.computingEngine.ComputingResponse;
 import tid.pce.pcep.constructs.Response;
-import tid.pce.pcep.messages.PCEPResponse;
 
 public class RestorationCaseTable {
 

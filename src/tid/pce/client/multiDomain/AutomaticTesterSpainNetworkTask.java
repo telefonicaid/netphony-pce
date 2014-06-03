@@ -1,17 +1,15 @@
 package tid.pce.client.multiDomain;
 
 import java.io.BufferedReader;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.PrintWriter;
 import java.net.Inet4Address;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.TimerTask;
 import java.util.logging.Logger;
 
-import javax.xml.parsers.SAXParser ;
+import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
 import org.xml.sax.Attributes;

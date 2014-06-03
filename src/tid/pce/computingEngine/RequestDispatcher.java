@@ -10,13 +10,17 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.logging.Logger;
+
 import tid.pce.computingEngine.algorithms.ComputingAlgorithmManager;
 import tid.pce.computingEngine.algorithms.ComputingAlgorithmManagerSSON;
 import tid.pce.computingEngine.algorithms.multiLayer.OperationsCounter;
 import tid.pce.pcep.constructs.Request;
 import tid.pce.pcep.constructs.SVECConstruct;
+import tid.pce.pcep.messages.PCEPInitiate;
+import tid.pce.pcep.messages.PCEPMessageTypes;
 import tid.pce.pcep.messages.PCEPRequest;
-import tid.pce.pcep.messages.PCEPResponse;
+import tid.pce.pcep.objects.ObjectiveFunction;
+import tid.pce.pcep.objects.RequestParameters;
 import tid.pce.pcep.objects.Svec;
 import tid.pce.pcep.objects.tlvs.MaxRequestTimeTLV;
 import tid.pce.server.ParentPCERequestManager;
@@ -217,7 +221,34 @@ public class RequestDispatcher {
 	public void dispathRequests(PCEPRequest reqMessage, DataOutputStream out){
 		dispathRequests(reqMessage,  out,null);
 	}
-	  
+	
+	
+	public void dispathRequests(PCEPInitiate iniMessage, DataOutputStream out)
+	{	    	
+		log.info("Dispatching Request from Initiate message!");
+		
+		ComputingRequest cr=new ComputingRequest();
+		cr.setOut(out);
+
+		LinkedList<Request> requestList = new LinkedList<Request>();
+		Request req = new Request();
+		ObjectiveFunction of=new ObjectiveFunction();//FIXME: FIRE!!!
+		of.setOFcode(1002);
+		req.setObjectiveFunction(of);
+		req.setEndPoints(iniMessage.getPcepIntiatedLSPList().get(0).getEndPoint());
+		req.setBandwidth(iniMessage.getPcepIntiatedLSPList().get(0).getBandwidth());
+		RequestParameters reqparams=new RequestParameters();
+		reqparams.setRequestID(iniMessage.getPcepIntiatedLSPList().get(0).getLsp().getLspId());
+		requestList.add(req);
+		
+		cr.setRequestList(requestList);
+		
+		cr.setTimeStampNs(System.nanoTime());
+		cr.setMaxTimeInPCE(120000);
+		cr.getEcodingType(PCEPMessageTypes.MESSAGE_INTIATE);
+		
+		pathComputingRequestQueue.add(cr);
+	}
     public void dispathRequests(PCEPRequest reqMessage, DataOutputStream out, Inet4Address remotePCEId){	    
     	if (out==null){
     		log.severe("OUT ESTA A NULL!!!!");

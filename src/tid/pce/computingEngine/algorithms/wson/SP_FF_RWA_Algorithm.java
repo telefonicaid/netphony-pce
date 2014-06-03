@@ -11,6 +11,7 @@ import org.jgrapht.alg.DijkstraShortestPath;
 import org.jgrapht.graph.SimpleDirectedWeightedGraph;
 
 import tid.pce.computingEngine.ComputingRequest;
+import tid.pce.computingEngine.ComputingResponse;
 import tid.pce.computingEngine.algorithms.AlgorithmReservation;
 import tid.pce.computingEngine.algorithms.ComputingAlgorithm;
 import tid.pce.computingEngine.algorithms.ComputingAlgorithmPreComputation;
@@ -21,7 +22,6 @@ import tid.pce.pcep.constructs.P2PEndpoints;
 import tid.pce.pcep.constructs.Path;
 import tid.pce.pcep.constructs.Request;
 import tid.pce.pcep.constructs.Response;
-import tid.pce.pcep.messages.PCEPResponse;
 import tid.pce.pcep.objects.EndPoints;
 import tid.pce.pcep.objects.EndPointsIPv4;
 import tid.pce.pcep.objects.ExplicitRouteObject;
@@ -72,9 +72,10 @@ public class SP_FF_RWA_Algorithm implements ComputingAlgorithm{
 		this.reservationManager=reservationManager;
 	}
 
-	public PCEPResponse call(){
+	public ComputingResponse call(){
 		long tiempoini =System.nanoTime();
-		PCEPResponse m_resp=new PCEPResponse();
+		ComputingResponse m_resp=new ComputingResponse();
+		m_resp.setEncodingType(pathReq.getEcodingType());
 		Request req=pathReq.getRequestList().get(0);
 		long reqId=req.getRequestParameters().getRequestID();
 		log.info("SP_FF_RWA: "+reqId);

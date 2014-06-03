@@ -2,16 +2,24 @@ package tid.pce.tedb;
 
 import java.io.File;
 import java.net.Inet4Address;
+import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.logging.Logger;
+
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
-import org.w3c.dom.*;
-import org.eclipse.jetty.util.log.Log;
+
 import org.jgrapht.graph.DirectedWeightedMultigraph;
 import org.jgrapht.graph.SimpleDirectedWeightedGraph;
+import org.w3c.dom.Attr;
+import org.w3c.dom.CharacterData;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
+import tid.bgp.bgp4.update.tlv.linkstate_attribute_tlvs.DefaultTEMetricLinkAttribTLV;
 import tid.ospf.ospfv2.lsa.tlv.subtlv.AvailableLabels;
 import tid.ospf.ospfv2.lsa.tlv.subtlv.MaximumBandwidth;
 import tid.ospf.ospfv2.lsa.tlv.subtlv.UnreservedBandwidth;
@@ -22,7 +30,6 @@ import tid.pce.pcep.objects.tlvs.StorageTLV;
 import tid.pce.pcep.objects.tlvs.subtlvs.CostSubTLV;
 import tid.pce.pcep.objects.tlvs.subtlvs.ResourceIDSubTLV;
 import tid.pce.pcep.objects.tlvs.subtlvs.StorageSizeSubTLV;
-import tid.pce.server.PCEServerParameters;
 import tid.rsvp.constructs.gmpls.DWDMWavelengthLabel;
 import tid.rsvp.objects.subobjects.IPv4prefixEROSubobject;
 import tid.util.UtilsFunctions;
@@ -35,7 +42,7 @@ import tid.util.UtilsFunctions;
  */
 public class FileTEDBUpdater {
 
-	
+
 	/**
 	 * Read a full network (no specific layer)
 	 * @param fileName Name of the XML file
@@ -75,12 +82,12 @@ public class FileTEDBUpdater {
 	 * @param lambdaEnd
 	 * @return
 	 */
-	
+
 	public static SimpleDirectedWeightedGraph<Object, IntraDomainEdge> readNetwork(String fileName, String layer,boolean allDomains,int lambdaIni, int lambdaEnd) {
 		return FileTEDBUpdater.readNetwork(fileName,layer,allDomains,0,Integer.MAX_VALUE, false);
 	}
-	
-	
+
+
 	/**
 	 * Reads a specific layer from a Network XML file. 
 	 * It can treat all domains as a single domain.
@@ -94,17 +101,19 @@ public class FileTEDBUpdater {
 		Logger log = Logger.getLogger("PCEPServer");
 		//First, create the graph
 		SimpleDirectedWeightedGraph<Object, IntraDomainEdge> graph = new SimpleDirectedWeightedGraph<Object, IntraDomainEdge>(IntraDomainEdge.class);
-		
+
 		File file = new File(fileName);
 		try {
+			String domain_id = "";
 			DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
 			Document doc = builder.parse(file);			
+			HashMap<Inet4Address, Integer >SIDS = new HashMap<Inet4Address,Integer>();
 
 			NodeList nodes_domains = doc.getElementsByTagName("domain");
 			if (layer!=null){
 				log.info("Reading topology, looking for layer "+ layer);	
 			}
-			
+
 
 			//First pass to get all the nodes
 			//If we need to read all the domains
@@ -120,7 +129,7 @@ public class FileTEDBUpdater {
 						log.info("Reading network topology");
 						if (layer_type.getAttributeNode("type").getValue().equals(layer)){
 							readNetwork = true;
-							
+
 						}
 						if (layer.equals("interlayer")){
 							readNetwork = true;
@@ -134,7 +143,7 @@ public class FileTEDBUpdater {
 					NodeList nodes_domain_id = element_domain.getElementsByTagName("domain_id");
 					for (int k = 0; k < nodes_domain_id.getLength(); k++) {
 						Element domain_id_e = (Element) nodes_domain_id.item(0);
-						String domain_id = getCharacterDataFromElement(domain_id_e);
+						domain_id = getCharacterDataFromElement(domain_id_e);
 						log.info("Looking for nodes in domain: " + domain_id);
 					}
 
@@ -147,11 +156,27 @@ public class FileTEDBUpdater {
 						log.info("Adding router_id " + router_id);
 						Inet4Address router_id_addr = (Inet4Address) Inet4Address.getByName(router_id);
 						graph.addVertex(router_id_addr);
+						log.info("About to look for SID");
+
+						NodeList SID_aux = element.getElementsByTagName("sid");
+						Element SID_e = (Element) SID_aux.item(0);
+						if (SID_e!=null)
+						{ 
+							log.info("SID existe");
+							int SID = Integer.parseInt(getCharacterDataFromElement(SID_e));
+							SIDS.put(router_id_addr,SID);
+							log.info("SID of node: "+SID);
+						}
+						else
+						{
+							log.info("SID not found");
+						}
+
 					}
 				}
 			}	
 
-			
+
 			//Next pass to get all the links
 			for (int j = 0; j < nodes_domains.getLength(); j++) {
 
@@ -175,10 +200,10 @@ public class FileTEDBUpdater {
 				if (readNetwork){
 					Element element_domain = (Element) nodes_domains.item(j);
 					NodeList nodes_domain_id = element_domain.getElementsByTagName("domain_id");
-					
+
 					for (int k = 0; k < nodes_domain_id.getLength(); k++) {
 						Element domain_id_e = (Element) nodes_domain_id.item(0);
-						String domain_id = getCharacterDataFromElement(domain_id_e);
+						domain_id = getCharacterDataFromElement(domain_id_e);
 						log.info("Looking for links in domain: " + domain_id);
 					}
 					int numLabels=0;
@@ -205,7 +230,7 @@ public class FileTEDBUpdater {
 								Element numbLabels_e = (Element) numbLabels_node.item(0);
 								String numbLabels_s = getCharacterDataFromElement(numbLabels_e);						
 								numLabels=Integer.parseInt(numbLabels_s);	
-								
+
 								NodeList baseLabel_node = labelSetField_el.getElementsByTagName("baseLabel");
 								Element baseLabel_e = (Element) baseLabel_node.item(0);
 
@@ -244,7 +269,7 @@ public class FileTEDBUpdater {
 							numLabels=numLabels*8;
 						}
 					}*/
-					
+
 					NodeList edges = element_domain.getElementsByTagName("edge");
 					for (int i = 0; i < edges.getLength(); i++) {
 						log.info("New Edge");
@@ -261,12 +286,12 @@ public class FileTEDBUpdater {
 									type="intradomain";
 								}
 							}
-							
+
 							else if (type.equals("interlayer")){
 								if (layer.equals("interlayer")){
 									type="intradomain";
 								}
-								
+
 							}
 						}	
 						log.info("type::"+type);
@@ -275,12 +300,11 @@ public class FileTEDBUpdater {
 							log.info("New Intradomain Edge");
 							NodeList source = element.getElementsByTagName("source");
 							Element source_router_el = (Element) source.item(0);
-							
+
 							NodeList source_router_id = source_router_el.getElementsByTagName("router_id");
 							Element source_router_id_el = (Element) source_router_id.item(0);
 							String s_r_id = getCharacterDataFromElement(source_router_id_el);
 							Inet4Address s_router_id_addr = (Inet4Address) Inet4Address.getByName(s_r_id);
-
 							NodeList source_if_id_nl = source_router_el.getElementsByTagName("if_id");
 							Element source_if_id_el = (Element) source_if_id_nl.item(0);
 							String s_source_if_id;
@@ -290,7 +314,7 @@ public class FileTEDBUpdater {
 								src_if_id = Integer.parseInt(s_source_if_id);
 							}
 							log.info("SRC if id: "+src_if_id);
-							
+
 							NodeList source_Numif_id_nl = source_router_el.getElementsByTagName("NumIf_id");
 							Element source_Numif_id_el = (Element) source_Numif_id_nl.item(0);
 							String s_source_Numif_id;
@@ -299,14 +323,25 @@ public class FileTEDBUpdater {
 								s_source_Numif_id = getCharacterDataFromElement(source_Numif_id_el);
 								src_Numif_id = (Inet4Address) Inet4Address.getByName(s_source_Numif_id);
 							}
-							
+
 							NodeList dest_nl = element.getElementsByTagName("destination");
 							Element dest_el = (Element) dest_nl.item(0);
-							
+
 							NodeList dest_router_id_nl = dest_el.getElementsByTagName("router_id");
 							Element dest_router_id_el = (Element) dest_router_id_nl.item(0);
 							String d_r_id = getCharacterDataFromElement(dest_router_id_el);
 							Inet4Address d_router_id_addr = (Inet4Address) Inet4Address.getByName(d_r_id);
+
+							
+							 //Anyadimos los SID
+						       if (SIDS.get(s_router_id_addr)!=null && SIDS.get(d_router_id_addr)!=null)
+						       {
+						        log.info("setting SIDS src: "+SIDS.get(s_router_id_addr)+" dst: "+SIDS.get(d_router_id_addr));
+						        edge.setSrc_sid(SIDS.get(s_router_id_addr));
+						        edge.setDst_sid(SIDS.get(d_router_id_addr));
+						       }							
+							
+
 
 							NodeList dest_if_id_nl = dest_el.getElementsByTagName("if_id");
 							Element dest_if_id_el= (Element) dest_if_id_nl.item(0);
@@ -317,7 +352,7 @@ public class FileTEDBUpdater {
 								dst_if_id = Integer.parseInt(s_dest_if_id);
 							}
 							log.info("DST if id: "+dst_if_id);
-							
+
 							NodeList dest_Numif_id_nl = dest_el.getElementsByTagName("NumIf_id");
 							Element dest_Numif_id_el = (Element) dest_Numif_id_nl.item(0);
 							String s_dest_Numif_id;
@@ -343,7 +378,7 @@ public class FileTEDBUpdater {
 							//DELAY, IF IT COMES..
 							NodeList delay_ms_nl = element.getElementsByTagName("delay");
 							if (delay_ms_nl.getLength()>0){
-								
+
 								Element delay_ms_el = (Element)delay_ms_nl.item(0);
 								String s_delay_ms=getCharacterDataFromElement(delay_ms_el);
 								double delay_ms=Double.parseDouble(s_delay_ms);
@@ -353,13 +388,16 @@ public class FileTEDBUpdater {
 							//TE Link information
 							NodeList maximum_bandwidth_nl = element.getElementsByTagName("maximum_bandwidth");
 							if (maximum_bandwidth_nl!=null){
+								System.out.println("HEMOS ENTRADO!!!");
 								if (maximum_bandwidth_nl.getLength()>0){
+									System.out.println("HEMOS ENTRADO!!!  Valores");
 									if(edge.getTE_info()==null){
 										TE_Information tE_info= new TE_Information();
-										
+
+										System.out.println("HEMOS ENTRADO!!!  Valores: "+numLabels+" "+grid+" "+cs+" "+n+" "+lambdaIni+" "+lambdaEnd);
 										if (commonBitmapLabelSet){
 											if(lambdaEnd!=Integer.MAX_VALUE){
-												
+
 												tE_info.createBitmapLabelSet(numLabels, grid,  cs, n,lambdaIni,lambdaEnd);
 											}
 											else
@@ -368,6 +406,20 @@ public class FileTEDBUpdater {
 										//tid.util.FuncionesUtiles.printByte(((BitmapLabelSet)tE_info.getAvailableLabels().getLabelSet()).getBytesBitmapReserved(),"getBytesBitmapReserved1:");
 										edge.setTE_info(tE_info);
 
+									} else {
+										System.out.println("HEMOS ENTRADO!!!  Valores: "+numLabels+" "+grid+" "+cs+" "+n+" "+lambdaIni+" "+lambdaEnd);
+										TE_Information te_info = edge.getTE_info();
+										if (commonBitmapLabelSet){
+											System.out.println("HEMOS ENTRADO!!!  Valores: "+numLabels+" "+grid+" "+cs+" "+n+" "+lambdaIni+" "+lambdaEnd);
+										//	if(lambdaEnd!=Integer.MAX_VALUE){
+
+											//	te_info.createBitmapLabelSet(numLabels, grid,  cs, n,lambdaIni,lambdaEnd);
+										//	}
+										//	else
+												te_info.createBitmapLabelSet(numLabels, grid,  cs, n);
+										}
+										//tid.util.FuncionesUtiles.printByte(((BitmapLabelSet)tE_info.getAvailableLabels().getLabelSet()).getBytesBitmapReserved(),"getBytesBitmapReserved1:");
+										edge.setTE_info(te_info);
 									}
 
 									Element maximum_bandwidth_el = (Element) maximum_bandwidth_nl.item(0);
@@ -380,13 +432,50 @@ public class FileTEDBUpdater {
 
 								}
 							}
+							/**
+							 * NodeList SID_aux = element.getElementsByTagName("sid");
+						Element SID_e = (Element) SID_aux.item(0);
+						if (SID_e!=null)
+						{ 
+							log.info("SID existe");
+							int SID = Integer.parseInt(getCharacterDataFromElement(SID_e));
+							SIDS.put(router_id_addr,SID);
+							log.info("SID of node: "+SID);
+						}
+						else
+						{
+							log.info("SID not found");
+						}
+							 */
 							
+							NodeList defaultmetric = element.getElementsByTagName("default_te_metric");
+							Element metric_aux = (Element) defaultmetric.item(0);
+							
+							if (metric_aux != null){
+							String s_metric_aux = getCharacterDataFromElement(metric_aux);
+								TE_Information tE_info;
+								int metric = Integer.parseInt(s_metric_aux);
+								DefaultTEMetricLinkAttribTLV defaultTeMetric= new DefaultTEMetricLinkAttribTLV();
+								if(edge.getTE_info()==null){
+									tE_info= new TE_Information();
+								}
+								else{
+									tE_info = edge.getTE_info();
+								}
+								defaultTeMetric.setLinkMetric((long)metric);
+								tE_info.setDefaultTEMetric(defaultTeMetric);
+								edge.setTE_info(tE_info);
+							}
+
 							NodeList unreserved_bandwidth_nl = element.getElementsByTagName("unreserved_bandwidth");
 							if (unreserved_bandwidth_nl!=null){
+								System.out.println("HEMOS ENTRADO2!!!");
 								int num_u_b=unreserved_bandwidth_nl.getLength();
 								UnreservedBandwidth unreservedBandwidth;
 								if (num_u_b>0){
+									System.out.println("HEMOS ENTRADO2!!!  Valores");
 									if(edge.getTE_info()==null){
+										System.out.println("HEMOS ENTRADO2!!!  Valores: "+numLabels+" "+grid+" "+cs+" "+n+" "+lambdaIni+" "+lambdaEnd);
 										TE_Information tE_info= new TE_Information();
 										if (commonBitmapLabelSet){
 											if(lambdaEnd!=Integer.MAX_VALUE)
@@ -412,16 +501,16 @@ public class FileTEDBUpdater {
 
 
 							}
-							
+
 							NodeList maximum_wlans_nl = element.getElementsByTagName("number_wlans");
 							if (maximum_wlans_nl!=null){
 								if (maximum_wlans_nl.getLength()>0){
 									if(edge.getTE_info()==null){
 										TE_Information tE_info= new TE_Information();
-										
+
 										if (commonBitmapLabelSet){
 											if(lambdaEnd!=Integer.MAX_VALUE){
-												
+
 												tE_info.createBitmapLabelSet(numLabels, grid,  cs, n,lambdaIni,lambdaEnd);
 											}
 											else
@@ -441,7 +530,7 @@ public class FileTEDBUpdater {
 
 								}
 							}
-							
+
 							/*
 							NodeList unreserved_wlans_nl = element.getElementsByTagName("unreserved_wlans");
 							if (unreserved_wlans_nl!=null){
@@ -472,8 +561,8 @@ public class FileTEDBUpdater {
 									}
 								}
 							}
-							*/
-							
+							 */
+
 							if(edge.getTE_info()==null){
 								TE_Information tE_info= new TE_Information();
 								if (commonBitmapLabelSet){
@@ -501,7 +590,7 @@ public class FileTEDBUpdater {
 
 										NodeList baseLabel_node = labelSetField_el.getElementsByTagName("baseLabel");
 										Element baseLabel_e = (Element) baseLabel_node.item(0);
-										
+
 										byte[] bitmap=new byte[1];
 										NodeList bitmap_node = labelSetField_el.getElementsByTagName("bitmap");
 										int result=0;
@@ -577,6 +666,7 @@ public class FileTEDBUpdater {
 			DocumentBuilder builder =	DocumentBuilderFactory.newInstance().newDocumentBuilder();
 			Document doc = builder.parse(file);
 			NodeList nodes_domains = doc.getElementsByTagName("domain");
+			HashMap<Inet4Address, Integer >SIDS = new HashMap<Inet4Address,Integer>();
 
 			for (int j = 0; j < nodes_domains.getLength(); j++) {
 				Element element_domain = (Element) nodes_domains.item(j);
@@ -596,6 +686,12 @@ public class FileTEDBUpdater {
 					log.info("El router_id es "+router_id);
 					Inet4Address router_id_addr= (Inet4Address) Inet4Address.getByName(router_id);
 					graph.addVertex(router_id_addr);
+
+					Element SID_e = (Element) element.getElementsByTagName("sid");
+					if (SID_e!=null)
+					{	int SID = Integer.parseInt(getCharacterDataFromElement(SID_e));
+					SIDS.put(router_id_addr,SID);
+					}					
 				}
 
 				NodeList it_sites = doc.getElementsByTagName("it_site");
@@ -680,6 +776,7 @@ public class FileTEDBUpdater {
 							d_id_addr=d_router_id_addr;
 						}
 
+
 						NodeList dest_it_site_id_nl= dest_el.getElementsByTagName("it_site_id");
 						if (dest_it_site_id_nl.getLength()>0){
 							Element dest_it_site_id_el=(Element)dest_it_site_id_nl.item(0);
@@ -704,8 +801,18 @@ public class FileTEDBUpdater {
 						log.info("Edge Dest if_id: "+s_dest_if_id);
 						int dst_if_id=Integer.parseInt(s_dest_if_id);
 
+
 						edge.setSrc_if_id(src_if_id);
 						edge.setDst_if_id(dst_if_id);
+
+
+						//TODO: Tal vez pete aqui
+						//Anyadimos los SID
+						if (SIDS.get(s_id_addr)!=null && SIDS.get(d_id_addr)!=null)
+						{
+							edge.setSrc_sid(SIDS.get(s_id_addr));
+							edge.setSrc_sid(SIDS.get(d_id_addr));
+						}	
 
 						graph.addEdge(s_id_addr, d_id_addr,edge);		       
 					}//MARTA
@@ -753,13 +860,14 @@ public class FileTEDBUpdater {
 		}
 	}
 	//FIXME: Sergio - mirar aqui para leer MD TEDB
-	//Función que ya estaba
+	//Funci�n que ya estaba
 	public static DirectedWeightedMultigraph<Object, InterDomainEdge> readMDNetwork(
 			String fileName) {
 		Logger log = Logger.getLogger("PCEPServer");
 		DirectedWeightedMultigraph<Object, InterDomainEdge> graph = new DirectedWeightedMultigraph<Object, InterDomainEdge>(
 				InterDomainEdge.class);
 		Hashtable<Object, Inet4Address> router_id_domain_ed = new Hashtable<Object, Inet4Address>();
+		HashMap<Inet4Address, Integer >SIDS = new HashMap<Inet4Address,Integer>();
 
 		File file = new File(fileName);
 		try {
@@ -790,6 +898,12 @@ public class FileTEDBUpdater {
 					log.info("El router_id es " + router_id);
 					Inet4Address router_id_addr = (Inet4Address) Inet4Address
 							.getByName(router_id);
+
+					Element SID_e = (Element) element.getElementsByTagName("sid");
+					if (SID_e!=null)
+					{	int SID = Integer.parseInt(getCharacterDataFromElement(SID_e));
+					SIDS.put(router_id_addr,SID);
+					}
 
 					NodeList domain_id_node = element.getElementsByTagName("domain_id");
 					router_id_domain_ed.put(router_id_addr, domain_id);
@@ -844,6 +958,9 @@ public class FileTEDBUpdater {
 				String s_dest_if_id = getCharacterDataFromElement(dest_if_id_el);
 				log.info("Edge Dest if_id: " + s_dest_if_id);
 				int dst_if_id = Integer.parseInt(s_dest_if_id);
+
+
+
 
 				edge.setSrc_if_id(src_if_id);
 				edge.setDst_if_id(dst_if_id);
@@ -1112,7 +1229,7 @@ public class FileTEDBUpdater {
 		return graph;
 
 	}
-	
+
 
 	public static WSONInformation getWSONInformation(String fileName){
 		return FileTEDBUpdater.getWSONInformation(fileName,null);
@@ -1201,7 +1318,7 @@ public class FileTEDBUpdater {
 		return WSONinfo;
 
 	}
-	
+
 	public static SSONInformation getSSONInformation(String fileName){
 		return FileTEDBUpdater.getSSONInformation(fileName,null);
 	}
@@ -1279,9 +1396,9 @@ public class FileTEDBUpdater {
 		if (commonAvailableLabels !=null){
 			SSONinfo = new SSONInformation();
 			SSONinfo.setCommonAvailableLabels(commonAvailableLabels);
-//			if(cs==5){
-//				SSONinfo.setNumLambdas(numLabels*8);
-//			}
+			//			if(cs==5){
+			//				SSONinfo.setNumLambdas(numLabels*8);
+			//			}
 			SSONinfo.setNumLambdas(numLabels);
 			SSONinfo.setCs(cs);
 			SSONinfo.setGrid(grid);
@@ -1313,10 +1430,33 @@ public class FileTEDBUpdater {
 		availableLabels.setLabelSet(bitmapLabelSet);
 
 	}
-	public static void getDomainReachabilityFromFile(String fileName,
-			/*byte[] domainReachabilityIPv4Prefix,*/ ReachabilityEntry reachabilityEntry) {
+	public static void getDomainReachabilityFromFile(String fileName, ReachabilityEntry reachabilityEntry) {
 		FileTEDBUpdater.getDomainReachabilityFromFile(fileName, reachabilityEntry,null);
 	}
+
+	public static Inet4Address getDomainIDfromSimpleDomain(String fileName) {
+		Logger log = Logger.getLogger("PCEPServer");
+		log.info("Initializng reachability from " + fileName);
+		File file = new File(fileName);
+		Inet4Address domain_id = null;
+		try {
+			DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+			Document doc = builder.parse(file);
+
+			NodeList nodes_domains = doc.getElementsByTagName("domain");
+			Element element_domain = (Element) nodes_domains.item(0);
+			NodeList nodes_domain_id = element_domain.getElementsByTagName("domain_id");
+			Element domain_id_e = (Element) nodes_domain_id.item(0);
+			String domain_id_str = getCharacterDataFromElement(domain_id_e);
+			domain_id = (Inet4Address) Inet4Address.getByName(domain_id_str);
+			log.info("El dominio leido es: " + domain_id);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return domain_id;
+	}
+
 	public static void getDomainReachabilityFromFile(String fileName,
 			/*byte[] domainReachabilityIPv4Prefix,*/ ReachabilityEntry reachabilityEntry,String layer) {
 		Logger log = Logger.getLogger("PCEPServer");
@@ -1355,7 +1495,6 @@ public class FileTEDBUpdater {
 							.getByName(domain_id_str);
 					reachabilityEntry.setDomainId(domain_id);
 					log.info("Network domain es: " + domain_id);
-
 					NodeList nodes = element_domain
 							.getElementsByTagName("reachability_entry");
 
@@ -1392,6 +1531,7 @@ public class FileTEDBUpdater {
 						//Meto la mascara
 						reachabilityEntry.setMask(mask);
 
+
 					}
 				}
 			}
@@ -1400,7 +1540,7 @@ public class FileTEDBUpdater {
 			e.printStackTrace();
 		}
 	}
-	
+
 	//FIXME: Sergio --> mirar esto para MD TEDB
 	// MARTA
 	/**
@@ -1437,7 +1577,7 @@ public class FileTEDBUpdater {
 						Element numbLabels_e = (Element) numbLabels_node.item(0);
 						String numbLabels_s = getCharacterDataFromElement(numbLabels_e);						
 						numLabels=Integer.parseInt(numbLabels_s);	
-						
+
 						NodeList baseLabel_node = labelSetField_el.getElementsByTagName("baseLabel");
 						Element baseLabel_e = (Element) baseLabel_node.item(0);
 
@@ -1468,7 +1608,7 @@ public class FileTEDBUpdater {
 				}
 
 			}
-			
+
 
 			// Read the nodes of the domain which has interdomain connection
 			NodeList edges = doc.getElementsByTagName("edge");
@@ -1528,7 +1668,7 @@ public class FileTEDBUpdater {
 						if(connection.getTE_info()==null){
 							TE_Information tE_info= new TE_Information();							
 							if (commonBitmapLabelSet){	
-									tE_info.createBitmapLabelSet(numLabels, grid,  cs, n);
+								tE_info.createBitmapLabelSet(numLabels, grid,  cs, n);
 							}
 							connection.setTE_info(tE_info);
 						}

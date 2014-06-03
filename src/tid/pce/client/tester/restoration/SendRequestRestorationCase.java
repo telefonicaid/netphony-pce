@@ -1,10 +1,8 @@
 package tid.pce.client.tester.restoration;
 
 import java.util.LinkedList;
-import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.logging.Logger;
 
