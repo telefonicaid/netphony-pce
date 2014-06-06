@@ -24,7 +24,7 @@ import tid.pce.tedb.controllers.TEDUpdaterController.MyEdge;
 import tid.provisioningManager.objects.RouterInfoPM;
 import tid.util.UtilsFunctions;
 
-public class TEDUpdaterBristol extends TEDUpdaterController
+public class TEDUpdaterNOX extends TEDUpdaterController
 {
 	public static String controllerName = "Bristol";
 	private Hashtable<Integer,MyEdge> interDomainLinks = new Hashtable<Integer,MyEdge>();
@@ -34,17 +34,17 @@ public class TEDUpdaterBristol extends TEDUpdaterController
 	private String topologyPathNodes = "/get_topology/";
 	private String topologyPathLinks = "/get_graph/";
 	
-	public TEDUpdaterBristol(String ip, String port, String topologyPathLinks, String topologyPathNodes,DomainTEDB ted, Logger log)
+	public TEDUpdaterNOX(String ip, String port, String topologyPathLinks, String topologyPathNodes,DomainTEDB ted, Logger log)
 	{
 		super( ip,  port,  topologyPathLinks,  topologyPathNodes, ted,  log);
 	}
 	
-	public TEDUpdaterBristol(String ip, String port, String topologyPathLinks, String topologyPathNodes,DomainTEDB ted, Logger log, Lock lock)
+	public TEDUpdaterNOX(String ip, String port, String topologyPathLinks, String topologyPathNodes,DomainTEDB ted, Logger log, Lock lock)
 	{
 		super( ip,  port,  topologyPathLinks,  topologyPathNodes, ted,  log,  lock);
 	}
 	
-	public TEDUpdaterBristol(ArrayList<String> ips, ArrayList<String>ports , String topologyPathLinks, String topologyPathNodes,DomainTEDB ted, Logger log)
+	public TEDUpdaterNOX(ArrayList<String> ips, ArrayList<String>ports , String topologyPathLinks, String topologyPathNodes,DomainTEDB ted, Logger log)
 	{
 		super(ips, ports ,  topologyPathLinks,  topologyPathNodes, ted,  log);
 	}
@@ -132,7 +132,7 @@ public class TEDUpdaterBristol extends TEDUpdaterController
 				
 				rInfo.setRouterID(BristoltoFloodlight((String)jsonObject.get("dpid")));
 				rInfo.setConfigurationMode("Openflow");
-				rInfo.setControllerType(TEDUpdaterBristol.controllerName);
+				rInfo.setControllerType(TEDUpdaterNOX.controllerName);
 				
 				rInfo.setControllerIdentifier(ip, port);
 				rInfo.setControllerIP(ip);
