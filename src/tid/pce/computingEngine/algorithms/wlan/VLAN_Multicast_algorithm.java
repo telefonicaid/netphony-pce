@@ -222,12 +222,12 @@ public class VLAN_Multicast_algorithm implements ComputingAlgorithm
 			
 			log.info("graphLambda::::"+graphLambda);
 			log.info("kmst.getEdgeSet()::::"+kmst.getEdgeSet());
-				
+			/*	
 			if ((edges==null) || (edges.size() == 0))
 			{				
 				return sendNoPath(response, m_resp);	
 			}
-			
+			*/
 			SimpleDirectedWeightedGraph<Object,IntraDomainEdge> sdwg = new SimpleDirectedWeightedGraph<Object,IntraDomainEdge>(IntraDomainEdge.class);
 			
 			log.info("edges.size():1::"+edges.size());
@@ -256,6 +256,13 @@ public class VLAN_Multicast_algorithm implements ComputingAlgorithm
 			for (int i = 0; i < switchList.size() && edges.size() > 0; i++) 
 			{
 				log.info("switchList.get(i)::"+switchList.get(i));
+				
+				if (!sdwg.containsVertex(switchList.get(i)))
+				{
+					log.info("Probably only one switch in the query");
+					break;
+				}
+				
 				//Case with only one node
 				if (!(sdwg.containsVertex(source)))
 				{
