@@ -4,6 +4,7 @@ import java.net.Inet4Address;
 
 import com.google.gson.Gson;
 
+import tid.ospf.ospfv2.lsa.OSPFTEv2LSA;
 import tid.ospf.ospfv2.lsa.tlv.subtlv.AvailableLabels;
 import tid.ospf.ospfv2.lsa.tlv.subtlv.complexFields.BitmapLabelSet;
 
@@ -123,6 +124,29 @@ public class DatabaseControlSimplifiedLSA {
 			num_wavelength++;
 		}	
 	}
+	
+	public void fillSimplifiedLsa(OSPFTEv2LSA lsa){
+		if (lsa.getAdvertisingRouter()!=null)
+			this.setAdvertisingRouter(lsa.getAdvertisingRouter());
+		if (lsa.getLinkTLV().getLinkID().getLinkID()!=null)
+			this.setLinkId(lsa.getLinkTLV().getLinkID().getLinkID());
+		if (lsa.getLinkTLV().getLinkLocalRemoteIdentifiers()!=null){
+			this.setLinkLocalIdentifier(lsa.getLinkTLV().getLinkLocalRemoteIdentifiers().getLinkLocalIdentifier());
+			this.setLinkRemoteIdentifier(lsa.getLinkTLV().getLinkLocalRemoteIdentifiers().getLinkRemoteIdentifier());
+		}
+		if (lsa.getLinkTLV().getMaximumBandwidth()!=null)
+			this.setMaximumBandwidth(lsa.getLinkTLV().getMaximumBandwidth().getMaximumBandwidth());
+		if (lsa.getLinkTLV().getUnreservedBandwidth()!=null){
+			this.setMaximumBandwidth(lsa.getLinkTLV().getUnreservedBandwidth().unreservedBandwidth[0]);
+		} if (lsa.getLinkTLV().getMaximumReservableBandwidth()!=null){
+			this.setMaximumReservableBandwidth(lsa.getLinkTLV().getMaximumReservableBandwidth().maximumReservableBandwidth);
+		}
+		
+		if (lsa.getLinkTLV().getAvailableLabels()!=null){
+			this.fillBitmap(lsa.getLinkTLV().getAvailableLabels());
+		}
+	}
+	
 	
 	public String logJsonSimplifiedLSA(){
 		

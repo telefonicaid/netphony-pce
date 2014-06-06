@@ -72,7 +72,7 @@ public class PCEPClientSession extends GenericPCEPSession
 		this.deadTimerLocal=180;
 	}
 	
-	public PCEPClientSession(Socket s,PCEPSessionsInformation pcepSessionManager, String sourceMAC, String destMAC, int source_interface, int destination_interface, String operation)
+	public PCEPClientSession(Socket s,PCEPSessionsInformation pcepSessionManager, String sourceMAC, String destMAC, int source_interface, int destination_interface, String operation, int messagetype)
 	{
 		super(pcepSessionManager);
 		this.socket=s;
@@ -85,6 +85,7 @@ public class PCEPClientSession extends GenericPCEPSession
 		this.source_interface = source_interface;
 		this.destination_interface = destination_interface;
 		this.operation = operation;
+		this.messagetype= messagetype;
 	}
 	
 	public void run()
@@ -112,7 +113,7 @@ public class PCEPClientSession extends GenericPCEPSession
 		 */
 		PCEPInitiate pr = new PCEPInitiate();
 
-		pr.setMessageType(PCEPMessageTypes.MESSAGE_INTIATE);
+		pr.setMessageType(this.messagetype);
 	
 		try {
 			OpenFlowUnnumberIfIDEROSubobject eroSubSource = new OpenFlowUnnumberIfIDEROSubobject();
