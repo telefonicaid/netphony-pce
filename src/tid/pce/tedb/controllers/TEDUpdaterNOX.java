@@ -26,13 +26,13 @@ import tid.util.UtilsFunctions;
 
 public class TEDUpdaterNOX extends TEDUpdaterController
 {
-	public static String controllerName = "Bristol";
+	public static String controllerName = "NOX";
 	private Hashtable<Integer,MyEdge> interDomainLinks = new Hashtable<Integer,MyEdge>();
 	
 	
 	//Overwritten father variables and fixing the topology urls in code
-	private String topologyPathNodes = "/get_topology/";
-	private String topologyPathLinks = "/get_graph/";
+	private String topologyPathNodes = "/get_vtopology/";
+	private String topologyPathLinks = "/get_graph/";//??
 	
 	public TEDUpdaterNOX(String ip, String port, String topologyPathLinks, String topologyPathNodes,DomainTEDB ted, Logger log)
 	{
@@ -76,13 +76,13 @@ public class TEDUpdaterNOX extends TEDUpdaterController
 			
 			for (int i = 0; i < ips.size(); i++)
 			{			
-				responseLinks = queryForLinks(ips.get(i), ports.get(i));	
+				//responseLinks = queryForLinks(ips.get(i), ports.get(i));	
 						
-		        log.info("responseLinks:::"+responseLinks);
+		        //log.info("responseLinks:::"+responseLinks);
 		        
-		        lock();
-		        parseLinks(responseLinks, nodes);
-		        unlock();
+		        //lock();
+		        //parseLinks(responseLinks, nodes);
+		        //unlock();
 	        
 			}
 	        			
@@ -115,9 +115,7 @@ public class TEDUpdaterNOX extends TEDUpdaterController
 			JSONParser parser = new JSONParser();
 			Object obj = parser.parse(response);
 		
-			JSONArray msgaux = (JSONArray) obj;
-			Iterator<JSONObject> iteratoraux = msgaux.iterator();
-			JSONObject jsonaux=(JSONObject) iteratoraux.next();
+			JSONObject jsonaux=(JSONObject) obj;
 			JSONArray msg=(JSONArray) jsonaux.get("switches");
 
 			
@@ -130,7 +128,7 @@ public class TEDUpdaterNOX extends TEDUpdaterController
 				
 				RouterInfoPM rInfo = new RouterInfoPM();
 				
-				rInfo.setRouterID(BristoltoFloodlight((String)jsonObject.get("dpid")));
+				rInfo.setRouterID((String)jsonObject.get("dpid"));//Bristol to floodlight?
 				rInfo.setConfigurationMode("Openflow");
 				rInfo.setControllerType(TEDUpdaterNOX.controllerName);
 				
