@@ -47,6 +47,14 @@ public class SimpleTEDB implements DomainTEDB{
 	 */
 	private LinkedList<InterDomainEdge> interDomainLinks = new LinkedList<InterDomainEdge>(); 
 
+	/*
+	 * List of Intradomain Edges
+	 * Please, It's not the same as intraDomainLinks
+	 * This has been created to support multiedges between two nodes
+	 */
+	private LinkedList<IntraDomainEdge> intraDomainEdges = new LinkedList<IntraDomainEdge>(); 
+
+	
 	/**
 	 * Reachability information
 	 */
@@ -280,6 +288,15 @@ public class SimpleTEDB implements DomainTEDB{
 		log.info("Belongs to domain retunrs: "+Arrays.equals(addrbytes,reachabilityEntry.getAggregatedIPRange().getAddress()));
 		return Arrays.equals(addrbytes,reachabilityEntry.getAggregatedIPRange().getAddress());
 
+	}
+	
+
+	public LinkedList<IntraDomainEdge> getIntraDomainEdges() {
+		return intraDomainEdges;
+	}
+
+	public void setIntraDomainEdges(LinkedList<IntraDomainEdge> intraDomainEdges) {
+		this.intraDomainEdges = intraDomainEdges;
 	}
 
 	public ReachabilityEntry getReachabilityEntry() {
