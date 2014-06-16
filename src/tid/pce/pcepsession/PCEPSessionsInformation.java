@@ -4,8 +4,6 @@ import java.io.DataOutputStream;
 import java.util.Enumeration;
 import java.util.Hashtable;
 
-import tid.pce.server.lspdb.LSP_DB;
-
 
 
 public class PCEPSessionsInformation {

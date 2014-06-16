@@ -16,14 +16,12 @@ import org.jgrapht.graph.SimpleDirectedWeightedGraph;
 
 import tid.ospf.ospfv2.lsa.tlv.subtlv.complexFields.BitmapLabelSet;
 import tid.pce.computingEngine.algorithms.ComputingAlgorithmPreComputation;
-import tid.pce.computingEngine.algorithms.multiLayer.Multilayer_MinTH_AlgorithmPreComputation.InfoNodo;
 import tid.pce.tedb.DomainTEDB;
 import tid.pce.tedb.IntraDomainEdge;
 import tid.pce.tedb.SimpleTEDB;
 import tid.pce.tedb.TEDB;
 import tid.pce.tedb.TE_Information;
-import tid.pce.tedb.WSONInformation;
-
+ 
 public class Multilayer_VNTMProv_AlgorithmPreComputation implements ComputingAlgorithmPreComputation{
 	
 private ArrayList<SimpleDirectedWeightedGraph<Object, IntraDomainEdge>> networkGraphs;
@@ -308,7 +306,7 @@ public void notifyNewEdgeIP(Object source, Object destination, TE_Information in
 		
 		baseSimplegraph.addEdge(source, destination, edge);
 		
-		/*System.out.println("VAMOS A PINTAR LA TOPOLOGÍA VIRTUAL A VER COMO ESTA LA COSA\n");
+		/*System.out.println("VAMOS A PINTAR LA TOPOLOGA VIRTUAL A VER COMO ESTA LA COSA\n");
 		Set<IntraDomainEdge> fiberEdges= NetworkGraphIP.edgeSet();
 		Iterator<IntraDomainEdge> iterFiberLink;
 		

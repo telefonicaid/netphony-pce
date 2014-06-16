@@ -1,16 +1,6 @@
 package tid.pce.tedb;
 
-import java.net.Inet4Address;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.UnknownHostException;
-import java.util.Hashtable;
 import java.util.LinkedList;
-import java.util.List;
-
-import org.jgrapht.*;
-import org.jgrapht.alg.DijkstraShortestPath;
-import org.jgrapht.graph.*;
 
 /**
  * Base de datos de ingenieria de trafico

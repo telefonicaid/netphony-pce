@@ -1,12 +1,12 @@
 package tid.netManager;
 import java.io.File;
 import java.net.Inet4Address;
-import java.net.InetAddress;
 import java.util.LinkedList;
 import java.util.logging.Logger;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
+
 import org.w3c.dom.CharacterData;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;

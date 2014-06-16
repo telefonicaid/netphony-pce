@@ -13,7 +13,6 @@ import tid.pce.pcep.messages.PCEPReport;
 import tid.pce.pcep.objects.LSP;
 import tid.pce.pcep.objects.OPEN;
 import tid.pce.pcep.objects.tlvs.LSPDatabaseVersionTLV;
-import tid.pce.pcep.objects.tlvs.LSPIdentifiersTLV;
 
 /**
  * LSP_DB implementation.

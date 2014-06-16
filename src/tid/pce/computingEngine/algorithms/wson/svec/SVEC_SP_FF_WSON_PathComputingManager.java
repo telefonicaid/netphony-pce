@@ -1,15 +1,10 @@
 package tid.pce.computingEngine.algorithms.wson.svec;
 
-import java.util.concurrent.Callable;
-
 import tid.pce.computingEngine.ComputingRequest;
-import tid.pce.computingEngine.ComputingResponse;
 import tid.pce.computingEngine.algorithms.ComputingAlgorithm;
 import tid.pce.computingEngine.algorithms.ComputingAlgorithmManager;
 import tid.pce.computingEngine.algorithms.ComputingAlgorithmPreComputation;
 import tid.pce.computingEngine.algorithms.multiLayer.OperationsCounter;
-import tid.pce.computingEngine.algorithms.wson.AURE_Algorithm;
-import tid.pce.computingEngine.algorithms.wson.AURE_AlgorithmPreComputation;
 import tid.pce.server.wson.ReservationManager;
 import tid.pce.tedb.TEDB;
 

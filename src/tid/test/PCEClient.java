@@ -7,9 +7,9 @@ import tid.pce.client.PCCPCEPSession;
 import tid.pce.computingEngine.ComputingResponse;
 import tid.pce.pcep.constructs.Request;
 import tid.pce.pcep.messages.PCEPRequest;
+import tid.pce.pcep.messages.PCEPResponse;
 import tid.pce.pcep.objects.Bandwidth;
 import tid.pce.pcep.objects.EndPointsIPv4;
-import tid.pce.pcep.objects.EndPointsUnnumberedIntf;
 import tid.pce.pcep.objects.ObjectiveFunction;
 import tid.pce.pcep.objects.RequestParameters;
 import tid.pce.pcepsession.PCEPSessionsInformation;
@@ -64,7 +64,7 @@ public class PCEClient {
 		req.setBandwidth(bandwidth);					
 		
 		
-		ComputingResponse pr=crm.newRequest(p_r);
+		PCEPResponse pr=crm.newRequest(p_r);
 		System.out.println("OJO!! Respuesta de PCE: "+pr.toString());
 		}catch (Exception e) {
 			e.printStackTrace();

@@ -1,19 +1,21 @@
 package tid.pce.computingEngine.algorithms.sson;
 
 import java.net.Inet4Address;
-import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.concurrent.Callable;
 import java.util.logging.Logger;
+
 import org.jgrapht.GraphPath;
 import org.jgrapht.alg.DijkstraShortestPath;
 import org.jgrapht.graph.SimpleDirectedWeightedGraph;
+
 import tid.pce.computingEngine.ComputingRequest;
 import tid.pce.computingEngine.ComputingResponse;
 import tid.pce.computingEngine.algorithms.AlgorithmReservation;
 import tid.pce.computingEngine.algorithms.ComputingAlgorithm;
 import tid.pce.computingEngine.algorithms.PCEPUtils;
+import tid.pce.computingEngine.algorithms.utilities.bandwidthToSlotConversion;
+import tid.pce.computingEngine.algorithms.utilities.graphs_comparator;
 import tid.pce.pcep.constructs.EndPoint;
 import tid.pce.pcep.constructs.EndPointAndRestrictions;
 import tid.pce.pcep.constructs.P2MPEndpoints;
@@ -22,33 +24,25 @@ import tid.pce.pcep.constructs.Path;
 import tid.pce.pcep.constructs.Request;
 import tid.pce.pcep.constructs.Response;
 import tid.pce.pcep.objects.Bandwidth;
-import tid.pce.pcep.objects.GeneralizedBandwidth;
 import tid.pce.pcep.objects.EndPoints;
 import tid.pce.pcep.objects.EndPointsIPv4;
 import tid.pce.pcep.objects.ExplicitRouteObject;
 import tid.pce.pcep.objects.GeneralizedBandwidthSSON;
 import tid.pce.pcep.objects.GeneralizedEndPoints;
-import tid.pce.pcep.objects.Metric;
 import tid.pce.pcep.objects.NoPath;
 import tid.pce.pcep.objects.ObjectParameters;
 import tid.pce.pcep.objects.RequestParameters;
-import tid.pce.pcep.objects.ReservationConf;
 import tid.pce.pcep.objects.tlvs.NoPathTLV;
 import tid.pce.server.wson.ReservationManager;
+import tid.pce.tedb.DomainTEDB;
 import tid.pce.tedb.IntraDomainEdge;
 import tid.pce.tedb.SSONInformation;
 import tid.pce.tedb.TEDB;
-import tid.pce.tedb.DomainTEDB;
-import tid.pce.tedb.SSONInformation;
 import tid.rsvp.RSVPProtocolViolationException;
 import tid.rsvp.constructs.gmpls.DWDMWavelengthLabel;
-import tid.rsvp.objects.SSONSenderTSpec;
-import tid.rsvp.constructs.gmpls.DWDMWavelengthLabelValues;
 import tid.rsvp.objects.subobjects.GeneralizedLabelEROSubobject;
 import tid.rsvp.objects.subobjects.IPv4prefixEROSubobject;
 import tid.rsvp.objects.subobjects.UnnumberIfIDEROSubobject;
-import tid.pce.computingEngine.algorithms.utilities.*;
-import tid.ospf.ospfv2.lsa.tlv.subtlv.complexFields.BitmapLabelSet;
 
 /**
  * Implementation of the algorithm "Adaptive Unconstrained Routing Exhaustive".

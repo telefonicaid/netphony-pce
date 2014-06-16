@@ -9,7 +9,6 @@ import org.jgrapht.graph.SimpleDirectedWeightedGraph;
 import tid.ospf.ospfv2.lsa.tlv.subtlv.complexFields.BitmapLabelSet;
 import tid.pce.tedb.IntraDomainEdge;
 import tid.pce.tedb.TEDB;
-import tid.pce.tedb.WSONInformation;
 
 public interface ComputingAlgorithmPreComputationSSON {
 

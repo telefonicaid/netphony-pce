@@ -1,12 +1,5 @@
 package tid.pce.tedb;
 
-import java.util.Arrays;
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.logging.Logger;
-
-//import sun.org.mozilla.javascript.internal.ast.ForInLoop;
-import org.eclipse.jetty.util.log.Log;
-
 import tid.bgp.bgp4.update.tlv.linkstate_attribute_tlvs.DefaultTEMetricLinkAttribTLV;
 import tid.bgp.bgp4.update.tlv.linkstate_attribute_tlvs.IPv4RouterIDLocalNodeLinkAttribTLV;
 import tid.bgp.bgp4.update.tlv.linkstate_attribute_tlvs.IPv4RouterIDRemoteNodeLinkAttribTLV;
@@ -27,6 +20,7 @@ import tid.ospf.ospfv2.lsa.tlv.subtlv.UnreservedBandwidth;
 import tid.ospf.ospfv2.lsa.tlv.subtlv.complexFields.BitmapLabelSet;
 import tid.pce.server.PCEServer;
 import tid.rsvp.constructs.gmpls.DWDMWavelengthLabel;
+//import sun.org.mozilla.javascript.internal.ast.ForInLoop;
 
 public class TE_Information {
 	

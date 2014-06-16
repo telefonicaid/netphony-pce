@@ -5,8 +5,6 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.logging.Logger;
 
 import tid.ospf.ospfv2.OSPFv2LinkStateUpdatePacket;
-import tid.ospf.ospfv2.lsa.OSPFTEv2LSA;
-import tid.pce.server.management.PCEManagementSession;
 
 public class OSPFTCPSessionServer extends Thread {
 	

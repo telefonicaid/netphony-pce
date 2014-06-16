@@ -6,7 +6,6 @@ import java.util.LinkedList;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.logging.Logger;
 
-
 import tid.netManager.emulated.LayerTypes;
 import tid.ospf.ospfv2.OSPFv2LinkStateUpdatePacket;
 import tid.ospf.ospfv2.lsa.LSA;
@@ -20,12 +19,11 @@ import tid.ospf.ospfv2.lsa.tlv.subtlv.UnreservedBandwidth;
 import tid.ospf.ospfv2.lsa.tlv.subtlv.complexFields.BitmapLabelSet;
 import tid.ospf.ospfv2.lsa.tlv.subtlv.complexFields.LabelSetField;
 import tid.ospf.ospfv2.lsa.tlv.subtlv.complexFields.LabelSetParameters;
-
 import tid.pce.tedb.DomainTEDB;
 import tid.pce.tedb.IntraDomainEdge;
 import tid.pce.tedb.MultiLayerTEDB;
-import tid.pce.tedb.TE_Information;
 import tid.pce.tedb.SimpleTEDB;
+import tid.pce.tedb.TE_Information;
 
 public class TopologyUpdaterThread extends Thread{
 

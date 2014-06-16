@@ -3,7 +3,6 @@ package tid.pce.computingEngine.algorithms.wson;
 import java.net.Inet4Address;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.concurrent.Callable;
 import java.util.logging.Logger;
 
 import org.jgrapht.GraphPath;
@@ -34,15 +33,10 @@ import tid.pce.pcep.objects.RequestParameters;
 import tid.pce.pcep.objects.tlvs.NoPathTLV;
 import tid.pce.server.wson.ReservationManager;
 import tid.pce.tedb.DomainTEDB;
-import tid.pce.tedb.SimpleTEDB;
 import tid.pce.tedb.IntraDomainEdge;
-import tid.pce.tedb.TEDB;
-import tid.rsvp.RSVPProtocolViolationException;
-import tid.rsvp.constructs.gmpls.DWDMWavelengthLabel;
-import tid.rsvp.constructs.gmpls.DWDMWavelengthLabelValues;
+import tid.pce.tedb.SimpleTEDB;
 import tid.rsvp.objects.subobjects.GeneralizedLabelEROSubobject;
 import tid.rsvp.objects.subobjects.IPv4prefixEROSubobject;
-import tid.rsvp.objects.subobjects.UnnumberIfIDEROSubobject;
 
 /**
  * Shortest Path Routing + First Fit Wavelength Assignement WSON Algorithm.

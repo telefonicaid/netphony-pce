@@ -4,12 +4,8 @@ import tid.pce.computingEngine.ComputingRequest;
 import tid.pce.computingEngine.algorithms.ComputingAlgorithm;
 import tid.pce.computingEngine.algorithms.ComputingAlgorithmManager;
 import tid.pce.computingEngine.algorithms.ComputingAlgorithmPreComputation;
-import tid.pce.computingEngine.algorithms.wson.AURE_Algorithm;
-import tid.pce.computingEngine.algorithms.wson.AURE_AlgorithmPreComputation;
 import tid.pce.server.wson.ReservationManager;
 import tid.pce.tedb.TEDB;
-import tid.pce.computingEngine.algorithms.multiLayer.Multilayer_Algorithm_auxGraph;
-import tid.pce.computingEngine.algorithms.multiLayer.Multilayer_Algorithm_auxGraphPreComputation;
 
 public class Multilayer_Algorithm_auxGraphManager implements ComputingAlgorithmManager{
 	

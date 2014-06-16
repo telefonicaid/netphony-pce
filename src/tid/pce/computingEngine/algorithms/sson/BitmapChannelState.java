@@ -2,8 +2,6 @@ package tid.pce.computingEngine.algorithms.sson;
 
 import java.util.Arrays;
 
-import tid.protocol.commons.ByteHandler;
-
 public class BitmapChannelState {
 	
 	private byte[] bytesBitmap;

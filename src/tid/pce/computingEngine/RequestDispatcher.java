@@ -21,7 +21,6 @@ import tid.pce.pcep.messages.PCEPMessageTypes;
 import tid.pce.pcep.messages.PCEPRequest;
 import tid.pce.pcep.objects.ObjectiveFunction;
 import tid.pce.pcep.objects.RequestParameters;
-import tid.pce.pcep.objects.Svec;
 import tid.pce.pcep.objects.tlvs.MaxRequestTimeTLV;
 import tid.pce.server.ParentPCERequestManager;
 import tid.pce.server.communicationpce.CollaborationPCESessionManager;

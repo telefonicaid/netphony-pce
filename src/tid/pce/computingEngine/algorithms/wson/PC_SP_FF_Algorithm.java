@@ -1,6 +1,5 @@
 package tid.pce.computingEngine.algorithms.wson;
 
-import java.util.concurrent.Callable;
 import java.util.logging.Logger;
 
 import tid.pce.computingEngine.ComputingRequest;

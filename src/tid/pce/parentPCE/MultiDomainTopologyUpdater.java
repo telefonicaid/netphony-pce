@@ -6,10 +6,9 @@ import java.util.logging.Logger;
 
 import tid.bgp.bgp4.messages.BGP4Update;
 import tid.bgp.bgp4Peer.updateTEDB.UpdateProccesorThread;
-import tid.pce.pcep.messages.PCEPNotification;
 import tid.pce.pcep.objects.Notification;
-import tid.pce.tedb.MDTEDB;
 import tid.pce.tedb.ITMDTEDB;
+import tid.pce.tedb.MDTEDB;
 
 public class MultiDomainTopologyUpdater {
 	

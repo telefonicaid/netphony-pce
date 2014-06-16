@@ -1,7 +1,5 @@
 package tid.test;
 
-import java.io.IOException;
-import java.net.SocketException;
 
 public class InterfaceDisable {
 

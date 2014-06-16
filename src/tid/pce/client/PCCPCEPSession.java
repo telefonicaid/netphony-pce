@@ -30,7 +30,6 @@ import tid.pce.pcep.objects.ExplicitRouteObject;
 import tid.pce.pcep.objects.LSP;
 import tid.pce.pcep.objects.OPEN;
 import tid.pce.pcep.objects.ObjectParameters;
-import tid.pce.pcep.objects.PCEPIntiatedLSP;
 import tid.pce.pcep.objects.SRERO;
 import tid.pce.pcep.objects.SRP;
 import tid.pce.pcep.objects.tlvs.PathSetupTLV;

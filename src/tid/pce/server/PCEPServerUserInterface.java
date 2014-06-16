@@ -1,6 +1,5 @@
 package tid.pce.server;
 
-import java.util.logging.Logger;
 
 public class PCEPServerUserInterface extends Thread {
 	

@@ -1,15 +1,17 @@
 package tid.netManager;
 
 import static com.savarese.rocksaw.net.RawSocket.PF_INET;
+
 import java.io.IOException;
 import java.net.Inet4Address;
 import java.net.InetAddress;
 import java.util.LinkedList;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.logging.Logger;
-import com.savarese.rocksaw.net.RawSocket;
+
 import tid.ospf.ospfv2.OSPFv2LinkStateUpdatePacket;
-import tid.ospf.ospfv2.lsa.LSA;
+
+import com.savarese.rocksaw.net.RawSocket;
 
 public class OSPFSender extends Thread {
 	

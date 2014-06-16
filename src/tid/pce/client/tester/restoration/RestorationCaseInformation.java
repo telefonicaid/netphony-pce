@@ -1,7 +1,6 @@
 package tid.pce.client.tester.restoration;
 
 import java.net.Inet4Address;
-import java.util.ArrayList;
 
 public class RestorationCaseInformation {
 	private Inet4Address source;

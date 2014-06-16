@@ -3,11 +3,8 @@ package tid.pce.parentPCE;
 import java.net.Inet4Address;
 import java.util.Iterator;
 import java.util.LinkedList;
-import java.util.List;
-import java.util.Set;
 import java.util.logging.Logger;
 
-import tid.pce.tedb.InterDomainEdge;
 import tid.rsvp.objects.subobjects.EROSubobject;
 import tid.rsvp.objects.subobjects.IPv4prefixEROSubobject;
 import tid.rsvp.objects.subobjects.SubObjectValues;

@@ -7,7 +7,6 @@ import tid.pce.pcep.constructs.ErrorConstruct;
 import tid.pce.pcep.messages.PCEPError;
 import tid.pce.pcep.objects.ObjectParameters;
 import tid.pce.pcep.objects.PCEPErrorObject;
-import tid.pce.pcepsession.PCEPSession;
 
 /**
  * If no Open message is received before the expiration of the OpenWait

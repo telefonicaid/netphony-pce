@@ -1,8 +1,6 @@
 package tid.pce.tedb;
 
 import tid.ospf.ospfv2.lsa.tlv.subtlv.AvailableLabels;
-import tid.ospf.ospfv2.lsa.tlv.subtlv.complexFields.BitmapLabelSet;
-import tid.ospf.ospfv2.lsa.tlv.subtlv.complexFields.LabelSetParameters;
 
 public class WSONInformation {
 	/**

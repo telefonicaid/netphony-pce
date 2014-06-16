@@ -2,11 +2,8 @@ package tid.pce.computingEngine.algorithms.sson;
 
 import java.net.Inet4Address;
 import java.util.ArrayList;
-import java.util.Hashtable;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Set;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.logging.Logger;
@@ -20,6 +17,7 @@ import tid.pce.computingEngine.ComputingResponse;
 import tid.pce.computingEngine.algorithms.AlgorithmReservation;
 import tid.pce.computingEngine.algorithms.ComputingAlgorithm;
 import tid.pce.computingEngine.algorithms.PCEPUtils;
+import tid.pce.computingEngine.algorithms.utilities.bandwidthToSlotConversion;
 import tid.pce.pcep.constructs.EndPoint;
 import tid.pce.pcep.constructs.EndPointAndRestrictions;
 import tid.pce.pcep.constructs.P2MPEndpoints;
@@ -45,15 +43,12 @@ import tid.pce.tedb.IntraDomainEdge;
 import tid.pce.tedb.SSONInformation;
 import tid.pce.tedb.SimpleTEDB;
 import tid.pce.tedb.TEDB;
-import tid.pce.tedb.WSONInformation;
 import tid.rsvp.RSVPProtocolViolationException;
 import tid.rsvp.constructs.gmpls.DWDMWavelengthLabel;
-import tid.rsvp.objects.SSONSenderTSpec;
 import tid.rsvp.objects.subobjects.GeneralizedLabelEROSubobject;
 import tid.rsvp.objects.subobjects.IPv4prefixEROSubobject;
 import tid.rsvp.objects.subobjects.UnnumberIfIDEROSubobject;
 import tid.util.UtilsFunctions;
-import tid.pce.computingEngine.algorithms.utilities.*;
 
 public class SVEC_Dynamic_RSA implements ComputingAlgorithm{
 

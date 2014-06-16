@@ -1,24 +1,12 @@
 package tid.pce.client.management;
 
-import java.io.FileWriter;
-import java.io.PrintWriter;
 import java.net.ServerSocket;
-import java.net.Socket;
 import java.util.Timer;
 import java.util.logging.Logger;
 
-import tid.pce.client.PCCPCEPSession;
 import tid.pce.client.emulator.AutomaticTesterStatistics;
 import tid.pce.client.emulator.Emulator;
 import tid.pce.client.tester.InformationRequest;
-import tid.pce.computingEngine.RequestDispatcher;
-import tid.pce.parentPCE.ChildPCERequestManager;
-import tid.pce.parentPCE.ReachabilityManager;
-import tid.pce.parentPCE.management.ParentPCEManagementSession;
-import tid.pce.server.PCEServerParameters;
-import tid.pce.tedb.DomainTEDB;
-import tid.pce.tedb.MDTEDB;
-import tid.pce.tedb.SimpleTEDB;
 
 public class AutomaticTesterManagementSever extends Thread {
 	

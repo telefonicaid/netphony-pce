@@ -1,7 +1,6 @@
 package tid.log;
 
 import java.util.logging.Formatter;
-import java.util.logging.Level;
 import java.util.logging.LogRecord;
 
 public class StrongestGUIFormatter extends Formatter{

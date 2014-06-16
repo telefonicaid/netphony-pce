@@ -1,18 +1,10 @@
 package tid.pce.server.communicationpce;
 
-import java.io.DataOutputStream;
 import java.io.IOException;
-import java.util.LinkedList;
 import java.util.logging.FileHandler;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import java.util.logging.SimpleFormatter;
-
 
 import tid.pce.pcep.PCEPProtocolViolationException;
-
 import tid.pce.pcep.messages.PCEPMessage;
-import tid.pce.pcep.messages.PCEPNotification;
 
 
 public class CollaborationPCESessionManager {

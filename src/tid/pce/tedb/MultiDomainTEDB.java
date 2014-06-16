@@ -1,6 +1,5 @@
 package tid.pce.tedb;
 
-import java.net.Inet4Address;
 
 public interface MultiDomainTEDB extends TEDB {
 

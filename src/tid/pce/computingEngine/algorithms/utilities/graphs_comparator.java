@@ -1,12 +1,11 @@
 package tid.pce.computingEngine.algorithms.utilities;
 
+import java.util.List;
+import java.util.logging.Logger;
+
 import org.jgrapht.GraphPath;
 
-import java.util.Iterator;
-import java.util.List;
-import java.util.LinkedList;
 import tid.pce.tedb.IntraDomainEdge;
-import java.util.logging.Logger;
 
 /**
  * Esta clase compara dos caminos para ver si son iguales.

@@ -7,6 +7,7 @@ import tid.pce.pcepsession.PCEPSessionsInformation;
 public class PCEPClient {
 	
 	private Vector<PCCPCEPSession> sesiones; 
+	@SuppressWarnings("unused")
 	private int sessionIdCounter;
 
 	public PCEPClient(){
@@ -29,14 +30,14 @@ public class PCEPClient {
 //		return PCESessions.elementAt(0);
 //	}
 	
-	private int getNewSessionId(){
-		sessionIdCounter=sessionIdCounter+1;
-		if (sessionIdCounter>100000){
-			sessionIdCounter=1;
-		}
-		return sessionIdCounter;
-	}
-	
+//	private int getNewSessionId(){
+//		sessionIdCounter=sessionIdCounter+1;
+//		if (sessionIdCounter>100000){
+//			sessionIdCounter=1;
+//		}
+//		return sessionIdCounter;
+//	}
+//	
 		
 
 }

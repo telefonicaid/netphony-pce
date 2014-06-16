@@ -1,29 +1,22 @@
 package tid.pce.computingEngine.algorithms.wson;
 
 import java.net.Inet4Address;
-import java.util.ArrayList;
-import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
-import java.util.concurrent.Callable;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
 import java.util.logging.Logger;
 
 import org.jgrapht.GraphPath;
 import org.jgrapht.alg.KShortestPaths;
 import org.jgrapht.graph.SimpleDirectedWeightedGraph;
 
-import tid.pce.computingEngine.algorithms.ComputingAlgorithm;
 import tid.ospf.ospfv2.lsa.tlv.subtlv.complexFields.BitmapLabelSet;
 import tid.pce.computingEngine.ComputingRequest;
 import tid.pce.computingEngine.ComputingResponse;
 import tid.pce.computingEngine.algorithms.AlgorithmReservation;
-import tid.pce.computingEngine.algorithms.ComputingAlgorithmPreComputation;
+import tid.pce.computingEngine.algorithms.ComputingAlgorithm;
 import tid.pce.computingEngine.algorithms.PCEPUtils;
-import tid.pce.computingEngine.algorithms.wson.wa.FirstFit;
 import tid.pce.pcep.constructs.EndPoint;
 import tid.pce.pcep.constructs.EndPointAndRestrictions;
 import tid.pce.pcep.constructs.P2MPEndpoints;
@@ -38,12 +31,10 @@ import tid.pce.pcep.objects.GeneralizedEndPoints;
 import tid.pce.pcep.objects.NoPath;
 import tid.pce.pcep.objects.ObjectParameters;
 import tid.pce.pcep.objects.RequestParameters;
-import tid.pce.pcep.objects.ReservationConf;
 import tid.pce.pcep.objects.tlvs.NoPathTLV;
 import tid.pce.server.wson.ReservationManager;
 import tid.pce.tedb.DomainTEDB;
 import tid.pce.tedb.IntraDomainEdge;
-import tid.pce.tedb.SimpleTEDB;
 import tid.pce.tedb.TEDB;
 import tid.pce.tedb.WSONInformation;
 import tid.rsvp.RSVPProtocolViolationException;
@@ -51,7 +42,6 @@ import tid.rsvp.constructs.gmpls.DWDMWavelengthLabel;
 import tid.rsvp.objects.subobjects.GeneralizedLabelEROSubobject;
 import tid.rsvp.objects.subobjects.IPv4prefixEROSubobject;
 import tid.rsvp.objects.subobjects.UnnumberIfIDEROSubobject;
-import tid.pce.computingEngine.*;
 
 public class KSP_PACK_Algorithm implements ComputingAlgorithm {
 	private WSONInformation WSONInfo;

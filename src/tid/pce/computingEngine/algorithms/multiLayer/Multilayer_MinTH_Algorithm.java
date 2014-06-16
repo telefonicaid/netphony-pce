@@ -2,37 +2,20 @@ package tid.pce.computingEngine.algorithms.multiLayer;
 
 import java.net.Inet4Address;
 import java.util.ArrayList;
-import java.util.Hashtable;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Set;
-import java.util.concurrent.Callable;
 import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
 import java.util.logging.Logger;
-import org.jgrapht.GraphPath;
-import org.jgrapht.alg.DijkstraShortestPath;
-import org.jgrapht.alg.KShortestPaths;
 
+import org.jgrapht.GraphPath;
 import org.jgrapht.graph.SimpleDirectedWeightedGraph;
 
-import tid.pce.computingEngine.algorithms.multiLayer.Operacion1;
-import tid.pce.computingEngine.algorithms.multiLayer.Operacion2;
-import tid.pce.computingEngine.algorithms.multiLayer.Operacion3;
-import tid.pce.computingEngine.algorithms.multiLayer.Operacion4;
-import tid.pce.computingEngine.algorithms.multiLayer.BFS_from_src;
-import tid.pce.computingEngine.algorithms.wson.AURE_Algorithm;
-import tid.pce.computingEngine.algorithms.wson.AURE_AlgorithmPreComputation;
-import tid.pce.computingEngine.algorithms.wson.GenericLambdaReservation;
-import tid.ospf.ospfv2.lsa.tlv.subtlv.MaximumReservableBandwidth;
-import tid.ospf.ospfv2.lsa.tlv.subtlv.complexFields.BitmapLabelSet;
-import tid.pce.computingEngine.algorithms.AlgorithmReservation;
-import tid.pce.computingEngine.algorithms.ComputingAlgorithm;
-import tid.pce.computingEngine.algorithms.ComputingAlgorithmManager;
-import tid.pce.computingEngine.algorithms.PCEPUtils;
 import tid.pce.computingEngine.ComputingRequest;
 import tid.pce.computingEngine.ComputingResponse;
+import tid.pce.computingEngine.algorithms.AlgorithmReservation;
+import tid.pce.computingEngine.algorithms.ComputingAlgorithm;
+import tid.pce.computingEngine.algorithms.PCEPUtils;
+import tid.pce.computingEngine.algorithms.wson.GenericLambdaReservation;
 import tid.pce.pcep.constructs.EndPoint;
 import tid.pce.pcep.constructs.EndPointAndRestrictions;
 import tid.pce.pcep.constructs.P2MPEndpoints;
@@ -50,11 +33,10 @@ import tid.pce.pcep.objects.ObjectParameters;
 import tid.pce.pcep.objects.RequestParameters;
 import tid.pce.pcep.objects.tlvs.NoPathTLV;
 import tid.pce.server.wson.ReservationManager;
+import tid.pce.tedb.DomainTEDB;
 import tid.pce.tedb.IntraDomainEdge;
 import tid.pce.tedb.MultiLayerTEDB;
 import tid.pce.tedb.TEDB;
-import tid.pce.tedb.DomainTEDB;
-import tid.pce.tedb.TE_Information;
 import tid.rsvp.RSVPProtocolViolationException;
 import tid.rsvp.constructs.gmpls.DWDMWavelengthLabel;
 import tid.rsvp.objects.subobjects.GeneralizedLabelEROSubobject;
@@ -640,7 +622,7 @@ public class Multilayer_MinTH_Algorithm implements ComputingAlgorithm {
 			
 			boolean nopath=true;//Initially, we still have no path
 			
-			/*System.out.println("VAMOS A PINTAR LA TOPOLOGÍA VIRTUAL A VER COMO ESTA LA COSA\n");
+			/*System.out.println("VAMOS A PINTAR LA TOPOLOA VIRTUAL A VER COMO ESTA LA COSA\n");
 			Set<IntraDomainEdge> fiberEdges= GraphIP.edgeSet();
 			Iterator<IntraDomainEdge> iterFiberLink;
 			

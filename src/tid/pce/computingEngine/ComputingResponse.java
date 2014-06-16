@@ -1,7 +1,6 @@
 package tid.pce.computingEngine;
 
 import java.io.DataOutputStream;
-import java.io.IOException;
 import java.net.Inet4Address;
 import java.net.InetAddress;
 import java.net.Socket;
@@ -25,11 +24,7 @@ import tid.util.UtilsFunctions;
 
 /**
  * It's a copy of PCEPResponse. It's an interface and it can be encoded as a PCEPResponse
- * or as a PCEPInitiate, asi que meritos a ogondio, nuestro master and commander y el espejo
- * en el que reflejarnos. Cuando el ejercito desvanece, sus odas al honor arengan
- * al equipo y hace que nos demos cuenta que no solo luchamos por nosotros mismos.
- * 
- * @author el treball dur, la humiltat, el seny, el pit i els collons
+ * or as a PCEPInitiate
  *
  */
 

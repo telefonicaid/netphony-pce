@@ -7,9 +7,9 @@ import java.util.logging.Level;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
+import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
-import org.xml.sax.Attributes;
 
 import tid.pce.computingEngine.AlgorithmRule;
 import tid.pce.computingEngine.MapAlgoRule;

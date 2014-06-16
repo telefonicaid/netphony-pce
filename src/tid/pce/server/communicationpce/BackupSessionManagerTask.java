@@ -9,7 +9,6 @@ import tid.pce.pcep.messages.PCEPMessage;
 import tid.pce.pcepsession.PCEPSessionsInformation;
 import tid.pce.server.NotificationDispatcher;
 import tid.pce.server.PCEServerParameters;
-import tid.pce.server.RequestQueue;
 import tid.pce.tedb.TEDB;
 
 public class BackupSessionManagerTask  extends TimerTask{

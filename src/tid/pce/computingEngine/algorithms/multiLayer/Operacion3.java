@@ -2,17 +2,13 @@ package tid.pce.computingEngine.algorithms.multiLayer;
 
 import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.concurrent.locks.Lock;
 import java.util.logging.Logger;
 
 import org.jgrapht.GraphPath;
 import org.jgrapht.alg.DijkstraShortestPath;
 import org.jgrapht.graph.SimpleDirectedWeightedGraph;
 
-import tid.pce.tedb.InterDomainEdge;
 import tid.pce.tedb.IntraDomainEdge;
-import tid.pce.computingEngine.algorithms.multiLayer.Multilayer_MinTH_AlgorithmPreComputation;
 
 
 public class Operacion3 {

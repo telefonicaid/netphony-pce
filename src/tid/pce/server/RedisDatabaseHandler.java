@@ -1,7 +1,5 @@
 package tid.pce.server;
 
-import org.eclipse.jetty.util.log.Log;
-
 import redis.clients.jedis.Jedis;
 
 

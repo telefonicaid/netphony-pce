@@ -1,9 +1,7 @@
 package tid.pce.computingEngine.algorithms.wson;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.LinkedList;
-import java.util.Set;
 import java.util.logging.Logger;
 
 import org.jgrapht.graph.DirectedMultigraph;
@@ -11,10 +9,10 @@ import org.jgrapht.graph.SimpleDirectedWeightedGraph;
 
 import tid.ospf.ospfv2.lsa.tlv.subtlv.complexFields.BitmapLabelSet;
 import tid.pce.computingEngine.algorithms.ComputingAlgorithmPreComputation;
-import tid.pce.tedb.IntraDomainEdge;
-import tid.pce.tedb.TEDB;
-import tid.pce.tedb.SimpleTEDB;
 import tid.pce.tedb.DomainTEDB;
+import tid.pce.tedb.IntraDomainEdge;
+import tid.pce.tedb.SimpleTEDB;
+import tid.pce.tedb.TEDB;
 import tid.pce.tedb.TE_Information;
 
 public class SPWSONAlgorithmPreComputation  implements ComputingAlgorithmPreComputation{

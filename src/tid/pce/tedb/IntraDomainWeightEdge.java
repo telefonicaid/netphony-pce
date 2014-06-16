@@ -1,10 +1,8 @@
 package tid.pce.tedb;
 
 import java.net.Inet4Address;
-import org.jgrapht.graph.DefaultEdge;
-import org.jgrapht.graph.DefaultWeightedEdge;
 
-import tid.ospf.ospfv2.lsa.tlv.subtlv.complexFields.BitmapLabelSet;
+import org.jgrapht.graph.DefaultWeightedEdge;
 
 /**
  * IntraDomain Edge of a Traffic Engineering Database.

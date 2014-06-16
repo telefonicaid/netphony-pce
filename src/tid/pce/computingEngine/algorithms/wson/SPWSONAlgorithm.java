@@ -2,15 +2,12 @@ package tid.pce.computingEngine.algorithms.wson;
 
 import java.net.Inet4Address;
 import java.util.List;
-import java.util.concurrent.Callable;
 import java.util.logging.Logger;
 
 import org.jgrapht.GraphPath;
 import org.jgrapht.alg.DijkstraShortestPath;
 import org.jgrapht.graph.SimpleDirectedWeightedGraph;
 
-import tid.rsvp.objects.subobjects.IPv4prefixEROSubobject;
-import tid.rsvp.objects.subobjects.UnnumberIfIDEROSubobject;
 import tid.pce.computingEngine.ComputingRequest;
 import tid.pce.computingEngine.ComputingResponse;
 import tid.pce.computingEngine.algorithms.AlgorithmReservation;
@@ -36,6 +33,8 @@ import tid.pce.server.wson.ReservationManager;
 import tid.pce.tedb.IntraDomainEdge;
 import tid.pce.tedb.SimpleTEDB;
 import tid.pce.tedb.TEDB;
+import tid.rsvp.objects.subobjects.IPv4prefixEROSubobject;
+import tid.rsvp.objects.subobjects.UnnumberIfIDEROSubobject;
 
 public class SPWSONAlgorithm implements ComputingAlgorithm {
 	

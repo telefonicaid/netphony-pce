@@ -3,7 +3,6 @@ package tid.pce.server.wson;
 import java.util.LinkedList;
 import java.util.logging.Logger;
 
-
 import tid.pce.tedb.DomainTEDB;
 
 public class DeleteReservationTask implements Runnable {

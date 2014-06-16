@@ -3,7 +3,6 @@ package tid.pce.pcepsession;
 import java.util.logging.Logger;
 
 import tid.pce.pcep.objects.ObjectParameters;
-import tid.pce.pcepsession.PCEPSession;
 
 /*
  * PCEP DeadTimer management Thread
