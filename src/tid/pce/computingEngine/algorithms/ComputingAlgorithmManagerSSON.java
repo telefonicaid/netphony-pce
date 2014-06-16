@@ -1,8 +1,8 @@
 package tid.pce.computingEngine.algorithms;
 
-import tid.pce.computingEngine.*;
+import tid.pce.computingEngine.ComputingRequest;
 import tid.pce.server.wson.ReservationManager;
-import tid.pce.tedb.*;
+import tid.pce.tedb.TEDB;
 
 public interface ComputingAlgorithmManagerSSON {
 		

@@ -1,5 +1,7 @@
 package tid.test;
 
+import tid.ipnms.wsimpl.impl.IdaTelnetClientPrueba;
+
 
 public class ReactivateInterface {
 
@@ -11,7 +13,7 @@ public class ReactivateInterface {
 		// TODO Auto-generated method stub
 		String router=args[0];
 		String intf=args[1];
-		telnet.prueba.IdaTelnetClientPrueba telnetClient = new telnet.prueba.IdaTelnetClientPrueba(true, new String[] {"#", ":", ">"});
+		IdaTelnetClientPrueba telnetClient = new IdaTelnetClientPrueba(true, new String[] {"#", ":", ">"});
 		
 		
 		String ip= returnManagmentAddress(router);

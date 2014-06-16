@@ -4,8 +4,8 @@ import java.util.LinkedList;
 
 import tid.netManager.NetworkLSPManager;
 import tid.netManager.NetworkLSPManagerTypes;
-import tid.rsvp.objects.subobjects.EROSubobject;
 import tid.pce.pcep.objects.GeneralizedBandwidthSSON;
+import tid.rsvp.objects.subobjects.EROSubobject;
 
 public class EmulatedUniNetworkLSPManager extends NetworkLSPManager{
 	public EmulatedUniNetworkLSPManager(){

@@ -1,8 +1,8 @@
 package tid.pce.tedb;
 
-import one.topology.elements.Bandwidth;
-
 import org.jgrapht.graph.DefaultWeightedEdge;
+
+import tid.topology.elements.Bandwidth;
 
 
 /**
