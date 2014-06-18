@@ -1,16 +1,8 @@
 package tid.pce.computingEngine.algorithms.multidomain;
 
-import java.io.IOException;
 import java.net.Inet4Address;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Set;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.FutureTask;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
 import java.util.logging.Logger;
 
 import org.jgrapht.GraphPath;
@@ -24,7 +16,6 @@ import tid.pce.computingEngine.algorithms.ComputingAlgorithm;
 import tid.pce.parentPCE.ChildPCERequestManager;
 import tid.pce.parentPCE.ParentPCESession;
 import tid.pce.parentPCE.ReachabilityManager;
-import tid.pce.pcep.PCEPProtocolViolationException;
 import tid.pce.pcep.constructs.EndPoint;
 import tid.pce.pcep.constructs.EndPointAndRestrictions;
 import tid.pce.pcep.constructs.P2MPEndpoints;
@@ -45,18 +36,13 @@ import tid.pce.pcep.objects.NoPath;
 import tid.pce.pcep.objects.ObjectParameters;
 import tid.pce.pcep.objects.RequestParameters;
 import tid.pce.pcep.objects.SwitchLayer;
-import tid.pce.pcep.objects.subobjects.UnnumberIfIDXROSubobject;
-import tid.pce.pcep.objects.subobjects.XROSubObjectValues;
-import tid.pce.pcep.objects.subobjects.XROSubobject;
 import tid.pce.pcep.objects.tlvs.EndPointIPv4TLV;
 import tid.pce.pcep.objects.tlvs.NoPathTLV;
+import tid.pce.tedb.ITMDTEDB;
 import tid.pce.tedb.InterDomainEdge;
 import tid.pce.tedb.MDTEDB;
-import tid.pce.tedb.ITMDTEDB;
 import tid.pce.tedb.TEDB;
-import tid.rsvp.objects.subobjects.EROSubobject;
 import tid.rsvp.objects.subobjects.IPv4prefixEROSubobject;
-import tid.rsvp.objects.subobjects.SubObjectValues;
 import tid.rsvp.objects.subobjects.UnnumberIfIDEROSubobject;
 
 /**

@@ -2,38 +2,27 @@ package tid.netManager.emulated;
 
 import java.net.Inet4Address;
 import java.util.ArrayList;
-import java.util.Hashtable;
-import java.util.Iterator;
-import java.util.Set;
-
 import java.util.LinkedList;
-
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.locks.ReentrantLock;
-
-import java.util.logging.FileHandler;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import tid.netManager.NetworkLSPManager;
 import tid.netManager.NetworkLSPManagerTypes;
 import tid.ospf.ospfv2.OSPFv2LinkStateUpdatePacket;
-import tid.ospf.ospfv2.lsa.tlv.subtlv.MaximumBandwidth;
 import tid.ospf.ospfv2.lsa.tlv.subtlv.MaximumReservableBandwidth;
 import tid.ospf.ospfv2.lsa.tlv.subtlv.UnreservedBandwidth;
 import tid.pce.client.emulator.AutomaticTesterStatistics;
+import tid.pce.pcep.objects.GeneralizedBandwidthSSON;
 import tid.pce.tedb.IntraDomainEdge;
 import tid.pce.tedb.MultiLayerTEDB;
 import tid.pce.tedb.SimpleTEDB;
-import tid.pce.tedb.TE_Information;
-import tid.pce.pcep.objects.GeneralizedBandwidthSSON;
 import tid.rsvp.constructs.gmpls.DWDMWavelengthLabel;
 import tid.rsvp.objects.subobjects.EROSubobject;
 import tid.rsvp.objects.subobjects.GeneralizedLabelEROSubobject;
 import tid.rsvp.objects.subobjects.IPv4prefixEROSubobject;
 import tid.rsvp.objects.subobjects.SubObjectValues;
 import tid.rsvp.objects.subobjects.UnnumberIfIDEROSubobject;
-import tid.vntm.LSP;
 import tid.vntm.LSPManager;
 import tid.vntm.LigthPathCreateIP;
 
@@ -134,7 +123,6 @@ public class CompletedEmulatedNetworkLSPManager extends NetworkLSPManager{
 		int layer = LayerTypes.UPPER_LAYER;
 		GeneralizedBandwidthSSON GB = null;
 		long controlPlaneDelay=0;
-		long prueba=0;
 		int j=0;
 		int number_hops =(eROSubobjectList_IP.size()-1);
 		boolean error = false;

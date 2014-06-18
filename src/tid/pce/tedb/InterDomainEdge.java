@@ -1,7 +1,6 @@
 package tid.pce.tedb;
 
 
-import org.jgrapht.graph.DefaultEdge;
 import org.jgrapht.graph.DefaultWeightedEdge;
 
 public class InterDomainEdge extends DefaultWeightedEdge {

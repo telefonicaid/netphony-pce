@@ -10,8 +10,6 @@ import java.util.logging.Logger;
 import tid.ospf.ospfv2.OSPFPacketTypes;
 import tid.ospf.ospfv2.OSPFv2LinkStateUpdatePacket;
 import tid.ospf.ospfv2.OSPFv2Packet;
-import tid.ospf.ospfv2.lsa.LSA;
-import tid.ospf.ospfv2.lsa.OSPFTEv2LSA;
 
 /**
  * OSPF Session over a TCP Connection. This can be later changed to sending the OSPF directly with a raw socket

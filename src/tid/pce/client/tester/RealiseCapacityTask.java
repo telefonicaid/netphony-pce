@@ -7,9 +7,8 @@ import java.util.logging.Logger;
 
 import tid.netManager.NetworkLSPManager;
 import tid.pce.client.emulator.AutomaticTesterStatistics;
-
-import tid.rsvp.objects.subobjects.EROSubobject;
 import tid.pce.pcep.objects.GeneralizedBandwidthSSON;
+import tid.rsvp.objects.subobjects.EROSubobject;
 
 
 

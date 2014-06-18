@@ -22,7 +22,6 @@ import tid.pce.tedb.DomainTEDB;
 import tid.pce.tedb.IntraDomainEdge;
 import tid.pce.tedb.SimpleTEDB;
 import tid.pce.tedb.controllers.TEDUpdaterController;
-import tid.pce.tedb.controllers.TEDUpdaterFloodlight;
 import tid.pce.tedb.ospfv2.OSPFSessionServer;
 import tid.pce.tedb.ospfv2.OSPFTCPSessionServer;
 import tid.util.UtilsFunctions;

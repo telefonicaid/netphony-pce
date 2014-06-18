@@ -4,14 +4,11 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Inet4Address;
 import java.net.Socket;
-import java.net.UnknownHostException;
 import java.util.LinkedList;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.logging.Logger;
 
 import tid.ospf.ospfv2.OSPFv2LinkStateUpdatePacket;
-import tid.ospf.ospfv2.lsa.LSA;
-import tid.vntm.VNTMParameters;
 
 public class TCPOSPFSender extends Thread {
 

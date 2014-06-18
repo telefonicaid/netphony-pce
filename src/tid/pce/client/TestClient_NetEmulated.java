@@ -1,4 +1,10 @@
 package tid.pce.client;
+import java.util.Hashtable;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.logging.FileHandler;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import tid.netManager.NetworkLSPManager;
 import tid.netManager.NetworkLSPManagerParameters;
 import tid.netManager.OSPFSender;
@@ -11,12 +17,6 @@ import tid.ospf.ospfv2.OSPFv2LinkStateUpdatePacket;
 import tid.pce.client.emulator.Emulator;
 import tid.pce.client.tester.InformationRequest;
 import tid.pce.pcepsession.PCEPSessionsInformation;
-
-import java.util.Hashtable;
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.logging.FileHandler;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 
 

@@ -2,7 +2,6 @@ package tid.pce.computingEngine.algorithms.wson.svec;
 
 import java.net.Inet4Address;
 import java.util.List;
-import java.util.concurrent.Callable;
 import java.util.logging.Logger;
 
 import org.jgrapht.GraphPath;
@@ -14,7 +13,6 @@ import tid.pce.computingEngine.ComputingResponse;
 import tid.pce.computingEngine.algorithms.AlgorithmReservation;
 import tid.pce.computingEngine.algorithms.ComputingAlgorithm;
 import tid.pce.computingEngine.algorithms.PCEPUtils;
-import tid.pce.computingEngine.algorithms.wson.AURE_AlgorithmPreComputation;
 import tid.pce.computingEngine.algorithms.wson.wa.FirstFit;
 import tid.pce.pcep.constructs.Path;
 import tid.pce.pcep.constructs.Request;
@@ -26,14 +24,13 @@ import tid.pce.pcep.objects.ObjectParameters;
 import tid.pce.pcep.objects.RequestParameters;
 import tid.pce.pcep.objects.tlvs.NoPathTLV;
 import tid.pce.tedb.IntraDomainEdge;
+import tid.pce.tedb.SimpleTEDB;
 import tid.pce.tedb.TEDB;
 import tid.rsvp.RSVPProtocolViolationException;
 import tid.rsvp.constructs.gmpls.DWDMWavelengthLabel;
 import tid.rsvp.objects.subobjects.GeneralizedLabelEROSubobject;
 import tid.rsvp.objects.subobjects.IPv4prefixEROSubobject;
 import tid.rsvp.objects.subobjects.UnnumberIfIDEROSubobject;
-
-import tid.pce.tedb.SimpleTEDB;
 
 
 public class SVEC_SP_FF_WSON_PathComputing implements ComputingAlgorithm {

@@ -25,7 +25,6 @@ import tid.pce.tedb.IntraDomainEdge;
 import tid.pce.tedb.SimpleTEDB;
 import tid.pce.tedb.TEDB;
 import tid.pce.tedb.TE_Information;
-import tid.pce.tedb.WSONInformation;
 
 
 public class AURE_WLAN_algorithmPreComputation  implements ComputingAlgorithmPreComputation{

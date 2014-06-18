@@ -6,14 +6,12 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
 import java.util.logging.Logger;
 
 import org.jgrapht.GraphPath;
 import org.jgrapht.alg.DijkstraShortestPath;
 import org.jgrapht.graph.SimpleDirectedWeightedGraph;
 
-import tid.emulator.node.NetworkNode;
 import tid.pce.computingEngine.ComputingRequest;
 import tid.pce.computingEngine.ComputingResponse;
 import tid.pce.computingEngine.algorithms.AlgorithmReservation;
@@ -48,7 +46,6 @@ import tid.rsvp.objects.subobjects.GeneralizedLabelEROSubobject;
 import tid.rsvp.objects.subobjects.IPv4prefixEROSubobject;
 import tid.rsvp.objects.subobjects.ServerLayerInfo;
 import tid.rsvp.objects.subobjects.UnnumberIfIDEROSubobject;
-import tid.pce.computingEngine.RequestProcessorThread;
 
 public class Multilayer_Algorithm_auxGraph implements ComputingAlgorithm{
 	/**

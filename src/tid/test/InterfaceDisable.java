@@ -1,7 +1,7 @@
 package tid.test;
 
-import java.io.IOException;
-import java.net.SocketException;
+import tid.ipnms.wsimpl.impl.IdaTelnetClientPrueba;
+
 
 public class InterfaceDisable {
 
@@ -14,7 +14,7 @@ public class InterfaceDisable {
 		String router=args[0];
 		String intf=args[1];
 		String operation=args[2];
-		telnet.prueba.IdaTelnetClientPrueba telnetClient = new telnet.prueba.IdaTelnetClientPrueba(true, new String[] {"#", ":", ">"});
+		IdaTelnetClientPrueba telnetClient = new IdaTelnetClientPrueba(true, new String[] {"#", ":", ">"});
 		
 		
 		String ip= returnManagmentAddress(router);

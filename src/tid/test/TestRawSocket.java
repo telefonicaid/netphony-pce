@@ -14,16 +14,12 @@ import tid.ospf.ospfv2.OSPFPacketTypes;
 import tid.ospf.ospfv2.OSPFv2HelloPacket;
 import tid.ospf.ospfv2.OSPFv2LinkStateUpdatePacket;
 import tid.ospf.ospfv2.OSPFv2Packet;
-import tid.ospf.ospfv2.lsa.LSA;
-import tid.ospf.ospfv2.lsa.OSPFTEv2LSA;
 import tid.pce.server.TopologyUpdaterThread;
 import tid.pce.tedb.DomainTEDB;
 import tid.pce.tedb.SimpleTEDB;
-import tid.pce.tedb.TEDB;
-import tid.protocol.commons.ByteHandler;
-//import tid.util.Utils;
 
 import com.savarese.rocksaw.net.RawSocket;
+//import tid.util.Utils;
 
 public class TestRawSocket {
 	  // Timeout para el socket

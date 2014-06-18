@@ -2,11 +2,11 @@ package tid.pce.tedb;
 
 import java.net.Inet4Address;
 
-import com.google.gson.Gson;
-
 import tid.ospf.ospfv2.lsa.OSPFTEv2LSA;
 import tid.ospf.ospfv2.lsa.tlv.subtlv.AvailableLabels;
 import tid.ospf.ospfv2.lsa.tlv.subtlv.complexFields.BitmapLabelSet;
+
+import com.google.gson.Gson;
 
 
 /**

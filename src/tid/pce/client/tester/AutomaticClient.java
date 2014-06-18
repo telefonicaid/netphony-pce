@@ -1,22 +1,14 @@
 package tid.pce.client.tester;
 
 
-import java.io.BufferedReader;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.net.Inet4Address;
-import java.net.Socket;
-import java.net.UnknownHostException;
 import java.util.Hashtable;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.logging.FileHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-
-import tid.netManager.NetworkLSPManagerParameters;
 import tid.netManager.NetworkLSPManager;
+import tid.netManager.NetworkLSPManagerParameters;
 import tid.netManager.OSPFSender;
 import tid.netManager.TCPOSPFSender;
 import tid.netManager.emulated.AdvancedEmulatedNetworkLSPManager;
@@ -24,10 +16,10 @@ import tid.netManager.emulated.CompletedEmulatedNetworkLSPManager;
 import tid.netManager.emulated.DummyEmulatedNetworkLSPManager;
 import tid.netManager.emulated.SimpleEmulatedNetworkLSPManager;
 import tid.ospf.ospfv2.OSPFv2LinkStateUpdatePacket;
-import tid.pce.pcepsession.PCEPSessionsInformation;
 import tid.pce.client.PCCPCEPSession;
 import tid.pce.client.emulator.AutomaticTesterStatistics;
 import tid.pce.client.emulator.Emulator;
+import tid.pce.pcepsession.PCEPSessionsInformation;
 import tid.vntm.VNTMParameters;
 
 /**

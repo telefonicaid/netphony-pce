@@ -6,22 +6,15 @@ import java.io.DataInputStream;
 import java.io.IOException;
 import java.net.Inet4Address;
 import java.net.InetAddress;
-import java.net.ServerSocket;
-import java.net.Socket;
-import java.util.LinkedList;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.logging.Logger;
-
-import com.savarese.rocksaw.net.RawSocket;
 
 import tid.ospf.ospfv2.OSPFPacketTypes;
 import tid.ospf.ospfv2.OSPFv2LinkStateUpdatePacket;
 import tid.ospf.ospfv2.OSPFv2Packet;
-import tid.ospf.ospfv2.lsa.LSA;
-import tid.ospf.ospfv2.lsa.LSATypes;
-import tid.ospf.ospfv2.lsa.OSPFTEv2LSA;
-import tid.pce.server.management.PCEManagementSession;
 import tid.util.UtilsFunctions;
+
+import com.savarese.rocksaw.net.RawSocket;
 
 public class OSPFSessionServer extends Thread {
 

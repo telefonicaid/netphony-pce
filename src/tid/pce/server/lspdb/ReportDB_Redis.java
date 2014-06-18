@@ -14,7 +14,6 @@ import java.util.List;
 import redis.clients.jedis.Jedis;
 import tid.pce.pcep.PCEPProtocolViolationException;
 import tid.pce.pcep.constructs.StateReport;
-import tid.pce.pcep.objects.MalformedPCEPObjectException;
 
 import com.google.gson.Gson;
 

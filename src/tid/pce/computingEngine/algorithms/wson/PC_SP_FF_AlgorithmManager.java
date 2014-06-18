@@ -1,9 +1,6 @@
 package tid.pce.computingEngine.algorithms.wson;
 
-import java.util.concurrent.Callable;
-
 import tid.pce.computingEngine.ComputingRequest;
-import tid.pce.computingEngine.ComputingResponse;
 import tid.pce.computingEngine.algorithms.ComputingAlgorithm;
 import tid.pce.computingEngine.algorithms.ComputingAlgorithmManager;
 import tid.pce.computingEngine.algorithms.ComputingAlgorithmPreComputation;

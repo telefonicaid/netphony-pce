@@ -17,11 +17,9 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import tid.ospf.ospfv2.lsa.tlv.subtlv.MaximumReservableBandwidth;
 import tid.pce.client.tester.PCCPCEPSessionParameters;
 import tid.pce.client.tester.RequestParametersConfiguration;
 import tid.pce.client.tester.RequestToSend;
-import tid.pce.computingEngine.MapAlgoRule;
 import cern.jet.random.engine.MersenneTwister;
 
 public class RestorationCaseParameters {

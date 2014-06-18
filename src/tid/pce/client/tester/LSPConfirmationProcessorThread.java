@@ -6,23 +6,15 @@ import java.util.Timer;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.logging.Logger;
 
-import cern.jet.random.Exponential;
-
 import tid.netManager.NetworkLSPManager;
 import tid.pce.client.emulator.AutomaticTesterStatistics;
-import tid.pce.pcep.constructs.Notify;
 import tid.pce.pcep.constructs.Path;
-import tid.pce.pcep.objects.ExplicitRouteObject;
-import tid.pce.pcep.objects.GeneralizedBandwidthSSON;
-import tid.pce.pcep.objects.Notification;
-import tid.pce.pcep.objects.ObjectParameters;
-import tid.pce.server.wson.ReservationManager;
 import tid.pce.tedb.DomainTEDB;
 import tid.rsvp.objects.subobjects.EROSubobject;
-import tid.rsvp.objects.subobjects.IPv4prefixEROSubobject;
 import tid.rsvp.objects.subobjects.SubObjectValues;
 import tid.vntm.LSP;
 import tid.vntm.LigthPathCreateIP;
+import cern.jet.random.Exponential;
 
 public class LSPConfirmationProcessorThread extends Thread {
 

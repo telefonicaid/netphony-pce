@@ -1,20 +1,16 @@
 package tid.pce.client.tester;
 
 
-import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.TimerTask;
 import java.util.logging.Logger;
 
-import tid.pce.pcep.objects.LSP;
-import tid.netManager.NetworkLSPManager;
 import tid.pce.client.PCCPCEPSession;
 import tid.pce.client.emulator.AutomaticTesterStatistics;
-
-import tid.rsvp.objects.subobjects.EROSubobject;
 import tid.pce.pcep.constructs.UpdateRequest;
 import tid.pce.pcep.messages.PCEPUpdate;
 import tid.pce.pcep.objects.GeneralizedBandwidthSSON;
+import tid.pce.pcep.objects.LSP;
 
 public class RealiseControlPlaneCapacityTask  extends TimerTask {
 

@@ -14,7 +14,6 @@ import java.util.logging.Logger;
 import tid.pce.pcep.messages.PCEPReport;
 import tid.pce.server.PCEServerParameters;
 import tid.pce.server.lspdb.ReportDB_Handler;
-import tid.pce.server.lspdb.LSP_DB;
 
 public class ReportProcessorThread extends Thread
 {

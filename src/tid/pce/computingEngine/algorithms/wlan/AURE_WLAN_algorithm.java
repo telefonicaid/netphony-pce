@@ -31,7 +31,6 @@ import tid.protocol.commons.ByteHandler;
 import tid.rsvp.RSVPProtocolViolationException;
 import tid.rsvp.constructs.WLANLabel;
 import tid.rsvp.objects.subobjects.GeneralizedLabelEROSubobject;
-import tid.rsvp.objects.subobjects.IPv4prefixEROSubobject;
 import tid.rsvp.objects.subobjects.SwitchIDEROSubobject;
 
 /**

@@ -7,7 +7,6 @@ import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.concurrent.locks.Lock;
 import java.util.logging.Logger;
 
@@ -15,13 +14,10 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 
-import com.metaparadigm.jsonrpc.JSONSerializer;
-
 import tid.pce.tedb.DomainTEDB;
 import tid.pce.tedb.IntraDomainEdge;
 import tid.pce.tedb.SimpleTEDB;
 import tid.pce.tedb.TE_Information;
-import tid.pce.tedb.controllers.TEDUpdaterController.MyEdge;
 import tid.provisioningManager.objects.RouterInfoPM;
 import tid.util.UtilsFunctions;
 

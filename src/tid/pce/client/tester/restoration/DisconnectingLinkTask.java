@@ -15,7 +15,6 @@ import java.util.logging.SimpleFormatter;
 import tid.netManager.NetworkLSPManager;
 import tid.ospf.ospfv2.lsa.tlv.subtlv.complexFields.BitmapLabelSet;
 import tid.pce.client.PCCPCEPSession;
-import tid.pce.client.tester.InformationRequest;
 import tid.pce.pcep.constructs.Path;
 import tid.pce.pcep.constructs.Request;
 import tid.pce.pcep.constructs.Response;

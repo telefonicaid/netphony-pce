@@ -4,14 +4,14 @@ import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.TimerTask;
-import java.util.concurrent.LinkedBlockingQueue;
 import java.util.logging.Logger;
 
 import tid.ospf.ospfv2.lsa.InterASTEv2LSA;
 import tid.ospf.ospfv2.lsa.tlv.LinkTLV;
-import tid.ospf.ospfv2.lsa.tlv.subtlv.*;
+import tid.ospf.ospfv2.lsa.tlv.subtlv.IPv4RemoteASBRID;
+import tid.ospf.ospfv2.lsa.tlv.subtlv.LinkLocalRemoteIdentifiers;
+import tid.ospf.ospfv2.lsa.tlv.subtlv.RemoteASNumber;
 import tid.pce.pcep.constructs.Notify;
-import tid.pce.pcep.messages.PCEPMessage;
 import tid.pce.pcep.messages.PCEPNotification;
 import tid.pce.pcep.objects.Notification;
 import tid.pce.pcep.objects.ObjectParameters;
@@ -19,8 +19,8 @@ import tid.pce.pcep.objects.tlvs.ITAdvertisementTLV;
 import tid.pce.pcep.objects.tlvs.OSPFTE_LSA_TLV;
 import tid.pce.pcep.objects.tlvs.StorageTLV;
 import tid.pce.tedb.DomainTEDB;
-import tid.pce.tedb.SimpleITTEDB;
 import tid.pce.tedb.InterDomainEdge;
+import tid.pce.tedb.SimpleITTEDB;
 
 /**
  * TimerTask in which the child PCE sends the inter-domain links to the Parent PCE  

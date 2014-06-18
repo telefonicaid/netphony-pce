@@ -1,13 +1,8 @@
 package tid.netManager.emulated;
 
+import java.net.Inet4Address;
 import java.util.ArrayList;
 import java.util.LinkedList;
-import tid.rsvp.objects.subobjects.EROSubobject;
-import tid.rsvp.constructs.gmpls.DWDMWavelengthLabel;
-import tid.rsvp.objects.subobjects.GeneralizedLabelEROSubobject;
-
-import java.net.Inet4Address;
-
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.logging.Logger;
@@ -15,14 +10,14 @@ import java.util.logging.Logger;
 import tid.netManager.NetworkLSPManager;
 import tid.netManager.NetworkLSPManagerTypes;
 import tid.ospf.ospfv2.OSPFv2LinkStateUpdatePacket;
-
 import tid.pce.pcep.objects.GeneralizedBandwidthSSON;
-import tid.pce.tedb.DomainTEDB;
-
 import tid.pce.tedb.IntraDomainEdge;
 import tid.pce.tedb.SimpleTEDB;
-import tid.rsvp.objects.subobjects.SubObjectValues;
+import tid.rsvp.constructs.gmpls.DWDMWavelengthLabel;
+import tid.rsvp.objects.subobjects.EROSubobject;
+import tid.rsvp.objects.subobjects.GeneralizedLabelEROSubobject;
 import tid.rsvp.objects.subobjects.IPv4prefixEROSubobject;
+import tid.rsvp.objects.subobjects.SubObjectValues;
 import tid.rsvp.objects.subobjects.UnnumberIfIDEROSubobject;
 
 
@@ -336,13 +331,6 @@ public class AdvancedEmulatedNetworkLSPManager extends NetworkLSPManager{
 
 
 
-	private  boolean isInteger(float x) {
-        if (x % 1 == 0) {
-            return true;
-        } else {
-            return false;
-        }
-	}
 
 
 	@Override

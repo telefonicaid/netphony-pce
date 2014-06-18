@@ -3,9 +3,7 @@ package tid.pce.server;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Inet4Address;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
 import java.util.logging.Logger;
 
 import org.jgrapht.GraphPath;
@@ -26,18 +24,16 @@ import tid.pce.pcep.objects.EndPoints;
 import tid.pce.pcep.objects.EndPointsIPv4;
 import tid.pce.pcep.objects.ExplicitRouteObject;
 import tid.pce.pcep.objects.GeneralizedEndPoints;
-import tid.pce.pcep.objects.Metric;
-import tid.pce.pcep.objects.Monitoring;
 import tid.pce.pcep.objects.NoPath;
 import tid.pce.pcep.objects.ObjectParameters;
 import tid.pce.pcep.objects.RequestParameters;
 import tid.pce.pcep.objects.tlvs.NoPathTLV;
 import tid.pce.tedb.IntraDomainEdge;
+import tid.pce.tedb.SimpleITTEDB;
+import tid.pce.tedb.SimpleTEDB;
 import tid.pce.tedb.TEDB;
 import tid.rsvp.objects.subobjects.IPv4prefixEROSubobject;
 import tid.rsvp.objects.subobjects.UnnumberIfIDEROSubobject;
-import tid.pce.tedb.SimpleTEDB;
-import tid.pce.tedb.SimpleITTEDB;
 
 public class RequestProcessor implements Runnable {
 	

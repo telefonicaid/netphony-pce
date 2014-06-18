@@ -27,7 +27,6 @@ import tid.pce.server.wson.ReservationManager;
 import tid.pce.tedb.DomainTEDB;
 import tid.pce.tedb.IntraDomainEdge;
 import tid.pce.tedb.TEDB;
-import tid.protocol.commons.ByteHandler;
 import tid.provisioningManager.objects.RouterInfoPM;
 import tid.rsvp.RSVPProtocolViolationException;
 import tid.rsvp.constructs.WLANLabel;

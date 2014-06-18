@@ -1,8 +1,5 @@
 package tid.pce.server.wlan;
 
-import org.eclipse.jetty.util.log.Log;
-
-import tid.pce.server.PCEServer;
 
 /**
  * 

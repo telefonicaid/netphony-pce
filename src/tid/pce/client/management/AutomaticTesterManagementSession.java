@@ -1,32 +1,17 @@
 package tid.pce.client.management;
 
 import java.io.BufferedReader;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
-import java.io.PrintWriter;
-import java.net.Inet4Address;
 import java.net.Socket;
 import java.util.Timer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import cern.jet.random.Exponential;
-import cern.jet.random.engine.MersenneTwister;
-
-import tid.pce.client.PCCPCEPSession;
 import tid.pce.client.emulator.AutomaticTesterStatistics;
 import tid.pce.client.emulator.Emulator;
-import tid.pce.client.multiLayer.AutomaticExponentialTesterMLNetworkTask;
-import tid.pce.client.multiLayer.AutomaticTesterMLNetworkRandomTask;
-import tid.pce.client.multiLayer.AutomaticTesterMLNetworkTask;
 import tid.pce.client.tester.InformationRequest;
-
-import tid.pce.pcep.constructs.Request;
-import tid.pce.pcep.messages.PCEPRequest;
-import tid.pce.pcep.objects.EndPointsIPv4;
-import tid.pce.pcep.objects.RequestParameters;
 
 
 public class AutomaticTesterManagementSession extends Thread {

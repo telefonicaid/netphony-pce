@@ -1,11 +1,9 @@
 package tid.pce.server;
 
-import java.util.Collection;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.logging.Logger;
 
 import tid.pce.pcep.constructs.Notify;
-import tid.pce.pcep.messages.PCEPMessage;
 import tid.pce.pcep.messages.PCEPNotification;
 import tid.pce.server.wson.ReservationManager;
 

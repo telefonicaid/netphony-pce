@@ -2,38 +2,20 @@ package tid.pce.computingEngine.algorithms.multiLayer;
 
 import java.net.Inet4Address;
 import java.util.ArrayList;
-import java.util.Hashtable;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Set;
-import java.util.concurrent.Callable;
 import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
 import java.util.logging.Logger;
-import org.jgrapht.GraphPath;
-import org.jgrapht.alg.DijkstraShortestPath;
-import org.jgrapht.alg.KShortestPaths;
 
+import org.jgrapht.GraphPath;
 import org.jgrapht.graph.SimpleDirectedWeightedGraph;
 
-import tid.pce.computingEngine.algorithms.multiLayer.Operacion1;
-import tid.pce.computingEngine.algorithms.multiLayer.Operacion2;
-import tid.pce.computingEngine.algorithms.multiLayer.Operacion3;
-import tid.pce.computingEngine.algorithms.multiLayer.Operacion4;
-import tid.pce.computingEngine.algorithms.multiLayer.BFS_from_src;
-import tid.pce.computingEngine.algorithms.wson.AURE_Algorithm;
-import tid.pce.computingEngine.algorithms.wson.AURE_AlgorithmPreComputation;
-import tid.pce.computingEngine.algorithms.wson.GenericLambdaReservation;
-import tid.ospf.ospfv2.lsa.tlv.subtlv.MaximumReservableBandwidth;
-import tid.ospf.ospfv2.lsa.tlv.subtlv.UnreservedBandwidth;
-import tid.ospf.ospfv2.lsa.tlv.subtlv.complexFields.BitmapLabelSet;
-import tid.pce.computingEngine.algorithms.AlgorithmReservation;
-import tid.pce.computingEngine.algorithms.ComputingAlgorithm;
-import tid.pce.computingEngine.algorithms.ComputingAlgorithmManager;
-import tid.pce.computingEngine.algorithms.PCEPUtils;
 import tid.pce.computingEngine.ComputingRequest;
 import tid.pce.computingEngine.ComputingResponse;
+import tid.pce.computingEngine.algorithms.AlgorithmReservation;
+import tid.pce.computingEngine.algorithms.ComputingAlgorithm;
+import tid.pce.computingEngine.algorithms.PCEPUtils;
+import tid.pce.computingEngine.algorithms.wson.GenericLambdaReservation;
 import tid.pce.pcep.constructs.EndPoint;
 import tid.pce.pcep.constructs.EndPointAndRestrictions;
 import tid.pce.pcep.constructs.P2MPEndpoints;
@@ -51,11 +33,10 @@ import tid.pce.pcep.objects.ObjectParameters;
 import tid.pce.pcep.objects.RequestParameters;
 import tid.pce.pcep.objects.tlvs.NoPathTLV;
 import tid.pce.server.wson.ReservationManager;
+import tid.pce.tedb.DomainTEDB;
 import tid.pce.tedb.IntraDomainEdge;
 import tid.pce.tedb.MultiLayerTEDB;
 import tid.pce.tedb.TEDB;
-import tid.pce.tedb.DomainTEDB;
-import tid.pce.tedb.TE_Information;
 import tid.rsvp.RSVPProtocolViolationException;
 import tid.rsvp.constructs.gmpls.DWDMWavelengthLabel;
 import tid.rsvp.objects.subobjects.GeneralizedLabelEROSubobject;
@@ -274,7 +255,7 @@ public class Multilayer_MinLP_Algorithm implements ComputingAlgorithm {
 		
 				/*System.out.println("ESTAMOS DENTRO DEL ALGORITMO VAMOS A CALCULAR LA RUTA -->" + "numLambdas:"+numLambdas);
 				
-				System.out.println("VAMOS A PINTAR LA TOPOLOGÍA VIRTUAL A VER COMO ESTA LA COSA\n");
+				System.out.println("VAMOS A PINTAR LA TOPOLOGA VIRTUAL A VER COMO ESTA LA COSA\n");
 				System.out.println("PINTAME ESTOOO!!");
 				Set<IntraDomainEdge> fiberEdges= GraphIP.edgeSet();
 				Iterator<IntraDomainEdge> iterFiberLink;
@@ -285,7 +266,7 @@ public class Multilayer_MinLP_Algorithm implements ComputingAlgorithm {
 					System.out.println(fiberEdge.toString()+"  BW -->"+fiberEdge.getTE_info().getUnreservedBandwidth().getUnreservedBandwidth()[0]);
 					
 				}
-				System.out.println("\nTERMINAMOS DE PINTAR LA TOPOLOGÍA VIRTUAL\n");*/
+				System.out.println("\nTERMINAMOS DE PINTAR LA TOPOLOG VIRTUAL\n");*/
 				GraphPath<Object,IntraDomainEdge> gp = Operacion1.get_op1(GraphIP, source_router_id_addr, dest_router_id_addr
 						, graphLock, bwt_req);
 					
@@ -691,7 +672,7 @@ public class Multilayer_MinLP_Algorithm implements ComputingAlgorithm {
 	
 			//System.out.println("ESTAMOS DENTRO DEL ALGORITMO VAMOS A CALCULAR LA RUTA -->" + "numLambdas:"+numLambdas);
 			
-			/*System.out.println("VAMOS A PINTAR LA TOPOLOGÍA VIRTUAL A VER COMO ESTA LA COSA\n");
+			/*System.out.println("VAMOS A PINTAR LA TOPOLOA VIRTUAL A VER COMO ESTA LA COSA\n");
 			System.out.println("PINTAME ESTOOO!!");
 			Set<IntraDomainEdge> fiberEdges= GraphIP.edgeSet();
 			Iterator<IntraDomainEdge> iterFiberLink;
@@ -702,7 +683,7 @@ public class Multilayer_MinLP_Algorithm implements ComputingAlgorithm {
 				System.out.println(fiberEdge.toString()+"  BW -->"+fiberEdge.getTE_info().getUnreservedBandwidth().getUnreservedBandwidth()[0]);
 				
 			}
-			System.out.println("\nTERMINAMOS DE PINTAR LA TOPOLOGÍA VIRTUAL\n");*/
+			System.out.println("\nTERMINAMOS DE PINTAR LA TOPOLOA VIRTUAL\n");*/
 			
 			GraphPath<Object,IntraDomainEdge> gp = Operacion1.get_op1(GraphIP, source_router_id_addr, dest_router_id_addr
 					, graphLock, bwt_req);

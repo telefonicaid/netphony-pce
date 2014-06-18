@@ -4,7 +4,6 @@ import tid.pce.computingEngine.ComputingRequest;
 import tid.pce.computingEngine.algorithms.ComputingAlgorithm;
 import tid.pce.computingEngine.algorithms.ComputingAlgorithmPreComputation;
 import tid.pce.computingEngine.algorithms.LocalChildRequestManager;
-import tid.pce.computingEngine.algorithms.MDHPCEMinNumberDomainsAlgorithm;
 import tid.pce.computingEngine.algorithms.ParentPCEComputingAlgorithmManager;
 import tid.pce.computingEngine.algorithms.multiLayer.OperationsCounter;
 import tid.pce.parentPCE.ChildPCERequestManager;

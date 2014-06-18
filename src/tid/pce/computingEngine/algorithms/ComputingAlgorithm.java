@@ -1,13 +1,8 @@
 package tid.pce.computingEngine.algorithms;
 
-import java.net.Inet4Address;
-import java.util.Hashtable;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.concurrent.Callable;
 
 import tid.pce.computingEngine.ComputingResponse;
-import tid.pce.tedb.IntraDomainEdge;
 
 public interface ComputingAlgorithm extends Callable<ComputingResponse> {
 

@@ -1,7 +1,6 @@
 package tid.pce.computingEngine.algorithms.wson;
 
 import java.net.Inet4Address;
-import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.logging.Logger;
@@ -22,7 +21,6 @@ import tid.pce.pcep.constructs.P2PEndpoints;
 import tid.pce.pcep.constructs.Path;
 import tid.pce.pcep.constructs.Request;
 import tid.pce.pcep.constructs.Response;
-import tid.pce.pcep.objects.Bandwidth;
 import tid.pce.pcep.objects.EndPoints;
 import tid.pce.pcep.objects.EndPointsIPv4;
 import tid.pce.pcep.objects.ExplicitRouteObject;

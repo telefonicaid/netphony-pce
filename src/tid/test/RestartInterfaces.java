@@ -1,5 +1,7 @@
 package tid.test;
 
+import tid.ipnms.wsimpl.impl.IdaTelnetClientPrueba;
+
 public class RestartInterfaces {
 
 	/**
@@ -13,7 +15,7 @@ public class RestartInterfaces {
 		String intf[] = {"ge-2/1/8","ge-2/1/9","ge-2/1/8","ge-2/1/9","ge-2/1/8","ge-2/1/9"};
 		String ip[] = {"23.23.23.2/30","43.43.43.2/30","43.43.43.1/30","33.33.33.2/30","33.33.33.1/30","23.23.23.1/30"};
 		for (int i=0; i<6; i++){
-			telnet.prueba.IdaTelnetClientPrueba telnetClient = new telnet.prueba.IdaTelnetClientPrueba(true, new String[] {"#", ":", ">"});
+			IdaTelnetClientPrueba telnetClient = new IdaTelnetClientPrueba(true, new String[] {"#", ":", ">"});
 			
 			
 			String managementip= returnManagmentAddress(machine[i]);

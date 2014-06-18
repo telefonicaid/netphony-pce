@@ -15,7 +15,6 @@ import tid.util.UtilsFunctions;
 
 /**
  * 
- * Valors i humiltat
  *
  */
 
@@ -57,7 +56,6 @@ public class ClientRequestManager {
 	
 	
 	//Generic function in case instead of PCEPRequest/PCEPResponse it's PCEPInitate/PCEPReport
-	//Fmdo: la humiltat
 	public PCEPResponse newRequest( PCEPRequest pcreq)
 	{
 		return newRequest(pcreq,30000);
@@ -66,7 +64,6 @@ public class ClientRequestManager {
 	
 	
 	//Generic function in case instead of PCEPRequest/PCEPResponse it's PCEPInitate/PCEPReport
-	//Fmdo: la humiltat
 	public PCEPMessage newRequest( PCEPMessage pcreq, long maxTimeMs)
 	{
 		log.info("New Request. Request:"+pcreq.toString());

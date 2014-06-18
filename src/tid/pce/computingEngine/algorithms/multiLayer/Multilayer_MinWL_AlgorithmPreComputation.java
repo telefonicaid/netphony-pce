@@ -2,7 +2,6 @@ package tid.pce.computingEngine.algorithms.multiLayer;
 
 import java.util.ArrayList;
 import java.util.Hashtable;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -11,29 +10,16 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.logging.Logger;
 
-import org.jgrapht.Graph;
 import org.jgrapht.GraphPath;
-import org.jgrapht.alg.BellmanFordShortestPath;
-import org.jgrapht.alg.DijkstraShortestPath;
 import org.jgrapht.graph.DirectedMultigraph;
 import org.jgrapht.graph.SimpleDirectedWeightedGraph;
-import org.jgrapht.alg.KShortestPaths;
 
-import tid.ospf.ospfv2.lsa.tlv.subtlv.MaximumBandwidth;
-import tid.ospf.ospfv2.lsa.tlv.subtlv.MaximumReservableBandwidth;
-import tid.ospf.ospfv2.lsa.tlv.subtlv.UnreservedBandwidth;
 import tid.ospf.ospfv2.lsa.tlv.subtlv.complexFields.BitmapLabelSet;
-import tid.pce.computingEngine.ComputingRequest;
-import tid.pce.computingEngine.ComputingResponse;
-import tid.pce.computingEngine.algorithms.ComputingAlgorithmManager;
 import tid.pce.computingEngine.algorithms.ComputingAlgorithmPreComputation;
-import tid.pce.server.wson.ReservationManager;
 import tid.pce.tedb.DomainTEDB;
-import tid.pce.tedb.InterDomainEdge;
 import tid.pce.tedb.IntraDomainEdge;
 import tid.pce.tedb.MultiLayerTEDB;
 import tid.pce.tedb.TEDB;
-import tid.pce.tedb.MDTEDB;
 import tid.pce.tedb.TE_Information;
 import tid.pce.tedb.WSONInformation;
 
@@ -356,7 +342,7 @@ public class Multilayer_MinWL_AlgorithmPreComputation implements ComputingAlgori
 			
 			NetworkGraphIP.addEdge(source, destination, edge);
 			
-			/*System.out.println("VAMOS A PINTAR LA TOPOLOGÍA VIRTUAL A VER COMO ESTA LA COSA\n");
+			/*System.out.println("VAMOS A PINTAR LA TOPOLOGA VIRTUAL A VER COMO ESTA LA COSA\n");
 			Set<IntraDomainEdge> fiberEdges= NetworkGraphIP.edgeSet();
 			Iterator<IntraDomainEdge> iterFiberLink;
 			

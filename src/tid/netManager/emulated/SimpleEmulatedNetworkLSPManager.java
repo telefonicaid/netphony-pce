@@ -1,11 +1,7 @@
 package tid.netManager.emulated;
 
 
-import tid.rsvp.constructs.gmpls.DWDMWavelengthLabel;
-import tid.rsvp.objects.subobjects.GeneralizedLabelEROSubobject;
-
 import java.net.Inet4Address;
-
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Set;
@@ -22,16 +18,16 @@ import tid.ospf.ospfv2.lsa.OSPFTEv2LSA;
 import tid.ospf.ospfv2.lsa.tlv.LinkTLV;
 import tid.ospf.ospfv2.lsa.tlv.subtlv.LocalInterfaceIPAddress;
 import tid.ospf.ospfv2.lsa.tlv.subtlv.RemoteInterfaceIPAddress;
-
 import tid.ospf.ospfv2.lsa.tlv.subtlv.complexFields.BitmapLabelSet;
-
+import tid.pce.pcep.objects.GeneralizedBandwidthSSON;
 import tid.pce.tedb.IntraDomainEdge;
 import tid.pce.tedb.SimpleTEDB;
 import tid.pce.tedb.TE_Information;
-import tid.pce.pcep.objects.GeneralizedBandwidthSSON;
+import tid.rsvp.constructs.gmpls.DWDMWavelengthLabel;
 import tid.rsvp.objects.subobjects.EROSubobject;
-import tid.rsvp.objects.subobjects.SubObjectValues;
+import tid.rsvp.objects.subobjects.GeneralizedLabelEROSubobject;
 import tid.rsvp.objects.subobjects.IPv4prefixEROSubobject;
+import tid.rsvp.objects.subobjects.SubObjectValues;
 import tid.rsvp.objects.subobjects.UnnumberIfIDEROSubobject;
 
 
@@ -74,7 +70,7 @@ public class SimpleEmulatedNetworkLSPManager extends NetworkLSPManager{
 		LinkedList<EROSubobject> erolist= new LinkedList<EROSubobject>();
 		UnnumberIfIDEROSubobject unnumberIfScr = new UnnumberIfIDEROSubobject();
 		IPv4prefixEROSubobject ipv4Dst = new IPv4prefixEROSubobject();
-		DWDMWavelengthLabel dwdmWavelengthLabel = new DWDMWavelengthLabel();
+//		DWDMWavelengthLabel dwdmWavelengthLabel = new DWDMWavelengthLabel();
 		while (edgeIterator.hasNext()){
 			IntraDomainEdge edge= edgeIterator.next();		
 			//Source

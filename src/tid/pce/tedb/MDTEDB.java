@@ -1,18 +1,12 @@
 package tid.pce.tedb;
 
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.UnknownHostException;
-import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.Set;
 import java.util.logging.Logger;
 
-import org.jgrapht.*;
-import org.jgrapht.alg.DijkstraShortestPath;
-import org.jgrapht.graph.*;
+import org.jgrapht.graph.DirectedWeightedMultigraph;
+import org.jgrapht.graph.SimpleDirectedWeightedGraph;
 
 /**
  * Base de datos de ingenieria de trafico

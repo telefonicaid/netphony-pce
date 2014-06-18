@@ -1,12 +1,8 @@
 package tid.pce.computingEngine.algorithms.sson;
 
-import java.util.concurrent.Callable;
-
 import tid.pce.computingEngine.ComputingRequest;
-import tid.pce.computingEngine.ComputingResponse;
 import tid.pce.computingEngine.algorithms.ComputingAlgorithm;
 import tid.pce.computingEngine.algorithms.ComputingAlgorithmManagerSSON;
-import tid.pce.computingEngine.algorithms.ComputingAlgorithmPreComputation;
 import tid.pce.computingEngine.algorithms.ComputingAlgorithmPreComputationSSON;
 import tid.pce.server.wson.ReservationManager;
 import tid.pce.tedb.TEDB;

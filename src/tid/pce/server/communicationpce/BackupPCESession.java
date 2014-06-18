@@ -1,14 +1,10 @@
 package tid.pce.server.communicationpce;
 
 import java.io.IOException;
-import java.net.Inet4Address;
-import java.net.InetAddress;
 import java.net.Socket;
 import java.util.Timer;
-import java.util.concurrent.LinkedBlockingQueue;
 import java.util.logging.Logger;
 
-import tid.pce.client.ClientRequestManager;
 import tid.pce.pcep.PCEPProtocolViolationException;
 import tid.pce.pcep.messages.PCEPClose;
 import tid.pce.pcep.messages.PCEPMessage;
@@ -21,8 +17,6 @@ import tid.pce.pcepsession.PCEPSessionsInformation;
 import tid.pce.pcepsession.PCEPValues;
 import tid.pce.server.NotificationDispatcher;
 import tid.pce.server.NotificationProcessorThread;
-import tid.pce.server.Sender;
-import tid.pce.server.wson.ReservationManager;
 import tid.pce.tedb.TEDB;
 
 /**
