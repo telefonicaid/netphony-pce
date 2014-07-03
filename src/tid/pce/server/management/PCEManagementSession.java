@@ -45,7 +45,6 @@ import tid.pce.pcep.objects.tlvs.SymbolicPathNameTLV;
 import tid.pce.server.DomainPCESession;
 import tid.pce.server.PCEServerParameters;
 import tid.pce.server.communicationpce.CollaborationPCESessionManager;
-import tid.pce.server.lspdb.SimpleLSP_DB.LSPTEInfo;
 import tid.pce.server.wson.ReservationManager;
 import tid.pce.tedb.DomainTEDB;
 import tid.rsvp.objects.subobjects.IPv4prefixEROSubobject;
