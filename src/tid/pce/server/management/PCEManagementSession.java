@@ -824,4 +824,28 @@ public class PCEManagementSession extends Thread {
 		}
 		return command;
 	}
+	
+	
+	public class LSPTEInfo
+	{
+		public PCEPReport pcepReport;
+		LSPTEInfo( PCEPReport pcepReport)
+		{
+			this.pcepReport = pcepReport;
+		}
+	}
+	
+	private class PCCInfo
+	{
+		private boolean isSyncOver;
+		private long dataBaseVersion;
+		
+		PCCInfo(boolean isSyncOver, long dataBaseVersion)
+		{
+			this.isSyncOver = isSyncOver;
+			this.dataBaseVersion = dataBaseVersion;
+		}
+	}	
+	
+	
 }
