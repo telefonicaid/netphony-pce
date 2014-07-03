@@ -811,20 +811,6 @@ public class PCEManagementSession extends Thread {
 
 		//oneSession.sendPCEPMessage(m_update);
 	}
-
-	private String requestInput(BufferedReader br)
-	{
-		out.print("PCE:>");
-		String command = null;
-		try {
-			command = br.readLine();
-		} catch (IOException ioe) {
-			log.warning("IO error trying to read your command");
-			return "Error";
-		}
-		return command;
-	}
-	
 	
 	public class LSPTEInfo
 	{
@@ -835,17 +821,6 @@ public class PCEManagementSession extends Thread {
 		}
 	}
 	
-	private class PCCInfo
-	{
-		private boolean isSyncOver;
-		private long dataBaseVersion;
-		
-		PCCInfo(boolean isSyncOver, long dataBaseVersion)
-		{
-			this.isSyncOver = isSyncOver;
-			this.dataBaseVersion = dataBaseVersion;
-		}
-	}	
 	
 	
 }
