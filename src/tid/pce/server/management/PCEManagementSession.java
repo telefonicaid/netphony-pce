@@ -45,7 +45,6 @@ import tid.pce.pcep.objects.tlvs.SymbolicPathNameTLV;
 import tid.pce.server.DomainPCESession;
 import tid.pce.server.PCEServerParameters;
 import tid.pce.server.communicationpce.CollaborationPCESessionManager;
-import tid.pce.server.lspdb.SimpleLSP_DB.LSPTEInfo;
 import tid.pce.server.wson.ReservationManager;
 import tid.pce.tedb.DomainTEDB;
 import tid.rsvp.objects.subobjects.IPv4prefixEROSubobject;
@@ -812,17 +811,16 @@ public class PCEManagementSession extends Thread {
 
 		//oneSession.sendPCEPMessage(m_update);
 	}
-
-	private String requestInput(BufferedReader br)
+	
+	public class LSPTEInfo
 	{
-		out.print("PCE:>");
-		String command = null;
-		try {
-			command = br.readLine();
-		} catch (IOException ioe) {
-			log.warning("IO error trying to read your command");
-			return "Error";
+		public PCEPReport pcepReport;
+		LSPTEInfo( PCEPReport pcepReport)
+		{
+			this.pcepReport = pcepReport;
 		}
-		return command;
 	}
+	
+	
+	
 }
