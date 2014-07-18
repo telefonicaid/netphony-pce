@@ -332,15 +332,15 @@ public class FileTEDBUpdater {
 							String d_r_id = getCharacterDataFromElement(dest_router_id_el);
 							Inet4Address d_router_id_addr = (Inet4Address) Inet4Address.getByName(d_r_id);
 
-							
-							 //Anyadimos los SID
-						       if (SIDS.get(s_router_id_addr)!=null && SIDS.get(d_router_id_addr)!=null)
-						       {
-						        log.info("setting SIDS src: "+SIDS.get(s_router_id_addr)+" dst: "+SIDS.get(d_router_id_addr));
-						        edge.setSrc_sid(SIDS.get(s_router_id_addr));
-						        edge.setDst_sid(SIDS.get(d_router_id_addr));
-						       }							
-							
+
+							//Anyadimos los SID
+							if (SIDS.get(s_router_id_addr)!=null && SIDS.get(d_router_id_addr)!=null)
+							{
+								log.info("setting SIDS src: "+SIDS.get(s_router_id_addr)+" dst: "+SIDS.get(d_router_id_addr));
+								edge.setSrc_sid(SIDS.get(s_router_id_addr));
+								edge.setDst_sid(SIDS.get(d_router_id_addr));
+							}							
+
 
 
 							NodeList dest_if_id_nl = dest_el.getElementsByTagName("if_id");
@@ -411,12 +411,12 @@ public class FileTEDBUpdater {
 										TE_Information te_info = edge.getTE_info();
 										if (commonBitmapLabelSet){
 											System.out.println("HEMOS ENTRADO!!!  Valores: "+numLabels+" "+grid+" "+cs+" "+n+" "+lambdaIni+" "+lambdaEnd);
-										//	if(lambdaEnd!=Integer.MAX_VALUE){
+											//	if(lambdaEnd!=Integer.MAX_VALUE){
 
 											//	te_info.createBitmapLabelSet(numLabels, grid,  cs, n,lambdaIni,lambdaEnd);
-										//	}
-										//	else
-												te_info.createBitmapLabelSet(numLabels, grid,  cs, n);
+											//	}
+											//	else
+											te_info.createBitmapLabelSet(numLabels, grid,  cs, n);
 										}
 										//tid.util.FuncionesUtiles.printByte(((BitmapLabelSet)tE_info.getAvailableLabels().getLabelSet()).getBytesBitmapReserved(),"getBytesBitmapReserved1:");
 										edge.setTE_info(te_info);
@@ -447,12 +447,12 @@ public class FileTEDBUpdater {
 							log.info("SID not found");
 						}
 							 */
-							
+
 							NodeList defaultmetric = element.getElementsByTagName("default_te_metric");
 							Element metric_aux = (Element) defaultmetric.item(0);
-							
+
 							if (metric_aux != null){
-							String s_metric_aux = getCharacterDataFromElement(metric_aux);
+								String s_metric_aux = getCharacterDataFromElement(metric_aux);
 								TE_Information tE_info;
 								int metric = Integer.parseInt(s_metric_aux);
 								DefaultTEMetricLinkAttribTLV defaultTeMetric= new DefaultTEMetricLinkAttribTLV();
@@ -564,14 +564,14 @@ public class FileTEDBUpdater {
 							 */
 
 							if(edge.getTE_info()==null){
-								TE_Information tE_info= new TE_Information();
-								if (commonBitmapLabelSet){
-									if(lambdaEnd!=Integer.MAX_VALUE)
-										tE_info.createBitmapLabelSet(numLabels, grid,  cs, n,lambdaIni,lambdaEnd);
-									else
-										tE_info.createBitmapLabelSet(numLabels, grid,  cs, n);
-								}								
+								TE_Information tE_info= new TE_Information();							
 								edge.setTE_info(tE_info);
+							}
+							if (commonBitmapLabelSet){
+								if(lambdaEnd!=Integer.MAX_VALUE)
+									edge.getTE_info().createBitmapLabelSet(numLabels, grid,  cs, n,lambdaIni,lambdaEnd);
+								else
+									edge.getTE_info().createBitmapLabelSet(numLabels, grid,  cs, n);
 							}
 
 							NodeList availableLabels_node = element.getElementsByTagName("AvailableLabels");

@@ -31,7 +31,7 @@ import tid.util.UtilsFunctions;
 public class ComputingResponse 
 {	
 	private byte messageBytes[];//The bytes of the message 
-	private int encodingType;
+	private int encodingType = PCEPMessageTypes.MESSAGE_PCREP;
 	
 	public LinkedList<Response> ResponseList;
 	private Logger log=Logger.getLogger("PCEPParser");
