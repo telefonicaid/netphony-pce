@@ -82,7 +82,7 @@ public class DisconnectingLinkTask extends TimerTask {
 	private ScheduledThreadPoolExecutor requestExecutor;
 
 	/**
-	 * Parametros de la emulación (como son las peticiones, par origen destino, carga, etc)
+	 * Parametros de la emulaciï¿½n (como son las peticiones, par origen destino, carga, etc)
 	 */
 	private RestorationCaseParameters testerParams;
 	/**
@@ -158,7 +158,7 @@ public class DisconnectingLinkTask extends TimerTask {
 //		log.info("---------------------------------------------------------------------------------------------------");
 //		log.info("----------------------------------- Desconectamos enlace!! ------------------------------------------");
 //		log.info("---------------------------------------------------------------------------------------------------");
-//		/* Desconecta el enlace. Se envian en el update de OSPF todo 111s en el enlace caído, mientras dure la caida.  */	
+//		/* Desconecta el enlace. Se envian en el update de OSPF todo 111s en el enlace caï¿½do, mientras dure la caida.  */	
 //		log.info("Source: "+this.sourceDisconnected.toString());
 //		log.info("destination: "+this.destinationDisconnected.toString());
 		IntraDomainEdge edge=((SimpleTEDB)networkLSPManager.getDomainTEDB()).getNetworkGraph().getEdge(sourceDisconnected, destinationDisconnected);		
@@ -397,7 +397,7 @@ public RestorationCaseTable findOneRestorationCaseTable(int idPath){
 		PCEPRequest request = null;
 		RestorationCaseTable restorationCaseTable = findOneRestorationCaseTable(idPath);
 		if (restorationCaseTable == null){
-			System.out.println("Hay algo maaaaaaaaaaaaal");
+			System.out.println("Error.");
 			System.exit(3);
 		}
 		request= createPCEPRequestMessage(restorationCaseTable.getInitialNodePath(),restorationCaseTable.getFinalNodePath());
