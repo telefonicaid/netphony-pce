@@ -317,6 +317,14 @@ public class ComputingResponse
 		this.reachabilityManager = reachabilityManager;
 	}
 	
+	public String toString(){
+		StringBuffer sb=new StringBuffer(ResponseList.size()*100);
+		sb.append("RESP: ");
+		for (int i=0;i<ResponseList.size();++i){
+			sb.append(ResponseList.get(i).toString());
+		}
+		return sb.toString();
+	}
 	
 	
 }

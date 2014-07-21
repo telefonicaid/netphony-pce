@@ -388,13 +388,9 @@ public class FileTEDBUpdater {
 							//TE Link information
 							NodeList maximum_bandwidth_nl = element.getElementsByTagName("maximum_bandwidth");
 							if (maximum_bandwidth_nl!=null){
-								System.out.println("HEMOS ENTRADO!!!");
 								if (maximum_bandwidth_nl.getLength()>0){
-									System.out.println("HEMOS ENTRADO!!!  Valores");
 									if(edge.getTE_info()==null){
 										TE_Information tE_info= new TE_Information();
-
-										System.out.println("HEMOS ENTRADO!!!  Valores: "+numLabels+" "+grid+" "+cs+" "+n+" "+lambdaIni+" "+lambdaEnd);
 										if (commonBitmapLabelSet){
 											if(lambdaEnd!=Integer.MAX_VALUE){
 
@@ -407,10 +403,8 @@ public class FileTEDBUpdater {
 										edge.setTE_info(tE_info);
 
 									} else {
-										System.out.println("HEMOS ENTRADO!!!  Valores: "+numLabels+" "+grid+" "+cs+" "+n+" "+lambdaIni+" "+lambdaEnd);
 										TE_Information te_info = edge.getTE_info();
 										if (commonBitmapLabelSet){
-											System.out.println("HEMOS ENTRADO!!!  Valores: "+numLabels+" "+grid+" "+cs+" "+n+" "+lambdaIni+" "+lambdaEnd);
 											//	if(lambdaEnd!=Integer.MAX_VALUE){
 
 											//	te_info.createBitmapLabelSet(numLabels, grid,  cs, n,lambdaIni,lambdaEnd);
@@ -469,13 +463,10 @@ public class FileTEDBUpdater {
 
 							NodeList unreserved_bandwidth_nl = element.getElementsByTagName("unreserved_bandwidth");
 							if (unreserved_bandwidth_nl!=null){
-								System.out.println("HEMOS ENTRADO2!!!");
 								int num_u_b=unreserved_bandwidth_nl.getLength();
 								UnreservedBandwidth unreservedBandwidth;
 								if (num_u_b>0){
-									System.out.println("HEMOS ENTRADO2!!!  Valores");
 									if(edge.getTE_info()==null){
-										System.out.println("HEMOS ENTRADO2!!!  Valores: "+numLabels+" "+grid+" "+cs+" "+n+" "+lambdaIni+" "+lambdaEnd);
 										TE_Information tE_info= new TE_Information();
 										if (commonBitmapLabelSet){
 											if(lambdaEnd!=Integer.MAX_VALUE)
@@ -653,7 +644,7 @@ public class FileTEDBUpdater {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		log.info("Insisdafhsfj :: "+graph.edgeSet());
+		log.info("Info graph edge :: "+graph.edgeSet());
 		return graph;
 	}
 
