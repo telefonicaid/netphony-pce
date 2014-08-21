@@ -31,7 +31,7 @@ import tid.util.UtilsFunctions;
 public class ComputingResponse 
 {	
 	private byte messageBytes[];//The bytes of the message 
-	private int encodingType;
+	private int encodingType = PCEPMessageTypes.MESSAGE_PCREP;
 	
 	public LinkedList<Response> ResponseList;
 	private Logger log=Logger.getLogger("PCEPParser");
@@ -317,6 +317,14 @@ public class ComputingResponse
 		this.reachabilityManager = reachabilityManager;
 	}
 	
+	public String toString(){
+		StringBuffer sb=new StringBuffer(ResponseList.size()*100);
+		sb.append("RESP: ");
+		for (int i=0;i<ResponseList.size();++i){
+			sb.append(ResponseList.get(i).toString());
+		}
+		return sb.toString();
+	}
 	
 	
 }

@@ -234,7 +234,7 @@ public abstract class GenericPCEPSession extends Thread implements PCEPSession {
 			}
 			else if (r==-1){
 				log.info("End of stream has been reached");
-				throw new IOException();
+				//throw new IOException();
 			}
 		}
 		if (length > 0) {
