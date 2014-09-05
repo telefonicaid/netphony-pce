@@ -219,7 +219,8 @@ public class TopologyManager
 				args[0] = ips.get(i);
 				args[1] = ports.get(i);
 				args[2] = "";
-				args[3] = "/wm/core/controller/switches/json";
+				//args[3] = "/wm/core/controller/switches/json";
+				args[3] = "/v1.0/topology/switches";
 				args[4] = ted;
 				args[5] = log;
 				
