@@ -219,8 +219,8 @@ public class TopologyManager
 				args[0] = ips.get(i);
 				args[1] = ports.get(i);
 				args[2] = "";
-				//args[3] = "/wm/core/controller/switches/json";
-				args[3] = "/v1.0/topology/switches";
+				//args[3] = "/wm/core/controller/switches/json"; /*Floodlight*/
+				args[3] = "/v1.0/topology/switches"; /*Ryu*/
 				args[4] = ted;
 				args[5] = log;
 				
@@ -230,15 +230,11 @@ public class TopologyManager
 			}
 			catch (Exception e1)
 			{
-				log.info("BBooOOoOOOooOOOOooOOOooooOoOooOoOooOooooOOOOOooOOOOOoooMMMM");
-				log.info("chica chica BBooOOoOOOooOOOOooOOOooooOoOooOoOooOooooOOOOOooOOOOOoooMMMM");
-				log.info("chica chica BBooOOoOOOooOOOOooOOOooooOoOooOoOooOooooOOOOOooOOOOOoooMMMM");
-				log.info("BBooOOoOOOooOOOOooOOOooooOoOooOoOooOooooOOOOOooOOOOOoooMMMM");
 				log.info(UtilsFunctions.exceptionToString(e1));			
 				return;
 			}
 			
-			log.info(i+ ":i + TED" + ted.printTopology());
+			log.info("NºTimes: " + i + " + TED" + ted.printTopology());
 			//TEDUpdaterFloodlight thread = new TEDUpdaterFloodlight(ips.get(i), ports.get(i), params.getTopologyPath(),"/wm/core/controller/switches/json", ted, log);
 			/*
 			TopologyUpdaterFloodlight thread = new TopologyUpdaterFloodlight(ips, ports, params.getTopologyPath(),"/wm/core/controller/switches/json", ted, log);
