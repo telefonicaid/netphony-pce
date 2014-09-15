@@ -234,7 +234,7 @@ public class TopologyManager
 				return;
 			}
 			
-			log.info("NºTimes: " + i + " + TED" + ted.printTopology());
+			log.info(i+ ":i + TED" + ted.printTopology());
 			//TEDUpdaterFloodlight thread = new TEDUpdaterFloodlight(ips.get(i), ports.get(i), params.getTopologyPath(),"/wm/core/controller/switches/json", ted, log);
 			/*
 			TopologyUpdaterFloodlight thread = new TopologyUpdaterFloodlight(ips, ports, params.getTopologyPath(),"/wm/core/controller/switches/json", ted, log);
