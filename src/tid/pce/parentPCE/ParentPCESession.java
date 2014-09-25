@@ -188,7 +188,7 @@ public class ParentPCESession extends GenericPCEPSession{
 							}
 							else if (notifType==ObjectParameters.PCEP_NOTIFICATION_TYPE_TOPOLOGY){
 								log.finest("Topology Notification received");
-								mdt.processNotification(m_not.getNotifyList().get(i).getNotificationList().get(0),this.remotePCEId,this.remoteDomainId);
+								//mdt.processNotification(m_not.getNotifyList().get(i).getNotificationList().get(0),this.remotePCEId,this.remoteDomainId);
 							}
 							else if (notifType==ObjectParameters.PCEP_NOTIFICATION_TYPE_IT_RESOURCE_INFORMATION){
 								mdt.processNotification(m_not.getNotifyList().get(i).getNotificationList().get(0),this.remotePCEId,this.remoteDomainId);

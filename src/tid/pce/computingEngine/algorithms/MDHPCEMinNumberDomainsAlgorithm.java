@@ -91,6 +91,8 @@ public class MDHPCEMinNumberDomainsAlgorithm implements ComputingAlgorithm{
 		
 		EndPoints  EP= req.getEndPoints();	
 		Inet4Address source_router_id_addr = null;
+		long src_if_id=-1;
+		long dst_if_id=-1;
 		Inet4Address dest_router_id_addr = null;
 		
 		if (EP.getOT()==ObjectParameters.PCEP_OBJECT_TYPE_ENDPOINTS_IPV4){
@@ -107,8 +109,22 @@ public class MDHPCEMinNumberDomainsAlgorithm implements ComputingAlgorithm{
 				P2PEndpoints p2pep= gep.getP2PEndpoints();
 				EndPoint sourceep=p2pep.getSourceEndPoint();
 				EndPoint destep=p2pep.getDestinationEndPoint();
-				source_router_id_addr=sourceep.getEndPointIPv4TLV().IPv4address;
-				dest_router_id_addr=destep.getEndPointIPv4TLV().IPv4address;
+				if (sourceep.getEndPointIPv4TLV()!=null){
+					source_router_id_addr=sourceep.getEndPointIPv4TLV().getIPv4address();
+				}else if (sourceep.getUnnumberedEndpoint()!=null){
+					source_router_id_addr=sourceep.getUnnumberedEndpoint().getIPv4address();
+				}
+				if (destep.getEndPointIPv4TLV()!=null){
+					dest_router_id_addr=destep.getEndPointIPv4TLV().getIPv4address();
+				}else if (destep.getUnnumberedEndpoint()!=null){
+					dest_router_id_addr=destep.getUnnumberedEndpoint().getIPv4address();
+				}
+				if (sourceep.getUnnumberedEndpoint()!=null ){
+					src_if_id= sourceep.getUnnumberedEndpoint().getIfID();
+				}
+				if (destep.getUnnumberedEndpoint()!=null ){
+					dst_if_id= destep.getUnnumberedEndpoint().getIfID();
+				}
 			}
 			if(gep.getGeneralizedEndPointsType()==ObjectParameters.PCEP_GENERALIZED_END_POINTS_TYPE_P2MP_NEW_LEAVES){
 				P2MPEndpoints p2mpep= gep.getP2MPEndpoints();
@@ -191,16 +207,40 @@ public class MDHPCEMinNumberDomainsAlgorithm implements ComputingAlgorithm{
 		}
 		List<InterDomainEdge> edge_list=gp.getEdgeList();
 		long tiempo2 =System.nanoTime();
-
+		boolean first_domain_equal=false;
 		if (source_domain_id.equals(dest_domain_id)){
-			NoPath noPath2= new NoPath();
-			noPath2.setNatureOfIssue(ObjectParameters.NOPATH_NOPATH_SAT_CONSTRAINTS);
-			NoPathTLV noPathTLV=new NoPathTLV();
-			noPath2.setNoPathTLV(noPathTLV);				
-			response.setNoPath(noPath2);
-			m_resp.addResponse(response);
-			return m_resp;
-		}
+//			NoPath noPath2= new NoPath();
+//			noPath2.setNatureOfIssue(ObjectParameters.NOPATH_NOPATH_SAT_CONSTRAINTS);
+//			NoPathTLV noPathTLV=new NoPathTLV();
+//			noPath2.setNoPathTLV(noPathTLV);				
+//			response.setNoPath(noPath2);
+//			m_resp.addResponse(response);
+//			return m_resp;
+			PCEPRequest pcreqToDomain=new PCEPRequest();
+			if (pathReq.getMonitoring()!=null){
+				pcreqToDomain.setMonitoring(pathReq.getMonitoring());
+			}
+			if (pathReq.getPccReqId()!=null){
+				pcreqToDomain.setPccReqId(pathReq.getPccReqId());
+			}
+			Request requestToDomain=new Request();
+			//requestToDomain.setObjectiveFunction(pathReq.getRequestList().get(0).getObjectiveFunction());
+			
+			requestToDomain.setBandwidth(pathReq.getRequestList().get(0).getBandwidth().duplicate());
+			
+			addXRO(req.getXro(),requestToDomain);
+			requestToDomain.setEndPoints(pathReq.getRequestList().get(0).getEndPoints());
+			RequestParameters rpDomain=new RequestParameters();
+			int newRequestID=ParentPCESession.getNewReqIDCounter();
+			rpDomain.setRequestID(newRequestID);
+			rpDomain.setPbit(true);
+			requestToDomain.setRequestParameters(rpDomain);
+			pcreqToDomain.addRequest(requestToDomain);
+			reqList.add(pcreqToDomain);
+			domainList.add(source_domain_id);
+			log.info("Sending ONLY ONE request"+requestToDomain.toString()+" to domain "+source_domain_id);
+			
+		} else {
 		
 		//log.info("number of involved domains = "+edge_list.size()+1);
 		int i=0;
@@ -251,7 +291,7 @@ public class MDHPCEMinNumberDomainsAlgorithm implements ComputingAlgorithm{
 		log.info("First part of the LSP is in domain: "+ domain+" from "+ source_router_id_addr+" to "+destIP);
 		//FIXME: METRICA? OF? BW?
 		long requestID;
-		boolean first_domain_equal=false;
+		
 		if (source_router_id_addr.equals(destIP)){
 			log.info("Origin and destination are the same");
 			first_domain_equal=true;
@@ -450,7 +490,7 @@ public class MDHPCEMinNumberDomainsAlgorithm implements ComputingAlgorithm{
 		//childPCERequestManager.addRequest(pcreqToLastDomain, Last_domain);
 		reqList.add(pcreqToLastDomain);
 		domainList.add(Last_domain);
-		
+		}
 		LinkedList <ComputingResponse> respList;
 		long tiempo3 =System.nanoTime();
 		try {
@@ -484,7 +524,7 @@ public class MDHPCEMinNumberDomainsAlgorithm implements ComputingAlgorithm{
 			j+=1;
 		}
 		boolean childrenFailed=false;
-		
+		int i;
 		
 		for (i=0;i<respList.size();++i){
 			if (respList.get(i)==null){

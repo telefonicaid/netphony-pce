@@ -20,16 +20,17 @@ import tid.pce.computingEngine.algorithms.PCEPUtils;
 import tid.pce.computingEngine.algorithms.utilities.bandwidthToSlotConversion;
 import tid.pce.pcep.constructs.EndPoint;
 import tid.pce.pcep.constructs.EndPointAndRestrictions;
+import tid.pce.pcep.constructs.GeneralizedBandwidthSSON;
 import tid.pce.pcep.constructs.P2MPEndpoints;
 import tid.pce.pcep.constructs.P2PEndpoints;
 import tid.pce.pcep.constructs.Path;
 import tid.pce.pcep.constructs.Request;
 import tid.pce.pcep.constructs.Response;
-import tid.pce.pcep.objects.Bandwidth;
+import tid.pce.pcep.objects.BandwidthRequested;
+import tid.pce.pcep.objects.BandwidthRequestedGeneralizedBandwidth;
 import tid.pce.pcep.objects.EndPoints;
 import tid.pce.pcep.objects.EndPointsIPv4;
 import tid.pce.pcep.objects.ExplicitRouteObject;
-import tid.pce.pcep.objects.GeneralizedBandwidthSSON;
 import tid.pce.pcep.objects.GeneralizedEndPoints;
 import tid.pce.pcep.objects.Metric;
 import tid.pce.pcep.objects.Monitoring;
@@ -142,7 +143,7 @@ public class SVEC_Dynamic_RSA implements ComputingAlgorithm{
 			SSONInfo=((DomainTEDB)ted).getSSONinfo();
 
 			EndPoints  EP= req.getEndPoints();
-			Bandwidth  Bw= req.getBandwidth(); // Objeto bandwidth para saber la demanda de la peticion.
+			BandwidthRequested  Bw= (BandwidthRequested)req.getBandwidth(); // Objeto bandwidth para saber la demanda de la peticion.
 			Object source_router_id_addr = null;
 			Object dest_router_id_addr = null;
 			
@@ -384,24 +385,18 @@ public class SVEC_Dynamic_RSA implements ComputingAlgorithm{
 				}
 				
 				//log.info("Label bit map: "+ted.getWSONinfo().getCommonAvailableLabels().getLabelSet().toString());
-				GeneralizedBandwidthSSON GB_SSON = new GeneralizedBandwidthSSON ();
-				
+				BandwidthRequestedGeneralizedBandwidth gw = new BandwidthRequestedGeneralizedBandwidth();
+				GeneralizedBandwidthSSON GB_SSON = new GeneralizedBandwidthSSON();
+				GB_SSON.setM(m);
 				preComp.setTotalBandwidth((m*Bmod*6.25)+preComp.getTotalBandwidth());
 				
-//				SSONSenderTSpec mLabel = new SSONSenderTSpec();
-//	        	mLabel.setM(m);
-//	          	mLabel.encode();
-	          
-		        GB_SSON.setM(m);
-		        GB_SSON.setRreverse(false);
-		        GB_SSON.setOreopt(false);
-				
+
 				IPv4prefixEROSubobject eroso= new IPv4prefixEROSubobject();
 				eroso.setIpv4address((Inet4Address)edge_list.get(edge_list.size()-1).getTarget());
 				eroso.setPrefix(32);
 				ero.addEROSubobject(eroso);
 				path.seteRO(ero);
-				path.setGeneralizedbandwidth(GB_SSON);
+				path.setBandwidth(gw);
 				PCEPUtils.completeMetric(path, req, edge_list);
 				response.addPath(path);
 				m_resp.addResponse(response);

@@ -26,7 +26,7 @@ import tid.pce.pcep.constructs.P2PEndpoints;
 import tid.pce.pcep.constructs.Path;
 import tid.pce.pcep.constructs.Request;
 import tid.pce.pcep.constructs.Response;
-import tid.pce.pcep.objects.Bandwidth;
+import tid.pce.pcep.objects.BandwidthRequested;
 import tid.pce.pcep.objects.EndPoints;
 import tid.pce.pcep.objects.EndPointsIPv4;
 import tid.pce.pcep.objects.ExplicitRouteObject;
@@ -154,7 +154,7 @@ public class SVEC_AURE_SSON_algorithm implements ComputingAlgorithm {
 				EndPoints  EP= req.getEndPoints();
 				
 				// Objeto bandwidth para saber la demanda de la peticion.
-				Bandwidth  Bw= req.getBandwidth(); 
+				BandwidthRequested  Bw= (BandwidthRequested)req.getBandwidth(); 
 				
 				Inet4Address source_router_id_addr = null;
 				Inet4Address dest_router_id_addr = null;

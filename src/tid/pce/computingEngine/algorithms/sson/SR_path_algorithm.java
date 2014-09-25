@@ -18,7 +18,7 @@ import tid.pce.computingEngine.algorithms.utilities.graphs_comparator;
 import tid.pce.pcep.constructs.Path;
 import tid.pce.pcep.constructs.Request;
 import tid.pce.pcep.constructs.Response;
-import tid.pce.pcep.objects.Bandwidth;
+import tid.pce.pcep.objects.BandwidthRequested;
 import tid.pce.pcep.objects.EndPoints;
 import tid.pce.pcep.objects.EndPointsIPv4;
 import tid.pce.pcep.objects.ExplicitRouteObject;
@@ -121,7 +121,7 @@ public class SR_path_algorithm implements ComputingAlgorithm {
 		//esto hay que cambiarlo para poder leer del GENERALIZED END POINTS
 		//if (getObjectType(req.getEndPoints()))
 		EndPoints  EP= req.getEndPoints();
-		Bandwidth  Bw= req.getBandwidth(); // Objeto bandwidth para saber la demanda de la peticion.
+		BandwidthRequested  Bw= (BandwidthRequested)req.getBandwidth(); // Objeto bandwidth para saber la demanda de la peticion.
 		Object source_router_id_addr = null;
 		Object dest_router_id_addr = null;
 		graphs_comparator grc = new graphs_comparator ();

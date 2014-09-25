@@ -9,6 +9,7 @@ import java.util.logging.Logger;
 import tid.netManager.NetworkLSPManager;
 import tid.pce.client.emulator.AutomaticTesterStatistics;
 import tid.pce.pcep.constructs.Path;
+import tid.pce.pcep.objects.BandwidthRequested;
 import tid.pce.tedb.DomainTEDB;
 import tid.rsvp.objects.subobjects.EROSubobject;
 import tid.rsvp.objects.subobjects.SubObjectValues;
@@ -63,7 +64,7 @@ public class LSPConfirmationProcessorThread extends Thread {
 				
 				if (path!=null){
 					boolean createIP = LPcreateIP.createLigthPath(path.geteRO().getEROSubobjectList());
-					float bw = path.getBandwidth().bw;
+					float bw = ((BandwidthRequested)path.getBandwidth()).getBw();
 					if (createIP== true){
 							// Creamos el ERO IP
 						LinkedList<EROSubobject> eroIP = new LinkedList<EROSubobject>();

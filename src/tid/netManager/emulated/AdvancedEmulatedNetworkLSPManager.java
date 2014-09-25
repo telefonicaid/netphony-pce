@@ -10,7 +10,7 @@ import java.util.logging.Logger;
 import tid.netManager.NetworkLSPManager;
 import tid.netManager.NetworkLSPManagerTypes;
 import tid.ospf.ospfv2.OSPFv2LinkStateUpdatePacket;
-import tid.pce.pcep.objects.GeneralizedBandwidthSSON;
+import tid.pce.pcep.objects.BandwidthRequestedGeneralizedBandwidth;
 import tid.pce.tedb.IntraDomainEdge;
 import tid.pce.tedb.SimpleTEDB;
 import tid.rsvp.constructs.gmpls.DWDMWavelengthLabel;
@@ -67,7 +67,7 @@ public class AdvancedEmulatedNetworkLSPManager extends NetworkLSPManager{
 	 * @param erolist
 	 */
 	@Override
-	public synchronized boolean setLSP(LinkedList<EROSubobject> erolist,boolean bidirect, GeneralizedBandwidthSSON GB) {
+	public synchronized boolean setLSP(LinkedList<EROSubobject> erolist,boolean bidirect, BandwidthRequestedGeneralizedBandwidth GB) {
 		log.info("Setting LSP with ERO: "+erolist.toString());
 		ArrayList<Inet4Address> src=new ArrayList<Inet4Address>();
 		ArrayList<Inet4Address> dst=new ArrayList<Inet4Address>();
@@ -116,7 +116,7 @@ public class AdvancedEmulatedNetworkLSPManager extends NetworkLSPManager{
 
 
 	@Override
-	public boolean setMLLSP(LinkedList<EROSubobject> erolist,boolean bidirect, GeneralizedBandwidthSSON GB) {
+	public boolean setMLLSP(LinkedList<EROSubobject> erolist,boolean bidirect, BandwidthRequestedGeneralizedBandwidth GB) {
 		log.info("Setting ML LSP with ERO: "+erolist.toString());
 		ArrayList<Inet4Address> src=new ArrayList<Inet4Address>();
 		ArrayList<Inet4Address> dst=new ArrayList<Inet4Address>();
@@ -162,7 +162,7 @@ public class AdvancedEmulatedNetworkLSPManager extends NetworkLSPManager{
 	}
 
 	@Override
-	public synchronized void removeLSP(LinkedList<EROSubobject> erolist, boolean bidirect, GeneralizedBandwidthSSON GB) {
+	public synchronized void removeLSP(LinkedList<EROSubobject> erolist, boolean bidirect, BandwidthRequestedGeneralizedBandwidth GB) {
  log.info("Removing ML LSP with ERO: "+erolist.toString());
 		
 		for (int i=0;i<erolist.size()-1;++i){
@@ -212,7 +212,7 @@ public class AdvancedEmulatedNetworkLSPManager extends NetworkLSPManager{
 	}
 
 	@Override
-	public void removeMLLSP(LinkedList<EROSubobject> erolist,boolean bidirect, GeneralizedBandwidthSSON GB) {
+	public void removeMLLSP(LinkedList<EROSubobject> erolist,boolean bidirect, BandwidthRequestedGeneralizedBandwidth GB) {
 	log.info("Removing ML LSP with ERO: "+erolist.toString());
 		
 		for (int i=0;i<erolist.size()-2;++i){
@@ -335,7 +335,7 @@ public class AdvancedEmulatedNetworkLSPManager extends NetworkLSPManager{
 
 	@Override
 	public void removeLSP(LinkedList<EROSubobject> erolist, boolean bidirect,
-			GeneralizedBandwidthSSON GB, float bw) {
+			BandwidthRequestedGeneralizedBandwidth GB, float bw) {
 		// TODO Auto-generated method stub
 		
 	}

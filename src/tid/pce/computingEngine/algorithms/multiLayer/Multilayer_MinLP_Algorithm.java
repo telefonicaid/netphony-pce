@@ -23,7 +23,7 @@ import tid.pce.pcep.constructs.P2PEndpoints;
 import tid.pce.pcep.constructs.Path;
 import tid.pce.pcep.constructs.Request;
 import tid.pce.pcep.constructs.Response;
-import tid.pce.pcep.objects.Bandwidth;
+import tid.pce.pcep.objects.BandwidthRequested;
 import tid.pce.pcep.objects.EndPoints;
 import tid.pce.pcep.objects.EndPointsIPv4;
 import tid.pce.pcep.objects.ExplicitRouteObject;
@@ -154,8 +154,8 @@ public class Multilayer_MinLP_Algorithm implements ComputingAlgorithm {
 				response.setRequestParameters(rp);
 				m_resp.addResponse(response);
 				
-				Bandwidth bandwidth = new Bandwidth();
-				bandwidth.setBw(req.getBandwidth().getBw());
+				BandwidthRequested bandwidth = new BandwidthRequested();
+				bandwidth.setBw(((BandwidthRequested)req.getBandwidth()).getBw());
 				response.setBandwidth(bandwidth);
 				m_resp_individual.addResponse(response);
 				
@@ -251,7 +251,7 @@ public class Multilayer_MinLP_Algorithm implements ComputingAlgorithm {
 				boolean op4a_flag = false;
 				boolean op4b_flag = false;
 						
-				float bwt_req = req.getBandwidth().getBw(); // ancho de banda de la request
+				float bwt_req = ((BandwidthRequested)req.getBandwidth()).getBw(); // ancho de banda de la request
 		
 				/*System.out.println("ESTAMOS DENTRO DEL ALGORITMO VAMOS A CALCULAR LA RUTA -->" + "numLambdas:"+numLambdas);
 				
@@ -572,8 +572,8 @@ public class Multilayer_MinLP_Algorithm implements ComputingAlgorithm {
 			response.setRequestParameters(rp);
 			m_resp.addResponse(response);
 			
-			Bandwidth bandwidth = new Bandwidth();
-			bandwidth.setBw(req.getBandwidth().getBw());
+			BandwidthRequested bandwidth = new BandwidthRequested();
+			bandwidth.setBw(((BandwidthRequested)req.getBandwidth()).getBw());
 			response.setBandwidth(bandwidth);
 						
 			//esto hay que cambiarlo para poder leer del GENERALIZED END POINTS
@@ -668,7 +668,7 @@ public class Multilayer_MinLP_Algorithm implements ComputingAlgorithm {
 			boolean op4a_flag = false;
 			boolean op4b_flag = false;
 					
-			float bwt_req = req.getBandwidth().getBw(); // ancho de banda de la request
+			float bwt_req = ((BandwidthRequested)req.getBandwidth()).getBw(); // ancho de banda de la request
 	
 			//System.out.println("ESTAMOS DENTRO DEL ALGORITMO VAMOS A CALCULAR LA RUTA -->" + "numLambdas:"+numLambdas);
 			

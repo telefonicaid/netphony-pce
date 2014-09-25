@@ -15,7 +15,7 @@ import java.util.logging.Logger;
 import tid.pce.pcep.messages.PCEPInitiate;
 import tid.pce.pcep.messages.PCEPMessage;
 import tid.pce.pcep.messages.PCEPReport;
-import tid.pce.pcep.objects.Bandwidth;
+import tid.pce.pcep.objects.BandwidthRequested;
 import tid.pce.pcep.objects.EndPointsIPv4;
 import tid.pce.pcep.objects.ExplicitRouteObject;
 import tid.pce.pcep.objects.LSP;
@@ -145,7 +145,7 @@ public class StatefulPCEPSession extends GenericPCEPSession
 					} else {
 						log.warning("Tipo de operacion no soportada");
 					}
-					Bandwidth bw= new Bandwidth();
+					BandwidthRequested bw= new BandwidthRequested();
 					bw.setBw(bandwidth);
 					pr.getPcepIntiatedLSPList().get(0).setBandwidth(bw);
 					pr.getPcepIntiatedLSPList().get(0).getLsp().setLspId((int)lspid);			

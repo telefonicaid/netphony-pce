@@ -9,20 +9,20 @@ import tid.pce.client.PCCPCEPSession;
 import tid.pce.client.emulator.AutomaticTesterStatistics;
 import tid.pce.pcep.constructs.UpdateRequest;
 import tid.pce.pcep.messages.PCEPUpdate;
-import tid.pce.pcep.objects.GeneralizedBandwidthSSON;
+import tid.pce.pcep.objects.BandwidthRequestedGeneralizedBandwidth;
 import tid.pce.pcep.objects.LSP;
 
 public class RealiseControlPlaneCapacityTask  extends TimerTask {
 
 	private Logger log;
-	private GeneralizedBandwidthSSON GB;
+	private BandwidthRequestedGeneralizedBandwidth GB;
 	private AutomaticTesterStatistics stats;
 	private LinkedList<LSP> lspList;
 	private boolean bidirectional; 
 	private PCCPCEPSession PCEPsession;
 
 	
-	public RealiseControlPlaneCapacityTask(LinkedList<LSP> lspList,AutomaticTesterStatistics stats, boolean bidirectional, GeneralizedBandwidthSSON GB
+	public RealiseControlPlaneCapacityTask(LinkedList<LSP> lspList,AutomaticTesterStatistics stats, boolean bidirectional, BandwidthRequestedGeneralizedBandwidth GB
 			, PCCPCEPSession PCEPsession){
 		log=Logger.getLogger("PCCClient");
 		this.stats=stats;

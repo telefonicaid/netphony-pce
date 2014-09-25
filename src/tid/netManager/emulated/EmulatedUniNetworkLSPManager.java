@@ -4,7 +4,7 @@ import java.util.LinkedList;
 
 import tid.netManager.NetworkLSPManager;
 import tid.netManager.NetworkLSPManagerTypes;
-import tid.pce.pcep.objects.GeneralizedBandwidthSSON;
+import tid.pce.pcep.objects.BandwidthRequestedGeneralizedBandwidth;
 import tid.rsvp.objects.subobjects.EROSubobject;
 
 public class EmulatedUniNetworkLSPManager extends NetworkLSPManager{
@@ -12,31 +12,31 @@ public class EmulatedUniNetworkLSPManager extends NetworkLSPManager{
 		this.setEmulatorType(NetworkLSPManagerTypes.UNI_EMULATED_NETWORK);		
 	}
 	@Override
-	public boolean setLSP(LinkedList<EROSubobject> erolist, boolean bidirect, GeneralizedBandwidthSSON GB) {
+	public boolean setLSP(LinkedList<EROSubobject> erolist, boolean bidirect, BandwidthRequestedGeneralizedBandwidth GB) {
 		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
-	public boolean setMLLSP(LinkedList<EROSubobject> erolist, boolean bidirect, GeneralizedBandwidthSSON GB) {
+	public boolean setMLLSP(LinkedList<EROSubobject> erolist, boolean bidirect, BandwidthRequestedGeneralizedBandwidth GB) {
 		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
-	public void removeLSP(LinkedList<EROSubobject> erolist, boolean bidirect, GeneralizedBandwidthSSON GB) {
+	public void removeLSP(LinkedList<EROSubobject> erolist, boolean bidirect, BandwidthRequestedGeneralizedBandwidth GB) {
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public void removeMLLSP(LinkedList<EROSubobject> erolist, boolean bidirect, GeneralizedBandwidthSSON GB) {
+	public void removeMLLSP(LinkedList<EROSubobject> erolist, boolean bidirect, BandwidthRequestedGeneralizedBandwidth GB) {
 		// TODO Auto-generated method stub
 		
 	}
 	@Override
 	public void removeLSP(LinkedList<EROSubobject> erolist, boolean bidirect,
-			GeneralizedBandwidthSSON GB, float bw) {
+			BandwidthRequestedGeneralizedBandwidth GB, float bw) {
 		// TODO Auto-generated method stub
 		
 	}

@@ -14,7 +14,7 @@ import tid.pce.pcep.constructs.Request;
 import tid.pce.pcep.constructs.SVECConstruct;
 import tid.pce.pcep.messages.PCEPRequest;
 import tid.pce.pcep.messages.PCEPResponse;
-import tid.pce.pcep.objects.Bandwidth;
+import tid.pce.pcep.objects.BandwidthRequested;
 import tid.pce.pcep.objects.EndPointsIPv4;
 import tid.pce.pcep.objects.Metric;
 import tid.pce.pcep.objects.Monitoring;
@@ -234,7 +234,7 @@ public class AutomaticClientTask  extends TimerTask {
 		//Creamos el object Request 
 		Request req = null;
 		if (testerParams.getRequestToSendList().get(i).getRequestParameters().Is_bandwidth()){
-			Bandwidth bw= new Bandwidth();			
+			BandwidthRequested bw= new BandwidthRequested();			
 			if (testerParams.getBandwidthMin() != 0){/*Hay que generar el valor de bandwidth aleatorio*/
 				Random rnd = new Random();
 				float number = (float)rnd.nextInt((int)testerParams.getBandwidthMax());

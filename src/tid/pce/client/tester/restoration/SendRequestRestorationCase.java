@@ -11,8 +11,8 @@ import tid.pce.client.PCCPCEPSession;
 import tid.pce.pcep.constructs.Path;
 import tid.pce.pcep.messages.PCEPRequest;
 import tid.pce.pcep.messages.PCEPResponse;
+import tid.pce.pcep.objects.BandwidthRequestedGeneralizedBandwidth;
 import tid.pce.pcep.objects.ExplicitRouteObject;
-import tid.pce.pcep.objects.GeneralizedBandwidthSSON;
 import tid.rsvp.objects.subobjects.EROSubobject;
 
 public class SendRequestRestorationCase  extends TimerTask {
@@ -87,7 +87,7 @@ public class SendRequestRestorationCase  extends TimerTask {
 						LinkedList<EROSubobject> eroSubObjList=ero.getEROSubobjectList();
 
 						long time_LSP1 = System.nanoTime();					
-						if (networkLSPManager.setLSP(eroSubObjList,request.getRequestList().get(0).getRequestParameters().isBidirect(),(GeneralizedBandwidthSSON)path.getGeneralizedbandwidth())){
+						if (networkLSPManager.setLSP(eroSubObjList,request.getRequestList().get(0).getRequestParameters().isBidirect(),(BandwidthRequestedGeneralizedBandwidth)path.getBandwidth())){
 							long time_LSP2= System.nanoTime();
 							double LSPTime = (time_LSP2-time_LSP1)/1000000;
 							//Numero de enlaces que tiene el camino, que tenemos que comprobar que estan disponibles.	

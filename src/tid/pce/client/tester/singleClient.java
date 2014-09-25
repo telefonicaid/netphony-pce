@@ -28,7 +28,7 @@ import tid.pce.pcep.constructs.Request;
 import tid.pce.pcep.messages.PCEPRequest;
 import tid.pce.pcep.messages.PCEPResponse;
 import tid.pce.pcep.messages.PCEPTELinkSuggestion;
-import tid.pce.pcep.objects.Bandwidth;
+import tid.pce.pcep.objects.BandwidthRequested;
 import tid.pce.pcep.objects.EndPointsIPv4;
 import tid.pce.pcep.objects.ExplicitRouteObject;
 import tid.pce.pcep.objects.Metric;
@@ -189,7 +189,7 @@ public class singleClient {
 		   res.setTimer(testerParams.getRequestToSendList().get(i).getRequestParameters().getTimeReserved());
 		  }
 		  if (testerParams.getRequestToSendList().get(i).getRequestParameters().Is_bandwidth()){
-			   Bandwidth bw= new Bandwidth();
+			   BandwidthRequested bw= new BandwidthRequested();
 			   bw.setBw(testerParams.getRequestToSendList().get(i).getRequestParameters().getBW());
 			   req.setBandwidth(bw);
 			  }

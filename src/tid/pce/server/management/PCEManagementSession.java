@@ -29,7 +29,7 @@ import tid.pce.pcep.messages.PCEPInitiate;
 import tid.pce.pcep.messages.PCEPReport;
 import tid.pce.pcep.messages.PCEPRequest;
 import tid.pce.pcep.messages.PCEPUpdate;
-import tid.pce.pcep.objects.Bandwidth;
+import tid.pce.pcep.objects.BandwidthRequested;
 import tid.pce.pcep.objects.EndPointsIPv4;
 import tid.pce.pcep.objects.ExplicitRouteObject;
 import tid.pce.pcep.objects.LSP;
@@ -791,10 +791,9 @@ public class PCEManagementSession extends Thread {
 
 		path.seteRO(auxERO);
 
-		Bandwidth bw = new Bandwidth();
+		BandwidthRequested bw = new BandwidthRequested();
 
 		bw.setBw(1);
-		bw.setReoptimization(false);
 
 		path.setBandwidth(bw);
 

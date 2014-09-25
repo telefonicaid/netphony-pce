@@ -98,8 +98,8 @@ public class PCCPCEPSession extends GenericPCEPSession{
 		this.peerPCE_IPaddress=ip;
 		this.peerPCE_port=port;
 		crm= new ClientRequestManager();
-		this.keepAliveLocal=60;
-		this.deadTimerLocal=240;
+		this.keepAliveLocal=30;
+		this.deadTimerLocal=120;
 		timer=new Timer();
 		this.no_delay=no_delay;
 		this.pcepSessionManager=pcepSessionManager;
