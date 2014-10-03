@@ -110,7 +110,7 @@ public class TEDUpdaterRYU extends TEDUpdaterController
 		}
 		log.info("RYUFormat--> " + RYUFormat + ", floodFormat-->" + floodFormat);
 		return floodFormat;
-	}
+}
 
 	private void parseNodes(String response, Hashtable<String,RouterInfoPM> routerInfoList, String ip, String port)
 	{	
@@ -174,9 +174,9 @@ public class TEDUpdaterRYU extends TEDUpdaterController
 
 				log.info("Adding Vertex->"+source+" hashcode:"+source.hashCode());
 				log.info("Adding Vertex->"+dest+" hashcode:"+dest.hashCode());
-				
-				edge.setSrc_if_id((Long)jsonObject_src.get("port_no"));
-				edge.setDst_if_id((Long)jsonObject_dst.get("port_no"));
+					
+				edge.setSrc_if_id(Long.parseLong((String) jsonObject_src.get("port_no")));
+				edge.setDst_if_id(Long.parseLong((String) jsonObject_dst.get("port_no")));
 				
 				
 				// This is a big problem because info is not initialized from file
@@ -211,9 +211,9 @@ public class TEDUpdaterRYU extends TEDUpdaterController
 					tE_infoOtherWay.setNumberWLANs(15);
 					tE_infoOtherWay.initWLANs();
 					IntraDomainEdge edgeOtherWay= new IntraDomainEdge();
-					
-					edgeOtherWay.setSrc_if_id((Long)jsonObject_src.get("port_no"));
-					edgeOtherWay.setDst_if_id((Long)jsonObject_dst.get("port_no"));
+
+					edgeOtherWay.setSrc_if_id(Long.parseLong((String) jsonObject_src.get("port_no"))); 
+					edgeOtherWay.setDst_if_id(Long.parseLong((String) jsonObject_dst.get("port_no"))); 
 					edgeOtherWay.setTE_info(tE_infoOtherWay);
 					
 					((SimpleTEDB)TEDB).getNetworkGraph().addEdge(source, dest, edge);
@@ -225,7 +225,6 @@ public class TEDUpdaterRYU extends TEDUpdaterController
 					log.info("dest::"+dest);
 					log.info("edgeOtherWay::"+edgeOtherWay);
 					log.info("edge::"+edge);
-					//log.info("Adding two!");
 				}
 				else
 				{
