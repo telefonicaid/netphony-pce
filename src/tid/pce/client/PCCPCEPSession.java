@@ -334,7 +334,7 @@ public class PCCPCEPSession extends GenericPCEPSession{
 					}					
 					break;
 					
-				case PCEPMessageTypes.MESSAGE_INTIATE:
+				case PCEPMessageTypes.MESSAGE_INITIATE:
 					log.info("Received INITIATE message");
 					timeIni=System.nanoTime();
 					try {

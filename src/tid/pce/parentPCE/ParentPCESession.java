@@ -177,7 +177,7 @@ public class ParentPCESession extends GenericPCEPSession{
 										log.info("EROSubobjectList size "+EROSubobjectList.size());
 										for (int jj=0;jj< EROSubobjectList.size();++jj){
 											log.info("ADD EROSO ");
-											rm.addEROSubobject(remoteDomainId, reachabilityTLVList.get(ii).EROSubobjectList.get(jj));											
+											//rm.addEROSubobject(remoteDomainId, reachabilityTLVList.get(ii).EROSubobjectList.get(jj));											
 										}
 									}
 																			

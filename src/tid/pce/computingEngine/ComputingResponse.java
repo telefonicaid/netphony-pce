@@ -10,13 +10,13 @@ import java.util.logging.Logger;
 
 import tid.pce.parentPCE.ReachabilityManager;
 import tid.pce.pcep.PCEPProtocolViolationException;
+import tid.pce.pcep.constructs.PCEPIntiatedLSP;
 import tid.pce.pcep.constructs.Response;
 import tid.pce.pcep.messages.PCEPInitiate;
 import tid.pce.pcep.messages.PCEPMessageTypes;
 import tid.pce.pcep.messages.PCEPResponse;
 import tid.pce.pcep.objects.ExplicitRouteObject;
 import tid.pce.pcep.objects.LSP;
-import tid.pce.pcep.objects.PCEPIntiatedLSP;
 import tid.pce.pcep.objects.SRP;
 import tid.rsvp.objects.subobjects.EROSubobject;
 import tid.rsvp.objects.subobjects.UnnumberIfIDEROSubobject;
@@ -81,7 +81,7 @@ public class ComputingResponse
 				setMessageBytes(p_resp.getBytes());
 			break;
 			
-			case PCEPMessageTypes.MESSAGE_INTIATE:
+			case PCEPMessageTypes.MESSAGE_INITIATE:
 				if (isFather)
 				{
 					//This part will suppose the Initiate has only one Path

@@ -11,6 +11,7 @@ import java.util.logging.Logger;
 import tid.pce.pcep.constructs.EndPoint;
 import tid.pce.pcep.constructs.GeneralizedBandwidthSSON;
 import tid.pce.pcep.constructs.P2PEndpoints;
+import tid.pce.pcep.constructs.PCEPIntiatedLSP;
 import tid.pce.pcep.constructs.Request;
 import tid.pce.pcep.messages.PCEPInitiate;
 import tid.pce.pcep.messages.PCEPMessage;
@@ -24,24 +25,25 @@ import tid.pce.pcep.objects.GeneralizedEndPoints;
 import tid.pce.pcep.objects.LSP;
 import tid.pce.pcep.objects.ObjectiveFunction;
 import tid.pce.pcep.objects.P2MPEndPointsIPv4;
-import tid.pce.pcep.objects.PCEPIntiatedLSP;
 import tid.pce.pcep.objects.RequestParameters;
 import tid.pce.pcep.objects.SRP;
 import tid.pce.pcep.objects.tlvs.EndPointIPv4TLV;
 import tid.pce.pcep.objects.tlvs.EndPointsIPv4TLV;
+import tid.pce.pcep.objects.tlvs.SymbolicPathNameTLV;
 import tid.pce.pcep.objects.tlvs.UnnumberedEndpointTLV;
 import tid.pce.pcepsession.PCEPSessionsInformation;
 
 public class QuickClient {
 
 	private static UserInterface ui;
-	private static PCCPCEPSession PCEsession;
-	private static ClientRequestManager crm;
+	
+	
 	public static final Logger Log =Logger.getLogger("PCCClient");
 
 	public static void main(String[] args) {
 		FileHandler fh;
 		FileHandler fh2;
+		PCCPCEPSession PCEsession;
 		try {
 			fh=new FileHandler("PCCClient2.log");
 			fh2=new FileHandler("PCEPClientParser2.log");
@@ -79,11 +81,58 @@ public class QuickClient {
 			e1.printStackTrace();
 		}
 
+		
+		int offset=2;
+		LinkedList<PCEPMessage> messageList=new LinkedList<PCEPMessage>();
+		System.out.println("A preparar y enviar");
+		
+		offset=createAndSendMessage(PCEsession,offset, args,messageList);
+		System.out.println("Enviado!!!");
+		String ip2;
+		int port2;
+		if (offset<args.length){
+			System.out.println("Hbra PCE!!!");
+			if (args[offset].equals("-pce")){
+				ip2 = args[offset+1];
+				port2 = Integer.valueOf(args[offset+2]).intValue();
+				offset=offset+3;
+				System.out.println("En un rato llamamos a "+ip2+": "+port2);
+				try {
+					Thread.sleep(3000);
+				} catch (InterruptedException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+				System.out.println("WGO ");
+
+				PCCPCEPSession PCEsession2 = new PCCPCEPSession(ip2, port2,false,pcepSessionManager);
+				System.out.println("RANCANDO ");
+				PCEsession2.start();
+				System.out.println("ALEEE ");
+				try {
+					Thread.sleep(1000);
+				} catch (InterruptedException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+				offset=createAndSendMessage(PCEsession2,offset, args, messageList);
+				
+			}
+			
+		}
+		System.exit(-1);
+		
+		
+		
+
+	}
+	
+	public  static int createAndSendMessage(PCCPCEPSession PCEsession, int offset,String[] args, LinkedList<PCEPMessage> messageList ){
+		ClientRequestManager crm;
 		crm=PCEsession.crm;
 		int message_type;
-		int offset=2;
 		if (args[offset].equals("-ini")){
-			message_type=PCEPMessageTypes.MESSAGE_INTIATE;
+			message_type=PCEPMessageTypes.MESSAGE_INITIATE;
 			//System.out.println(" Single Initiate from "+args[offset+1]+" to "+args[offset+1]);
 			System.out.println(" Single Initiate");
 			offset=offset+1;
@@ -260,9 +309,10 @@ public class QuickClient {
 			req.setBandwidth(gw);
 			System.out.println("Peticion "+req.toString());
 			PCEPResponse pr=crm.newRequest(p_r);
+			messageList.add(pr);
 			System.out.println("Respuesta "+pr.toString());
-			System.exit(1);
-		} else if (message_type==PCEPMessageTypes.MESSAGE_INTIATE) {
+		} else if (message_type==PCEPMessageTypes.MESSAGE_INITIATE) {
+			System.out.println("A por initiate"); 
 			String src= args[offset];
 			String src_ip="";;
 			long src_if=0;
@@ -286,7 +336,11 @@ public class QuickClient {
 			boolean gen=false;
 			boolean p2mp=false;
 			offset=offset+2;
-			if (args.length>=5) {
+			System.out.println("origen: "+src_ip+" destino: "+dst_ip);
+			System.out.println("offset vale "+offset+" y la length "+args.length);
+			
+			if (args.length>offset) {
+				
 				if (args[offset].equals("-g")){
 					offset=offset+1;
 					gen=true;
@@ -294,9 +348,11 @@ public class QuickClient {
 				else if (args[offset].equals("-p2mp")){
 					offset=offset+1;
 					p2mp=true;
+				}
 			}
 
-
+			System.out.println("OLEEEE");
+			
 			PCEPInitiate p_i = new PCEPInitiate();
 			PCEPIntiatedLSP lsp_ini = new PCEPIntiatedLSP();
 			p_i.getPcepIntiatedLSPList().add(lsp_ini);
@@ -391,6 +447,7 @@ public class QuickClient {
 				}
 				
 			} else {
+				System.out.println("END POINTS NORMALES");
 				ep=new EndPointsIPv4();				
 				//String src_ip= "1.1.1.1";
 				Inet4Address ipp;
@@ -415,23 +472,43 @@ public class QuickClient {
 			}
 			lsp_ini.setEndPoint(ep);
 			SRP srp= new SRP();
+			if (args[offset].equals("-srpid")){
+				long srp_id = Long.valueOf(args[offset+1]).intValue();
+				offset=offset+2;
+				srp.setSRP_ID_number(srp_id);
+
+			}else {
+				srp.setSRP_ID_number(1);
+
+			}
 			lsp_ini.setRsp(srp);
+			
 			LSP lsp = new LSP();
 			lsp_ini.setLsp(lsp);
+			SymbolicPathNameTLV symPathName = new SymbolicPathNameTLV();
+			symPathName.setSymbolicPathNameID("HOLA".getBytes());
+			lsp.setSymbolicPathNameTLV_tlv(symPathName);
+			
+			if (args[offset].equals("-ero")){
+				offset=offset+1;
+				if (args[offset].equals("-prev")){
+					offset=offset+1;
+					PCEPResponse pr=(PCEPResponse)messageList.getLast();
+					lsp_ini.setEro(pr.getResponse(0).getPath(0).geteRO());
+				}	
+			}	
 			
 			
 			
 			System.out.println("Peticion "+p_i.toString());
 			PCEPMessage pr=crm.newRequest(p_i);
+			messageList.add(pr);
 			System.out.println("Respuesta "+p_i.toString());
-			System.exit(1);
+			
 			
 			
 		}
-
-		}
-
-
-	}		
+		return offset;
+	}
 
 }

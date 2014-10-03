@@ -97,11 +97,15 @@ public class ParentPCEServer {
 		TEDB ted;//TEDB is generic, depending on the type of PCE, it will get a different specific TEDB
 		TEDB simple_ted = null;
 		LocalChildRequestManager localChildRequestManager=null;
+		
+		ReachabilityManager rm=new ReachabilityManager();
+		
 		if(!params.isITCapable()){			
 			if ((params.isMultiDomain())&&(!params.isKnowsWholeTopology())){
 				//The PCE is multidomain
 				log.info("The PCE is multidomain");
 				ted=new MDTEDB();
+				((MDTEDB)ted).setReachability(rm.getReachability());
 				if (params.isReadMDTEDFromFile()){
 					ted.initializeFromFile(params.getMDnetworkDescriptionFile());
 					((MDTEDB)ted).initializeFullTEDFromFile(params.getNetworkDescriptionFile() );
@@ -110,6 +114,7 @@ public class ParentPCEServer {
 			}else if (params.isKnowsWholeTopology()){
 				log.info("The PCE knows the whole topology. Interdomain and intradomain");
 				ted=new MDTEDB();
+				((MDTEDB)ted).setReachability(rm.getReachability());
 				if (params.isReadMDTEDFromFile()){
 					ted.initializeFromFile(params.getMDnetworkDescriptionFile());
 					((MDTEDB)ted).initializeFullTEDFromFile(params.getNetworkDescriptionFile() );
@@ -154,7 +159,8 @@ public class ParentPCEServer {
 				mdt=new MultiDomainTopologyUpdater((MDTEDB)ted,params.isActingAsBGP4Peer());
 				mdt.initialize();
 			}
-			ReachabilityManager rm=new ReachabilityManager();
+			
+		
 			
 			if (params.isMultiDomain()){
 				if (params.isReadMDTEDFromFile()){
@@ -261,9 +267,7 @@ public class ParentPCEServer {
 			//Create the multidomain topology updater
 			MultiDomainTopologyUpdater mdt=new MultiDomainTopologyUpdater((ITMDTEDB)ted);
 			mdt.ITinitialize();
-			
-			ReachabilityManager rm=new ReachabilityManager();
-			
+				
 			if (params.isMultiDomain()){
 				if (params.isReadMDTEDFromFile()){
 					FileTEDBUpdater.initializeReachabilityFromFile(params.getITMDnetworkDescriptionFile(), rm);

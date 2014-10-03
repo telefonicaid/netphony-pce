@@ -244,7 +244,7 @@ public class RequestDispatcher {
 		
 		cr.setTimeStampNs(System.nanoTime());
 		cr.setMaxTimeInPCE(120000);
-		cr.getEcodingType(PCEPMessageTypes.MESSAGE_INTIATE);
+		cr.getEcodingType(PCEPMessageTypes.MESSAGE_INITIATE);
 		
 		pathComputingRequestQueue.add(cr);
 	}

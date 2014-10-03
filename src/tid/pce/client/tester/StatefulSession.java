@@ -57,7 +57,7 @@ public class StatefulSession {
 				PCEPSessionsInformation pcepsessioninfo=new PCEPSessionsInformation();
 				pcepsessioninfo.setActive(true);
 				pcepsessioninfo.setStateful(false);
-				vntmsession = new StatefulPCEPSession( s,pcepsessioninfo, PCEPMessageTypes.MESSAGE_INTIATE);
+				vntmsession = new StatefulPCEPSession( s,pcepsessioninfo, PCEPMessageTypes.MESSAGE_INITIATE);
 				vntmsession.start();
 				}
 			catch(Exception e){

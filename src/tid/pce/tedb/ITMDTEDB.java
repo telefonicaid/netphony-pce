@@ -1,5 +1,6 @@
 package tid.pce.tedb;
 
+import java.net.Inet4Address;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Iterator;
@@ -254,6 +255,13 @@ public class ITMDTEDB implements MultiDomainTEDB {
 	public boolean isITtedb() {
 		// TODO Auto-generated method stub
 		return true;
+	}
+
+	@Override
+	public void addReachabilityIPv4(Inet4Address domainId,
+			Inet4Address aggregatedIPRange, int prefix) {
+		// TODO Auto-generated method stub
+		
 	}
 
 
