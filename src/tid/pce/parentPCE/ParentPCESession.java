@@ -177,7 +177,7 @@ public class ParentPCESession extends GenericPCEPSession{
 										log.info("EROSubobjectList size "+EROSubobjectList.size());
 										for (int jj=0;jj< EROSubobjectList.size();++jj){
 											log.info("ADD EROSO ");
-											rm.addEROSubobject(remoteDomainId, reachabilityTLVList.get(ii).EROSubobjectList.get(jj));											
+											//rm.addEROSubobject(remoteDomainId, reachabilityTLVList.get(ii).EROSubobjectList.get(jj));											
 										}
 									}
 																			
@@ -188,7 +188,7 @@ public class ParentPCESession extends GenericPCEPSession{
 							}
 							else if (notifType==ObjectParameters.PCEP_NOTIFICATION_TYPE_TOPOLOGY){
 								log.finest("Topology Notification received");
-								mdt.processNotification(m_not.getNotifyList().get(i).getNotificationList().get(0),this.remotePCEId,this.remoteDomainId);
+								//mdt.processNotification(m_not.getNotifyList().get(i).getNotificationList().get(0),this.remotePCEId,this.remoteDomainId);
 							}
 							else if (notifType==ObjectParameters.PCEP_NOTIFICATION_TYPE_IT_RESOURCE_INFORMATION){
 								mdt.processNotification(m_not.getNotifyList().get(i).getNotificationList().get(0),this.remotePCEId,this.remoteDomainId);

@@ -14,8 +14,8 @@ import tid.pce.computingEngine.ComputingResponse;
 import tid.pce.pcep.constructs.Path;
 import tid.pce.pcep.messages.PCEPRequest;
 import tid.pce.pcep.messages.PCEPResponse;
+import tid.pce.pcep.objects.BandwidthRequestedGeneralizedBandwidth;
 import tid.pce.pcep.objects.ExplicitRouteObject;
-import tid.pce.pcep.objects.GeneralizedBandwidthSSON;
 import tid.pce.pcep.objects.LSP;
 import tid.rsvp.objects.subobjects.SubObjectValues;
 import tid.rsvp.objects.subobjects.UnnumberIfIDEROSubobject;
@@ -105,7 +105,7 @@ public class DummyActivity implements Activity{
 					}
 					
 					if (staticConnections==false){
-						RealiseControlPlaneCapacityTask realiseCapacity = new RealiseControlPlaneCapacityTask(listLSP,stats,request.getRequestList().getFirst().getRequestParameters().isBidirect(),(GeneralizedBandwidthSSON)path.getGeneralizedbandwidth(), PCEPsession);
+						RealiseControlPlaneCapacityTask realiseCapacity = new RealiseControlPlaneCapacityTask(listLSP,stats,request.getRequestList().getFirst().getRequestParameters().isBidirect(),(BandwidthRequestedGeneralizedBandwidth)path.getBandwidth(), PCEPsession);
 						long duration =Math.round(connectionTime.nextDouble());
 						log.info("LSP duration: "+duration);
 						planificationTimer.schedule(realiseCapacity,duration);

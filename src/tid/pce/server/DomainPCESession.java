@@ -300,7 +300,7 @@ public class DomainPCESession extends GenericPCEPSession{
 							e.printStackTrace();
 							break;
 						}
-					case PCEPMessageTypes.MESSAGE_INTIATE:
+					case PCEPMessageTypes.MESSAGE_INITIATE:
 						
 						log.info("INITIATE RECEIVED");
 						PCEPInitiate pcepInitiate = null;

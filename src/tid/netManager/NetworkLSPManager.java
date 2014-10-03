@@ -18,7 +18,7 @@ import tid.ospf.ospfv2.lsa.tlv.subtlv.LinkID;
 import tid.ospf.ospfv2.lsa.tlv.subtlv.LocalInterfaceIPAddress;
 import tid.ospf.ospfv2.lsa.tlv.subtlv.RemoteInterfaceIPAddress;
 import tid.ospf.ospfv2.lsa.tlv.subtlv.complexFields.BitmapLabelSet;
-import tid.pce.pcep.objects.GeneralizedBandwidthSSON;
+import tid.pce.pcep.objects.BandwidthRequestedGeneralizedBandwidth;
 import tid.pce.tedb.DomainTEDB;
 import tid.pce.tedb.IntraDomainEdge;
 import tid.pce.tedb.MultiLayerTEDB;
@@ -162,12 +162,12 @@ public abstract class NetworkLSPManager {
 		sendingQueue.add(ospfv2Packet);
 	}
 	
-	public abstract boolean setLSP(LinkedList<EROSubobject> erolist,boolean bidirect, GeneralizedBandwidthSSON GB);
-	public abstract boolean setMLLSP(LinkedList<EROSubobject> erolist,boolean bidirect, GeneralizedBandwidthSSON GB);
+	public abstract boolean setLSP(LinkedList<EROSubobject> erolist,boolean bidirect, BandwidthRequestedGeneralizedBandwidth GB);
+	public abstract boolean setMLLSP(LinkedList<EROSubobject> erolist,boolean bidirect, BandwidthRequestedGeneralizedBandwidth GB);
 	public abstract boolean setLSP_UpperLayer(LinkedList<EROSubobject> eROSubobjectList_IP, float bw, boolean bidirect);
-	public abstract void removeLSP(LinkedList<EROSubobject> erolist, boolean bidirect, GeneralizedBandwidthSSON GB);
-	public abstract void removeLSP(LinkedList<EROSubobject> erolist, boolean bidirect, GeneralizedBandwidthSSON GB, float bw);
-	public abstract void removeMLLSP(LinkedList<EROSubobject> erolist, boolean bidirect, GeneralizedBandwidthSSON GB);
+	public abstract void removeLSP(LinkedList<EROSubobject> erolist, boolean bidirect, BandwidthRequestedGeneralizedBandwidth GB);
+	public abstract void removeLSP(LinkedList<EROSubobject> erolist, boolean bidirect, BandwidthRequestedGeneralizedBandwidth GB, float bw);
+	public abstract void removeMLLSP(LinkedList<EROSubobject> erolist, boolean bidirect, BandwidthRequestedGeneralizedBandwidth GB);
 
 	public LinkedBlockingQueue<OSPFv2LinkStateUpdatePacket> getSendingQueue() {
 		return sendingQueue;

@@ -225,7 +225,7 @@ public class PCEServer {
 		if(params.algorithmRuleList.size()==0){
 
 			log.warning("No hay algoritmos registrados!");
-			System.exit(1);
+			//System.exit(1);
 
 		}
 		//FIXME: cambiar esto de orden

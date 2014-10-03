@@ -23,7 +23,7 @@ import tid.pce.pcep.constructs.P2PEndpoints;
 import tid.pce.pcep.constructs.Path;
 import tid.pce.pcep.constructs.Request;
 import tid.pce.pcep.constructs.Response;
-import tid.pce.pcep.objects.Bandwidth;
+import tid.pce.pcep.objects.BandwidthRequested;
 import tid.pce.pcep.objects.EndPointDataPathID;
 import tid.pce.pcep.objects.EndPoints;
 import tid.pce.pcep.objects.EndPointsIPv4;
@@ -141,8 +141,8 @@ public class Multilayer_VNTMProv_Algorithm implements ComputingAlgorithm {
 				rp.setRequestID(reqId);
 				response.setRequestParameters(rp);
 				
-				Bandwidth bandwidth = new Bandwidth();
-				bandwidth.setBw(req.getBandwidth().getBw());
+				BandwidthRequested bandwidth = new BandwidthRequested();
+				bandwidth.setBw(((BandwidthRequested)req.getBandwidth()).getBw());
 				response.setBandwidth(bandwidth);
 				
 				m_resp.addResponse(response);
@@ -240,7 +240,7 @@ public class Multilayer_VNTMProv_Algorithm implements ComputingAlgorithm {
 				ExplicitRouteObject eroml=null;
 				
 						
-				float bwt_req = req.getBandwidth().getBw(); // ancho de banda de la request
+				float bwt_req = ((BandwidthRequested)req.getBandwidth()).getBw(); // ancho de banda de la request
 					
 				GraphPath<Object,IntraDomainEdge> gp = Operacion12.get_op1(graph, source_router_id_addr, dest_router_id_addr
 						, graphLock, bwt_req);
@@ -473,8 +473,8 @@ public class Multilayer_VNTMProv_Algorithm implements ComputingAlgorithm {
 				rp.setRequestID(reqId);
 				response.setRequestParameters(rp);
 				
-				Bandwidth bandwidth = new Bandwidth();
-				bandwidth.setBw(req.getBandwidth().getBw());
+				BandwidthRequested bandwidth = new BandwidthRequested();
+				bandwidth.setBw(((BandwidthRequested)req.getBandwidth()).getBw());
 				response.setBandwidth(bandwidth);
 				
 				m_resp.addResponse(response);
@@ -571,7 +571,7 @@ public class Multilayer_VNTMProv_Algorithm implements ComputingAlgorithm {
 				ExplicitRouteObject eroml=null;
 				
 						
-				float bwt_req = req.getBandwidth().getBw(); // ancho de banda de la request
+				float bwt_req = ((BandwidthRequested)req.getBandwidth()).getBw(); // ancho de banda de la request
 					
 				GraphPath<Object,IntraDomainEdge> gp = Operacion12.get_op1(graph, source_router_id_addr, dest_router_id_addr
 						, graphLock, bwt_req);

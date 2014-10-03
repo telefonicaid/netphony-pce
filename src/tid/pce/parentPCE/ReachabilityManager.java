@@ -138,4 +138,10 @@ public class ReachabilityManager {
 	
 		return reachabilityString;
 	}
+
+	public LinkedList<ReachabilityEntry> getReachability() {
+		return reachability;
+	}
+	
+	
 }

@@ -1,5 +1,6 @@
 package tid.pce.tedb;
 
+import java.net.Inet4Address;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Set;
@@ -7,6 +8,8 @@ import java.util.logging.Logger;
 
 import org.jgrapht.graph.DirectedWeightedMultigraph;
 import org.jgrapht.graph.SimpleDirectedWeightedGraph;
+
+import tid.pce.parentPCE.ReachabilityEntry;
 
 /**
  * Base de datos de ingenieria de trafico
@@ -26,6 +29,11 @@ public class MDTEDB implements MultiDomainTEDB {
 	private Logger log;
 	
 	private boolean addBidirectional;
+	
+	/**
+	 * Table with IP address/prefix --> domain
+	 */
+	LinkedList<ReachabilityEntry> reachability;
 	
 	public MDTEDB(){
 		log=Logger.getLogger("PCEServer");
@@ -134,6 +142,28 @@ public class MDTEDB implements MultiDomainTEDB {
 
 		}
 	}
+
+	
+	public void addReachabilityIPv4(Inet4Address domainId,Inet4Address aggregatedIPRange,int prefix){
+		ReachabilityEntry ra=new ReachabilityEntry();
+		ra.setAggregatedIPRange(aggregatedIPRange);
+		long resta=((long)0x1<<prefix)-1;
+		long maskLong=resta<<(32-prefix);
+		byte[] mask=new byte[4];
+		mask[0]=(byte)(maskLong>>>24 & 0xFF);
+		mask[1]=(byte)(maskLong>>>16 & 0xFF);
+		mask[2]=(byte)(maskLong>>>8 & 0xFF);
+		mask[3]=(byte)(maskLong& 0xFF);
+		ra.setMask(mask);
+		ra.setDomainId(domainId);
+		ra.setPrefix(prefix);
+		if (!(reachability.contains(ra))){
+			reachability.add(ra);
+		}	
+		return;
+	}
+	
+	
 	public String printMDTopology(){
 		String topoString;
 		Set<Object> vetexSet= networkDomainGraph.vertexSet();
@@ -214,4 +244,14 @@ public class MDTEDB implements MultiDomainTEDB {
 	public void setSimple_ted(SimpleTEDB simple_ted) {
 		this.simple_ted = simple_ted;
 	}
+
+	public LinkedList<ReachabilityEntry> getReachability() {
+		return reachability;
+	}
+
+	public void setReachability(LinkedList<ReachabilityEntry> reachability) {
+		this.reachability = reachability;
+	}
+	
+	
 }

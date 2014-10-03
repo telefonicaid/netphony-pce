@@ -8,7 +8,7 @@ import tid.ipnms.datamodel.router.LabelSwitchedPath.LabelSwitchedPathProperties;
 import tid.ipnms.datamodel.router.LabelSwitchedPath.LabelSwitchedPathWithUnnumIf;
 import tid.netManager.NetworkLSPManager;
 import tid.netManager.NetworkLSPManagerTypes;
-import tid.pce.pcep.objects.GeneralizedBandwidthSSON;
+import tid.pce.pcep.objects.BandwidthRequestedGeneralizedBandwidth;
 import tid.rsvp.objects.subobjects.EROSubobject;
 import tid.rsvp.objects.subobjects.IPv4prefixEROSubobject;
 import tid.rsvp.objects.subobjects.SubObjectValues;
@@ -24,13 +24,13 @@ public class UniNetworkLSPManager extends NetworkLSPManager {
 		this.setEmulatorType(NetworkLSPManagerTypes.UNI_NETWORK);		
 	}
 	@Override
-	public boolean setLSP(LinkedList<EROSubobject> erolist, boolean bidirect, GeneralizedBandwidthSSON GB) {
+	public boolean setLSP(LinkedList<EROSubobject> erolist, boolean bidirect, BandwidthRequestedGeneralizedBandwidth GB) {
 		// TODO Auto-generated method stub
 		return true;
 	}
 
 	@Override
-	public boolean setMLLSP(LinkedList<EROSubobject> erolist, boolean bidirect, GeneralizedBandwidthSSON GB) {
+	public boolean setMLLSP(LinkedList<EROSubobject> erolist, boolean bidirect, BandwidthRequestedGeneralizedBandwidth GB) {
 		log.info("Reserving LSP and sending capacity update");
 		
 /*		LabelSwitchedPathWithUnnumIf label=new LabelSwitchedPathWithUnnumIf();
@@ -54,7 +54,7 @@ public class UniNetworkLSPManager extends NetworkLSPManager {
 		return true;
 	}
 
-	public boolean delMLLSP(LinkedList<EROSubobject> erolist, boolean bidirect, GeneralizedBandwidthSSON GB) {
+	public boolean delMLLSP(LinkedList<EROSubobject> erolist, boolean bidirect, BandwidthRequestedGeneralizedBandwidth GB) {
 		log.info("Reserving LSP and sending capacity update");
 		
 /*		LabelSwitchedPathWithUnnumIf label=new LabelSwitchedPathWithUnnumIf();
@@ -87,13 +87,13 @@ public class UniNetworkLSPManager extends NetworkLSPManager {
 
 
 	@Override
-	public void removeLSP(LinkedList<EROSubobject> erolist, boolean bidirect, GeneralizedBandwidthSSON GB) {
+	public void removeLSP(LinkedList<EROSubobject> erolist, boolean bidirect, BandwidthRequestedGeneralizedBandwidth GB) {
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public void removeMLLSP(LinkedList<EROSubobject> erolist, boolean bidirect, GeneralizedBandwidthSSON GB) {
+	public void removeMLLSP(LinkedList<EROSubobject> erolist, boolean bidirect, BandwidthRequestedGeneralizedBandwidth GB) {
 
 /*		log.info("Delete LSP");
 		
@@ -204,7 +204,7 @@ public class UniNetworkLSPManager extends NetworkLSPManager {
 	}
 	@Override
 	public void removeLSP(LinkedList<EROSubobject> erolist, boolean bidirect,
-			GeneralizedBandwidthSSON GB, float bw) {
+			BandwidthRequestedGeneralizedBandwidth GB, float bw) {
 		// TODO Auto-generated method stub
 		
 	}

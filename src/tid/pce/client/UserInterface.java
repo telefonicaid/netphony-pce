@@ -9,24 +9,33 @@ import java.util.LinkedList;
 import java.util.logging.Logger;
 
 import tid.pce.pcep.constructs.EndPoint;
+import tid.pce.pcep.constructs.GeneralizedBandwidthSSON;
+import tid.pce.pcep.constructs.P2MPEndpoints;
 import tid.pce.pcep.constructs.P2PEndpoints;
 import tid.pce.pcep.constructs.Request;
 import tid.pce.pcep.constructs.SVECConstruct;
+import tid.pce.pcep.constructs.SwitchEncodingType;
 import tid.pce.pcep.messages.PCEPError;
 import tid.pce.pcep.messages.PCEPKeepalive;
 import tid.pce.pcep.messages.PCEPRequest;
 import tid.pce.pcep.messages.PCEPResponse;
-import tid.pce.pcep.objects.Bandwidth;
+import tid.pce.pcep.objects.BandwidthRequested;
 import tid.pce.pcep.objects.EndPointsIPv4;
+import tid.pce.pcep.objects.BandwidthRequestedGeneralizedBandwidth;
 import tid.pce.pcep.objects.GeneralizedEndPoints;
+import tid.pce.pcep.objects.InterLayer;
 import tid.pce.pcep.objects.Metric;
 import tid.pce.pcep.objects.ObjectParameters;
 import tid.pce.pcep.objects.ObjectiveFunction;
+import tid.pce.pcep.objects.P2MPEndPointsIPv4;
 import tid.pce.pcep.objects.PCEPErrorObject;
 import tid.pce.pcep.objects.RequestParameters;
 import tid.pce.pcep.objects.Reservation;
 import tid.pce.pcep.objects.Svec;
+import tid.pce.pcep.objects.SwitchLayer;
+import tid.pce.pcep.objects.tlvs.BandwidthTLV;
 import tid.pce.pcep.objects.tlvs.EndPointIPv4TLV;
+import tid.pce.pcep.objects.tlvs.EndPointsIPv4TLV;
 
 public class UserInterface extends Thread {
 	
@@ -61,6 +70,8 @@ public class UserInterface extends Thread {
 			System.out.println(" 34- Send default Synchronized Path Requests");
 			System.out.println(" 35- Send default BIG Synchronized Path Requests");
 			System.out.println(" 36- Send default Synchronized Path Requests with OF=7");
+			System.out.println(" 37- Send PTMPT Request");
+			System.out.println(" 38- Send Idealist Request");
 			System.out.println(" 4- Send ERROR");
 			System.out.println(" 5- Send Notification");
 			System.out.println(" 6- Send CLOSE message");
@@ -104,7 +115,7 @@ public class UserInterface extends Thread {
 				req.setObjectiveFunction(of);
 				
 				float bw = 8;
-				Bandwidth bandwidth=new Bandwidth();
+				BandwidthRequested bandwidth=new BandwidthRequested();
 				bandwidth.setBw(bw);
 				req.setBandwidth(bandwidth);
 				
@@ -137,7 +148,7 @@ public class UserInterface extends Thread {
 				req2.setObjectiveFunction(of);
 				req2.setReservation(rs1);
 				float bw2 = 100000000;
-				Bandwidth bandwidth2=new Bandwidth();
+				BandwidthRequested bandwidth2=new BandwidthRequested();
 				bandwidth2.setBw(bw2);
 				req2.setBandwidth(bandwidth2);
 				p_r.addRequest(req2);
@@ -152,7 +163,7 @@ public class UserInterface extends Thread {
 				Reservation rs2=new Reservation();
 				req_1.setReservation(rs2);
 				float bw_1 = 50000000;
-				Bandwidth bandwidth_1=new Bandwidth();
+				BandwidthRequested bandwidth_1=new BandwidthRequested();
 				bandwidth_1.setBw(bw_1);
 				req_1.setBandwidth(bandwidth_1);
 				p_r2.addRequest(req_1);
@@ -556,6 +567,152 @@ public class UserInterface extends Thread {
 				PCEPResponse pr=crm.newRequest(p_r);
 				
 			}
+			if (command.equals("381")) {
+				System.out.println(" Single Request with OF =1002 and OF bit = 1, from 172.16.102.101 to 172.16.102.106");
+				PCEPRequest p_r = new PCEPRequest();
+				Request req = createRequest("172.16.102.101", "172.16.102.106");
+				//req.getRequestParameters().s
+				ObjectiveFunction of=new ObjectiveFunction();
+				of.setOFcode(1002);
+				of.setPbit(true);
+				req.setObjectiveFunction(of);
+				p_r.addRequest(req);
+				BandwidthRequestedGeneralizedBandwidth gw = new BandwidthRequestedGeneralizedBandwidth();
+				GeneralizedBandwidthSSON gwsson = new GeneralizedBandwidthSSON();
+				gwsson.setM(2);
+				gw.setGeneralizedBandwidth(gwsson);
+				req.setBandwidth(gw);
+				System.out.println("Peticion "+req.toString());
+				PCEPResponse pr=crm.newRequest(p_r);
+				System.out.println("Respuesta "+pr.toString());
+				}
+			if (command.equals("3811")) {
+				System.out.println(" Single Request with OF =1002 and OF bit = 1, from 172.16.102.101 to 172.16.102.106");
+				String src_ip= "172.16.102.101";
+				String dst_ip= "172.16.102.106";
+				PCEPRequest p_r = new PCEPRequest();
+				Request req = new Request();
+				RequestParameters rp= new RequestParameters();
+				rp.setPbit(true);
+				req.setRequestParameters(rp);		
+				rp.setRequestID(PCCPCEPSession.getNewReqIDCounter());
+				System.out.println("Creating test Request");
+				
+				int prio = 1;;
+				rp.setPrio(prio);
+				boolean reo = false;
+				rp.setReopt(reo);
+				boolean bi = false;
+				rp.setBidirect(bi);
+				boolean lo = false;
+				rp.setLoose(lo);
+				GeneralizedEndPoints ep=new GeneralizedEndPoints();
+				P2PEndpoints p2pEndpoints = new P2PEndpoints();
+				EndPoint sourceEndPoint = new EndPoint();
+				EndPointsIPv4TLV ipv4tlv = new EndPointsIPv4TLV();
+				//sourceEndPoint.setEndPointIPv4TLV(ipv4tlv);
+						
+				
+				p2pEndpoints.setSourceEndPoints(sourceEndPoint);
+				//p2pEndpoints.setDestinationEndPoints(destinationEndPoint);
+				ep.setP2PEndpoints(p2pEndpoints);
+				
+				EndPointsIPv4 ep2=new EndPointsIPv4();				
+				req.setEndPoints(ep);
+				//String src_ip= "1.1.1.1";
+				Inet4Address ipp;
+				try {
+					ipp = (Inet4Address)Inet4Address.getByName(src_ip);
+					ep2.setSourceIP(ipp);								
+				} catch (UnknownHostException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				System.out.println(" - Destination IP address: ");
+				//br2 = new BufferedReader(new InputStreamReader(System.in));
+				//String dst_ip="172.16.101.101";
+				Inet4Address i_d;
+				try {
+					i_d = (Inet4Address)Inet4Address.getByName(dst_ip);
+					ep2.setDestIP(i_d);
+				} catch (UnknownHostException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				//req.getRequestParameters().s
+				ObjectiveFunction of=new ObjectiveFunction();
+				of.setOFcode(1002);
+				of.setPbit(true);
+				req.setObjectiveFunction(of);
+				p_r.addRequest(req);
+				BandwidthRequestedGeneralizedBandwidth gw = new BandwidthRequestedGeneralizedBandwidth();
+				GeneralizedBandwidthSSON gwsson = new GeneralizedBandwidthSSON();
+				gwsson.setM(2);
+				gw.setGeneralizedBandwidth(gwsson);
+				req.setBandwidth(gw);
+				System.out.println("Peticion "+req.toString());
+				PCEPResponse pr=crm.newRequest(p_r);
+				System.out.println("Respuesta "+pr.toString());
+				}
+			if (command.equals("382")) {
+				PCEPRequest p_r = new PCEPRequest();
+				Request req = new Request();
+				p_r.addRequest(req);
+				RequestParameters rp= new RequestParameters();
+				rp.setPbit(true);
+				req.setRequestParameters(rp);		
+				rp.setRequestID(PCCPCEPSession.getNewReqIDCounter());
+				System.out.println("Creating test Request for IDEALIST");
+				
+				int prio = 1;;
+				rp.setPrio(prio);
+				boolean reo = false;
+				rp.setReopt(reo);
+				boolean bi = false;
+				rp.setBidirect(bi);
+				boolean lo = false;
+				rp.setLoose(lo);
+				
+				EndPointIPv4TLV sourceIPv4TLV=new EndPointIPv4TLV();
+				EndPointIPv4TLV destIPv4TLV=new EndPointIPv4TLV();
+				
+				System.out.println(" - Source IP address: 1.1.1.1");
+				Inet4Address sourceIPP;
+				try {
+					sourceIPP = (Inet4Address)Inet4Address.getByName ("1.1.1.1");
+					sourceIPv4TLV.setIPv4address(sourceIPP);
+				} catch (UnknownHostException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				
+				System.out.println(" - Destination IP address: 172.16.101.102");
+				Inet4Address destIPP;
+				try {
+					destIPP = (Inet4Address)Inet4Address.getByName ("172.16.101.102");
+					destIPv4TLV.setIPv4address(destIPP);
+				} catch (UnknownHostException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				
+				EndPoint sourceEP=new EndPoint();
+				EndPoint destEP=new EndPoint();
+				sourceEP.setEndPointIPv4TLV(sourceIPv4TLV);
+				destEP.setEndPointIPv4TLV(destIPv4TLV);
+				
+				P2PEndpoints p2pep=new P2PEndpoints();
+				p2pep.setSourceEndPoints(sourceEP);
+				p2pep.setDestinationEndPoints(destEP);
+								
+				GeneralizedEndPoints gep=new GeneralizedEndPoints();
+				gep.setP2PEndpoints(p2pep);
+				//EndPointsIPv4 ep=new EndPointsIPv4();				
+				req.setEndPoints(gep);
+				
+				PCEPResponse pr=crm.newRequest(p_r);
+				
+			}
 			
 			if (command.equals("88")) {
 				PCEPRequest p_r = new PCEPRequest();
@@ -615,6 +772,102 @@ public class UserInterface extends Thread {
 				
 				PCEPResponse pr=crm.newRequest(p_r);
 				
+			}
+			
+			if (command.equals("37")) {
+				PCEPRequest p_r = new PCEPRequest();
+				Request req = new Request();
+				p_r.addRequest(req);
+				RequestParameters rp= new RequestParameters();
+				rp.setPbit(true);
+				req.setRequestParameters(rp);		
+				rp.setRequestID(PCCPCEPSession.getNewReqIDCounter());
+				System.out.println("Creating test Request to UPC");
+				
+				int prio = 1;;
+				rp.setPrio(prio);
+				boolean reo = false;
+				rp.setReopt(reo);
+				boolean bi = false;
+				rp.setBidirect(bi);
+				boolean lo = false;
+				rp.setLoose(lo);
+				
+				
+				System.out.println(" - Source IP address: 10.10.0.1");
+				Inet4Address sourceIPP;
+				P2MPEndPointsIPv4 p2mp=new P2MPEndPointsIPv4();
+				req.setEndPoints(p2mp);
+				try {
+					sourceIPP = (Inet4Address)Inet4Address.getByName ("10.10.0.1");
+					p2mp.setSourceIP(sourceIPP);
+				} catch (UnknownHostException e) {
+				
+					e.printStackTrace();
+				}
+				
+				
+				
+				System.out.println(" - Destination IP address 1: 10.10.0.2, 10.10.0.3, 10.10.0.4");
+				Inet4Address destIPP1,destIPP2,destIPP3;
+				try {
+					destIPP1 = (Inet4Address)Inet4Address.getByName ("10.10.0.2");
+					p2mp.setLeafType(1);
+					LinkedList<Inet4Address> destIPList= new LinkedList<Inet4Address>();
+					destIPList.add(destIPP1);
+					destIPP2 = (Inet4Address)Inet4Address.getByName ("10.10.0.3");
+					destIPList.add(destIPP2);
+					destIPP3 = (Inet4Address)Inet4Address.getByName ("10.10.0.4");
+					destIPList.add(destIPP3);
+					p2mp.setDestIPList(destIPList);
+				} catch (UnknownHostException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				System.out.println(" ADD svec");
+				Svec svec = new Svec();
+				svec.addRequestID(rp.getRequestID());
+				SVECConstruct sc = new SVECConstruct();
+				
+				sc.setSvec(svec);
+				ObjectiveFunction of1=new ObjectiveFunction();
+				of1.setOFcode(41);
+				ObjectiveFunction of2=new ObjectiveFunction();
+				of2.setOFcode(42);
+				sc.getObjectiveFunctionList().add(of1);
+				sc.getObjectiveFunctionList().add(of2);
+				BandwidthTLV bwTLV = new BandwidthTLV();
+				float bw=(float) 400.0;
+				bwTLV.setBw(bw);
+				of2.setBwTLV(bwTLV);
+				p_r.addSvec(sc);
+				InterLayer il =new InterLayer();
+				il.setIFlag(true);
+				SwitchLayer sl = new SwitchLayer();
+				SwitchEncodingType sw1 = new SwitchEncodingType();
+				sw1.setLSPEncodingType(2);
+				sw1.setSwitchingType(51);
+				sw1.setIflag(true);
+				SwitchEncodingType sw2 = new SwitchEncodingType();
+				sw2.setLSPEncodingType(8);
+				sw2.setSwitchingType(150);
+				sw2.setIflag(true);
+				
+				sl.getSwitchLayers().add(sw1);
+				sl.getSwitchLayers().add(sw2);
+				req.setInterLayer(il);
+				req.setSwitchLayer(sl);
+				BandwidthRequested bww= new BandwidthRequested();
+				float bw_pmp=(float) 100.0;
+				bww.setBw(bw_pmp);
+				req.setBandwidth(bww);
+				try {
+					PCEPResponse pr=crm.newRequest(p_r);
+
+				}
+				catch (Exception e){
+					e.printStackTrace();
+				}
 			}
 			
 		}

@@ -16,7 +16,7 @@ import tid.pce.pcep.constructs.Path;
 import tid.pce.pcep.messages.PCEPRequest;
 import tid.pce.pcep.messages.PCEPResponse;
 import tid.pce.pcep.messages.PCEPTELinkSuggestion;
-import tid.pce.pcep.objects.Bandwidth;
+import tid.pce.pcep.objects.BandwidthRequested;
 import tid.pce.pcep.objects.ExplicitRouteObject;
 import tid.rsvp.objects.subobjects.EROSubobject;
 import tid.rsvp.objects.subobjects.IPv4prefixEROSubobject;
@@ -92,8 +92,9 @@ public class VNTMActivity implements Activity{
 						PCEPTELinkSuggestion telinksug=new PCEPTELinkSuggestion();
 						Path path2=new Path();
 						path2.seteRO(eroList.get(i));
-						Bandwidth bandwidth = new Bandwidth();
-						bandwidth.setBw(response.getResponseList().get(0).getBandwidth().getBw());
+						BandwidthRequested bandwidth = new BandwidthRequested();
+						float bw=((BandwidthRequested)(response.getResponseList().get(0).getBandwidth())).getBw();
+						bandwidth.setBw(bw);
 						path2.setBandwidth(bandwidth);
 						telinksug.setPath(path2);	
 						//telinksug.setMessageType(id_response_svec);
@@ -120,8 +121,7 @@ public class VNTMActivity implements Activity{
 				// No hay camino multilayer --> Utilizamos TE Link de la capa Virtual
 				else if (numNewLinks == 0){
 					log.info("Reserving LSP and sending capacity update");
-					
-					float bw = response.getResponse(0).getBandwidth().getBw();
+					float bw=((BandwidthRequested)(response.getResponseList().get(0).getBandwidth())).getBw();
 								
 					long time1 = System.nanoTime();
 					if (networkLSPManager.setLSP_UpperLayer(eroSubObjList, bw, false)){
@@ -176,8 +176,9 @@ public class VNTMActivity implements Activity{
 						NumWL = (eroList.get(i).getEROSubobjectList().size() - 4)/2;
 						stats.addNumWL(NumWL);
 						
-						Bandwidth bandwidth = new Bandwidth();
-						bandwidth.setBw(response.getResponseList().get(0).getBandwidth().getBw());
+						BandwidthRequested bandwidth = new BandwidthRequested();
+						float bw=((BandwidthRequested)(response.getResponseList().get(0).getBandwidth())).getBw();
+						bandwidth.setBw(bw);
 						path2.setBandwidth(bandwidth);
 						telinksug.setPath(path2);	
 
@@ -208,7 +209,7 @@ public class VNTMActivity implements Activity{
 				// No hay camino multilayer --> Utilizamos TE Link de la capa IP/MPLS
 				else if (numNewLinks == 0){
 					log.info("Reserving LSP and sending capacity update");
-					float bw = response.getResponse(0).getBandwidth().getBw();
+					float bw=((BandwidthRequested)(response.getResponseList().get(0).getBandwidth())).getBw();
 					TrafficHops=(eroSubObjList.size()-1);	
 					long time1 = System.nanoTime();
 					if (networkLSPManager.setLSP_UpperLayer(eroSubObjList, bw, false)){

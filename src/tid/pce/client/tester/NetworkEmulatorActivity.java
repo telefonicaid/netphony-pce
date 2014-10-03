@@ -10,8 +10,8 @@ import tid.pce.client.emulator.AutomaticTesterStatistics;
 import tid.pce.pcep.constructs.Path;
 import tid.pce.pcep.messages.PCEPRequest;
 import tid.pce.pcep.messages.PCEPResponse;
+import tid.pce.pcep.objects.BandwidthRequestedGeneralizedBandwidth;
 import tid.pce.pcep.objects.ExplicitRouteObject;
-import tid.pce.pcep.objects.GeneralizedBandwidthSSON;
 import tid.rsvp.objects.subobjects.EROSubobject;
 import tid.vntm.LigthPathManagement;
 import cern.jet.random.Exponential;
@@ -82,7 +82,7 @@ public class NetworkEmulatorActivity implements Activity{
 					ExplicitRouteObject ero=path.geteRO();
 					LinkedList<EROSubobject> eroSubObjList=ero.getEROSubobjectList();
 					long time1 = System.nanoTime();
-					if (networkLSPManager.setLSP(eroSubObjList,request.getRequestList().getFirst().getRequestParameters().isBidirect(),(GeneralizedBandwidthSSON)path.getGeneralizedbandwidth())){
+					if (networkLSPManager.setLSP(eroSubObjList,request.getRequestList().getFirst().getRequestParameters().isBidirect(),(BandwidthRequestedGeneralizedBandwidth)path.getBandwidth())){
 						long time2= System.nanoTime();
 						double LSPTime = (time2-time1)/1000000;
 						stats.analyzeLSPTime(LSPTime);
@@ -94,7 +94,7 @@ public class NetworkEmulatorActivity implements Activity{
 	
 	//					log.info("connectionTime 2: ");
 	//					log.info("connectionTime.nextDouble() "+connectionTime.nextDouble());
-						RealiseCapacityTask realiseCapacity = new RealiseCapacityTask(networkLSPManager,eroSubObjList,stats,request.getRequestList().getFirst().getRequestParameters().isBidirect(),(GeneralizedBandwidthSSON)path.getGeneralizedbandwidth());
+						RealiseCapacityTask realiseCapacity = new RealiseCapacityTask(networkLSPManager,eroSubObjList,stats,request.getRequestList().getFirst().getRequestParameters().isBidirect(),(BandwidthRequestedGeneralizedBandwidth)path.getBandwidth());
 						long duration =Math.round(connectionTime.nextDouble());
 						log.info("LSP duration: "+duration);
 						planificationTimer.schedule(realiseCapacity,duration);

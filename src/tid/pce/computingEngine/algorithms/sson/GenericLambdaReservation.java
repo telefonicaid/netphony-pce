@@ -5,7 +5,8 @@ import java.util.logging.Logger;
 
 import tid.pce.computingEngine.ComputingResponse;
 import tid.pce.computingEngine.algorithms.AlgorithmReservation;
-import tid.pce.pcep.objects.GeneralizedBandwidthSSON;
+import tid.pce.pcep.constructs.GeneralizedBandwidthSSON;
+import tid.pce.pcep.objects.BandwidthRequestedGeneralizedBandwidth;
 import tid.pce.pcep.objects.ObjectParameters;
 import tid.pce.pcep.objects.Reservation;
 import tid.pce.pcep.objects.ReservationConf;
@@ -36,15 +37,16 @@ public class GenericLambdaReservation implements AlgorithmReservation{
 	
 	public ComputingResponse call() throws Exception {
 		if (reservation!=null){
-			if (resp.getResponse(0).getPath(0).getGeneralizedbandwidth()!=null){
-				if (resp.getResponse(0).getPath(0).getGeneralizedbandwidth().getOT()==ObjectParameters.PCEP_OBJECT_TYPE_GB_SSON){
-					int m=0;
-					m=(((GeneralizedBandwidthSSON)resp.getResponse(0).getPath(0).getGeneralizedbandwidth()).getM());
-					long reservationID=reservationManager.reserve(sourceVertexList, targetVertexList, lambda_chosen, reservation.getTimer(), this.bidirectional, m);
-					ReservationConf resConf= new ReservationConf();
-					resConf.setReservationID(reservationID);
-					resp.getResponse(0).setResConf(resConf);
-					
+			if (resp.getResponse(0).getPath(0).getBandwidth()!=null){
+				if (resp.getResponse(0).getPath(0).getBandwidth() instanceof BandwidthRequestedGeneralizedBandwidth ){
+						if (((BandwidthRequestedGeneralizedBandwidth)resp.getResponse(0).getPath(0).getBandwidth()).getGeneralizedBandwidth() instanceof GeneralizedBandwidthSSON) {
+							int m=0;
+							m=((GeneralizedBandwidthSSON) (((BandwidthRequestedGeneralizedBandwidth)resp.getResponse(0).getPath(0).getBandwidth())).getGeneralizedBandwidth()).getM();
+							long reservationID=reservationManager.reserve(sourceVertexList, targetVertexList, lambda_chosen, reservation.getTimer(), this.bidirectional, m);
+							ReservationConf resConf= new ReservationConf();
+							resConf.setReservationID(reservationID);
+							resp.getResponse(0).setResConf(resConf);
+						}
 				}
 				return resp;
 			}

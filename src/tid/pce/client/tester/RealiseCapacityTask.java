@@ -7,7 +7,7 @@ import java.util.logging.Logger;
 
 import tid.netManager.NetworkLSPManager;
 import tid.pce.client.emulator.AutomaticTesterStatistics;
-import tid.pce.pcep.objects.GeneralizedBandwidthSSON;
+import tid.pce.pcep.objects.BandwidthRequestedGeneralizedBandwidth;
 import tid.rsvp.objects.subobjects.EROSubobject;
 
 
@@ -15,7 +15,7 @@ import tid.rsvp.objects.subobjects.EROSubobject;
 public class RealiseCapacityTask  extends TimerTask {
 
 	private Logger log;
-	private GeneralizedBandwidthSSON GB;
+	private BandwidthRequestedGeneralizedBandwidth GB;
 	private AutomaticTesterStatistics stats;
 	private LinkedList<EROSubobject> erolist;
 	private NetworkLSPManager networkLSPManager;
@@ -23,7 +23,7 @@ public class RealiseCapacityTask  extends TimerTask {
 	private float bw;
 	private boolean VirtualTELink=false;
 	
-	public RealiseCapacityTask(NetworkLSPManager networkLSPManager, LinkedList<EROSubobject> erolist,AutomaticTesterStatistics stats, boolean bidirectional, GeneralizedBandwidthSSON GB){
+	public RealiseCapacityTask(NetworkLSPManager networkLSPManager, LinkedList<EROSubobject> erolist,AutomaticTesterStatistics stats, boolean bidirectional, BandwidthRequestedGeneralizedBandwidth GB){
 		log=Logger.getLogger("PCCClient");
 		this.stats=stats;
 		this.erolist=erolist;
@@ -33,7 +33,7 @@ public class RealiseCapacityTask  extends TimerTask {
 
 	}
 	
-	public RealiseCapacityTask(NetworkLSPManager networkLSPManager, LinkedList<EROSubobject> erolist,AutomaticTesterStatistics stats, boolean bidirectional, GeneralizedBandwidthSSON GB,
+	public RealiseCapacityTask(NetworkLSPManager networkLSPManager, LinkedList<EROSubobject> erolist,AutomaticTesterStatistics stats, boolean bidirectional, BandwidthRequestedGeneralizedBandwidth GB,
 			float bw, boolean VirtualTELink){
 		log=Logger.getLogger("PCCClient");
 		this.stats=stats;

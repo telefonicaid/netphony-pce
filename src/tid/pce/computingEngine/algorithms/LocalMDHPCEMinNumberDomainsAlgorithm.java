@@ -27,6 +27,7 @@ import tid.pce.pcep.constructs.Request;
 import tid.pce.pcep.constructs.Response;
 import tid.pce.pcep.messages.PCEPRequest;
 import tid.pce.pcep.objects.Bandwidth;
+import tid.pce.pcep.objects.BandwidthRequested;
 import tid.pce.pcep.objects.EndPoints;
 import tid.pce.pcep.objects.EndPointsIPv4;
 import tid.pce.pcep.objects.ExcludeRouteObject;
@@ -318,8 +319,8 @@ public class LocalMDHPCEMinNumberDomainsAlgorithm implements ComputingAlgorithm{
 			addXRO(req.getXro(),requestToFirstDomain);
 			requestToFirstDomain.setEndPoints(endpointsRequest);
 			RequestParameters rpFirstDomain=new RequestParameters();
-			Bandwidth bw= new Bandwidth();
-		    bw.setBw(pathReq.getRequestList().get(0).getBandwidth().getBw());
+			Bandwidth bw_ori= pathReq.getRequestList().get(0).getBandwidth();
+			Bandwidth bw=bw_ori.duplicate();
 		    requestToFirstDomain.setBandwidth(bw);
 			requestID=ParentPCESession.getNewReqIDCounter();
 			rpFirstDomain.setRequestID(requestID);

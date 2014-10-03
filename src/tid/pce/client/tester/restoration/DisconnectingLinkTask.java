@@ -19,7 +19,7 @@ import tid.pce.pcep.constructs.Path;
 import tid.pce.pcep.constructs.Request;
 import tid.pce.pcep.constructs.Response;
 import tid.pce.pcep.messages.PCEPRequest;
-import tid.pce.pcep.objects.Bandwidth;
+import tid.pce.pcep.objects.BandwidthRequested;
 import tid.pce.pcep.objects.EndPointsIPv4;
 import tid.pce.pcep.objects.ExplicitRouteObject;
 import tid.pce.pcep.objects.Metric;
@@ -304,7 +304,7 @@ public class DisconnectingLinkTask extends TimerTask {
 		   res.setTimer(testerParams.getRequestToSendList().get(0).getRequestParameters().getTimeReserved());
 		  }
 		  if (testerParams.getRequestToSendList().get(0).getRequestParameters().Is_bandwidth()){
-			   Bandwidth bw= new Bandwidth();
+			   BandwidthRequested bw= new BandwidthRequested();
 			   bw.setBw(testerParams.getRequestToSendList().get(0).getRequestParameters().getBW());
 			   req.setBandwidth(bw);
 			  }

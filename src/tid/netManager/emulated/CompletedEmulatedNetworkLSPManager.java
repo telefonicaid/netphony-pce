@@ -13,7 +13,8 @@ import tid.ospf.ospfv2.OSPFv2LinkStateUpdatePacket;
 import tid.ospf.ospfv2.lsa.tlv.subtlv.MaximumReservableBandwidth;
 import tid.ospf.ospfv2.lsa.tlv.subtlv.UnreservedBandwidth;
 import tid.pce.client.emulator.AutomaticTesterStatistics;
-import tid.pce.pcep.objects.GeneralizedBandwidthSSON;
+import tid.pce.pcep.constructs.GeneralizedBandwidthSSON;
+import tid.pce.pcep.objects.BandwidthRequestedGeneralizedBandwidth;
 import tid.pce.tedb.IntraDomainEdge;
 import tid.pce.tedb.MultiLayerTEDB;
 import tid.pce.tedb.SimpleTEDB;
@@ -121,7 +122,7 @@ public class CompletedEmulatedNetworkLSPManager extends NetworkLSPManager{
 		int reserved =0;
 		int reserved_op=0;
 		int layer = LayerTypes.UPPER_LAYER;
-		GeneralizedBandwidthSSON GB = null;
+		BandwidthRequestedGeneralizedBandwidth GB = null;
 		long controlPlaneDelay=0;
 		int j=0;
 		int number_hops =(eROSubobjectList_IP.size()-1);
@@ -247,7 +248,7 @@ public class CompletedEmulatedNetworkLSPManager extends NetworkLSPManager{
 
 	@Override
 	public boolean setLSP(LinkedList<EROSubobject> erolist, boolean bidirect,
-			GeneralizedBandwidthSSON GB) {
+			BandwidthRequestedGeneralizedBandwidth GB) {
 		ArrayList<Inet4Address> src=new ArrayList<Inet4Address>();
 		ArrayList<Inet4Address> dst=new ArrayList<Inet4Address>();
 		ArrayList<DWDMWavelengthLabel> dwdmWavelengthLabel = null;
@@ -375,7 +376,7 @@ public class CompletedEmulatedNetworkLSPManager extends NetworkLSPManager{
 	 */
 	@Override
 	public boolean setMLLSP(LinkedList<EROSubobject> erolist, boolean bidirect,
-			GeneralizedBandwidthSSON GB) {
+			BandwidthRequestedGeneralizedBandwidth GB) {
 		// log.info("Setting LSP with ERO: "+erolist.toString());
 		ArrayList<Inet4Address> src=new ArrayList<Inet4Address>();
 		ArrayList<Inet4Address> dst=new ArrayList<Inet4Address>();
@@ -492,7 +493,7 @@ public class CompletedEmulatedNetworkLSPManager extends NetworkLSPManager{
 	 */
 	
 	@Override
-	public  void removeLSP(LinkedList<EROSubobject> erolist, boolean bidirect, GeneralizedBandwidthSSON GB) {
+	public  void removeLSP(LinkedList<EROSubobject> erolist, boolean bidirect, BandwidthRequestedGeneralizedBandwidth GB) {
 		//log.info("Removing LSP with ERO: "+erolist.toString());
 		boolean isLambdaLoop=false;
 		int layer;
@@ -537,7 +538,7 @@ public class CompletedEmulatedNetworkLSPManager extends NetworkLSPManager{
 					if (edge != null){
 						int lambda = 0;
 						if (GB != null){
-							int m=GB.getM();
+							int m=((GeneralizedBandwidthSSON)GB.getGeneralizedBandwidth()).getM();
 							if (dwdmWavelengthLabel!= null){//hay lambda
 								if (multilayer){
 									lambda = dwdmWavelengthLabel.getN() - ((MultiLayerTEDB)this.getDomainTEDB()).getWSONinfo().getnMin();
@@ -625,7 +626,7 @@ public class CompletedEmulatedNetworkLSPManager extends NetworkLSPManager{
 	 */
 	@Override
 	public void removeLSP(LinkedList<EROSubobject> erolist, boolean bidirect,
-			GeneralizedBandwidthSSON GB, float bw_delete) {
+			BandwidthRequestedGeneralizedBandwidth GB, float bw_delete) {
 		// log.info("Removing LSP with ERO: "+erolist.toString());
 		boolean isLambdaLoop = false;
 		int layer;
@@ -669,7 +670,7 @@ public class CompletedEmulatedNetworkLSPManager extends NetworkLSPManager{
 					int lambda = 0;
 					
 					if (GB != null) {
-						int m = GB.getM();
+						int m=((GeneralizedBandwidthSSON)GB.getGeneralizedBandwidth()).getM();
 						if (dwdmWavelengthLabel != null) {// hay lambda
 							if (multilayer) {
 								lambda = dwdmWavelengthLabel.getN()	- ((MultiLayerTEDB)this.getDomainTEDB()).getWSONinfo().getnMin();
@@ -758,7 +759,7 @@ public class CompletedEmulatedNetworkLSPManager extends NetworkLSPManager{
 
 	@Override
 	public void removeMLLSP(LinkedList<EROSubobject> erolist, boolean bidirect,
-			GeneralizedBandwidthSSON GB) {
+			BandwidthRequestedGeneralizedBandwidth GB) {
 		// log.info("Removing ML LSP with ERO: "+erolist.toString());
 		int layer;
 		boolean flag = false;
@@ -799,7 +800,7 @@ public class CompletedEmulatedNetworkLSPManager extends NetworkLSPManager{
 			if (edge != null) {
 				int lambda = 0;
 				if (GB != null) {
-					int m = GB.getM();
+					int m=((GeneralizedBandwidthSSON)GB.getGeneralizedBandwidth()).getM();
 					if (dwdmWavelengthLabel != null) {// hay lambda
 						lambda = dwdmWavelengthLabel.getN() - this.getDomainTEDB().getWSONinfo().getnMin();
 						for (int j = (lambda - m); j < (lambda + m); j++) {
@@ -955,7 +956,7 @@ public class CompletedEmulatedNetworkLSPManager extends NetworkLSPManager{
 	 */
 	private boolean updateEdge(ArrayList<IntraDomainEdge> edge, ArrayList<DWDMWavelengthLabel> dwdmWavelengthLabel,
 			ArrayList<Inet4Address> src, ArrayList<Inet4Address> dst, ArrayList<Integer> lambda, int i, boolean multilayer,
-			GeneralizedBandwidthSSON GB, int layer, int k, float bw_req) {
+			BandwidthRequestedGeneralizedBandwidth GB, int layer, int k, float bw_req) {
 
 		IntraDomainEdge edge1=null;
 		int flag;
@@ -1007,7 +1008,7 @@ public class CompletedEmulatedNetworkLSPManager extends NetworkLSPManager{
 					min = ((SimpleTEDB) this.getDomainTEDB()).getWSONinfo().getnMin();
 				}if (dwdmWavelengthLabel.size()!=0){
 					if (GB != null){
-						int m=GB.getM();
+						int m=((GeneralizedBandwidthSSON)GB.getGeneralizedBandwidth()).getM();
 						for (int j=((dwdmWavelengthLabel.get(i).getN() - min)) - m; j < ((dwdmWavelengthLabel.get(i).getN() - min)) + m; j++) {
 							lambda.add(i,j);
 							if (edge.get(i).getTE_info().isWavelengthFree(lambda.get(i))) {

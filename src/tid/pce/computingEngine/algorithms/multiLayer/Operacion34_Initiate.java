@@ -55,7 +55,7 @@ public class Operacion34_Initiate  {
 		Socket s1=null;
 		try {
 			s1 = new Socket("localhost", 4190);
-			PCEPClientSession vntmsessionil = new PCEPClientSession( s1,new PCEPSessionsInformation(), "00:00:00:00:00:00:00:00", "00:00:00:00:00:00:00:00", 0, 0, "add", PCEPMessageTypes.MESSAGE_INTIATE);
+			PCEPClientSession vntmsessionil = new PCEPClientSession( s1,new PCEPSessionsInformation(), "00:00:00:00:00:00:00:00", "00:00:00:00:00:00:00:00", 0, 0, "add", PCEPMessageTypes.MESSAGE_INITIATE);
 			vntmsessionil.start();
 			while(vntmsessionil.isAlive()){
 				System.out.println("Waiting for response...");
@@ -79,7 +79,7 @@ public class Operacion34_Initiate  {
 			try {
 				s = new Socket("localhost", 4190);
 
-				PCEPClientSession vntmsession = new PCEPClientSession( s,new PCEPSessionsInformation(), srcaux, dstaux, 0, 0, "add", PCEPMessageTypes.MESSAGE_INTIATE);
+				PCEPClientSession vntmsession = new PCEPClientSession( s,new PCEPSessionsInformation(), srcaux, dstaux, 0, 0, "add", PCEPMessageTypes.MESSAGE_INITIATE);
 				vntmsession.start();
 				while(vntmsession.isAlive()){
 					System.out.println("Waiting for response...");
