@@ -6,12 +6,12 @@ import java.net.Socket;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.logging.Logger;
 
-import tid.ospf.ospfv2.OSPFPacketTypes;
-import tid.ospf.ospfv2.OSPFv2HelloPacket;
-import tid.ospf.ospfv2.OSPFv2LinkStateUpdatePacket;
-import tid.ospf.ospfv2.OSPFv2Packet;
-
 import com.savarese.rocksaw.net.RawSocket;
+
+import es.tid.ospf.ospfv2.OSPFPacketTypes;
+import es.tid.ospf.ospfv2.OSPFv2HelloPacket;
+import es.tid.ospf.ospfv2.OSPFv2LinkStateUpdatePacket;
+import es.tid.ospf.ospfv2.OSPFv2Packet;
 /**
  * This class reads OSPF messages from the network. 
  * It reads all packages with destination multicast, and keep in a queue those which are OSPFv2_LINK_STATE_UPDATE.

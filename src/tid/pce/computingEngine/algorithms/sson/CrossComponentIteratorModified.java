@@ -18,7 +18,7 @@ import org.jgrapht.event.VertexTraversalEvent;
 import org.jgrapht.traverse.AbstractGraphIterator;
 import org.jgrapht.traverse.CrossComponentIterator;
 
-import tid.ospf.ospfv2.lsa.tlv.subtlv.complexFields.BitmapLabelSet;
+import es.tid.ospf.ospfv2.lsa.tlv.subtlv.complexFields.BitmapLabelSet;
 import tid.pce.tedb.IntraDomainEdge;
 
 

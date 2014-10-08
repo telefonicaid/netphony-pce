@@ -4,7 +4,7 @@ package tid.pce.tedb;
 import java.util.LinkedList;
 import java.util.Set;
 
-import tid.ospf.ospfv2.lsa.tlv.subtlv.complexFields.BitmapLabelSet;
+import es.tid.ospf.ospfv2.lsa.tlv.subtlv.complexFields.BitmapLabelSet;
 import tid.pce.computingEngine.algorithms.ComputingAlgorithmPreComputation;
 import tid.pce.computingEngine.algorithms.ComputingAlgorithmPreComputationSSON;
 import tid.pce.parentPCE.ReachabilityEntry;

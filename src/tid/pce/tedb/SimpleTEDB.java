@@ -13,7 +13,7 @@ import java.util.logging.Logger;
 
 import org.jgrapht.graph.SimpleDirectedWeightedGraph;
 
-import tid.ospf.ospfv2.lsa.tlv.subtlv.complexFields.BitmapLabelSet;
+import es.tid.ospf.ospfv2.lsa.tlv.subtlv.complexFields.BitmapLabelSet;
 import tid.pce.computingEngine.RequestDispatcher;
 import tid.pce.computingEngine.algorithms.ComputingAlgorithmPreComputation;
 import tid.pce.computingEngine.algorithms.ComputingAlgorithmPreComputationSSON;

@@ -11,35 +11,35 @@ import java.util.Timer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import es.tid.pce.pcep.PCEPProtocolViolationException;
+import es.tid.pce.pcep.constructs.Path;
+import es.tid.pce.pcep.constructs.StateReport;
+import es.tid.pce.pcep.messages.PCEPInitiate;
+import es.tid.pce.pcep.messages.PCEPMessage;
+import es.tid.pce.pcep.messages.PCEPMessageTypes;
+import es.tid.pce.pcep.messages.PCEPReport;
+import es.tid.pce.pcep.messages.PCEPResponse;
+import es.tid.pce.pcep.messages.PCEPTELinkConfirmation;
+import es.tid.pce.pcep.messages.PCEPUpdate;
+import es.tid.pce.pcep.objects.EndPointsIPv4;
+import es.tid.pce.pcep.objects.ExplicitRouteObject;
+import es.tid.pce.pcep.objects.LSP;
+import es.tid.pce.pcep.objects.OPEN;
+import es.tid.pce.pcep.objects.ObjectParameters;
+import es.tid.pce.pcep.objects.SRERO;
+import es.tid.pce.pcep.objects.SRP;
+import es.tid.pce.pcep.objects.tlvs.PathSetupTLV;
+import es.tid.rsvp.objects.ERO;
+import es.tid.rsvp.objects.subobjects.EROSubobject;
 import tid.emulator.node.transport.lsp.LSPKey;
 import tid.emulator.node.transport.lsp.LSPManager;
 import tid.emulator.node.transport.lsp.te.LSPTE;
 import tid.pce.client.tester.LSPConfirmationDispatcher;
-import tid.pce.pcep.PCEPProtocolViolationException;
-import tid.pce.pcep.constructs.Path;
-import tid.pce.pcep.constructs.StateReport;
-import tid.pce.pcep.messages.PCEPInitiate;
-import tid.pce.pcep.messages.PCEPMessage;
-import tid.pce.pcep.messages.PCEPMessageTypes;
-import tid.pce.pcep.messages.PCEPReport;
-import tid.pce.pcep.messages.PCEPResponse;
-import tid.pce.pcep.messages.PCEPTELinkConfirmation;
-import tid.pce.pcep.messages.PCEPUpdate;
-import tid.pce.pcep.objects.EndPointsIPv4;
-import tid.pce.pcep.objects.ExplicitRouteObject;
-import tid.pce.pcep.objects.LSP;
-import tid.pce.pcep.objects.OPEN;
-import tid.pce.pcep.objects.ObjectParameters;
-import tid.pce.pcep.objects.SRERO;
-import tid.pce.pcep.objects.SRP;
-import tid.pce.pcep.objects.tlvs.PathSetupTLV;
 import tid.pce.pcepsession.DeadTimerThread;
 import tid.pce.pcepsession.GenericPCEPSession;
 import tid.pce.pcepsession.KeepAliveThread;
 import tid.pce.pcepsession.PCEPSessionsInformation;
 import tid.pce.pcepsession.PCEPValues;
-import tid.rsvp.objects.ERO;
-import tid.rsvp.objects.subobjects.EROSubobject;
 import tid.util.UtilsFunctions;
 
 /**
@@ -353,7 +353,7 @@ public class PCCPCEPSession extends GenericPCEPSession{
 							Path path = new Path();
 							path.setSRERO(srero);
 							
-							srep.setRSP(rsp);
+							srep.setSRP(rsp);
 							srep.setLSP(lsp);
 							srep.setPath(path);
 							

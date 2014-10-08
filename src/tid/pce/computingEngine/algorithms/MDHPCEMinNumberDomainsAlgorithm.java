@@ -11,46 +11,46 @@ import org.jgrapht.GraphPath;
 import org.jgrapht.alg.DijkstraShortestPath;
 import org.jgrapht.graph.DirectedWeightedMultigraph;
 
+import es.tid.pce.pcep.constructs.EndPoint;
+import es.tid.pce.pcep.constructs.EndPointAndRestrictions;
+import es.tid.pce.pcep.constructs.NCF;
+import es.tid.pce.pcep.constructs.P2MPEndpoints;
+import es.tid.pce.pcep.constructs.P2PEndpoints;
+import es.tid.pce.pcep.constructs.Path;
+import es.tid.pce.pcep.constructs.Request;
+import es.tid.pce.pcep.constructs.Response;
+import es.tid.pce.pcep.messages.PCEPRequest;
+import es.tid.pce.pcep.objects.BitmapLabelSet;
+import es.tid.pce.pcep.objects.EndPoints;
+import es.tid.pce.pcep.objects.EndPointsIPv4;
+import es.tid.pce.pcep.objects.ExcludeRouteObject;
+import es.tid.pce.pcep.objects.ExplicitRouteObject;
+import es.tid.pce.pcep.objects.GeneralizedEndPoints;
+import es.tid.pce.pcep.objects.LabelSetInclusiveList;
+import es.tid.pce.pcep.objects.Monitoring;
+import es.tid.pce.pcep.objects.NoPath;
+import es.tid.pce.pcep.objects.ObjectParameters;
+import es.tid.pce.pcep.objects.RequestParameters;
+import es.tid.pce.pcep.objects.subobjects.UnnumberIfIDXROSubobject;
+import es.tid.pce.pcep.objects.subobjects.XROSubObjectValues;
+import es.tid.pce.pcep.objects.subobjects.XROSubobject;
+import es.tid.pce.pcep.objects.tlvs.EndPointIPv4TLV;
+import es.tid.pce.pcep.objects.tlvs.NoPathTLV;
+import es.tid.pce.pcep.objects.tlvs.UnnumberedEndpointTLV;
+import es.tid.rsvp.constructs.gmpls.DWDMWavelengthLabel;
+import es.tid.rsvp.objects.subobjects.GeneralizedLabelEROSubobject;
+import es.tid.rsvp.objects.subobjects.IPv4prefixEROSubobject;
+import es.tid.rsvp.objects.subobjects.UnnumberIfIDEROSubobject;
 import tid.pce.computingEngine.ComputingRequest;
 import tid.pce.computingEngine.ComputingResponse;
 import tid.pce.computingEngine.algorithms.multidomain.MDFunctions;
 import tid.pce.parentPCE.ChildPCERequestManager;
 import tid.pce.parentPCE.ParentPCESession;
 import tid.pce.parentPCE.ReachabilityManager;
-import tid.pce.pcep.constructs.EndPoint;
-import tid.pce.pcep.constructs.EndPointAndRestrictions;
-import tid.pce.pcep.constructs.NCF;
-import tid.pce.pcep.constructs.P2MPEndpoints;
-import tid.pce.pcep.constructs.P2PEndpoints;
-import tid.pce.pcep.constructs.Path;
-import tid.pce.pcep.constructs.Request;
-import tid.pce.pcep.constructs.Response;
-import tid.pce.pcep.messages.PCEPRequest;
-import tid.pce.pcep.objects.BitmapLabelSet;
-import tid.pce.pcep.objects.EndPoints;
-import tid.pce.pcep.objects.EndPointsIPv4;
-import tid.pce.pcep.objects.ExcludeRouteObject;
-import tid.pce.pcep.objects.ExplicitRouteObject;
-import tid.pce.pcep.objects.GeneralizedEndPoints;
-import tid.pce.pcep.objects.Monitoring;
-import tid.pce.pcep.objects.NoPath;
-import tid.pce.pcep.objects.ObjectParameters;
-import tid.pce.pcep.objects.RequestParameters;
-import tid.pce.pcep.objects.LabelSetInclusiveList;
-import tid.pce.pcep.objects.subobjects.UnnumberIfIDXROSubobject;
-import tid.pce.pcep.objects.subobjects.XROSubObjectValues;
-import tid.pce.pcep.objects.subobjects.XROSubobject;
-import tid.pce.pcep.objects.tlvs.EndPointIPv4TLV;
-import tid.pce.pcep.objects.tlvs.NoPathTLV;
-import tid.pce.pcep.objects.tlvs.UnnumberedEndpointTLV;
 import tid.pce.tedb.ITMDTEDB;
 import tid.pce.tedb.InterDomainEdge;
 import tid.pce.tedb.MDTEDB;
 import tid.pce.tedb.TEDB;
-import tid.rsvp.constructs.gmpls.DWDMWavelengthLabel;
-import tid.rsvp.objects.subobjects.GeneralizedLabelEROSubobject;
-import tid.rsvp.objects.subobjects.IPv4prefixEROSubobject;
-import tid.rsvp.objects.subobjects.UnnumberIfIDEROSubobject;
 
 /**
  * Algorithm to Minimize the number of Transit Domains (MTD)
@@ -406,7 +406,7 @@ public class MDHPCEMinNumberDomainsAlgorithm implements ComputingAlgorithm{
 						sourceIPv4TLV.setIPv4address(last_source_IP);
 						sourceIPv4TLV.setIfID(edge_list.get(i-1).getSrc_if_id());
 						destIPv4TLV.setIPv4address(dest_router_id_addr);
-						destIPv4TLV.setIfID(edge_list.get(0).getDst_if_id());
+						destIPv4TLV.setIfID(dst_if_id);
 						sourceEP.setUnnumberedEndpoint(sourceIPv4TLV);
 						destEP.setUnnumberedEndpoint(destIPv4TLV);
 					}					
@@ -805,39 +805,23 @@ public class MDHPCEMinNumberDomainsAlgorithm implements ComputingAlgorithm{
 	
 
 	public ExplicitRouteObject addELC(ExplicitRouteObject ero,DWDMWavelengthLabel dwdmWavelengthLabel, EndPoints ep){
-		log.warning("VAMOS A PONER EL ELC");
-		boolean startingIncomingIf=false;
-		if (ep instanceof GeneralizedEndPoints){
-			if (((GeneralizedEndPoints)ep).getP2PEndpoints()!=null){
-				if (((GeneralizedEndPoints)ep).getP2PEndpoints().getSourceEndPoint().getUnnumberedEndpoint()!=null){
-					startingIncomingIf=true;
-				}
-			}
-		 }
+//		boolean unNumberedIf=false;
+//		if (ep instanceof GeneralizedEndPoints){
+//			if (((GeneralizedEndPoints)ep).getP2PEndpoints()!=null){
+//				if (((GeneralizedEndPoints)ep).getP2PEndpoints().getSourceEndPoint().getUnnumberedEndpoint()!=null){
+//					unNumberedIf=true;
+//				}
+//			}
+//		 }
 		ExplicitRouteObject ero2 = new ExplicitRouteObject();
 		int i=0;
 		for (i=0;i<ero.getEROSubobjectList().size();++i) {
-			ero2.addEROSubobject(ero.getEROSubobjectList().get(i));
-			if (i==0){
-				if (startingIncomingIf){
-					//skip the first
-				}else {
-					log.warning("HAY UNNUMBERED y no es incoming interface... PONGO ELC");
-					//we assume we start in an unnumbered interface..
-					if (ero.getEROSubobjectList().get(i) instanceof UnnumberIfIDEROSubobject){
-						GeneralizedLabelEROSubobject ge= new GeneralizedLabelEROSubobject();
-						ge.setDwdmWavelengthLabel(dwdmWavelengthLabel);
-						ero2.addEROSubobject(ge);
-					}
-				}
-			}else {
+			ero2.addEROSubobject(ero.getEROSubobjectList().get(i));	
 				if (ero.getEROSubobjectList().get(i) instanceof UnnumberIfIDEROSubobject){
-					log.warning("HAY UNNUMBERED... PONGO ELC");
 					GeneralizedLabelEROSubobject ge= new GeneralizedLabelEROSubobject();
 					ge.setDwdmWavelengthLabel(dwdmWavelengthLabel);
 					ero2.addEROSubobject(ge);
 				}
-			}
 		}
 		return ero2;
 	}
@@ -974,52 +958,5 @@ public class MDHPCEMinNumberDomainsAlgorithm implements ComputingAlgorithm{
 		return dest_router_id_addr;
 
 	}
-
-
-
-
-
-
-
-	//	public Inet4Address duplicateEndPoint(EndPoints  EP) {
-	//		EndPoints endpointsRequest;
-	//		if (EP.getOT()==ObjectParameters.PCEP_OBJECT_TYPE_ENDPOINTS_IPV4){			
-	//			endpointsRequest = new EndPointsIPv4();
-	//			((EndPointsIPv4) endpointsRequest).setSourceIP( ((EndPointsIPv4) EP).getSourceIP() );
-	//			destIP = (Inet4Address)edge_list.get(0).getSrc_router_id();
-	//			((EndPointsIPv4) endpointsRequest).setDestIP(destIP);
-	//			
-	//		}else if (EP.getOT()==ObjectParameters.PCEP_OBJECT_TYPE_ENDPOINTS_IPV6){
-	//			//NO IMPLEMENTADO
-	//		}
-	//		
-	//		if (EP.getOT()==ObjectParameters.PCEP_OBJECT_TYPE_GENERALIZED_ENDPOINTS){
-	//			GeneralizedEndPoints  gep=(GeneralizedEndPoints) req.getEndPoints();
-	//			if(gep.getGeneralizedEndPointsType()==ObjectParameters.PCEP_GENERALIZED_END_POINTS_TYPE_P2P){
-	//				EndPointIPv4TLV sourceIPv4TLV = new EndPointIPv4TLV();
-	//				EndPointIPv4TLV destIPv4TLV = new EndPointIPv4TLV();
-	//				sourceIPv4TLV.setIPv4address(source_router_id_addr);
-	//				destIP=(Inet4Address)edge_list.get(0).getSrc_router_id();
-	//				destIPv4TLV.setIPv4address(destIP);
-	//				
-	//				EndPoint sourceEP=new EndPoint();
-	//				EndPoint destEP=new EndPoint();
-	//				sourceEP.setEndPointIPv4TLV(sourceIPv4TLV);
-	//				destEP.setEndPointIPv4TLV(destIPv4TLV);
-	//				
-	//				P2PEndpoints p2pep=new P2PEndpoints();
-	//				p2pep.setSourceEndPoints(sourceEP);
-	//				p2pep.setDestinationEndPoints(destEP);
-	//				
-	//				endpointsRequest = new GeneralizedEndPoints();
-	//				((GeneralizedEndPoints) endpointsRequest).setP2PEndpoints(p2pep);
-	//				
-	//			}
-	//			if(gep.getGeneralizedEndPointsType()==ObjectParameters.PCEP_GENERALIZED_END_POINTS_TYPE_P2MP_NEW_LEAVES){
-	//
-	//			}
-	//		}
-	//	return 	endpointsRequest;
-	//	}
 
 }

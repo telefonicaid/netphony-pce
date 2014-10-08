@@ -6,14 +6,14 @@ import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.logging.Logger;
 
+import es.tid.pce.pcep.constructs.Path;
+import es.tid.pce.pcep.messages.PCEPRequest;
+import es.tid.pce.pcep.messages.PCEPResponse;
+import es.tid.pce.pcep.objects.BandwidthRequestedGeneralizedBandwidth;
+import es.tid.pce.pcep.objects.ExplicitRouteObject;
+import es.tid.rsvp.objects.subobjects.EROSubobject;
 import tid.netManager.NetworkLSPManager;
 import tid.pce.client.PCCPCEPSession;
-import tid.pce.pcep.constructs.Path;
-import tid.pce.pcep.messages.PCEPRequest;
-import tid.pce.pcep.messages.PCEPResponse;
-import tid.pce.pcep.objects.BandwidthRequestedGeneralizedBandwidth;
-import tid.pce.pcep.objects.ExplicitRouteObject;
-import tid.rsvp.objects.subobjects.EROSubobject;
 
 public class SendRequestRestorationCase  extends TimerTask {
 	private PCEPRequest request;

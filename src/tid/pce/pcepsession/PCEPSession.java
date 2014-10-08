@@ -1,6 +1,6 @@
 package tid.pce.pcepsession;
 
-import tid.pce.pcep.messages.PCEPMessage;
+import es.tid.pce.pcep.messages.PCEPMessage;
 
 public interface PCEPSession {
 	

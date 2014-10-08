@@ -5,12 +5,12 @@ package tid.pce.client.tester;
 import java.util.TimerTask;
 import java.util.logging.Logger;
 
+import es.tid.pce.pcep.messages.PCEPMessage;
+import es.tid.pce.pcep.messages.PCEPMonReq;
+import es.tid.pce.pcep.messages.PCEPRequest;
+import es.tid.pce.pcep.messages.PCEPResponse;
 import tid.pce.client.ClientRequestManager;
 import tid.pce.client.PCCPCEPSession;
-import tid.pce.pcep.messages.PCEPMessage;
-import tid.pce.pcep.messages.PCEPMonReq;
-import tid.pce.pcep.messages.PCEPRequest;
-import tid.pce.pcep.messages.PCEPResponse;
 
 
 public class AutomaticTesterNetworkTask  extends TimerTask {

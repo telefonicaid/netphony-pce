@@ -8,7 +8,7 @@ import java.util.LinkedList;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.logging.Logger;
 
-import tid.ospf.ospfv2.OSPFv2LinkStateUpdatePacket;
+import es.tid.ospf.ospfv2.OSPFv2LinkStateUpdatePacket;
 
 public class TCPOSPFSender extends Thread {
 

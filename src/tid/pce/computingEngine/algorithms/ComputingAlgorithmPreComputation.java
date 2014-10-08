@@ -6,7 +6,7 @@ import java.util.LinkedList;
 import org.jgrapht.graph.DirectedMultigraph;
 import org.jgrapht.graph.SimpleDirectedWeightedGraph;
 
-import tid.ospf.ospfv2.lsa.tlv.subtlv.complexFields.BitmapLabelSet;
+import es.tid.ospf.ospfv2.lsa.tlv.subtlv.complexFields.BitmapLabelSet;
 import tid.pce.tedb.IntraDomainEdge;
 import tid.pce.tedb.TEDB;
 import tid.pce.tedb.TE_Information;

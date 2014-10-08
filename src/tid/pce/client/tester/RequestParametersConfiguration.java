@@ -2,7 +2,7 @@ package tid.pce.client.tester;
 
 import java.util.LinkedList;
 
-import tid.pce.pcep.objects.Metric;
+import es.tid.pce.pcep.objects.Metric;
 
 public class RequestParametersConfiguration {
 	boolean isReservation = false;

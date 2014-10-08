@@ -2,7 +2,7 @@ package tid.pce.parentPCE;
 
 import java.net.Inet4Address;
 
-import tid.pce.pcep.objects.Notification;
+import es.tid.pce.pcep.objects.Notification;
 
 public class MultiDomainUpdate {
 	

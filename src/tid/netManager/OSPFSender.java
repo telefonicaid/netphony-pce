@@ -9,9 +9,9 @@ import java.util.LinkedList;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.logging.Logger;
 
-import tid.ospf.ospfv2.OSPFv2LinkStateUpdatePacket;
-
 import com.savarese.rocksaw.net.RawSocket;
+
+import es.tid.ospf.ospfv2.OSPFv2LinkStateUpdatePacket;
 
 public class OSPFSender extends Thread {
 	

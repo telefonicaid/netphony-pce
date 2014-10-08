@@ -11,8 +11,8 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.logging.Logger;
 
-import tid.pce.pcep.PCEPProtocolViolationException;
-import tid.pce.pcep.messages.PCEPKeepalive;
+import es.tid.pce.pcep.PCEPProtocolViolationException;
+import es.tid.pce.pcep.messages.PCEPKeepalive;
 
 public class KeepAliveThread extends Thread {
 

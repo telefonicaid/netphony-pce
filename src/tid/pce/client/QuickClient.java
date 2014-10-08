@@ -8,29 +8,29 @@ import java.util.logging.FileHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import tid.pce.pcep.constructs.EndPoint;
-import tid.pce.pcep.constructs.GeneralizedBandwidthSSON;
-import tid.pce.pcep.constructs.P2PEndpoints;
-import tid.pce.pcep.constructs.PCEPIntiatedLSP;
-import tid.pce.pcep.constructs.Request;
-import tid.pce.pcep.messages.PCEPInitiate;
-import tid.pce.pcep.messages.PCEPMessage;
-import tid.pce.pcep.messages.PCEPMessageTypes;
-import tid.pce.pcep.messages.PCEPRequest;
-import tid.pce.pcep.messages.PCEPResponse;
-import tid.pce.pcep.objects.BandwidthRequestedGeneralizedBandwidth;
-import tid.pce.pcep.objects.EndPoints;
-import tid.pce.pcep.objects.EndPointsIPv4;
-import tid.pce.pcep.objects.GeneralizedEndPoints;
-import tid.pce.pcep.objects.LSP;
-import tid.pce.pcep.objects.ObjectiveFunction;
-import tid.pce.pcep.objects.P2MPEndPointsIPv4;
-import tid.pce.pcep.objects.RequestParameters;
-import tid.pce.pcep.objects.SRP;
-import tid.pce.pcep.objects.tlvs.EndPointIPv4TLV;
-import tid.pce.pcep.objects.tlvs.EndPointsIPv4TLV;
-import tid.pce.pcep.objects.tlvs.SymbolicPathNameTLV;
-import tid.pce.pcep.objects.tlvs.UnnumberedEndpointTLV;
+import es.tid.pce.pcep.constructs.EndPoint;
+import es.tid.pce.pcep.constructs.GeneralizedBandwidthSSON;
+import es.tid.pce.pcep.constructs.P2PEndpoints;
+import es.tid.pce.pcep.constructs.PCEPIntiatedLSP;
+import es.tid.pce.pcep.constructs.Request;
+import es.tid.pce.pcep.messages.PCEPInitiate;
+import es.tid.pce.pcep.messages.PCEPMessage;
+import es.tid.pce.pcep.messages.PCEPMessageTypes;
+import es.tid.pce.pcep.messages.PCEPRequest;
+import es.tid.pce.pcep.messages.PCEPResponse;
+import es.tid.pce.pcep.objects.BandwidthRequestedGeneralizedBandwidth;
+import es.tid.pce.pcep.objects.EndPoints;
+import es.tid.pce.pcep.objects.EndPointsIPv4;
+import es.tid.pce.pcep.objects.GeneralizedEndPoints;
+import es.tid.pce.pcep.objects.LSP;
+import es.tid.pce.pcep.objects.ObjectiveFunction;
+import es.tid.pce.pcep.objects.P2MPEndPointsIPv4;
+import es.tid.pce.pcep.objects.RequestParameters;
+import es.tid.pce.pcep.objects.SRP;
+import es.tid.pce.pcep.objects.tlvs.EndPointIPv4TLV;
+import es.tid.pce.pcep.objects.tlvs.EndPointsIPv4TLV;
+import es.tid.pce.pcep.objects.tlvs.SymbolicPathNameTLV;
+import es.tid.pce.pcep.objects.tlvs.UnnumberedEndpointTLV;
 import tid.pce.pcepsession.PCEPSessionsInformation;
 
 public class QuickClient {
@@ -93,6 +93,7 @@ public class QuickClient {
 		if (offset<args.length){
 			System.out.println("Hbra PCE!!!");
 			if (args[offset].equals("-pce")){
+				System.out.println("el PCE es ... "+args[offset+1]);
 				ip2 = args[offset+1];
 				port2 = Integer.valueOf(args[offset+2]).intValue();
 				offset=offset+3;
@@ -486,8 +487,16 @@ public class QuickClient {
 			LSP lsp = new LSP();
 			lsp_ini.setLsp(lsp);
 			SymbolicPathNameTLV symPathName = new SymbolicPathNameTLV();
-			symPathName.setSymbolicPathNameID("HOLA".getBytes());
 			lsp.setSymbolicPathNameTLV_tlv(symPathName);
+			if (args[offset].equals("-spn")){		
+				symPathName.setSymbolicPathNameID(args[offset+1].getBytes());	
+				offset=offset+2;
+
+			}else {
+				symPathName.setSymbolicPathNameID("HOLA".getBytes());
+
+			}
+			
 			
 			if (args[offset].equals("-ero")){
 				offset=offset+1;

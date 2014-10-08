@@ -5,10 +5,10 @@ import java.util.LinkedList;
 import java.util.TimerTask;
 import java.util.logging.Logger;
 
+import es.tid.pce.pcep.objects.BandwidthRequestedGeneralizedBandwidth;
+import es.tid.rsvp.objects.subobjects.EROSubobject;
 import tid.netManager.NetworkLSPManager;
 import tid.pce.client.emulator.AutomaticTesterStatistics;
-import tid.pce.pcep.objects.BandwidthRequestedGeneralizedBandwidth;
-import tid.rsvp.objects.subobjects.EROSubobject;
 
 
 

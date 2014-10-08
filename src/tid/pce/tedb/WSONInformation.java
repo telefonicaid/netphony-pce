@@ -1,6 +1,6 @@
 package tid.pce.tedb;
 
-import tid.ospf.ospfv2.lsa.tlv.subtlv.AvailableLabels;
+import es.tid.ospf.ospfv2.lsa.tlv.subtlv.AvailableLabels;
 
 public class WSONInformation {
 	/**

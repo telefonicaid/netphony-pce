@@ -16,39 +16,39 @@ import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.logging.Logger;
 
+import es.tid.pce.pcep.PCEPProtocolViolationException;
+import es.tid.pce.pcep.constructs.PCEPIntiatedLSP;
+import es.tid.pce.pcep.constructs.Path;
+import es.tid.pce.pcep.constructs.Request;
+import es.tid.pce.pcep.constructs.SVECConstruct;
+import es.tid.pce.pcep.constructs.StateReport;
+import es.tid.pce.pcep.constructs.UpdateRequest;
+import es.tid.pce.pcep.messages.PCEPInitiate;
+import es.tid.pce.pcep.messages.PCEPReport;
+import es.tid.pce.pcep.messages.PCEPRequest;
+import es.tid.pce.pcep.messages.PCEPUpdate;
+import es.tid.pce.pcep.objects.BandwidthRequested;
+import es.tid.pce.pcep.objects.EndPointsIPv4;
+import es.tid.pce.pcep.objects.ExplicitRouteObject;
+import es.tid.pce.pcep.objects.LSP;
+import es.tid.pce.pcep.objects.ObjectParameters;
+import es.tid.pce.pcep.objects.ObjectiveFunction;
+import es.tid.pce.pcep.objects.RequestParameters;
+import es.tid.pce.pcep.objects.SRP;
+import es.tid.pce.pcep.objects.XifiUniCastEndPoints;
+import es.tid.pce.pcep.objects.tlvs.LSPDatabaseVersionTLV;
+import es.tid.pce.pcep.objects.tlvs.LSPIdentifiersTLV;
+import es.tid.pce.pcep.objects.tlvs.SymbolicPathNameTLV;
+import es.tid.rsvp.objects.subobjects.IPv4prefixEROSubobject;
+import es.tid.rsvp.objects.subobjects.UnnumberIfIDEROSubobject;
 import tid.pce.computingEngine.RequestDispatcher;
 import tid.pce.computingEngine.RequestProcessorThread;
 import tid.pce.computingEngine.algorithms.ComputingAlgorithmManager;
-import tid.pce.pcep.PCEPProtocolViolationException;
-import tid.pce.pcep.constructs.PCEPIntiatedLSP;
-import tid.pce.pcep.constructs.Path;
-import tid.pce.pcep.constructs.Request;
-import tid.pce.pcep.constructs.SVECConstruct;
-import tid.pce.pcep.constructs.StateReport;
-import tid.pce.pcep.constructs.UpdateRequest;
-import tid.pce.pcep.messages.PCEPInitiate;
-import tid.pce.pcep.messages.PCEPReport;
-import tid.pce.pcep.messages.PCEPRequest;
-import tid.pce.pcep.messages.PCEPUpdate;
-import tid.pce.pcep.objects.BandwidthRequested;
-import tid.pce.pcep.objects.EndPointsIPv4;
-import tid.pce.pcep.objects.ExplicitRouteObject;
-import tid.pce.pcep.objects.LSP;
-import tid.pce.pcep.objects.ObjectParameters;
-import tid.pce.pcep.objects.ObjectiveFunction;
-import tid.pce.pcep.objects.RequestParameters;
-import tid.pce.pcep.objects.SRP;
-import tid.pce.pcep.objects.XifiUniCastEndPoints;
-import tid.pce.pcep.objects.tlvs.LSPDatabaseVersionTLV;
-import tid.pce.pcep.objects.tlvs.LSPIdentifiersTLV;
-import tid.pce.pcep.objects.tlvs.SymbolicPathNameTLV;
 import tid.pce.server.DomainPCESession;
 import tid.pce.server.PCEServerParameters;
 import tid.pce.server.communicationpce.CollaborationPCESessionManager;
 import tid.pce.server.wson.ReservationManager;
 import tid.pce.tedb.DomainTEDB;
-import tid.rsvp.objects.subobjects.IPv4prefixEROSubobject;
-import tid.rsvp.objects.subobjects.UnnumberIfIDEROSubobject;
 import tid.util.UtilsFunctions;
 
 /**
@@ -444,7 +444,7 @@ public class PCEManagementSession extends Thread {
 									rpt.setStateReportList(new LinkedList<StateReport>());
 									rpt.getStateReportList().add(new StateReport());
 									rpt.getStateReportList().get(0).setLSP(new LSP());
-									rpt.getStateReportList().get(0).setRSP(new SRP());
+									rpt.getStateReportList().get(0).setSRP(new SRP());
 									rpt.getStateReportList().get(0).setPath(new Path());
 									rpt.getStateReportList().get(0).getPath().seteRO(new ExplicitRouteObject());
 
@@ -727,7 +727,7 @@ public class PCEManagementSession extends Thread {
 
 			update.getUpdateRequestList().add(new UpdateRequest());
 			update.getUpdateRequestList().get(i).setLSP(report.getLSP());
-			update.getUpdateRequestList().get(i).setRSP(report.getRSP());
+			update.getUpdateRequestList().get(i).setRSP(report.getSRP());
 			update.getUpdateRequestList().get(i).setPath(report.getPath());
 		}
 		dm.sendPCEPMessage(update);
