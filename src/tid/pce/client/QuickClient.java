@@ -4,9 +4,11 @@ package tid.pce.client;
 import java.net.Inet4Address;
 import java.net.UnknownHostException;
 import java.util.LinkedList;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.FileHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.logging.SimpleFormatter;
 
 import es.tid.pce.pcep.constructs.EndPoint;
 import es.tid.pce.pcep.constructs.GeneralizedBandwidthSSON;
@@ -47,7 +49,8 @@ public class QuickClient {
 		try {
 			fh=new FileHandler("PCCClient2.log");
 			fh2=new FileHandler("PCEPClientParser2.log");
-			//fh.setFormatter(new SimpleFormatter());
+			fh.setFormatter(new SimpleFormatter());
+			fh2.setFormatter(new SimpleFormatter());
 			Log.addHandler(fh);
 			Log.setLevel(Level.ALL);
 			Logger log2=Logger.getLogger("PCEPParser");
@@ -71,18 +74,31 @@ public class QuickClient {
 
 		ip = args[0];
 		port = Integer.valueOf(args[1]).intValue();
+		String localbind=null;
+		int offset=2;
+		
+		
 		PCEPSessionsInformation pcepSessionManager=new PCEPSessionsInformation();
 		PCEsession = new PCCPCEPSession(ip, port,false,pcepSessionManager);
-		PCEsession.start();
-		try {
-			Thread.sleep(1000);
-		} catch (InterruptedException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
+		if (args[offset].equals("-li")){
+			PCEsession.localAddress=args[offset+1];
+			System.out.println("local interface"+PCEsession.localAddress);
+			offset=offset+2;
 		}
+		PCEsession.start();
+
+		try {
+			System.out.println("waaait");
+			PCEsession.sessionStarted.tryAcquire(15,TimeUnit.SECONDS);
+			System.out.println("go go go");
+
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 
 		
-		int offset=2;
 		LinkedList<PCEPMessage> messageList=new LinkedList<PCEPMessage>();
 		System.out.println("A preparar y enviar");
 		
@@ -98,23 +114,29 @@ public class QuickClient {
 				port2 = Integer.valueOf(args[offset+2]).intValue();
 				offset=offset+3;
 				System.out.println("En un rato llamamos a "+ip2+": "+port2);
-				try {
-					Thread.sleep(3000);
-				} catch (InterruptedException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				}
-				System.out.println("WGO ");
+//				try {
+//					Thread.sleep(3000);
+//				} catch (InterruptedException e1) {
+//					// TODO Auto-generated catch block
+//					e1.printStackTrace();
+//				}
 
 				PCCPCEPSession PCEsession2 = new PCCPCEPSession(ip2, port2,false,pcepSessionManager);
+				if (args[2].equals("-li")){
+					PCEsession2.localAddress=args[3];
+					System.out.println("local interface2"+PCEsession2.localAddress);
+				}
 				System.out.println("RANCANDO ");
 				PCEsession2.start();
 				System.out.println("ALEEE ");
 				try {
-					Thread.sleep(1000);
-				} catch (InterruptedException e1) {
+					System.out.println("waaait");
+					PCEsession2.sessionStarted.tryAcquire(15,TimeUnit.SECONDS);
+					System.out.println("go go go");
+
+				} catch (InterruptedException e) {
 					// TODO Auto-generated catch block
-					e1.printStackTrace();
+					e.printStackTrace();
 				}
 				offset=createAndSendMessage(PCEsession2,offset, args, messageList);
 				
@@ -143,28 +165,28 @@ public class QuickClient {
 
 		}
 		if (message_type==PCEPMessageTypes.MESSAGE_PCREQ){
-			String src= args[2];
+			String src= args[offset];
 			String src_ip="";;
 			long src_if=0;
 			long dst_if=0;
 			String dst_ip="";
-			String dst=args[3];
+			String dst=args[offset+1];
 			if (src.contains(":")){
 				String[] parts = src.split(":");
 				src_ip=parts[0];
 				src_if=Long.valueOf(parts[1]).longValue();
 			}else {
-				src_ip=args[2];
+				src_ip=args[offset+1];
 			}
 			if (dst.contains(":")){
 				String[] parts = dst.split(":");
 				dst_ip=parts[0];
 				dst_if=Long.valueOf(parts[1]).longValue();
 			}else {
-				dst_ip=args[3];
+				dst_ip=args[offset+1];
 			}
 			boolean gen=false;
-			offset=4;
+			offset=offset+2;
 			if (args.length>=5) {
 				if (args[offset].equals("-g")){
 					offset=offset+1;
@@ -482,6 +504,15 @@ public class QuickClient {
 				srp.setSRP_ID_number(1);
 
 			}
+			if (args[offset].equals("-srpd")){
+				offset=offset+1;
+				srp.setrFlag(true);
+
+			}else {
+				srp.setrFlag(false);
+
+			}
+			
 			lsp_ini.setRsp(srp);
 			
 			LSP lsp = new LSP();
@@ -509,10 +540,17 @@ public class QuickClient {
 			
 			
 			
-			System.out.println("Peticion "+p_i.toString());
-			PCEPMessage pr=crm.newRequest(p_i);
+			System.out.println("PeticionIBA "+p_i.toString());
+			long maxTimeMs =15000;
+			
+			PCEPMessage pr=crm.initiate(p_i, maxTimeMs); 
 			messageList.add(pr);
-			System.out.println("Respuesta "+p_i.toString());
+			if (pr!=null){
+				System.out.println("Respuesta "+pr.toString());
+			}else {
+				System.out.println("No response");
+			}
+			
 			
 			
 			

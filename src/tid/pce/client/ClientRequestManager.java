@@ -4,11 +4,15 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.Hashtable;
 import java.util.Random;
+import java.util.concurrent.Semaphore;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 
 import es.tid.pce.pcep.PCEPProtocolViolationException;
+import es.tid.pce.pcep.messages.PCEPInitiate;
 import es.tid.pce.pcep.messages.PCEPMessage;
 import es.tid.pce.pcep.messages.PCEPMonReq;
+import es.tid.pce.pcep.messages.PCEPReport;
 import es.tid.pce.pcep.messages.PCEPRequest;
 import es.tid.pce.pcep.messages.PCEPResponse;
 import tid.util.UtilsFunctions;
@@ -23,15 +27,21 @@ public class ClientRequestManager {
 	//private PCCPCEPSession session;
 	public Hashtable<Long,Object> locks;
 	private Hashtable<Long,PCEPResponse> responses;
+	private Hashtable<Long,PCEPReport> responsesInit;
 	private Logger log;
 	private DataOutputStream out=null; //Use this to send messages to PCC
 	private long lastTime;
 	
+	public Hashtable<Long,Semaphore> semaphores;
+	
 	public ClientRequestManager(){
+		log=Logger.getLogger("PCCClient");
 		//this.out=out;
 		locks = new Hashtable<Long, Object>();
 		responses=new Hashtable<Long, PCEPResponse>();
-		log=Logger.getLogger("PCCClient");
+		responsesInit=new Hashtable<Long, PCEPReport>();
+	
+		semaphores=new Hashtable<Long,Semaphore>();
 	}
 	public void notifyResponse(PCEPResponse pcres, long timeIni){
 		lastTime=timeIni;
@@ -42,6 +52,18 @@ public class ClientRequestManager {
 			responses.put(new Long(idRequest), pcres);
 			object_lock.notifyAll();	
 		}
+	}
+	
+	public void notifyResponseInit(PCEPReport pcres, long timeIni){
+		System.out.println("Entrando en Notify Resp Init");
+		log.info("Entrando en Notify Resp Init");
+		lastTime=timeIni;
+		
+		
+		long idIni=pcres.getStateReportList().get(0).getSRP().getSRP_ID_number();
+		System.out.println("Nos llega un" +idIni);
+		responsesInit.put(new Long(idIni), pcres);
+		
 	}
 
 	public void setDataOutputStream(DataOutputStream out)
@@ -209,5 +231,43 @@ public class ClientRequestManager {
 	{
 		Random generator = new Random(); 
 		return generator.nextInt(Integer.MAX_VALUE);
+	}
+	
+	public PCEPMessage initiate ( PCEPInitiate pcini, long maxTimeMs)
+	{
+		log.info("Sending Initiate:"+pcini.toString());
+		
+		
+		
+		byte[] LSPname=pcini.getPcepIntiatedLSPList().get(0).getLsp().getSymbolicPathNameTLV_tlv().getSymbolicPathNameID();
+		long idIni=pcini.getPcepIntiatedLSPList().get(0).getRsp().getSRP_ID_number();
+		System.out.println("Sending with id " +idIni);
+		Long idReqLong=new Long(idIni);
+		long timeIni=System.nanoTime();
+		//System.out.println("id ini es "+)
+		Semaphore semapohore=new Semaphore(0);
+		semaphores.put(idIni, semapohore);
+		sendPCEPMessage(pcini);
+			
+		try 
+			{				
+			semapohore.tryAcquire(maxTimeMs,TimeUnit.MILLISECONDS);
+				
+			} 
+			catch (InterruptedException e)
+			{
+				UtilsFunctions.exceptionToString(e);
+			}
+		long timeIni2=System.nanoTime();
+		//log.info("Response "+pr.toString());
+		double reqTime_ms=(timeIni2-timeIni)/1000000;
+		log.fine("Time: "+reqTime_ms );
+		
+		PCEPMessage resp=responsesInit.remove(new Long(idIni));
+		if (resp==null){
+			log.warning("NO RESPONSE!!!!! me deshago del lock... con idIni "+idIni);
+			locks.remove(idReqLong);
+		}
+		return resp;
 	}
 }

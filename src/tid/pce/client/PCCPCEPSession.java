@@ -8,6 +8,9 @@ import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.Timer;
+import java.util.concurrent.Semaphore;
+import java.util.concurrent.locks.Condition;
+import java.util.concurrent.locks.Lock;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -59,6 +62,11 @@ public class PCCPCEPSession extends GenericPCEPSession{
 	 */
 	private String peerPCE_IPaddress;
 	/**
+	 * Address of the peer PCE
+	 */
+	public String localAddress;
+	
+	/**
 	 * Port of the peer PCE
 	 */
 	private int peerPCE_port;
@@ -85,6 +93,8 @@ public class PCCPCEPSession extends GenericPCEPSession{
 	private LSPManager lspManager;
 		
 	
+	public Semaphore sessionStarted;
+	
 	/**
 	 * Constructor of the PCE Session
 	 * @param ip IP Address of the peer PCE
@@ -104,6 +114,7 @@ public class PCCPCEPSession extends GenericPCEPSession{
 		this.no_delay=no_delay;
 		this.pcepSessionManager=pcepSessionManager;
 		this.lspManager = null;
+		this.sessionStarted=new Semaphore(0);
 		
 	}
 	
@@ -162,6 +173,7 @@ public class PCCPCEPSession extends GenericPCEPSession{
 	 */
 	public void run() 
 	{
+		
 		running=true;
 		log.info("Opening new PCEP Session with host "+ peerPCE_IPaddress + " on port " + peerPCE_port);
 		
@@ -169,7 +181,13 @@ public class PCCPCEPSession extends GenericPCEPSession{
 		{
 			try 
 			{
-				this.socket = new Socket(peerPCE_IPaddress, peerPCE_port);
+				if (localAddress!=null){
+					this.socket = new Socket(Inet4Address.getByName(peerPCE_IPaddress), peerPCE_port,Inet4Address.getByName(localAddress),0);
+				}else {
+					this.socket = new Socket(peerPCE_IPaddress, peerPCE_port);
+			
+				}
+				
 				if (no_delay)
 				{
 					this.socket.setTcpNoDelay(true);
@@ -202,7 +220,10 @@ public class PCCPCEPSession extends GenericPCEPSession{
 			log.info("Actually sending params");
 			sendPCELSPParameters(true, ObjectParameters.LSP_OPERATIONAL_UP, false);
 		}
-		
+		//Session is up
+		if (sessionStarted!=null){
+			sessionStarted.release();
+		}
 		//Listen to new messages
 		while(running) {
 			try {
@@ -272,13 +293,17 @@ public class PCCPCEPSession extends GenericPCEPSession{
 					break;
 					
 				case PCEPMessageTypes.MESSAGE_REPORT:
-					log.info("Received Report message");			
-					
+					log.info("Received Report message");	
+					long timeInii=System.nanoTime();
 					try {
-						PCEPReport m_report = null;
-						log.info("Decoding PCEP Report");
+						PCEPReport m_report;
 						m_report=new PCEPReport(this.msg);
 						
+						log.info(m_report.toString());
+						crm.notifyResponseInit(m_report, timeInii);
+						Semaphore semaphore = crm.semaphores.get(new Long(m_report.getStateReportList().get(0).getSRP().getSRP_ID_number()));
+						semaphore.release();
+
 					} catch (PCEPProtocolViolationException e1) {
 						log.warning("Problem decoding report message, ignoring message"+e1.getMessage());
 						e1.printStackTrace();
@@ -312,9 +337,9 @@ public class PCCPCEPSession extends GenericPCEPSession{
 				case PCEPMessageTypes.MESSAGE_PCREP:
 					log.info("Received PCE RESPONSE message");
 					long timeIni=System.nanoTime();
-					PCEPResponse pcres=new PCEPResponse();
+					PCEPResponse pcres;
 					try {
-						pcres.decode(msg);
+						pcres=new PCEPResponse(msg);
 						
 						log.info("IdResponse: "+pcres.getResponse(0).getRequestParameters().getRequestID());
 						Object lock=crm.locks.get(new Long(pcres.getResponse(0).getRequestParameters().getRequestID()));
@@ -402,6 +427,7 @@ public class PCCPCEPSession extends GenericPCEPSession{
 				case PCEPMessageTypes.MESSAGE_PCREQ:
 					log.info("PCREQ message received");
 					break;
+
 
 				default:
 					log.info("ERROR: unexpected message PCCCEPSession with type : "+PCEPMessage.getMessageType(this.msg));

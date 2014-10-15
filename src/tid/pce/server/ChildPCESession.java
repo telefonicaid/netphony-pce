@@ -206,9 +206,9 @@ public class ChildPCESession  extends GenericPCEPSession{
 				
 				case PCEPMessageTypes.MESSAGE_PCREP:
 					log.fine("Received PC RESPONSE message");
-					PCEPResponse pcres=new PCEPResponse();
+					PCEPResponse pcres;
 					try {
-						pcres.decode(msg);
+						pcres=new PCEPResponse(msg);
 						Long idr= new Long(pcres.getResponse(0).getRequestParameters().getRequestID());
 						log.info("Llega un response del IdRequest "+idr);
 						synchronized (childPCERequestManager.locks.get(idr)) {
@@ -224,9 +224,9 @@ public class ChildPCESession  extends GenericPCEPSession{
 					
 				case PCEPMessageTypes.MESSAGE_PCREQ:
 					log.info("PCREQ message from Parent PCE received");
-					PCEPRequest p_req=new PCEPRequest();
+					PCEPRequest p_req;
 					try {
-						p_req.decode(msg);
+						p_req=new PCEPRequest(msg);
 					} catch (PCEPProtocolViolationException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();

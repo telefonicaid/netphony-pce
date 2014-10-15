@@ -278,9 +278,9 @@ public class DomainPCESession extends GenericPCEPSession{
 
 					case PCEPMessageTypes.MESSAGE_PCREQ:
 						log.info("PCREQ message received");
-						PCEPRequest p_req=new PCEPRequest();
+						PCEPRequest p_req;
 						try {						
-							p_req.decode(msg);
+							p_req=new PCEPRequest(msg);
 
 						} catch (PCEPProtocolViolationException e) {
 							e.printStackTrace();

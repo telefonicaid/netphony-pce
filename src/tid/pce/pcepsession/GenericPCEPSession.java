@@ -184,6 +184,7 @@ public abstract class GenericPCEPSession extends Thread implements PCEPSession {
 		this.pcepSessionManager=pcepSessionManager;
 		this.newSessionId();
 		this.pcepSessionManager.addSession(this.sessionId, this);
+		log=Logger.getLogger("PCCClient");
 	}
 
 	/**
