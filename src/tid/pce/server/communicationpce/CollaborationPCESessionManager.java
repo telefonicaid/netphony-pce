@@ -3,8 +3,8 @@ package tid.pce.server.communicationpce;
 import java.io.IOException;
 import java.util.logging.FileHandler;
 
-import tid.pce.pcep.PCEPProtocolViolationException;
-import tid.pce.pcep.messages.PCEPMessage;
+import es.tid.pce.pcep.PCEPProtocolViolationException;
+import es.tid.pce.pcep.messages.PCEPMessage;
 
 
 public class CollaborationPCESessionManager {

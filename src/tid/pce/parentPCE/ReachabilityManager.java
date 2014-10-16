@@ -5,9 +5,9 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.logging.Logger;
 
-import tid.rsvp.objects.subobjects.EROSubobject;
-import tid.rsvp.objects.subobjects.IPv4prefixEROSubobject;
-import tid.rsvp.objects.subobjects.SubObjectValues;
+import es.tid.rsvp.objects.subobjects.EROSubobject;
+import es.tid.rsvp.objects.subobjects.IPv4prefixEROSubobject;
+import es.tid.rsvp.objects.subobjects.SubObjectValues;
 
 /**
  * Class that maintains a table with Reachability entries.

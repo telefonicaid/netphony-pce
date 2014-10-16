@@ -6,6 +6,7 @@ import java.util.logging.FileHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import es.tid.ospf.ospfv2.OSPFv2LinkStateUpdatePacket;
 import tid.netManager.NetworkLSPManager;
 import tid.netManager.NetworkLSPManagerParameters;
 import tid.netManager.OSPFSender;
@@ -13,7 +14,6 @@ import tid.netManager.TCPOSPFSender;
 import tid.netManager.emulated.AdvancedEmulatedNetworkLSPManager;
 import tid.netManager.emulated.CompletedEmulatedNetworkLSPManager;
 import tid.netManager.emulated.SimpleEmulatedNetworkLSPManager;
-import tid.ospf.ospfv2.OSPFv2LinkStateUpdatePacket;
 import tid.pce.client.PCCPCEPSession;
 
 /**

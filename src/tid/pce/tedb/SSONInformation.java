@@ -1,6 +1,6 @@
 package tid.pce.tedb;
 
-import tid.ospf.ospfv2.lsa.tlv.subtlv.AvailableLabels;
+import es.tid.ospf.ospfv2.lsa.tlv.subtlv.AvailableLabels;
 
 /**
  * Label information in the special case of a Switched Spectrum Optical Network based on Flexgrid.

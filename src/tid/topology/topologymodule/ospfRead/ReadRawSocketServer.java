@@ -8,12 +8,12 @@ import java.net.InetAddress;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.logging.Logger;
 
-import tid.ospf.ospfv2.OSPFPacketTypes;
-import tid.ospf.ospfv2.OSPFv2HelloPacket;
-import tid.ospf.ospfv2.OSPFv2LinkStateUpdatePacket;
-import tid.ospf.ospfv2.OSPFv2Packet;
-
 import com.savarese.rocksaw.net.RawSocket;
+
+import es.tid.ospf.ospfv2.OSPFPacketTypes;
+import es.tid.ospf.ospfv2.OSPFv2HelloPacket;
+import es.tid.ospf.ospfv2.OSPFv2LinkStateUpdatePacket;
+import es.tid.ospf.ospfv2.OSPFv2Packet;
 
 public class ReadRawSocketServer extends Thread {
 	  // Timeout para el socket

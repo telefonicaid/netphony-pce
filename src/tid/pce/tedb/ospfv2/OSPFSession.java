@@ -6,8 +6,8 @@ import java.net.Socket;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.logging.Logger;
 
-import tid.ospf.ospfv2.lsa.LSA;
-import tid.ospf.ospfv2.lsa.OSPFTEv2LSA;
+import es.tid.ospf.ospfv2.lsa.LSA;
+import es.tid.ospf.ospfv2.lsa.OSPFTEv2LSA;
 
 /**
  * OSPF Session over a TCP Connection. This can be later changed to sending the OSPF directly with a raw socket

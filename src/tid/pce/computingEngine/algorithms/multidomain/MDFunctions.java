@@ -7,11 +7,11 @@ import java.util.logging.Logger;
 
 import org.jgrapht.graph.DirectedWeightedMultigraph;
 
+import es.tid.pce.pcep.objects.ExcludeRouteObject;
+import es.tid.pce.pcep.objects.subobjects.UnnumberIfIDXROSubobject;
+import es.tid.pce.pcep.objects.subobjects.XROSubObjectValues;
+import es.tid.pce.pcep.objects.subobjects.XROSubobject;
 import tid.pce.parentPCE.ReachabilityManager;
-import tid.pce.pcep.objects.ExcludeRouteObject;
-import tid.pce.pcep.objects.subobjects.UnnumberIfIDXROSubobject;
-import tid.pce.pcep.objects.subobjects.XROSubObjectValues;
-import tid.pce.pcep.objects.subobjects.XROSubobject;
 import tid.pce.tedb.InterDomainEdge;
 
 public class MDFunctions {

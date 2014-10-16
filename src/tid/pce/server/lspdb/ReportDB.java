@@ -8,7 +8,7 @@ package tid.pce.server.lspdb;
  *
  */
 
-import tid.pce.pcep.constructs.StateReport;
+import es.tid.pce.pcep.constructs.StateReport;
 
 public interface ReportDB 
 {

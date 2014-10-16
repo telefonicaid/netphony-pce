@@ -7,23 +7,23 @@ import java.util.LinkedList;
 import java.util.Timer;
 import java.util.logging.Logger;
 
+import es.tid.pce.pcep.PCEPProtocolViolationException;
+import es.tid.pce.pcep.messages.PCEPClose;
+import es.tid.pce.pcep.messages.PCEPMessage;
+import es.tid.pce.pcep.messages.PCEPMessageTypes;
+import es.tid.pce.pcep.messages.PCEPNotification;
+import es.tid.pce.pcep.messages.PCEPRequest;
+import es.tid.pce.pcep.messages.PCEPResponse;
+import es.tid.pce.pcep.objects.ObjectParameters;
+import es.tid.pce.pcep.objects.tlvs.ReachabilityTLV;
+import es.tid.rsvp.objects.subobjects.EROSubobject;
 import tid.pce.computingEngine.RequestDispatcher;
-import tid.pce.pcep.PCEPProtocolViolationException;
-import tid.pce.pcep.messages.PCEPClose;
-import tid.pce.pcep.messages.PCEPMessage;
-import tid.pce.pcep.messages.PCEPMessageTypes;
-import tid.pce.pcep.messages.PCEPNotification;
-import tid.pce.pcep.messages.PCEPRequest;
-import tid.pce.pcep.messages.PCEPResponse;
-import tid.pce.pcep.objects.ObjectParameters;
-import tid.pce.pcep.objects.tlvs.ReachabilityTLV;
 import tid.pce.pcepsession.DeadTimerThread;
 import tid.pce.pcepsession.GenericPCEPSession;
 import tid.pce.pcepsession.KeepAliveThread;
 import tid.pce.pcepsession.PCEPSessionsInformation;
 import tid.pce.pcepsession.PCEPValues;
 import tid.pce.tedb.TEDB;
-import tid.rsvp.objects.subobjects.EROSubobject;
 
 /** Thread that maintains a PCEP Session with one PCC Client. 
  * <p> Reads the first message, and if it is a valid OPEN Message, initiates a new 
@@ -205,9 +205,9 @@ public class ParentPCESession extends GenericPCEPSession{
 					
 				case PCEPMessageTypes.MESSAGE_PCREP:
 					log.info("Received PC RESPONSE message");
-					PCEPResponse pcres=new PCEPResponse();
+					PCEPResponse pcres;
 					try {
-						pcres.decode(msg);
+						pcres=new PCEPResponse(msg);
 						log.info("IdResponse: "+pcres.getResponse(0).getRequestParameters().getRequestID());
 						synchronized (childPCERequestManager.locks.get(pcres.getResponse(0).getRequestParameters().getRequestID())) {
 							childPCERequestManager.notifyResponse(pcres);
@@ -222,9 +222,9 @@ public class ParentPCESession extends GenericPCEPSession{
 					
 				case PCEPMessageTypes.MESSAGE_PCREQ:
 					log.info("PCREQ message received");
-					PCEPRequest p_req=new PCEPRequest();
+					PCEPRequest p_req;
 					try {
-						p_req.decode(msg);
+						p_req=new PCEPRequest(msg);
 						log.info(p_req.toString());
 					} catch (PCEPProtocolViolationException e) {
 						e.printStackTrace();

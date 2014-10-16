@@ -3,10 +3,10 @@ package tid.pce.computingEngine.algorithms.wson;
 import java.util.LinkedList;
 import java.util.logging.Logger;
 
+import es.tid.pce.pcep.objects.Reservation;
+import es.tid.pce.pcep.objects.ReservationConf;
 import tid.pce.computingEngine.ComputingResponse;
 import tid.pce.computingEngine.algorithms.AlgorithmReservation;
-import tid.pce.pcep.objects.Reservation;
-import tid.pce.pcep.objects.ReservationConf;
 import tid.pce.server.wson.ReservationManager;
 
 public class GenericLambdaReservation implements AlgorithmReservation{

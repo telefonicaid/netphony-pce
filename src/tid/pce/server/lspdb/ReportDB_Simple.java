@@ -11,7 +11,7 @@ package tid.pce.server.lspdb;
 import java.util.Hashtable;
 import java.util.logging.Logger;
 
-import tid.pce.pcep.constructs.StateReport;
+import es.tid.pce.pcep.constructs.StateReport;
 
 public class ReportDB_Simple implements ReportDB
 {

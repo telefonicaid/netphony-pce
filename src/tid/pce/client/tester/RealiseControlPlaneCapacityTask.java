@@ -5,12 +5,12 @@ import java.util.LinkedList;
 import java.util.TimerTask;
 import java.util.logging.Logger;
 
+import es.tid.pce.pcep.constructs.UpdateRequest;
+import es.tid.pce.pcep.messages.PCEPUpdate;
+import es.tid.pce.pcep.objects.BandwidthRequestedGeneralizedBandwidth;
+import es.tid.pce.pcep.objects.LSP;
 import tid.pce.client.PCCPCEPSession;
 import tid.pce.client.emulator.AutomaticTesterStatistics;
-import tid.pce.pcep.constructs.UpdateRequest;
-import tid.pce.pcep.messages.PCEPUpdate;
-import tid.pce.pcep.objects.BandwidthRequestedGeneralizedBandwidth;
-import tid.pce.pcep.objects.LSP;
 
 public class RealiseControlPlaneCapacityTask  extends TimerTask {
 

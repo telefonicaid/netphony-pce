@@ -9,19 +9,19 @@ import java.util.HashMap;
 import java.util.Timer;
 import java.util.logging.Logger;
 
+import es.tid.pce.pcep.PCEPProtocolViolationException;
+import es.tid.pce.pcep.messages.PCEPClose;
+import es.tid.pce.pcep.messages.PCEPInitiate;
+import es.tid.pce.pcep.messages.PCEPMessage;
+import es.tid.pce.pcep.messages.PCEPMessageTypes;
+import es.tid.pce.pcep.messages.PCEPMonReq;
+import es.tid.pce.pcep.messages.PCEPNotification;
+import es.tid.pce.pcep.messages.PCEPReport;
+import es.tid.pce.pcep.messages.PCEPRequest;
+import es.tid.pce.pcep.objects.EndPointsIPv4;
+import es.tid.pce.pcep.objects.OPEN;
 import tid.pce.computingEngine.ReportDispatcher;
 import tid.pce.computingEngine.RequestDispatcher;
-import tid.pce.pcep.PCEPProtocolViolationException;
-import tid.pce.pcep.messages.PCEPClose;
-import tid.pce.pcep.messages.PCEPInitiate;
-import tid.pce.pcep.messages.PCEPMessage;
-import tid.pce.pcep.messages.PCEPMessageTypes;
-import tid.pce.pcep.messages.PCEPMonReq;
-import tid.pce.pcep.messages.PCEPNotification;
-import tid.pce.pcep.messages.PCEPReport;
-import tid.pce.pcep.messages.PCEPRequest;
-import tid.pce.pcep.objects.EndPointsIPv4;
-import tid.pce.pcep.objects.OPEN;
 import tid.pce.pcepsession.DeadTimerThread;
 import tid.pce.pcepsession.GenericPCEPSession;
 import tid.pce.pcepsession.KeepAliveThread;
@@ -278,9 +278,9 @@ public class DomainPCESession extends GenericPCEPSession{
 
 					case PCEPMessageTypes.MESSAGE_PCREQ:
 						log.info("PCREQ message received");
-						PCEPRequest p_req=new PCEPRequest();
+						PCEPRequest p_req;
 						try {						
-							p_req.decode(msg);
+							p_req=new PCEPRequest(msg);
 
 						} catch (PCEPProtocolViolationException e) {
 							e.printStackTrace();

@@ -10,10 +10,10 @@ import java.util.ArrayList;
 import java.util.TimerTask;
 import java.util.logging.Logger;
 
+import es.tid.pce.pcep.messages.PCEPRequest;
+import es.tid.pce.pcep.messages.PCEPTELinkTearDownSuggestion;
+import es.tid.pce.pcep.objects.EndPointsIPv4;
 import tid.pce.client.emulator.AutomaticTesterStatistics;
-import tid.pce.pcep.messages.PCEPRequest;
-import tid.pce.pcep.messages.PCEPTELinkTearDownSuggestion;
-import tid.pce.pcep.objects.EndPointsIPv4;
 
 
 

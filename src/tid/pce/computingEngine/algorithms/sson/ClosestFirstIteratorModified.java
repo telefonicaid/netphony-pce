@@ -52,7 +52,7 @@ import org.jgrapht.traverse.CrossComponentIterator;
 import org.jgrapht.util.FibonacciHeap;
 import org.jgrapht.util.FibonacciHeapNode;
 
-import tid.ospf.ospfv2.lsa.tlv.subtlv.complexFields.BitmapLabelSet;
+import es.tid.ospf.ospfv2.lsa.tlv.subtlv.complexFields.BitmapLabelSet;
  
 /**
  * A closest-first iterator for a directed or undirected graph. For this

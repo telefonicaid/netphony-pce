@@ -2,7 +2,7 @@ package tid.ipnms.datamodel.router.LabelSwitchedPath;
 
 import java.util.LinkedList;
 
-import tid.rsvp.objects.subobjects.EROSubobject;
+import es.tid.rsvp.objects.subobjects.EROSubobject;
 
 
 

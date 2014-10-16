@@ -2,7 +2,7 @@ package tid.pce.client;
 
 import java.util.logging.Logger;
 
-import tid.pce.pcep.objects.ObjectParameters;
+import es.tid.pce.pcep.objects.ObjectParameters;
 
 /*
  * PCEP DeadTimer management Thread

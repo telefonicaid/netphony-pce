@@ -3,7 +3,7 @@ package tid.pce.computingEngine.algorithms.utilities;
 import java.util.ArrayList;
 import java.util.logging.Logger;
 
-import tid.ospf.ospfv2.lsa.tlv.subtlv.complexFields.BitmapLabelSet;
+import es.tid.ospf.ospfv2.lsa.tlv.subtlv.complexFields.BitmapLabelSet;
 
 public class channel_generator{
 	

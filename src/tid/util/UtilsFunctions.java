@@ -9,10 +9,10 @@ import org.w3c.dom.CharacterData;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
+import es.tid.rsvp.objects.subobjects.EROSubobject;
+import es.tid.rsvp.objects.subobjects.GeneralizedLabelEROSubobject;
+import es.tid.rsvp.objects.subobjects.SubObjectValues;
 import tid.pce.computingEngine.ComputingResponse;
-import tid.rsvp.objects.subobjects.EROSubobject;
-import tid.rsvp.objects.subobjects.GeneralizedLabelEROSubobject;
-import tid.rsvp.objects.subobjects.SubObjectValues;
 
 
 public class UtilsFunctions {

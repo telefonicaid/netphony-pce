@@ -1,7 +1,7 @@
 package tid.topology.topologymodule;
 import java.util.concurrent.LinkedBlockingQueue;
 
-import tid.ospf.ospfv2.OSPFv2LinkStateUpdatePacket;
+import es.tid.ospf.ospfv2.OSPFv2LinkStateUpdatePacket;
 import tid.topology.ONEGraph;
 import tid.topology.topologymodule.ospfRead.OneGprahUpdaterThread;
 import tid.topology.topologymodule.ospfRead.ReadRawSocketServer;

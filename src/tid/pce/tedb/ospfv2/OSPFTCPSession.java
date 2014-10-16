@@ -7,9 +7,9 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import tid.ospf.ospfv2.OSPFPacketTypes;
-import tid.ospf.ospfv2.OSPFv2LinkStateUpdatePacket;
-import tid.ospf.ospfv2.OSPFv2Packet;
+import es.tid.ospf.ospfv2.OSPFPacketTypes;
+import es.tid.ospf.ospfv2.OSPFv2LinkStateUpdatePacket;
+import es.tid.ospf.ospfv2.OSPFv2Packet;
 
 /**
  * OSPF Session over a TCP Connection. This can be later changed to sending the OSPF directly with a raw socket
