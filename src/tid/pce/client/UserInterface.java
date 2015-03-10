@@ -1,6 +1,7 @@
 package tid.pce.client;
 
 import java.io.BufferedReader;
+
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.Inet4Address;
@@ -35,7 +36,6 @@ import es.tid.pce.pcep.objects.Svec;
 import es.tid.pce.pcep.objects.SwitchLayer;
 import es.tid.pce.pcep.objects.tlvs.BandwidthTLV;
 import es.tid.pce.pcep.objects.tlvs.EndPointIPv4TLV;
-import es.tid.pce.pcep.objects.tlvs.EndPointsIPv4TLV;
 
 public class UserInterface extends Thread {
 	
@@ -609,7 +609,6 @@ public class UserInterface extends Thread {
 				GeneralizedEndPoints ep=new GeneralizedEndPoints();
 				P2PEndpoints p2pEndpoints = new P2PEndpoints();
 				EndPoint sourceEndPoint = new EndPoint();
-				EndPointsIPv4TLV ipv4tlv = new EndPointsIPv4TLV();
 				//sourceEndPoint.setEndPointIPv4TLV(ipv4tlv);
 						
 				

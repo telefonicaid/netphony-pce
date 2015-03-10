@@ -30,7 +30,6 @@ import es.tid.pce.pcep.objects.P2MPEndPointsIPv4;
 import es.tid.pce.pcep.objects.RequestParameters;
 import es.tid.pce.pcep.objects.SRP;
 import es.tid.pce.pcep.objects.tlvs.EndPointIPv4TLV;
-import es.tid.pce.pcep.objects.tlvs.EndPointsIPv4TLV;
 import es.tid.pce.pcep.objects.tlvs.SymbolicPathNameTLV;
 import es.tid.pce.pcep.objects.tlvs.UnnumberedEndpointTLV;
 import tid.pce.pcepsession.PCEPSessionsInformation;
