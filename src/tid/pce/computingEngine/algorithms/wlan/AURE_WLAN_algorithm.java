@@ -47,7 +47,7 @@ public class AURE_WLAN_algorithm implements ComputingAlgorithm {
 	* The Logger.
 	*/
 	private Logger log=Logger.getLogger("PCEServer");
-	
+
 	/**
 	 * The Path Computing Request to calculate.
 	 */
@@ -57,22 +57,22 @@ public class AURE_WLAN_algorithm implements ComputingAlgorithm {
 	 * Access to the Precomputation part of the algorithm.
 	 */
 	private AURE_WLAN_algorithmPreComputation preComp;
-	
+
 	/**
 	 * Access to the Reservation Manager to make reservations of Wavalengths/labels.
 	 */
 	private ReservationManager reservationManager;
-	
+
 //		/**
 //		 * Number of wavelenghts (labels).
 //		 */
 //		private int num_lambdas;
-	
+
 	/**
 	 * The traffic engineering database
 	 */
 	private DomainTEDB ted;
-	
+
 	private GenericWLANReservation  reserv;
 	/**
 	 * Constructor
@@ -109,10 +109,10 @@ public class AURE_WLAN_algorithm implements ComputingAlgorithm {
 		rp.setRequestID(reqId);
 		response.setRequestParameters(rp);
 		m_resp.addResponse(response);
-		
+
 		//esto hay que cambiarlo para poder leer del GENERALIZED END POINTS
 		//if (getObjectType(req.getEndPoints()))
-		
+
 		//log.info("Bw: "+req.getBandwidth().getBw());
 		EndPoints  EP= req.getEndPoints();	
 		Object source_router_id_addr = null;
@@ -181,7 +181,7 @@ public class AURE_WLAN_algorithm implements ComputingAlgorithm {
 					}else {
 						lambda=lambda+1;
 					}
-					
+
 				}
 				else {
 					if (gp.getWeight()<max_metric){
@@ -216,7 +216,7 @@ public class AURE_WLAN_algorithm implements ComputingAlgorithm {
 				eroso.setSwitchID(ByteHandler.MACFormatStringtoByteArray((String)edge_list.get(i).getSource()));
 				eroso.setLoosehop(false);
 				ero.addEROSubobject(eroso);
-				
+
 				GeneralizedLabelEROSubobject genLabel= new GeneralizedLabelEROSubobject();
 				ero.addEROSubobject(genLabel);
 				//ITU-T Format
@@ -230,7 +230,7 @@ public class AURE_WLAN_algorithm implements ComputingAlgorithm {
 					e.printStackTrace();
 				}
 				genLabel.setLabel(wlanlabel.getBytes());		
-				
+
 			}
 			SwitchIDEROSubobject eroso= new SwitchIDEROSubobject();
 			eroso.setSwitchID(ByteHandler.MACFormatStringtoByteArray((String)edge_list.get(edge_list.size()-1).getTarget()));
@@ -238,21 +238,21 @@ public class AURE_WLAN_algorithm implements ComputingAlgorithm {
 			path.seteRO(ero);
 			PCEPUtils.completeMetric(path, req, edge_list);
 			response.addPath(path);
-			
+
 			//log.info("Resp: "+response.toString());
 
 			//FIXME: RESERVATION NEEDS TO BE IMPROVED!!!
 			LinkedList<Object> sourceVertexList=new LinkedList<Object>();
 			LinkedList<Object> targetVertexList=new LinkedList<Object>();
 			LinkedList<Integer> wlans=new LinkedList<Integer>();
-			
+
 			for (i=0;i<edge_list.size();i++){
 				sourceVertexList.add(edge_list.get(i).getSource());
 				targetVertexList.add(edge_list.get(i).getTarget());
 				wlans.add(lambda_chosen);
 			}		
-			
-			
+
+
 			if (req.getReservation()!=null){
 				reserv= new GenericWLANReservation();
 				reserv.setResp(m_resp);
@@ -260,14 +260,14 @@ public class AURE_WLAN_algorithm implements ComputingAlgorithm {
 				reserv.setReservation(req.getReservation());
 				reserv.setSourceVertexList(sourceVertexList);
 				reserv.setTargetVertexList(targetVertexList);
-				
+
 				if (rp.isBidirect() == true){
 					reserv.setBidirectional(true);
 				}
 				else{
 					reserv.setBidirectional(false);
 				}
-				
+
 				reserv.setReservationManager(reservationManager);
 			}
 		}
