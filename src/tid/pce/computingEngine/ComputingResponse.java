@@ -17,9 +17,11 @@ import es.tid.pce.pcep.messages.PCEPResponse;
 import es.tid.pce.pcep.objects.ExplicitRouteObject;
 import es.tid.pce.pcep.objects.LSP;
 import es.tid.pce.pcep.objects.SRP;
+import es.tid.rsvp.objects.subobjects.DataPathIDEROSubobject;
 import es.tid.rsvp.objects.subobjects.EROSubobject;
 import es.tid.rsvp.objects.subobjects.UnnumberIfIDEROSubobject;
 import tid.pce.parentPCE.ReachabilityManager;
+import tid.pce.tedb.DataPathID;
 import tid.util.UtilsFunctions;
 
 /**
@@ -34,7 +36,8 @@ public class ComputingResponse
 	private int encodingType = PCEPMessageTypes.MESSAGE_PCREP;
 	
 	public LinkedList<Response> ResponseList;
-	private Logger log=Logger.getLogger("PCEPParser");
+	//private Logger log=Logger.getLogger("PCEPParser");
+	private Logger log=Logger.getLogger("PCEP listener");
 	
 	private ReachabilityManager reachabilityManager;
 	
@@ -233,6 +236,23 @@ public class ComputingResponse
 			{
 				EROSubobject currentERO = ero.getEROSubobjectList().get(offset);
 				
+//				if ((ero.getEROSubobjectList().get(offset)) instanceof DataPathIDEROSubobject)
+//				{
+//					DataPathIDEROSubobject unAux = (DataPathIDEROSubobject)ero.getEROSubobjectList().get(i);
+//					currentID = reachabilityManager.getDomain(unAux.getRouterID());
+//					
+//					
+//					if (currentID!=null && firstID.equals(currentID))
+//					{
+//						subERO.addEROSubobject(currentERO);
+//					}
+//					else
+//					{
+//						hasDomainChanged = true;
+//					}
+//				}
+				
+				
 				if ((ero.getEROSubobjectList().get(offset)) instanceof UnnumberIfIDEROSubobject)
 				{
 					UnnumberIfIDEROSubobject unAux = (UnnumberIfIDEROSubobject)ero.getEROSubobjectList().get(i);
@@ -248,6 +268,8 @@ public class ComputingResponse
 						hasDomainChanged = true;
 					}
 				}
+
+				
 				else
 				{
 					subERO.addEROSubobject(currentERO);
@@ -268,7 +290,10 @@ public class ComputingResponse
 			} 
 			catch (UnknownHostException e)
 			{
-				log.info(UtilsFunctions.exceptionToString(e));
+				log.info("NO EaIP.address; try EaIP.dataPathID");
+				
+				EaIP.dataPath = (DataPathID) DataPathID.getByNameBytes(firstID.getAddress());
+				//log.info(UtilsFunctions.exceptionToString(e));
 			}
 			firstID = currentID;
 			offset--;
@@ -281,6 +306,7 @@ public class ComputingResponse
 	{
 		ExplicitRouteObject ero;
 		Inet4Address address;
+		DataPathID dataPath;
 	}
 	
 	public void encode() throws PCEPProtocolViolationException 

@@ -30,6 +30,7 @@ import es.tid.pce.pcep.objects.tlvs.subtlvs.ResourceIDSubTLV;
 import es.tid.pce.pcep.objects.tlvs.subtlvs.StorageSizeSubTLV;
 import es.tid.rsvp.constructs.gmpls.DWDMWavelengthLabel;
 import es.tid.rsvp.objects.subobjects.IPv4prefixEROSubobject;
+import tid.pce.computingEngine.algorithms.GraphEndPoint;
 import tid.pce.parentPCE.ReachabilityEntry;
 import tid.pce.parentPCE.ReachabilityManager;
 import tid.util.UtilsFunctions;
@@ -99,8 +100,16 @@ public class FileTEDBUpdater {
 	 */
 	public static SimpleDirectedWeightedGraph<Object, IntraDomainEdge> readNetwork(String fileName, String layer,boolean allDomains,int lambdaIni, int lambdaEnd, boolean isSSONnetwork) {
 		Logger log = Logger.getLogger("PCEPServer");
+		Object router_id_addr = null;
+		Object s_router_id_addr = null;
+		Object d_router_id_addr = null;
+		Object src_Numif_id = null;
+		Object dst_Numif_id = null;
+
 		//First, create the graph
 		SimpleDirectedWeightedGraph<Object, IntraDomainEdge> graph = new SimpleDirectedWeightedGraph<Object, IntraDomainEdge>(IntraDomainEdge.class);
+
+		log.info("1. SimpleDirectedWeightedGraph");
 
 		File file = new File(fileName);
 		try {
@@ -108,6 +117,7 @@ public class FileTEDBUpdater {
 			DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
 			Document doc = builder.parse(file);			
 			HashMap<Inet4Address, Integer >SIDS = new HashMap<Inet4Address,Integer>();
+			HashMap<DataPathID, Integer >SIDSDP = new HashMap<DataPathID,Integer>();
 
 			NodeList nodes_domains = doc.getElementsByTagName("domain");
 			if (layer!=null){
@@ -153,19 +163,34 @@ public class FileTEDBUpdater {
 						NodeList router_id_node = element.getElementsByTagName("router_id");
 						Element router_id_e = (Element) router_id_node.item(0);
 						String router_id = getCharacterDataFromElement(router_id_e);
-						log.info("Adding router_id " + router_id);
-						Inet4Address router_id_addr = (Inet4Address) Inet4Address.getByName(router_id);
-						graph.addVertex(router_id_addr);
-						log.info("About to look for SID");
 
+						log.info("Adding router_id " + router_id);
+
+						try { //Router_type: DatapathID
+							router_id_addr = (Inet4Address) Inet4Address.getByName(router_id);
+							graph.addVertex(router_id_addr);
+						} catch (Exception e) { //Router_type: DatapathID
+							router_id_addr =  (DataPathID) DataPathID.getByName(router_id);
+							log.info("router_id_addr: "+router_id_addr);
+							graph.addVertex(router_id_addr);
+						}
+
+
+						log.info("About to look for SID");
 						NodeList SID_aux = element.getElementsByTagName("sid");
 						Element SID_e = (Element) SID_aux.item(0);
 						if (SID_e!=null)
 						{ 
 							log.info("SID existe");
 							int SID = Integer.parseInt(getCharacterDataFromElement(SID_e));
-							SIDS.put(router_id_addr,SID);
-							log.info("SID of node: "+SID);
+
+							try { //Router_type: DatapathID
+								SIDS.put((Inet4Address) router_id_addr,SID);
+								log.info("SID of node Inet4Address: "+SID);
+							} catch (Exception e) { //Router_type: DatapathID
+								SIDSDP.put((DataPathID)router_id_addr, SID);
+								log.info("SID of node DataPathID: "+SID);
+							}
 						}
 						else
 						{
@@ -295,7 +320,7 @@ public class FileTEDBUpdater {
 							}
 						}	
 						log.info("type::"+type);
-						if (type.equals("intradomain")) {
+						if (type.equals("intradomain")) {						
 							IntraDomainEdge edge = new IntraDomainEdge();
 							log.info("New Intradomain Edge");
 							NodeList source = element.getElementsByTagName("source");
@@ -304,7 +329,14 @@ public class FileTEDBUpdater {
 							NodeList source_router_id = source_router_el.getElementsByTagName("router_id");
 							Element source_router_id_el = (Element) source_router_id.item(0);
 							String s_r_id = getCharacterDataFromElement(source_router_id_el);
-							Inet4Address s_router_id_addr = (Inet4Address) Inet4Address.getByName(s_r_id);
+							try { // s_router_id_addr type : Inet4Address
+								s_router_id_addr = (Inet4Address) Inet4Address.getByName(s_r_id);
+								log.info("s_router_id_addr Inet4Address:: "+s_router_id_addr);
+							} catch (Exception e1) { // s_router_id_addr type : DataPathID
+								s_router_id_addr = (DataPathID) DataPathID.getByName(s_r_id);
+								log.info("s_router_id_addr DataPathID:: "+s_router_id_addr);
+							}
+
 							NodeList source_if_id_nl = source_router_el.getElementsByTagName("if_id");
 							Element source_if_id_el = (Element) source_if_id_nl.item(0);
 							String s_source_if_id;
@@ -318,10 +350,13 @@ public class FileTEDBUpdater {
 							NodeList source_Numif_id_nl = source_router_el.getElementsByTagName("NumIf_id");
 							Element source_Numif_id_el = (Element) source_Numif_id_nl.item(0);
 							String s_source_Numif_id;
-							Inet4Address src_Numif_id = null;
 							if (source_Numif_id_el!=null){
 								s_source_Numif_id = getCharacterDataFromElement(source_Numif_id_el);
-								src_Numif_id = (Inet4Address) Inet4Address.getByName(s_source_Numif_id);
+								try { // src_Numif_id type : Inet4Address
+									src_Numif_id = (Inet4Address) Inet4Address.getByName(s_source_Numif_id);
+								} catch (Exception e) { // src_Numif_id type : DataPathID
+									src_Numif_id =  DataPathID.getByName(s_source_Numif_id);
+								}
 							}
 
 							NodeList dest_nl = element.getElementsByTagName("destination");
@@ -330,8 +365,13 @@ public class FileTEDBUpdater {
 							NodeList dest_router_id_nl = dest_el.getElementsByTagName("router_id");
 							Element dest_router_id_el = (Element) dest_router_id_nl.item(0);
 							String d_r_id = getCharacterDataFromElement(dest_router_id_el);
-							Inet4Address d_router_id_addr = (Inet4Address) Inet4Address.getByName(d_r_id);
-
+							try {// d_router_id_addr type : Inet4Address
+								d_router_id_addr = (Inet4Address) Inet4Address.getByName(d_r_id);
+								log.info("d_router_id_addr Inet4Address:: "+d_router_id_addr.toString());	
+							} catch (Exception e1) {  // d_router_id_addr type : DataPathID
+								d_router_id_addr = (DataPathID) DataPathID.getByName(d_r_id);
+								log.info("d_router_id_addr DataPathID:: "+d_router_id_addr);
+							}
 
 							//Anyadimos los SID
 							if (SIDS.get(s_router_id_addr)!=null && SIDS.get(d_router_id_addr)!=null)
@@ -339,8 +379,17 @@ public class FileTEDBUpdater {
 								log.info("setting SIDS src: "+SIDS.get(s_router_id_addr)+" dst: "+SIDS.get(d_router_id_addr));
 								edge.setSrc_sid(SIDS.get(s_router_id_addr));
 								edge.setDst_sid(SIDS.get(d_router_id_addr));
-							}							
-
+								log.info("edge.getSrc_sid(): "+edge.getSrc_sid());
+								log.info("edge.getDst_sid(): "+edge.getDst_sid());
+							}
+							else if (SIDSDP.get(s_router_id_addr)!=null && SIDSDP.get(d_router_id_addr)!=null)
+							{
+								log.info("setting SIDSDP src: "+SIDSDP.get(s_router_id_addr)+" dst: "+SIDSDP.get(d_router_id_addr));
+								edge.setSrc_sid(SIDSDP.get(s_router_id_addr));
+								edge.setDst_sid(SIDSDP.get(d_router_id_addr));
+								log.info("edge.getSrc_sid(): "+edge.getSrc_sid());
+								log.info("edge.getDst_sid(): "+edge.getDst_sid());
+							}
 
 
 							NodeList dest_if_id_nl = dest_el.getElementsByTagName("if_id");
@@ -356,10 +405,15 @@ public class FileTEDBUpdater {
 							NodeList dest_Numif_id_nl = dest_el.getElementsByTagName("NumIf_id");
 							Element dest_Numif_id_el = (Element) dest_Numif_id_nl.item(0);
 							String s_dest_Numif_id;
-							Inet4Address dst_Numif_id = null;
+
 							if (source_Numif_id_el!=null){
 								s_dest_Numif_id = getCharacterDataFromElement(dest_Numif_id_el);
-								dst_Numif_id = (Inet4Address) Inet4Address.getByName(s_dest_Numif_id);
+
+								try { // s_dest_Numif_id type : Inet4Address
+									dst_Numif_id = (Inet4Address) Inet4Address.getByName(s_dest_Numif_id);
+								} catch (Exception e) { // s_dest_Numif_id type : DataPathID 
+									dst_Numif_id =  DataPathID.getByName(s_dest_Numif_id);
+								}
 							}
 							// Añadimos interfaces Numeradas
 							if (src_Numif_id!=null){
@@ -629,7 +683,8 @@ public class FileTEDBUpdater {
 								if(graph.containsEdge(s_router_id_addr, d_router_id_addr)){
 									graph.getEdge(s_router_id_addr, d_router_id_addr).setNumberFibers(graph.getEdge(s_router_id_addr, d_router_id_addr).getNumberFibers()+1);
 								}else{
-									graph.addEdge(s_router_id_addr, d_router_id_addr, edge);
+									log.info("s_router_id_addr: "+s_router_id_addr.toString()+"; d_router_id_addr: "+d_router_id_addr.toString()+"; edge: "+edge);
+									graph.addEdge((DataPathID)s_router_id_addr, (DataPathID)d_router_id_addr, edge);
 									graph.getEdge(s_router_id_addr, d_router_id_addr).setNumberFibers(1);
 								}
 							}catch(Exception e){
@@ -651,13 +706,27 @@ public class FileTEDBUpdater {
 	public static SimpleDirectedWeightedGraph<Object,IntraDomainEdge> readITNetwork(String fileName){
 		Logger log=Logger.getLogger("PCEPServer");
 		SimpleDirectedWeightedGraph<Object,IntraDomainEdge> graph =new SimpleDirectedWeightedGraph<Object,IntraDomainEdge>(IntraDomainEdge.class);
+		Object router_id_addr = null;
+		Object it_site_id_addr = null;
+		Object resource_addr = null;
+		Object s_id_addr = null;
+		Object d_id_addr = null;
+		Object s_router_id_addr = null;
+		Object d_router_id_addr = null;
+		Object s_it_site_id_addr = null;
+		Object d_it_site_id_addr = null;
+		Object s_resource_id_addr = null;
+		Object d_resource_id_addr = null;
+
+		log.info("2. SimpleDirectedWeightedGraph");
 
 		File file = new File(fileName);
 		try {
 			DocumentBuilder builder =	DocumentBuilderFactory.newInstance().newDocumentBuilder();
 			Document doc = builder.parse(file);
 			NodeList nodes_domains = doc.getElementsByTagName("domain");
-			HashMap<Inet4Address, Integer >SIDS = new HashMap<Inet4Address,Integer>();
+			HashMap<Inet4Address, Integer >SIDS   = new HashMap<Inet4Address,Integer>();
+			HashMap<DataPathID,   Integer >SIDSDP = new HashMap<DataPathID,Integer>();
 
 			for (int j = 0; j < nodes_domains.getLength(); j++) {
 				Element element_domain = (Element) nodes_domains.item(j);
@@ -675,13 +744,24 @@ public class FileTEDBUpdater {
 					Element router_id_e = (Element) router_id_node.item(0);
 					String router_id=getCharacterDataFromElement(router_id_e);
 					log.info("El router_id es "+router_id);
-					Inet4Address router_id_addr= (Inet4Address) Inet4Address.getByName(router_id);
+
+					try { // router_id_addr type: Inet4Address
+						router_id_addr = (Inet4Address) Inet4Address.getByName(router_id);
+					} catch (Exception e) { // router_id_addr type: DataPathID
+						router_id_addr =  DataPathID.getByName(router_id);
+					}
+
 					graph.addVertex(router_id_addr);
 
 					Element SID_e = (Element) element.getElementsByTagName("sid");
 					if (SID_e!=null)
 					{	int SID = Integer.parseInt(getCharacterDataFromElement(SID_e));
-					SIDS.put(router_id_addr,SID);
+
+					try { // router_id_addr type: Inet4Address
+						SIDS.put((Inet4Address)router_id_addr,SID);
+					} catch (Exception e) { // router_id_addr type: DataPathID
+						SIDSDP.put((DataPathID)router_id_addr,SID);
+					}
 					}					
 				}
 
@@ -692,7 +772,12 @@ public class FileTEDBUpdater {
 					Element it_site_id_e = (Element) it_site_id_node.item(0);
 					String it_site_id=getCharacterDataFromElement(it_site_id_e);
 					log.info("El IT_site_id es "+it_site_id);
-					Inet4Address it_site_id_addr= (Inet4Address) Inet4Address.getByName(it_site_id);
+
+					try { // it_site_id_addr type: Inet4Address
+						it_site_id_addr = (Inet4Address) Inet4Address.getByName(it_site_id);
+					} catch (Exception e) { // it_site_id_addr type: DataPathID
+						it_site_id_addr =  DataPathID.getByName(it_site_id);
+					}
 					graph.addVertex(it_site_id_addr);
 				}
 
@@ -703,7 +788,12 @@ public class FileTEDBUpdater {
 					Element resource_id_e = (Element) resource_id_node.item(0);
 					String resource_id=getCharacterDataFromElement(resource_id_e);
 					log.info("El resource_id es "+resource_id);
-					Inet4Address resource_addr= (Inet4Address) Inet4Address.getByName(resource_id);
+
+					try {
+						resource_addr = (Inet4Address) Inet4Address.getByName(resource_id);
+					} catch (Exception e) {
+						resource_addr =  DataPathID.getByName(resource_id);
+					}
 					graph.addVertex(resource_addr);
 				}
 
@@ -717,8 +807,6 @@ public class FileTEDBUpdater {
 						//IntraDomainEdge edge = new IntraDomainEdge();
 
 						IntraDomainEdge edge = new IntraDomainEdge();
-						Inet4Address s_id_addr= null;
-						Inet4Address d_id_addr= null;
 
 						NodeList source = element.getElementsByTagName("source");
 						Element source_router_el = (Element)source.item(0);
@@ -726,7 +814,13 @@ public class FileTEDBUpdater {
 						if (source_router_id.getLength()>0){
 							Element source_router_id_el=(Element)source_router_id.item(0);
 							String s_r_id=getCharacterDataFromElement(source_router_id_el);
-							Inet4Address s_router_id_addr= (Inet4Address) Inet4Address.getByName(s_r_id);
+
+							try { // s_router_id_addr type: Inet4Address
+								s_router_id_addr = (Inet4Address) Inet4Address.getByName(s_r_id);
+							} catch (Exception e) { // s_router_id_addr type: DataPathID
+								s_router_id_addr =  DataPathID.getByName(s_r_id);
+							}
+
 							s_id_addr=s_router_id_addr;
 						}
 
@@ -735,7 +829,12 @@ public class FileTEDBUpdater {
 							Element source_it_site_id_el=(Element)source_it_site_id.item(0);
 							String s_itsite_id=getCharacterDataFromElement(source_it_site_id_el);
 							log.info("Edge Source IT_site_id: "+s_itsite_id);
-							Inet4Address s_it_site_id_addr= (Inet4Address) Inet4Address.getByName(s_itsite_id);
+
+							try { // s_it_site_id_addr type: Inet4Address
+								s_it_site_id_addr = (Inet4Address) Inet4Address.getByName(s_itsite_id);
+							} catch (Exception e) { // s_it_site_id_addr type: DataPathID
+								s_it_site_id_addr =  DataPathID.getByName(s_itsite_id);
+							}
 							s_id_addr=s_it_site_id_addr;
 						}
 
@@ -744,7 +843,12 @@ public class FileTEDBUpdater {
 							Element source_resource_id_el=(Element)source_resource_id.item(0);
 							String s_resource_id=getCharacterDataFromElement(source_resource_id_el);
 							log.info("Edge Source resource_id: "+s_resource_id);
-							Inet4Address s_resource_id_addr= (Inet4Address) Inet4Address.getByName(s_resource_id);
+
+							try {// s_resource_id_addr type: Inet4Address
+								s_resource_id_addr = (Inet4Address) Inet4Address.getByName(s_resource_id);
+							} catch (Exception e) { // s_resource_id_addr type: DataPathID
+								s_resource_id_addr =  DataPathID.getByName(s_resource_id);
+							}
 							s_id_addr=s_resource_id_addr;
 						}
 
@@ -763,7 +867,13 @@ public class FileTEDBUpdater {
 							Element dest_router_id_el=(Element)dest_router_id_nl.item(0);
 							String d_r_id=getCharacterDataFromElement(dest_router_id_el);
 							log.info("Edge Destination router_id: "+d_r_id);
-							Inet4Address d_router_id_addr= (Inet4Address) Inet4Address.getByName(d_r_id);
+
+							try { // d_router_id_addr type: Inet4Address
+								d_router_id_addr = (Inet4Address) Inet4Address.getByName(d_r_id);
+							} catch (Exception e) { // d_router_id_addr type: DataPathID
+								d_router_id_addr =  DataPathID.getByName(d_r_id);
+
+							}
 							d_id_addr=d_router_id_addr;
 						}
 
@@ -773,7 +883,12 @@ public class FileTEDBUpdater {
 							Element dest_it_site_id_el=(Element)dest_it_site_id_nl.item(0);
 							String d_it_site_id=getCharacterDataFromElement(dest_it_site_id_el);
 							log.info("Edge Destination IT_site_id: "+d_it_site_id);
-							Inet4Address d_it_site_id_addr= (Inet4Address) Inet4Address.getByName(d_it_site_id);
+
+							try { // d_it_site_id_addr type: Inet4Address
+								d_it_site_id_addr = (Inet4Address) Inet4Address.getByName(d_it_site_id);
+							} catch (Exception e) { // d_it_site_id_addr type: DataPathID
+								d_it_site_id_addr =  DataPathID.getByName(d_it_site_id);
+							}
 							d_id_addr=d_it_site_id_addr;
 						}
 
@@ -782,7 +897,12 @@ public class FileTEDBUpdater {
 							Element dest_resource_id_el=(Element)dest_resource_id_nl.item(0);
 							String d_resource_id=getCharacterDataFromElement(dest_resource_id_el);
 							log.info("Edge Destination resource_id: "+d_resource_id);
-							Inet4Address d_resource_id_addr= (Inet4Address) Inet4Address.getByName(d_resource_id);
+							try { // d_resource_id_addr type: Inet4Address
+								d_resource_id_addr = (Inet4Address) Inet4Address.getByName(d_resource_id);
+							} catch (Exception e) { // d_resource_id_addr type: DataPathID
+								d_resource_id_addr =  DataPathID.getByName(d_resource_id);
+
+							}
 							d_id_addr=d_resource_id_addr;
 						}
 
@@ -857,8 +977,17 @@ public class FileTEDBUpdater {
 		Logger log = Logger.getLogger("PCEPServer");
 		DirectedWeightedMultigraph<Object, InterDomainEdge> graph = new DirectedWeightedMultigraph<Object, InterDomainEdge>(
 				InterDomainEdge.class);
-		Hashtable<Object, Inet4Address> router_id_domain_ed = new Hashtable<Object, Inet4Address>();
-		HashMap<Inet4Address, Integer >SIDS = new HashMap<Inet4Address,Integer>();
+		Hashtable<Object, Inet4Address> router_id_domain_ed  = new Hashtable<Object, Inet4Address>();
+		Hashtable<Object, DataPathID> router_id_domain_ed_dp = new Hashtable<Object, DataPathID>();
+
+		HashMap<Inet4Address, Integer >SIDS   = new HashMap<Inet4Address,Integer>();
+		HashMap<DataPathID,   Integer >SIDSDP = new HashMap<DataPathID,Integer>();
+
+		Object router_id_addr = null;
+		Object s_router_id_addr = null;
+		Object d_router_id_addr = null;
+
+		log.info("3. DirectedWeightedMultigraph");
 
 		File file = new File(fileName);
 		try {
@@ -887,13 +1016,20 @@ public class FileTEDBUpdater {
 					Element router_id_e = (Element) router_id_node.item(0);
 					String router_id = getCharacterDataFromElement(router_id_e);
 					log.info("El router_id es " + router_id);
-					Inet4Address router_id_addr = (Inet4Address) Inet4Address
-							.getByName(router_id);
+					try { // router_id_addr type: Inet4Address
+						router_id_addr = (Inet4Address) Inet4Address.getByName(router_id);
+					} catch (Exception e) { // router_id_addr type: DataPathID
+						router_id_addr =  DataPathID.getByName(router_id);
+					}
 
 					Element SID_e = (Element) element.getElementsByTagName("sid");
 					if (SID_e!=null)
 					{	int SID = Integer.parseInt(getCharacterDataFromElement(SID_e));
-					SIDS.put(router_id_addr,SID);
+					try {
+						SIDS.put((Inet4Address)router_id_addr,SID);
+					} catch (Exception e) {
+						SIDSDP.put((DataPathID)router_id_addr,SID);
+					}
 					}
 
 					NodeList domain_id_node = element.getElementsByTagName("domain_id");
@@ -918,10 +1054,13 @@ public class FileTEDBUpdater {
 						.item(0);
 				String s_r_id = getCharacterDataFromElement(source_router_id_el);
 				log.info("Edge Source router_id: " + s_r_id);
-				Inet4Address s_router_id_addr = (Inet4Address) Inet4Address
-						.getByName(s_r_id);
-				Inet4Address source_domain_id = router_id_domain_ed
-						.get(s_router_id_addr);
+
+				try { // s_router_id_addr type: Inet4Address
+					s_router_id_addr = (Inet4Address) Inet4Address.getByName(s_r_id);
+				} catch (Exception e) {// s_router_id_addr type: DataPathID
+					s_router_id_addr =  DataPathID.getByName(s_r_id);
+				}
+				Inet4Address source_domain_id = router_id_domain_ed.get(s_router_id_addr);
 				log.info("Edge Source domain_id: " + source_domain_id);
 
 				NodeList source_if_id_nl = source_router_el
@@ -938,10 +1077,12 @@ public class FileTEDBUpdater {
 				Element dest_router_id_el = (Element) dest_router_id_nl.item(0);
 				String d_r_id = getCharacterDataFromElement(dest_router_id_el);
 				log.info("Edge Destination router_id: " + d_r_id);
-				Inet4Address d_router_id_addr = (Inet4Address) Inet4Address
-						.getByName(d_r_id);
-				Inet4Address dest_domain_id = router_id_domain_ed
-						.get(d_router_id_addr);
+				try { // d_router_id_addr type: Inet4Address
+					d_router_id_addr = (Inet4Address) Inet4Address.getByName(d_r_id);
+				} catch (Exception e) { // d_router_id_addr type: DataPathID
+					d_router_id_addr =  DataPathID.getByName(d_r_id);
+				}
+				Inet4Address dest_domain_id = router_id_domain_ed.get(d_router_id_addr);
 				log.info("Destination domain_id: " + dest_domain_id);
 
 				NodeList dest_if_id_nl = dest_el.getElementsByTagName("if_id");
@@ -1023,7 +1164,6 @@ public class FileTEDBUpdater {
 			e.printStackTrace();
 		}
 	}
-
 
 	// IT update del GEYSERS
 

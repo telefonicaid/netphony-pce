@@ -13,6 +13,7 @@ import es.tid.pce.pcep.constructs.Path;
 import es.tid.pce.pcep.constructs.Request;
 import es.tid.pce.pcep.objects.Metric;
 import es.tid.pce.pcep.objects.ObjectParameters;
+import tid.pce.tedb.DataPathID;
 import tid.pce.tedb.IntraDomainEdge;
 import tid.pce.tedb.TE_Information;
 
@@ -58,7 +59,7 @@ public class PCEPUtils {
 		Set<Object> nodes= networkGraph.vertexSet();
 		Iterator<Object> iter=nodes.iterator();
 		Set<IntraDomainEdge> fiberEdges= networkGraph.edgeSet();
-		//log.info("num_labels: "+networkGraph.);
+		DataPathID dpid = new DataPathID();
 		Iterator<IntraDomainEdge> iterFiberLink;
 		while (iter.hasNext()){
 			networkGraphDuplicated.addVertex( iter.next());			

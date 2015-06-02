@@ -25,10 +25,12 @@ import es.tid.pce.pcep.objects.NoPath;
 import es.tid.pce.pcep.objects.ObjectParameters;
 import es.tid.pce.pcep.objects.RequestParameters;
 import es.tid.pce.pcep.objects.tlvs.NoPathTLV;
+import es.tid.rsvp.objects.subobjects.DataPathIDEROSubobject;
 import es.tid.rsvp.objects.subobjects.IPv4prefixEROSubobject;
 import es.tid.rsvp.objects.subobjects.UnnumberIfIDEROSubobject;
 import tid.pce.computingEngine.ComputingRequest;
 import tid.pce.computingEngine.ComputingResponse;
+import tid.pce.tedb.DataPathID;
 import tid.pce.tedb.IntraDomainEdge;
 import tid.pce.tedb.MDTEDB;
 import tid.pce.tedb.SimpleITTEDB;
@@ -36,12 +38,12 @@ import tid.pce.tedb.SimpleTEDB;
 import tid.pce.tedb.TEDB;
 
 public class DefaultSinglePathComputing implements ComputingAlgorithm {
-	
+
 	private SimpleDirectedWeightedGraph<Object,IntraDomainEdge> networkGraph;
 	private Logger log=Logger.getLogger("PCEServer");
 	private ComputingRequest pathReq;
 	private TEDB ted;
-	
+
 	public DefaultSinglePathComputing(ComputingRequest pathReq,TEDB ted ){
 		this.ted=ted;
 		try {
@@ -53,61 +55,74 @@ public class DefaultSinglePathComputing implements ComputingAlgorithm {
 			} else if (ted.getClass().equals(SimpleITTEDB.class) ){
 				this.networkGraph= ((SimpleITTEDB)ted).getDuplicatedNetworkGraph();
 			}
-	
+
 			this.pathReq=pathReq;	
 		}catch (Exception e){
 			this.pathReq=pathReq;
 			this.networkGraph=null;
 		}
-		
+
 	}
-	
+
 	public ComputingResponse call(){
 		long tiempoini =System.nanoTime();
 		ComputingResponse m_resp=new ComputingResponse();
 		Request req=pathReq.getRequestList().get(0);
 		long reqId=req.getRequestParameters().getRequestID();
 		log.info("Processing Single Path Computing Request id: "+reqId);
-		
+
 		//Start creating the response
 		Response response=new Response();
 		RequestParameters rp = new RequestParameters();
 		rp.setRequestID(reqId);
 		response.setRequestParameters(rp);
-		 if (this.networkGraph==null){
-			 NoPath noPath= new NoPath();
+		if (this.networkGraph==null){
+			NoPath noPath= new NoPath();
 			noPath.setNatureOfIssue(ObjectParameters.NOPATH_NOPATH_SAT_CONSTRAINTS);
-				NoPathTLV noPathTLV=new NoPathTLV();	
-				noPath.setNoPathTLV(noPathTLV);				
-				response.setNoPath(noPath);
-				m_resp.addResponse(response);
-				return m_resp;
-		 }
-		
-		
-		
-		//esto hay que cambiarlo para poder leer del GENERALIZED END POINTS
-		//if (getObjectType(req.getEndPoints()))
+			NoPathTLV noPathTLV=new NoPathTLV();	
+			noPath.setNoPathTLV(noPathTLV);				
+			response.setNoPath(noPath);
+			m_resp.addResponse(response);
+			return m_resp;
+		}
+
+
 		EndPoints  EP= req.getEndPoints();	
 		Object source_router_id_addr = null;
 		Object dest_router_id_addr = null;
-		
+		DataPathID source = new DataPathID();
+		DataPathID dest = new DataPathID();	
+
+
 		if (EP.getOT()==ObjectParameters.PCEP_OBJECT_TYPE_ENDPOINTS_IPV4){
 			EndPointsIPv4  ep=(EndPointsIPv4) req.getEndPoints();
 			source_router_id_addr=ep.getSourceIP();
 			dest_router_id_addr=ep.getDestIP();
 		}else if (EP.getOT()==ObjectParameters.PCEP_OBJECT_TYPE_ENDPOINTS_IPV6){
-			
+
 		}
-		
+
 		if (EP.getOT()==ObjectParameters.PCEP_OBJECT_TYPE_GENERALIZED_ENDPOINTS){
 			GeneralizedEndPoints  gep=(GeneralizedEndPoints) req.getEndPoints();
 			if(gep.getGeneralizedEndPointsType()==ObjectParameters.PCEP_GENERALIZED_END_POINTS_TYPE_P2P){
 				P2PEndpoints p2pep= gep.getP2PEndpoints();
-				EndPoint sourceep=p2pep.getSourceEndPoint();
+				EndPoint sourceep = p2pep.getSourceEndPoint();
 				EndPoint destep=p2pep.getDestinationEndPoint();
-				source_router_id_addr=sourceep.getEndPointIPv4TLV().IPv4address;
-				dest_router_id_addr=destep.getEndPointIPv4TLV().IPv4address;
+				try { // router_id_addr type: Inet4Address
+					source_router_id_addr=sourceep.getEndPointIPv4TLV().IPv4address;
+					dest_router_id_addr=destep.getEndPointIPv4TLV().IPv4address;
+				} catch (Exception e) { // router_id_addr type: DataPathID
+					log.info("router_id_addr type: DataPathID, "+sourceep.toString().toUpperCase()+"  "+destep.toString().toUpperCase());
+					source_router_id_addr=(sourceep.getEndPointDataPathTLV().switchID).toUpperCase();
+					dest_router_id_addr=(destep.getEndPointDataPathTLV().switchID).toUpperCase();
+
+					source.setDataPathID((String)source_router_id_addr);
+					dest.setDataPathID((String)dest_router_id_addr);
+
+					source_router_id_addr=source;
+					dest_router_id_addr=dest;
+
+				}
 			}
 			if(gep.getGeneralizedEndPointsType()==ObjectParameters.PCEP_GENERALIZED_END_POINTS_TYPE_P2MP_NEW_LEAVES){
 				P2MPEndpoints p2mpep= gep.getP2MPEndpoints();
@@ -115,7 +130,7 @@ public class DefaultSinglePathComputing implements ComputingAlgorithm {
 				EndPoint sourceep=epandrest.getEndPoint();
 				source_router_id_addr=sourceep.getEndPointIPv4TLV().IPv4address;
 				int cont=0;
-				while (cont<=p2mpep.getEndPointAndRestrictionsList().size()){ //esto est� mal
+				while (cont<=p2mpep.getEndPointAndRestrictionsList().size()){
 					epandrest=p2mpep.getEndPointAndRestrictionsList().get(cont);
 					EndPoint destep=epandrest.getEndPoint();
 					source_router_id_addr=sourceep.getEndPointIPv4TLV().IPv4address;
@@ -124,70 +139,89 @@ public class DefaultSinglePathComputing implements ComputingAlgorithm {
 				}
 			}
 		}
-		//aqu� acaba lo que he a�adido
 
-		
-			
-		//EndPointsIPv4  ep=(EndPointsIPv4) req.getEndPoints();
-		//Object source_router_id_addr=ep.getSourceIP();
-		log.info("Source: "+source_router_id_addr);
-		//Object dest_router_id_addr=ep.getDestIP();
-		log.info("Destination: "+dest_router_id_addr);
-		log.finest("Check if we have source and destination in our TED");
-		((SimpleTEDB)ted).printTopology();
-		
+
+
+		//		Object source_router_id_addr=ep.getSourceIP();
+		//		Object dest_router_id_addr=ep.getDestIP();			
+		//log.info("Algorithm->  Source:: "+source_router_id_addr+" Destination:: "+dest_router_id_addr);
+		log.info("Algorithm->  Source:: "+source_router_id_addr+" Destination:: "+dest_router_id_addr);
+		log.info("Check if we have source and destination in our TED");
+		//((SimpleTEDB)ted).printTopology();
+		//log.info("networkGraph DefaultSinglePathComputing:: "+networkGraph.toString());
+
 		if (!((networkGraph.containsVertex(source_router_id_addr))&&(networkGraph.containsVertex(dest_router_id_addr)))){
-			log.warning("Source or destination are NOT in the TED");	
+			log.warning("DefaultSinglePathComputing:: Source or destination are NOT in the TED");	
 			NoPath noPath= new NoPath();
 			noPath.setNatureOfIssue(ObjectParameters.NOPATH_NOPATH_SAT_CONSTRAINTS);
 			NoPathTLV noPathTLV=new NoPathTLV();
 			if (!((networkGraph.containsVertex(source_router_id_addr)))){
-				log.finest("Unknown source");	
+				log.warning("Unknown source");	
 				noPathTLV.setUnknownSource(true);	
 			}
 			if (!((networkGraph.containsVertex(dest_router_id_addr)))){
-				log.finest("Unknown destination");
+				log.warning("Unknown destination");
 				noPathTLV.setUnknownDestination(true);	
 			}
-			
+
 			noPath.setNoPathTLV(noPathTLV);				
 			response.setNoPath(noPath);
 			m_resp.addResponse(response);
 			return m_resp;
 		}
-			
+
 		log.finest("Computing path");
 		//long tiempoini =System.nanoTime();
 		DijkstraShortestPath<Object,IntraDomainEdge>  dsp=new DijkstraShortestPath<Object,IntraDomainEdge> (networkGraph, source_router_id_addr, dest_router_id_addr);
 		GraphPath<Object,IntraDomainEdge> gp=dsp.getPath();
-	
+
 		log.finest("Creating response");
 		if (  gp==null){
-			log.warning("No Path Found");	
+			log.warning("DefaultSinglePathComputing:: No Path Found");	
 			NoPath noPath= new NoPath();
 			noPath.setNatureOfIssue(ObjectParameters.NOPATH_NOPATH_SAT_CONSTRAINTS);				
 			response.setNoPath(noPath);
 			m_resp.addResponse(response);
 			return m_resp;
 		}
-	
+
 		m_resp.addResponse(response);
 		Path path=new Path();
 		ExplicitRouteObject ero= new ExplicitRouteObject();
 		List<IntraDomainEdge> edge_list=gp.getEdgeList();
 		int i;
 		for (i=0;i<edge_list.size();i++){
-			UnnumberIfIDEROSubobject eroso= new UnnumberIfIDEROSubobject();
-			eroso.setRouterID((Inet4Address)edge_list.get(i).getSource());
-			eroso.setInterfaceID(edge_list.get(i).getSrc_if_id());
-			eroso.setLoosehop(false);
-			ero.addEROSubobject(eroso);
-		 }
+			UnnumberIfIDEROSubobject eroso = new UnnumberIfIDEROSubobject();
+			DataPathIDEROSubobject erosodp = new DataPathIDEROSubobject();
+			try { //Inet4Address
+				eroso.setRouterID((Inet4Address)edge_list.get(i).getSource());
+				eroso.setInterfaceID(edge_list.get(i).getSrc_if_id());
+				eroso.setLoosehop(false);
+				ero.addEROSubobject(eroso);
+
+			} catch (Exception e) { //DataPathID
+				erosodp.setDataPath((DataPathID)edge_list.get(i).getSource());
+				erosodp.setLoosehop(false);
+				ero.addEROSubobject(erosodp);
+			}
+			
+		}
 		IPv4prefixEROSubobject eroso= new IPv4prefixEROSubobject();
-		eroso.setIpv4address((Inet4Address)edge_list.get(edge_list.size()-1).getTarget());
-		eroso.setPrefix(32);
-		ero.addEROSubobject(eroso);
+		DataPathIDEROSubobject erosodp = new DataPathIDEROSubobject();
+		
+		try {
+			eroso.setIpv4address((Inet4Address)edge_list.get(edge_list.size()-1).getTarget());
+			eroso.setPrefix(32);
+			ero.addEROSubobject(eroso);
+		} catch (Exception e) {
+			erosodp.setDataPath((DataPathID)edge_list.get(edge_list.size()-1).getTarget());
+			ero.addEROSubobject(erosodp);
+		}
+		
+		log.info("Algorithm.ero :: "+ero.toString());
 		path.seteRO(ero);
+		log.info("Algorithm.path:: "+path.toString());
+		
 		if (req.getMetricList().size()!=0){
 			Metric metric=new Metric();
 			metric.setMetricType(req.getMetricList().get(0).getMetricType() );
@@ -203,7 +237,7 @@ public class DefaultSinglePathComputing implements ComputingAlgorithm {
 		Monitoring monitoring=pathReq.getMonitoring();
 		if (monitoring!=null){
 			if (monitoring.isProcessingTimeBit()){
-				
+
 			}
 		}
 		return m_resp;

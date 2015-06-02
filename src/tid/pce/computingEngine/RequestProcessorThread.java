@@ -10,9 +10,11 @@ import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 
 import es.tid.pce.pcep.PCEPProtocolViolationException;
+import es.tid.pce.pcep.constructs.EndPoint;
 import es.tid.pce.pcep.constructs.ErrorConstruct;
 import es.tid.pce.pcep.constructs.MetricPCE;
 import es.tid.pce.pcep.constructs.Notify;
+import es.tid.pce.pcep.constructs.P2PEndpoints;
 import es.tid.pce.pcep.constructs.Request;
 import es.tid.pce.pcep.constructs.Response;
 import es.tid.pce.pcep.messages.PCEPError;
@@ -30,6 +32,7 @@ import es.tid.pce.pcep.objects.PCEPErrorObject;
 import es.tid.pce.pcep.objects.PceIdIPv4;
 import es.tid.pce.pcep.objects.ProcTime;
 import es.tid.pce.pcep.objects.RequestParameters;
+import es.tid.pce.pcep.objects.tlvs.EndPointDataPathTLV;
 import es.tid.pce.pcep.objects.tlvs.NoPathTLV;
 import es.tid.pce.pcep.objects.tlvs.PathReservationTLV;
 import es.tid.rsvp.objects.subobjects.EROSubobject;
@@ -66,7 +69,7 @@ public class RequestProcessorThread extends Thread{
 	 * The queue to read the requests
 	 */
 	private LinkedBlockingQueue<ComputingRequest> pathComputingRequestQueue;
-	
+
 
 
 	private LinkedBlockingQueue<ComputingRequest> pathComputingRequestRetryQueue;
@@ -85,17 +88,17 @@ public class RequestProcessorThread extends Thread{
 	 * List of algorithms for individual requests 
 	 */
 	private Hashtable<Integer,ComputingAlgorithmManagerSSON> singleAlgorithmListsson;
-	
+
 	/**
 	 * List of algorithms for synchronized requests
 	 */
 	private Hashtable<Integer,ComputingAlgorithmManager> svecAlgorithmList;
-	
+
 	/**
 	 * List of algorithms for synchronized requests
 	 */
 	private Hashtable<Integer,ComputingAlgorithmManagerSSON> svecAlgorithmListsson;
-	
+
 	/**
 	 * Logger
 	 */
@@ -121,40 +124,40 @@ public class RequestProcessorThread extends Thread{
 	 */
 	private Inet4Address source;
 	private Inet4Address dest;
-	
+
 	private OperationsCounter opCounter;
 
 	private boolean isChildPCE;
-	
+
 	//private boolean isCompleteAuxGraph;
-	
+
 	private boolean isMultilayer=false;
 
 	//private PrintWriter pw;
 	private boolean analyzeRequestTime;
-	
+
 	private boolean useMaxReqTime;
-	
+
 	private double maxProcTime;
-	
+
 	private long numReqProcessed=0;
 	private long numAnswersSent=0;
 	private long numNoPathOLSent=0;
 
 	private ReservationManager reservationManager;
-	
+
 	/*** STRONGEST: Collaborative PCEs ***/
 	CollaborationPCESessionManager collaborationPCESessionManager;
 
 
-/**
- * Constructor
- * @param queue
- * @param ted
- * @param cpcerm
- * @param pathComputingRequestRetryQueue
- * @param analyzeRequestTime
- */
+	/**
+	 * Constructor
+	 * @param queue
+	 * @param ted
+	 * @param cpcerm
+	 * @param pathComputingRequestRetryQueue
+	 * @param analyzeRequestTime
+	 */
 	public RequestProcessorThread(LinkedBlockingQueue<ComputingRequest> queue,TEDB ted,ParentPCERequestManager cpcerm, LinkedBlockingQueue<ComputingRequest> pathComputingRequestRetryQueue, boolean analyzeRequestTime){
 		useMaxReqTime=false;
 		this.pathComputingRequestQueue=queue;
@@ -225,9 +228,9 @@ public class RequestProcessorThread extends Thread{
 		if (useMaxReqTime==true){
 			log.info("USING MAX REQ TIME");
 		}
-		
+
 	}
-	
+
 	/**
 	 * SERGIO
 	 * Constructor 
@@ -270,9 +273,9 @@ public class RequestProcessorThread extends Thread{
 		if (useMaxReqTime==true){
 			log.info("USING MAX REQ TIME");
 		}
-		
+
 	}
-	
+
 	/**
 	 * Constructor para collaborative PCEs
 	 * @param queue
@@ -347,11 +350,11 @@ public class RequestProcessorThread extends Thread{
 		if (useMaxReqTime==true){
 			log.info("USING MAX REQ TIME");
 		}
-		
+
 		this.collaborationPCESessionManager=collaborationPCESessionManager;
 	}
 
-	
+
 	/**
 	 * Method to register an algorithm
 	 * @param rule
@@ -366,7 +369,7 @@ public class RequestProcessorThread extends Thread{
 		}
 
 	}
-	
+
 	/**
 	 * Method to register an algorithm
 	 * @param rule
@@ -428,23 +431,36 @@ public class RequestProcessorThread extends Thread{
 			try{
 				//For the IT case
 				if (ted.isITtedb()){
-					log.info("Processing New Path Computing request, id: "+pathCompReq.getRequestList().get(0).toString());		source =(((GeneralizedEndPoints)pathCompReq.getRequestList().get(0).getEndPoints()).getP2PEndpoints().getSourceEndPoint().getEndPointIPv4TLV().getIPv4address());
+					log.info("Processing New Path Computing request, id: "+pathCompReq.getRequestList().get(0).toString());		
 					source =(((GeneralizedEndPoints)pathCompReq.getRequestList().get(0).getEndPoints()).getP2PEndpoints().getSourceEndPoint().getEndPointIPv4TLV().getIPv4address());
 					dest =(((GeneralizedEndPoints)pathCompReq.getRequestList().get(0).getEndPoints()).getP2PEndpoints().getDestinationEndPoint().getEndPointIPv4TLV().getIPv4address());
 				}else {
-					if (pathCompReq.getRequestList().get(0).getEndPoints() instanceof EndPointsUnnumberedIntf){
-						source = ((EndPointsUnnumberedIntf)pathCompReq.getRequestList().get(0).getEndPoints()).getSourceIP();
-						dest = ((EndPointsUnnumberedIntf)pathCompReq.getRequestList().get(0).getEndPoints()).getDestIP();
-						sourceIF=((EndPointsUnnumberedIntf)pathCompReq.getRequestList().get(0).getEndPoints()).getSourceIF();
-						destIF=((EndPointsUnnumberedIntf)pathCompReq.getRequestList().get(0).getEndPoints()).getDestIF();
-						log.info("SubObjeto: EP-Unnumbered Interface: "+((EndPointsUnnumberedIntf)pathCompReq.getRequestList().get(0).getEndPoints()).toString());
-						EndPointsIPv4 ep= new EndPointsIPv4();
-						ep.setDestIP(dest);
-						ep.setSourceIP(source);
-						pathCompReq.getRequestList().get(0).setEndPoints(ep);
+					try {  //EndPointsIPv4
+						if (pathCompReq.getRequestList().get(0).getEndPoints() instanceof GeneralizedEndPoints){
+							source = ((EndPointsUnnumberedIntf)pathCompReq.getRequestList().get(0).getEndPoints()).getSourceIP();
+							dest = ((EndPointsUnnumberedIntf)pathCompReq.getRequestList().get(0).getEndPoints()).getDestIP();
+							sourceIF=((EndPointsUnnumberedIntf)pathCompReq.getRequestList().get(0).getEndPoints()).getSourceIF();
+							destIF=((EndPointsUnnumberedIntf)pathCompReq.getRequestList().get(0).getEndPoints()).getDestIF();
+							log.info("SubObjeto: EP-Unnumbered Interface: "+((EndPointsUnnumberedIntf)pathCompReq.getRequestList().get(0).getEndPoints()).toString());
+							EndPointsIPv4 ep= new EndPointsIPv4();
+							ep.setDestIP(dest);
+							ep.setSourceIP(source);
+							pathCompReq.getRequestList().get(0).setEndPoints(ep);
+						}
+						source = ((EndPointsIPv4)pathCompReq.getRequestList().get(0).getEndPoints()).getSourceIP();
+						dest = ((EndPointsIPv4)pathCompReq.getRequestList().get(0).getEndPoints()).getDestIP();
+					} catch (Exception e) {  //GeneralizedEndPoints
+						if (pathCompReq.getRequestList().get(0).getEndPoints() instanceof GeneralizedEndPoints){
+
+							P2PEndpoints p2pep = ((GeneralizedEndPoints)pathCompReq.getRequestList().get(0).getEndPoints()).getP2PEndpoints();			
+							log.info("RequestProcessorThread GeneralizedEndPoints -> sourceDataPath:: "+p2pep.getSourceEndPoint()+" destDataPath :: "+p2pep.getDestinationEndPoint());
+
+							GeneralizedEndPoints ep= new GeneralizedEndPoints();
+							ep.setP2PEndpoints(p2pep); 
+
+							pathCompReq.getRequestList().get(0).setEndPoints(ep);
+						}
 					}
-					source = ((EndPointsIPv4)pathCompReq.getRequestList().get(0).getEndPoints()).getSourceIP();
-					dest = ((EndPointsIPv4)pathCompReq.getRequestList().get(0).getEndPoints()).getDestIP();
 				}
 			}catch (Exception e){
 				//If fails, we send NoPath, by now (reasons later...)
@@ -469,15 +485,15 @@ public class RequestProcessorThread extends Thread{
 				//FIXME: hay que poner un nuevo requestID, si no... la podemos liar
 				pcreq.addRequest(request);
 				PCEPResponse p_rep = cpcerm.newRequest(pcreq);
-				
-				
+
+
 				if (p_rep==null){
 					log.warning("Parent doesn't answer");
 					this.sendNoPath(pathCompReq);
 				}else {
 					log.info("RESP: "+p_rep.toString());
 				}
-				
+
 				ComputingResponse pcepresp =  new ComputingResponse();
 				pcepresp.setResponsetList(p_rep.getResponseList());
 				try 
@@ -489,8 +505,8 @@ public class RequestProcessorThread extends Thread{
 				{
 					log.info(UtilsFunctions.exceptionToString(e1));
 				}
-				
-				
+
+
 				try {
 					log.info("oNE OF THE NODES IS NOT IN THE DOMAIN. Send Request to parent PCE,pcepresp:"+pcepresp+",pathCompReq.getOut():"+pathCompReq.getOut());
 					pathCompReq.getOut().write(p_rep.getBytes());
@@ -597,12 +613,12 @@ public class RequestProcessorThread extends Thread{
 							nopath=true;
 						}	
 					}
-																		
+
 					if (nopath==false){
 						ObjectiveFunction objectiveFunctionObject=pathCompReq.getRequestList().get(0).getObjectiveFunction();
 						if (objectiveFunctionObject!=null){    				
 							of=objectiveFunctionObject.getOFcode();
-							
+
 							log.fine("ObjectiveFunction code "+of);
 							algortithmManager =singleAlgorithmList.get(new Integer(of));
 							if (singleAlgorithmListsson != null){
@@ -638,6 +654,8 @@ public class RequestProcessorThread extends Thread{
 								}
 								else {
 									log.info("Choosing default algotithm 1");
+									log.info("pathCompReq:: "+pathCompReq.toString());
+									//log.info("ted:: "+ted.printTopology());
 									DefaultSinglePathComputing dspc=new DefaultSinglePathComputing(pathCompReq,ted);
 									ft=new ComputingTask(dspc);
 								}
@@ -661,7 +679,7 @@ public class RequestProcessorThread extends Thread{
 										ComputingAlgorithm cpr=algortithmManager.getComputingAlgorithm(pathCompReq, ted);
 										ft=new ComputingTask(cpr);
 									}
-									
+
 								}
 							}
 						}
@@ -680,7 +698,7 @@ public class RequestProcessorThread extends Thread{
 				try {
 					ft.run();
 					rep=ft.get(pathCompReq.getMaxTimeInPCE(),TimeUnit.MILLISECONDS);
-					
+
 				}
 				catch(Exception e){
 					log.warning("Computation failed: "+e.getMessage()+" || "+UtilsFunctions.exceptionToString(e)+"  || " +",MAXTIME: "+pathCompReq.getMaxTimeInPCE());
@@ -767,14 +785,14 @@ public class RequestProcessorThread extends Thread{
 								}
 							}
 							//log.info("Response sent number "+rep.getResponseList().getFirst().getRequestParameters().getRequestID()+",rep.getPathList().get(0)"+rep.getResponse(0).getPathList().get(0));
-						
+
 							/*** STRONGEST: Collaborative PCEs ***/	
 							//FIXME: pasarlo al reservation manager							
 							if (collaborationPCESessionManager!=null){
 								if (!(rep.getResponseList().isEmpty())){
 									if (!(rep.getResponseList().get(0).getNoPath()!=null)){
 										PCEPNotification m_not = createNotificationMessage(rep,pathCompReq.getRequestList().get(0).getReservation().getTimer());				
-								
+
 										collaborationPCESessionManager.sendNotifyMessage(m_not);
 									}
 								}
@@ -851,7 +869,7 @@ public class RequestProcessorThread extends Thread{
 
 	private void trappingResponse(ComputingResponse resp, long sourceIF, long destIF){
 		//Ancora no fa niente
-		
+
 		log.info("First ERO SubObject type "+resp.getResponseList().get(0).getPath(0).geteRO().getEROSubobjectList().getFirst().getClass());
 		log.info("Second ERO SubObject type "+resp.getResponseList().get(0).getPath(0).geteRO().getEROSubobjectList().get(1).getClass());
 		log.info("Last ERO SubObject type "+resp.getResponseList().get(0).getPath(0).geteRO().getEROSubobjectList().getLast().getClass());
@@ -859,14 +877,14 @@ public class RequestProcessorThread extends Thread{
 
 		EROSubobject label= resp.getResponseList().get(0).getPath(0).geteRO().getEROSubobjectList().get(1);
 		resp.getResponseList().get(0).getPath(0).geteRO().getEROSubobjectList().add(0, label);
-		
+
 		UnnumberIfIDEROSubobject firsteroso= new UnnumberIfIDEROSubobject();
 		firsteroso.setRouterID(firstIP);
 		firsteroso.setInterfaceID(sourceIF);
 		firsteroso.setLoosehop(false);
 		resp.getResponseList().get(0).getPath(0).geteRO().getEROSubobjectList().add(0, firsteroso);
 
-		
+
 		int size=resp.getResponseList().get(0).getPath(0).geteRO().getEROSubobjectList().size();
 		Inet4Address lastIP=((IPv4prefixEROSubobject)resp.getResponseList().get(0).getPath(0).geteRO().getEROSubobjectList().getLast()).getIpv4address();
 		resp.getResponseList().get(0).getPath(0).geteRO().getEROSubobjectList().removeLast();
@@ -903,17 +921,17 @@ public class RequestProcessorThread extends Thread{
 			// TODO Auto-generated catch block
 			e3.printStackTrace();
 		}
-		
+
 		log.severe("No path sent... should we send");
-		
+
 	}
 
 	public double getMaxProcTime() {
 		return maxProcTime;
 	}
-	
+
 	/*** STRONGEST: Collaborative PCEs ***/
-	
+
 	public PCEPNotification createNotificationMessage(ComputingResponse resp,long timer ){
 		log.info("Timer "+timer);
 		PCEPNotification notificationMsg = new PCEPNotification();

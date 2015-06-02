@@ -116,7 +116,8 @@ public class RequestDispatcher {
 	    threads = new RequestProcessorThread[nThreads];
 
         for (int i=0; i<this.nThreads; i++) {
-        	log.info("Starting Request Processor Thread!");	        	
+        	//log.info("TEEED:: "+ted.printTopology());
+        	log.info("1. Starting Request Processor Thread!");	        	
             threads[i] = new RequestProcessorThread(pathComputingRequestQueue,ted,cpcerm,pathComputingRequestRetryQueue,analyzeRequestTime,useMaxReqTime, reservationManager);
             threads[i].setPriority(Thread.MAX_PRIORITY);
             threads[i].start();
@@ -167,7 +168,7 @@ public class RequestDispatcher {
 		    threads = new RequestProcessorThread[nThreads];
 
 	        for (int i=0; i<this.nThreads; i++) {
-	        	log.info("Starting Request Processor Thread");	        	
+	        	log.info("Starting Request Processor Thread!");        	
 	            threads[i] = new RequestProcessorThread(pathComputingRequestQueue,ted,cpcerm,pathComputingRequestRetryQueue,analyzeRequestTime, collaborationPCESessionManager);
 	            threads[i].setPriority(Thread.MAX_PRIORITY);
 	            threads[i].start();
@@ -194,7 +195,7 @@ public class RequestDispatcher {
 	    threads = new RequestProcessorThread[nThreads];
 
         for (int i=0; i<this.nThreads; i++) {
-        	log.info("Starting Request Processor Thread!");	        	
+        	log.info("Starting Request Processor Thread!");       	
             threads[i] = new RequestProcessorThread(pathComputingRequestQueue,ted,cpcerm,pathComputingRequestRetryQueue,analyzeRequestTime,useMaxReqTime, reservationManager,collaborationPCESessionManager);
             threads[i].setPriority(Thread.MAX_PRIORITY);
             threads[i].start();
