@@ -33,7 +33,9 @@ import tid.pce.computingEngine.ComputingRequest;
 import tid.pce.computingEngine.ComputingResponse;
 import tid.pce.computingEngine.algorithms.AlgorithmReservation;
 import tid.pce.computingEngine.algorithms.ComputingAlgorithm;
+import tid.pce.computingEngine.algorithms.GraphFunctions;
 import tid.pce.computingEngine.algorithms.PCEPUtils;
+import es.tid.pce.pcep.objects.ExcludeRouteObject;
 import tid.pce.server.wson.ReservationManager;
 import tid.pce.tedb.DomainTEDB;
 import tid.pce.tedb.IntraDomainEdge;
@@ -188,6 +190,12 @@ public class AURE_Algorithm implements ComputingAlgorithm {
 		try{
 			while (!end){
 				SimpleDirectedWeightedGraph<Object,IntraDomainEdge> graphLambda=preComp.getNetworkGraphs().get(lambda); 
+
+				if(req.getXro()!=null){
+					ExcludeRouteObject XRO = req.getXro();
+					log.info("AURE_Algorithm XRO:: "+ XRO.toString());
+					GraphFunctions.processXRO(XRO, graphLambda);
+				}
 				DijkstraShortestPath<Object,IntraDomainEdge>  dsp=new DijkstraShortestPath<Object,IntraDomainEdge> (graphLambda, source_router_id_addr, dest_router_id_addr);
 				GraphPath<Object,IntraDomainEdge> gp=dsp.getPath();
 				if (gp==null){				
@@ -208,7 +216,7 @@ public class AURE_Algorithm implements ComputingAlgorithm {
 					}else {
 						lambda=lambda+1;
 					}
-					
+
 				}
 				else {
 					if (gp.getWeight()<max_metric){

@@ -16,6 +16,7 @@ public class Node {
 	String parentRouter;
 	String layer;
 	String configurationMode;
+	String dataPathID;
 	/**Router Vendor Type*/
 	String routerType;
 	/**IOS version*/
@@ -27,6 +28,12 @@ public class Node {
 	}
 	public void setUnnumberedIntfList(ArrayList<String> unnumberedIntfList) {
 		this.unnumberedIntfList = unnumberedIntfList;
+	}
+	public String getDataPathID() {
+		return dataPathID;
+	}
+	public void setDataPathID(String dpid) {
+		this.dataPathID = dpid;
 	}
 	public String getConfigurationMode() {
 		return configurationMode;

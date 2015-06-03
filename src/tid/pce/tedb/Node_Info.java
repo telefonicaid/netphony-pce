@@ -13,6 +13,7 @@ public class Node_Info {
 
 	//caracterizacion
 	private Inet4Address as_number, area_id, bgpls_ident, ipv4AddressLocalNode= null;
+	private DataPathID dataPathIDLocalNode;
 	private boolean overload_bit = false;
 	private boolean attached_bit = false;
 	private boolean external_bit = false;
@@ -121,11 +122,19 @@ public class Node_Info {
 	public Inet4Address getIpv4AddressLocalNode() {
 		return ipv4AddressLocalNode;
 	}
-
+	
 	public void setIpv4AddressLocalNode(Inet4Address ipv4AddressLocalNode) {
 		this.ipv4AddressLocalNode = ipv4AddressLocalNode;
 	}
 
+	public DataPathID getDataPathLocalNode() {
+		return dataPathIDLocalNode;
+	}
+	
+	public void setDataPathLocalNode(DataPathID dataPathLocalNode) {
+		this.dataPathIDLocalNode = dataPathLocalNode;
+	}
+	
 	public Inet4Address getAs_number() {
 		return as_number;
 	}
