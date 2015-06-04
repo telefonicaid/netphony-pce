@@ -70,11 +70,11 @@ public class QuickClient {
 		String ip;
 		int port;
 
-
-		ip = args[0];
-		port = Integer.valueOf(args[1]).intValue();
+		int offset=0;
+		ip = args[offset];
+		port = Integer.valueOf(args[offset+1]).intValue();
 		String localbind=null;
-		int offset=2;
+		offset=offset+2;
 		
 		
 		PCEPSessionsInformation pcepSessionManager=new PCEPSessionsInformation();
@@ -528,12 +528,17 @@ public class QuickClient {
 			}
 			
 			
-			if (args[offset].equals("-ero")){
+			
+			if (args[offset].equals("-bw")){
 				offset=offset+1;
-				if (args[offset].equals("-prev")){
+				if (args[offset].equals("m")){
 					offset=offset+1;
-					PCEPResponse pr=(PCEPResponse)messageList.getLast();
-					lsp_ini.setEro(pr.getResponse(0).getPath(0).geteRO());
+					BandwidthRequestedGeneralizedBandwidth bwgw = new BandwidthRequestedGeneralizedBandwidth();				
+					GeneralizedBandwidthSSON gs = new GeneralizedBandwidthSSON();
+					bwgw.setGeneralizedBandwidth(gs);
+					gs.setM(Integer.valueOf(args[offset+1]).intValue());
+					offset=offset+1;
+					lsp_ini.setBandwidth(bwgw);
 				}	
 			}	
 			

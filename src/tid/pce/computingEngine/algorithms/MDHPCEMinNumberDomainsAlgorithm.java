@@ -16,9 +16,14 @@ import es.tid.pce.pcep.constructs.EndPointAndRestrictions;
 import es.tid.pce.pcep.constructs.NCF;
 import es.tid.pce.pcep.constructs.P2MPEndpoints;
 import es.tid.pce.pcep.constructs.P2PEndpoints;
+import es.tid.pce.pcep.constructs.PCEPIntiatedLSP;
 import es.tid.pce.pcep.constructs.Path;
 import es.tid.pce.pcep.constructs.Request;
 import es.tid.pce.pcep.constructs.Response;
+import es.tid.pce.pcep.constructs.StateReport;
+import es.tid.pce.pcep.messages.PCEPInitiate;
+import es.tid.pce.pcep.messages.PCEPMessageTypes;
+import es.tid.pce.pcep.messages.PCEPReport;
 import es.tid.pce.pcep.messages.PCEPRequest;
 import es.tid.pce.pcep.objects.BitmapLabelSet;
 import es.tid.pce.pcep.objects.EndPoints;
@@ -26,17 +31,21 @@ import es.tid.pce.pcep.objects.EndPointsIPv4;
 import es.tid.pce.pcep.objects.ExcludeRouteObject;
 import es.tid.pce.pcep.objects.ExplicitRouteObject;
 import es.tid.pce.pcep.objects.GeneralizedEndPoints;
+import es.tid.pce.pcep.objects.LSP;
 import es.tid.pce.pcep.objects.LabelSetInclusiveList;
 import es.tid.pce.pcep.objects.Monitoring;
 import es.tid.pce.pcep.objects.NoPath;
 import es.tid.pce.pcep.objects.ObjectParameters;
 import es.tid.pce.pcep.objects.RequestParameters;
+import es.tid.pce.pcep.objects.SRP;
 import es.tid.pce.pcep.objects.subobjects.UnnumberIfIDXROSubobject;
 import es.tid.pce.pcep.objects.subobjects.XROSubObjectValues;
 import es.tid.pce.pcep.objects.subobjects.XROSubobject;
 import es.tid.pce.pcep.objects.tlvs.EndPointIPv4TLV;
 import es.tid.pce.pcep.objects.tlvs.NoPathTLV;
+import es.tid.pce.pcep.objects.tlvs.SymbolicPathNameTLV;
 import es.tid.pce.pcep.objects.tlvs.UnnumberedEndpointTLV;
+import es.tid.pce.pcep.objects.tlvs.subtlvs.SymbolicPathNameSubTLV;
 import es.tid.rsvp.constructs.gmpls.DWDMWavelengthLabel;
 import es.tid.rsvp.objects.subobjects.GeneralizedLabelEROSubobject;
 import es.tid.rsvp.objects.subobjects.IPv4prefixEROSubobject;
@@ -83,7 +92,12 @@ public class MDHPCEMinNumberDomainsAlgorithm implements ComputingAlgorithm{
 		long tiempoini =System.nanoTime(); // To measure the time, 
 		ComputingResponse m_resp=new ComputingResponse(); //Create the response of the computation.
 		m_resp.setReachabilityManager(reachabilityManager);
-		m_resp.setEncodingType(pathReq.getEcodingType());
+		if (pathReq.getEcodingType()==PCEPMessageTypes.MESSAGE_INITIATE){
+			m_resp.setEncodingType(PCEPMessageTypes.MESSAGE_REPORT);
+		}
+		else {
+			m_resp.setEncodingType(pathReq.getEcodingType());
+		}
 
 		Request req=pathReq.getRequestList().get(0); // Get the original request
 		long reqId=req.getRequestParameters().getRequestID(); //Get the request ID.
@@ -615,6 +629,66 @@ public class MDHPCEMinNumberDomainsAlgorithm implements ComputingAlgorithm{
 			}
 
 		}
+		
+		
+		//OSCAR INI
+		
+		if (pathReq.getEcodingType()==PCEPMessageTypes.MESSAGE_INITIATE){
+			LinkedList<PCEPInitiate> iniList= new LinkedList<PCEPInitiate>();
+			for (i=0;i<respList.size();++i){
+				PCEPInitiate ini = new PCEPInitiate();
+				PCEPIntiatedLSP inilsp = new PCEPIntiatedLSP();
+				ini.getPcepIntiatedLSPList().add(inilsp);
+				SRP srp= new SRP();
+				srp.setSRP_ID_number(ParentPCESession.getNewReqIDCounter());
+				inilsp.setRsp(srp);
+				inilsp.setEndPoint(reqList.get(i).getRequest(0).getEndPoints());
+				inilsp.setEro(respList.get(i).getResponse(0).getPath(0).geteRO());
+				LSP lsp =new LSP();
+				lsp.setLspId(0);
+				SymbolicPathNameTLV symbolicPathNameTLV_tlv = new SymbolicPathNameTLV();
+				String name ="IDEALIST "+ParentPCESession.getNewReqIDCounter();
+				byte [] symbolicPathNameID= name.getBytes();
+				symbolicPathNameTLV_tlv.setSymbolicPathNameID(symbolicPathNameID);
+				
+				lsp.setSymbolicPathNameTLV_tlv(symbolicPathNameTLV_tlv);
+				inilsp.setLsp(lsp);
+				iniList.add(ini);
+			}
+			try {
+				respList= childPCERequestManager.executeInitiates(iniList, domainList);	
+			}catch (Exception e){
+				log.severe("PROBLEM SENDING THE INITIATES");
+				NoPath noPath2= new NoPath();
+				noPath2.setNatureOfIssue(ObjectParameters.NOPATH_NOPATH_SAT_CONSTRAINTS);
+				NoPathTLV noPathTLV=new NoPathTLV();
+				noPath2.setNoPathTLV(noPathTLV);				
+				response.setNoPath(noPath2);
+				m_resp.addResponse(response);
+				return m_resp;
+			}
+		}
+		
+		for (i=0;i<respList.size();++i){
+			if (respList.get(i)==null){
+				childrenFailed=true;
+			}
+		}
+		if (childrenFailed) {
+			log.warning("Some child has failed to initiate");
+
+		} else {
+			StateReport sr = new StateReport();
+			LSP lsp=new LSP();
+			sr.setLSP(lsp);
+			m_resp.addReport(sr);
+		}
+		
+		
+		
+		
+		//OSCAR FIN
+		
 		long tiempofin =System.nanoTime();
 		long tiempotot=tiempofin-tiempoini;
 		log.info("Ha tardado "+tiempotot+" nanosegundos");

@@ -21,11 +21,13 @@ import es.tid.pce.pcep.objects.OPEN;
 import es.tid.pce.pcep.objects.ObjectParameters;
 import es.tid.pce.pcep.objects.PCEPErrorObject;
 import es.tid.pce.pcep.objects.tlvs.DomainIDTLV;
+import es.tid.pce.pcep.objects.tlvs.GMPLSCapabilityTLV;
 import es.tid.pce.pcep.objects.tlvs.LSPDatabaseVersionTLV;
 import es.tid.pce.pcep.objects.tlvs.PCE_ID_TLV;
 import es.tid.pce.pcep.objects.tlvs.PCE_Redundancy_Group_Identifier_TLV;
 import es.tid.pce.pcep.objects.tlvs.SRCapabilityTLV;
 import es.tid.pce.pcep.objects.tlvs.StatefulCapabilityTLV;
+import tid.pce.management.PcepCapability;
 import tid.pce.server.RequestQueue;
 
 /**
@@ -37,6 +39,19 @@ import tid.pce.server.RequestQueue;
  *
  */
 public abstract class GenericPCEPSession extends Thread implements PCEPSession {
+	
+	/**
+	 * Capabilities of the LOCAL Entity
+	 */
+	
+	protected PcepCapability localPcepCapability;
+	
+	/**
+	 * Capabilities of the Peer Entity
+	 */
+	
+	protected PcepCapability peerPcepCapability;
+	
 
 	/**
 	 * PCEP Session Manager
@@ -83,6 +98,11 @@ public abstract class GenericPCEPSession extends Thread implements PCEPSession {
 	 */
 	protected Socket socket = null; 
 
+	/**
+	 * IP Address of the remote PCEP Peer
+	 */
+	protected Inet4Address remotePeerIP;
+	
 	/**
 	 * DataOutputStream to send messages to the peer PCC
 	 */
@@ -183,6 +203,7 @@ public abstract class GenericPCEPSession extends Thread implements PCEPSession {
 	public GenericPCEPSession(PCEPSessionsInformation pcepSessionManager){
 		this.pcepSessionManager=pcepSessionManager;
 		this.newSessionId();
+		this.localPcepCapability=pcepSessionManager.getLocalPcepCapability();
 		this.pcepSessionManager.addSession(this.sessionId, this);
 		log=Logger.getLogger("PCCClient");
 	}
@@ -433,13 +454,13 @@ public abstract class GenericPCEPSession extends Thread implements PCEPSession {
 
 	public void killSession(){	
 		log.info("Killing Session");
+		pcepSessionManager.notifyPeerSessionInactive((Inet4Address)this.socket.getInetAddress());
 		timer.cancel();
 		this.endConnections();
 		this.cancelDeadTimer();
 		this.cancelKeepAlive();
 		this.endSession();
 		this.pcepSessionManager.deleteSession(this.sessionId);
-		log.info("Interrupting thread!!!!");
 		this.interrupt();				
 	}
 
@@ -461,7 +482,7 @@ public abstract class GenericPCEPSession extends Thread implements PCEPSession {
 	 */
 
 	protected void initializePCEPSession(boolean zeroDeadTimerAccepted, int minimumKeepAliveTimerAccepted, int maxDeadTimerAccepted, boolean isParentPCE, boolean requestsParentPCE, Inet4Address domainId, Inet4Address pceId, int databaseVersion){
-
+		remotePeerIP=(Inet4Address)socket.getInetAddress();
 		//private void initializePCEPSession(){
 		/**
 		 * Byte array to store the last PCEP message read.
@@ -476,6 +497,8 @@ public abstract class GenericPCEPSession extends Thread implements PCEPSession {
 			killSession();
 			return;
 		}
+		//FIXME: Ojo si no es IPv4, cambiar por InetAddress generico
+		pcepSessionManager.notifyPeer((Inet4Address)socket.getInetAddress());
 		//STARTING PCEP SESSION ESTABLISHMENT PHASE
 		//It begins in Open Wait State
 		this.setFSMstate(PCEPValues.PCEP_STATE_OPEN_WAIT);
@@ -503,28 +526,29 @@ public abstract class GenericPCEPSession extends Thread implements PCEPSession {
 			pce_id_tlv.setPceId(pceId);
 			p_open_snd.getOpen().setPce_id_tlv(pce_id_tlv);
 		}
-		if (pcepSessionManager.isStateful())
+		if (pcepSessionManager.getLocalPcepCapability().isStateful())
 		{
-			log.info("Statefull: "+pcepSessionManager.isStateful()+" Active: "+pcepSessionManager.isActive()+
+			log.info("Stateful: "+pcepSessionManager.isStateful()+" Active: "+pcepSessionManager.isActive()+
 					 " Trigger sync: "+pcepSessionManager.isStatefulTFlag()+ " Incremental sync: "+pcepSessionManager.isStatefulDFlag()+
 					 " include the LSP-DB-VERSION: "+pcepSessionManager.isStatefulSFlag());
 			
 			
 			StatefulCapabilityTLV stateful_capability_tlv = new StatefulCapabilityTLV();
 
-			/*STATEFUL CAPABILITY TLV*/
-			//Means this PCE is capable of updating LSPs
 			stateful_capability_tlv.setuFlag(true);
-			stateful_capability_tlv.setsFlag(true);
 			stateful_capability_tlv.setdFlag(pcepSessionManager.isStatefulDFlag());
 			stateful_capability_tlv.settFlag(pcepSessionManager.isStatefulTFlag());
 			stateful_capability_tlv.setsFlag(pcepSessionManager.isStatefulSFlag());
+			
+			stateful_capability_tlv.setiFlag(pcepSessionManager.getLocalPcepCapability().isInstantiationCapability());
+			
 			p_open_snd.getOpen().setStateful_capability_tlv(stateful_capability_tlv);
 			
 			/*PCE REDUNDANCY GROUP IDENTIFIER TLV*/
-			PCE_Redundancy_Group_Identifier_TLV pce_redundancy_tlv = new PCE_Redundancy_Group_Identifier_TLV();
+			// OSCAR FIXME
+			/*PCE_Redundancy_Group_Identifier_TLV pce_redundancy_tlv = new PCE_Redundancy_Group_Identifier_TLV();
 			pce_redundancy_tlv.setRedundancyId(ObjectParameters.redundancyID);
-			p_open_snd.getOpen().setRedundancy_indetifier_tlv(pce_redundancy_tlv);
+			p_open_snd.getOpen().setRedundancy_indetifier_tlv(pce_redundancy_tlv);*/
 
 			
 			/*LSP DATABASE VERSION TLV*/
@@ -548,6 +572,10 @@ public abstract class GenericPCEPSession extends Thread implements PCEPSession {
 
 			log.info("SR: "+pcepSessionManager.isSRCapable()+" MSD: "+pcepSessionManager.getMSD());
 
+		}
+		if (pcepSessionManager.getLocalPcepCapability().isGmpls()){
+			GMPLSCapabilityTLV gmplsCapabilityTLV=new GMPLSCapabilityTLV();
+			p_open_snd.getOpen().setGmplsCapabilityTLV(gmplsCapabilityTLV);
 		}
 
 
@@ -918,7 +946,8 @@ public abstract class GenericPCEPSession extends Thread implements PCEPSession {
 							error_c.getErrorObjList().add(perrorObject);
 							perror.setError(error_c);
 							log.info("Sending Error and ending PCEPSession");
-							sendPCEPMessage(perror);						
+							sendPCEPMessage(perror);	
+							pcepSessionManager.notifyPeerSessionFail((Inet4Address)this.socket.getInetAddress());
 							killSession();
 						}//Fin del catch de la exception PCEP
 					}
@@ -1088,6 +1117,9 @@ public abstract class GenericPCEPSession extends Thread implements PCEPSession {
 				}
 			}//Fin del else
 		}//Fin del WHILE
+		pcepSessionManager.notifyPeerSessionOK((Inet4Address)this.socket.getInetAddress());
+
+
 	}
 
 	public void sendPCEPMessage(PCEPMessage message) {
