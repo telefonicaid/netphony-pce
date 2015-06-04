@@ -16,8 +16,8 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
+import es.tid.ospf.ospfv2.OSPFv2LinkStateUpdatePacket;
 import tid.bgp.bgp4Peer.pruebas.BGPPeer;
-import tid.ospf.ospfv2.OSPFv2LinkStateUpdatePacket;
 import tid.pce.tedb.DomainTEDB;
 import tid.pce.tedb.IntraDomainEdge;
 import tid.pce.tedb.SimpleTEDB;
@@ -63,10 +63,10 @@ public class TopologyManager
 		}
 		
 		if (params.isActingAsBGP4Peer()) {//BGP
-			log.info("Acting as BGP Peer");
+			log.info("Acting as BGP Peer!");
 			BGPPeer bgpPeer = new BGPPeer();		
 			bgpPeer.configure(params.getBGP4File());			
-			//bgpPeer.configure("PCEServerConfiguration.xml");			
+			//bgpPeer.configure("PCEServerConfiguration.xml");				
 			bgpPeer.setReadDomainTEDB(ted);
 			bgpPeer.createUpdateDispatcher();
 			bgpPeer.startClient();		

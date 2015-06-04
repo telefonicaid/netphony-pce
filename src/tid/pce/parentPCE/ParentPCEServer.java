@@ -10,12 +10,14 @@ import java.util.logging.SimpleFormatter;
 import tid.bgp.bgp4Peer.pruebas.BGPPeer;
 import tid.log.StrongestGUIFormatter;
 import tid.log.StrongestGUIHandler;
+import tid.pce.computingEngine.ReportDispatcher;
 import tid.pce.computingEngine.RequestDispatcher;
 import tid.pce.computingEngine.algorithms.ComputingAlgorithmManager;
 import tid.pce.computingEngine.algorithms.LocalChildRequestManager;
 import tid.pce.computingEngine.algorithms.ParentPCEComputingAlgorithmManager;
 import tid.pce.parentPCE.management.ParentPCEManagementSever;
 import tid.pce.pcepsession.PCEPSessionsInformation;
+import tid.pce.server.lspdb.ReportDB_Handler;
 import tid.pce.tedb.FileTEDBUpdater;
 import tid.pce.tedb.ITMDTEDB;
 import tid.pce.tedb.MDTEDB;
@@ -41,30 +43,27 @@ public class ParentPCEServer {
 		params.initialize();
 		//Initiate the Loggers (general, PCEP Parsing, OSPF Parsing, GUI)		
 		FileHandler fh;
-		FileHandler fh2,fh3,fh4;
+		FileHandler fh2,fh3;
 		Logger log;
-		Logger log2,log3,log4;
+		Logger log2,log3;
 		log=Logger.getLogger("PCEServer");
 		log2=Logger.getLogger("PCEPParser");
 		log3=Logger.getLogger("OSPFParser");
-		log4=Logger.getLogger("MultiDomainTologyUpdater");
+		
 		PCEPSessionsInformation pcepSessionManager=new PCEPSessionsInformation();
+		pcepSessionManager.setLocalPcepCapability(params.getLocalPcepCapability());
 		
 		try {
 			fh=new FileHandler(params.getParentPCEServerLogFile());
 			fh2=new FileHandler(params.getParentPCEPParserLogFile());
 			fh3=new FileHandler("OSPFParser.log");
-			fh4=new FileHandler("MultiDomainTologyUpdater.log");
-			SimpleFormatter sf4=new SimpleFormatter();
 			log.addHandler(fh);
 			log.setLevel(Level.ALL);			
 			log2.addHandler(fh2);
 			log2.setLevel(Level.ALL);
 			log3.addHandler(fh3);
 			log3.setLevel(Level.ALL);
-			log4.addHandler(fh4);
-			log4.setLevel(Level.ALL);
-			fh4.setFormatter(sf4);
+
 			if (params.isStrongestLog()){
 				Logger logGUI=Logger.getLogger("GUILogger");
 				log.info("Adding GUI Logger");
@@ -207,7 +206,30 @@ public class ParentPCEServer {
 					e.printStackTrace();
 				}
 			}
-			
+			ReportDispatcher stateReportDispatcher= null;
+			ReportDB_Handler rptdb = new ReportDB_Handler();
+			stateReportDispatcher = new ReportDispatcher( rptdb, 2);
+			if (params.getLocalPcepCapability().isStateful()){
+				
+//				//
+//				if (pcepSessionsInformation.isStateful())
+//				{
+//				log.info("redis: "+params.getDbType() + " "+params.getDbName());
+//					if (params.getDbType().equals("redis") && params.getDbName().length() > 0)
+//					{
+//						log.info("redis: redis db with id: "+ params.getDbName());
+//						rptdb = new ReportDB_Handler(params.getDbName(),"localhost");	
+//						rptdb.fillFromDB();
+//					}
+//					else
+//					{
+//						rptdb = new ReportDB_Handler();
+//					}
+//					params.setLspDB(rptdb);	
+//					log.info("Creando dispatchers para el LSP DB");
+//					PCCReportDispatcher = new ReportDispatcher(params, rptdb, 2);
+//				}
+			}
 			
 
 			log.info("Initializing Management Server");
@@ -233,7 +255,6 @@ public class ParentPCEServer {
 	        }
 
 	        try {
-	        	pcepSessionManager.setStateful(false);
 	        	while (listening) {
 	        		new ParentPCESession(serverSocket.accept(),params, requestDispatcher,ted,mdt,childPCERequestManager,rm,pcepSessionManager).start();
 	        	}

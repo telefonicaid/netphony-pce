@@ -1,16 +1,17 @@
 package tid.pce.server.lspdb;
 
 import java.net.Inet4Address;
+import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Set;
 import java.util.logging.Logger;
 
+import es.tid.pce.pcep.constructs.StateReport;
+import es.tid.pce.pcep.messages.PCEPReport;
+import es.tid.pce.pcep.objects.LSP;
+import es.tid.pce.pcep.objects.OPEN;
 import redis.clients.jedis.Jedis;
-import tid.pce.pcep.constructs.StateReport;
-import tid.pce.pcep.messages.PCEPReport;
-import tid.pce.pcep.objects.LSP;
-import tid.pce.pcep.objects.OPEN;
 
 
 public class ReportDB_Handler {
@@ -198,6 +199,18 @@ public class ReportDB_Handler {
 			return rptdb.getVersion();
 		else
 			return 0;
+	}
+	
+	
+	public String toString(){
+		StringBuffer sb=new StringBuffer(moduleList.size()*100);
+		sb.append("Report DB: ");
+		Enumeration<ReportDB> db =moduleList.elements();
+		while (db.hasMoreElements()){
+			sb.append(db.nextElement().toString());
+		}
+		
+		return sb.toString();
 	}
 
 }

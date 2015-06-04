@@ -13,6 +13,7 @@ import org.xml.sax.helpers.DefaultHandler;
 
 import tid.pce.computingEngine.AlgorithmRule;
 import tid.pce.computingEngine.MapAlgoRule;
+import tid.pce.management.PcepCapability;
 //import tid.pce.pcep.messages.PCEPResponse;
 import tid.pce.tedb.Layer;
 
@@ -124,6 +125,8 @@ public class ParentPCEServerParameters {
 	private String ParentPCEServerAddress;
 	
 	private boolean fullTopologyMode=false;
+	
+	private PcepCapability localPcepCapability;
 
 	/**
 	 * BGP. This variable indeicates if the PCE has a BGP module 
@@ -362,10 +365,15 @@ public class ParentPCEServerParameters {
 		return knowsWholeTopology;
 	}
 
+	public PcepCapability getLocalPcepCapability() {
+		return localPcepCapability;
+	}
+
 	public void initialize(){
 		algorithmList=new LinkedList<String>();
 		PCElayers=new LinkedList<Layer>();
 		 algorithmRuleList=	new LinkedList<MapAlgoRule>();
+		 localPcepCapability= new PcepCapability();
 		try {
 			 
 		     SAXParserFactory factory = SAXParserFactory.newInstance();
@@ -504,6 +512,21 @@ public class ParentPCEServerParameters {
 							}
 							else if (qName.equalsIgnoreCase("knowsWholeTopology")) {
 								knowsWholeTopology=Boolean.parseBoolean(tempVal.trim());
+							}
+							else if (qName.equalsIgnoreCase("gmpls")) {
+								localPcepCapability.setGmpls(Boolean.parseBoolean(tempVal.trim()));
+							}
+							else if (qName.equalsIgnoreCase("stateful")) {
+								localPcepCapability.setStateful(Boolean.parseBoolean(tempVal.trim()));
+							}
+							else if (qName.equalsIgnoreCase("lspUpdate")) {
+								localPcepCapability.setLspUpdate(Boolean.parseBoolean(tempVal.trim()));
+							}
+							else if (qName.equalsIgnoreCase("parentPCE")) {
+								localPcepCapability.setParentPCE(Boolean.parseBoolean(tempVal.trim()));
+							}
+							else if (qName.equalsIgnoreCase("childPCE")) {
+								localPcepCapability.setChildPCE(Boolean.parseBoolean(tempVal.trim()));
 							}
 		    		   		
 		    		   		

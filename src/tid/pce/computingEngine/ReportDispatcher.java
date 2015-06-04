@@ -3,7 +3,7 @@ package tid.pce.computingEngine;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.logging.Logger;
 
-import tid.pce.pcep.messages.PCEPReport;
+import es.tid.pce.pcep.messages.PCEPReport;
 import tid.pce.server.PCEServerParameters;
 import tid.pce.server.lspdb.ReportDB_Handler;
 
@@ -41,7 +41,7 @@ public class ReportDispatcher
 	private Logger log;
 	
 			
-	public ReportDispatcher(PCEServerParameters params, ReportDB_Handler lspDB, int nThreads)
+	public ReportDispatcher(ReportDB_Handler lspDB, int nThreads)
 	{
 		log=Logger.getLogger("PCEServer");
 		
@@ -51,7 +51,7 @@ public class ReportDispatcher
 	    threads = new ReportProcessorThread[nThreads];
         for (int i=0; i<this.nThreads; i++) {
         	log.info("Starting Request Processor Thread");	        	
-            threads[i] = new ReportProcessorThread(params,reportMessageQueue, lspDB);
+            threads[i] = new ReportProcessorThread(reportMessageQueue, lspDB);
             threads[i].setPriority(Thread.MAX_PRIORITY);
             threads[i].start();
             

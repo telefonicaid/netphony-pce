@@ -46,6 +46,8 @@ public class TestClient {
 		PCEPSessionsInformation pcepSessionManager=new PCEPSessionsInformation();
 		PCEsession = new PCCPCEPSession(ip, port,false,pcepSessionManager);
 		PCEsession.start();
+		ui = new UserInterface(PCEsession);
+		ui.start();
 		
 	
 	}		

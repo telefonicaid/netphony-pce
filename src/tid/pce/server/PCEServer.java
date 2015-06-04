@@ -385,7 +385,7 @@ public class PCEServer {
 				}
 				params.setLspDB(rptdb);	
 				log.info("Creando dispatchers para el LSP DB");
-				PCCReportDispatcher = new ReportDispatcher(params, rptdb, 2);
+				PCCReportDispatcher = new ReportDispatcher( rptdb, 2);
 			}
 			
 

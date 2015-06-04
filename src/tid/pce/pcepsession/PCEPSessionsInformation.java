@@ -1,17 +1,35 @@
 package tid.pce.pcepsession;
 
 import java.io.DataOutputStream;
+import java.net.Inet4Address;
 import java.util.Enumeration;
 import java.util.Hashtable;
+
+import tid.pce.management.PcepCapability;
+import tid.pce.management.PcepPeer;
 
 
 
 public class PCEPSessionsInformation {
 	
+	
+	/** 
+	 * Local Capabilities of the PCEP Entity
+	 */
+	private PcepCapability localPcepCapability;
+
+	/**
+	 * List of Active PCEP Sessions
+	 */
 	public Hashtable<Long,GenericPCEPSession> sessionList;
+
+	/**
+	 * List of known peers (active or not)
+	 */
+	private Hashtable<Inet4Address,PcepPeer> peerList;
+		
 	
-	private boolean isStateful = false;
-	
+	//FIXME: mover a capabilities
 	private boolean isSRCapable = false;
 	private int MSD = 0;
 
@@ -30,6 +48,8 @@ public class PCEPSessionsInformation {
 	
 	public PCEPSessionsInformation(){
 		sessionList=new Hashtable<Long,GenericPCEPSession>();
+		localPcepCapability=new PcepCapability();
+		peerList = new Hashtable<Inet4Address,PcepPeer>();
 	}
 	public void addSession(long sessionId, GenericPCEPSession session){
 		sessionList.put(new Long(sessionId),session);
@@ -79,7 +99,7 @@ public class PCEPSessionsInformation {
 	}
 	
 	public boolean isStateful() {
-		return isStateful;
+		return localPcepCapability.isStateful();
 	}
 	
 	public boolean isSRCapable() {
@@ -92,7 +112,8 @@ public class PCEPSessionsInformation {
 	}
 	
 	public void setStateful(boolean isStateful) {
-		this.isStateful = isStateful;
+		//FIXME: TEMPORAL, QUITAR DESPUES Y MOVER TODO A PCEPCAPABILITIES
+		this.localPcepCapability.setStateful(isStateful);
 	}
 	
 	public void setSRCapable(boolean isSRCapable) {
@@ -139,6 +160,59 @@ public class PCEPSessionsInformation {
 
 	public void setStatefulSFlag(boolean statefulSFlag) {
 		this.statefulSFlag = statefulSFlag;
+	}
+	public PcepCapability getLocalPcepCapability() {
+		return localPcepCapability;
+	}
+	public void setLocalPcepCapability(PcepCapability localPcepCapability) {
+		this.localPcepCapability = localPcepCapability;
 	}	
+	
+	
+	
+	public void notifyPeer(Inet4Address addr){
+		if (!peerList.containsKey(addr)){
+			PcepPeer peer = new PcepPeer();
+			peer.setAddr(addr);
+			peerList.put(addr, peer);
+		}
+	}
+	
+	public void notifyPeerSessionOK(Inet4Address addr){
+		peerList.get(addr).notifyNewSessSetupOK();
+	}
+	
+	public void notifyPeerSessionFail(Inet4Address addr){
+		peerList.get(addr).notifyNewSessSetupFail();
+	}
+	
+	public void notifyPeerSessionActive(Inet4Address addr){
+		peerList.get(addr).setSessionExists(true);
+	}
+	
+	public void notifyPeerSessionInactive(Inet4Address addr){
+		peerList.get(addr).setSessionExists(false);
+	}
+	
+	public String printPeersInfo(){
+		StringBuffer sb=new StringBuffer(200);
+		Enumeration<PcepPeer> peers= peerList.elements();
+		sb.append("Peers: ");
+		while (peers.hasMoreElements()) {
+			sb.append(peers.nextElement().toString());
+		}
+		return sb.toString();
+	}
+	
+	public String printFullPeersInfo(){
+		StringBuffer sb=new StringBuffer(200);
+		Enumeration<PcepPeer> peers= peerList.elements();
+		sb.append("Peers: ");
+		while (peers.hasMoreElements()) {
+			sb.append(peers.nextElement().fullInfo());
+		}
+		return sb.toString();
+	}
+	
 	
 }
