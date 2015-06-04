@@ -63,10 +63,10 @@ public class TopologyManager
 		}
 		
 		if (params.isActingAsBGP4Peer()) {//BGP
-			log.info("Acting as BGP Peer");
+			log.info("Acting as BGP Peer!");
 			BGPPeer bgpPeer = new BGPPeer();		
 			bgpPeer.configure(params.getBGP4File());			
-			//bgpPeer.configure("PCEServerConfiguration.xml");			
+			//bgpPeer.configure("PCEServerConfiguration.xml");				
 			bgpPeer.setReadDomainTEDB(ted);
 			bgpPeer.createUpdateDispatcher();
 			bgpPeer.startClient();		

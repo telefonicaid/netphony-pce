@@ -26,16 +26,13 @@ public class ReportProcessorThread extends Thread
 	ReportDB_Handler lspDB;
 		
 	Logger log;
-	
-	PCEServerParameters params;
-	
-	public ReportProcessorThread(PCEServerParameters params, LinkedBlockingQueue<PCEPReport> reportMessageQueue, ReportDB_Handler lspDB) 
+		
+	public ReportProcessorThread( LinkedBlockingQueue<PCEPReport> reportMessageQueue, ReportDB_Handler lspDB) 
 	{
 		log=Logger.getLogger("PCEServer");
 		running = true;
 		this.lspDB = lspDB;
 		this.reportMessageQueue = reportMessageQueue;
-		this.params = params;
 	}
 	
 	public void run()

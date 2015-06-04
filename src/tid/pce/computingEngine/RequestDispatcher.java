@@ -239,6 +239,7 @@ public class RequestDispatcher {
 		req.setBandwidth(iniMessage.getPcepIntiatedLSPList().get(0).getBandwidth());
 		RequestParameters reqparams=new RequestParameters();
 		reqparams.setRequestID(iniMessage.getPcepIntiatedLSPList().get(0).getLsp().getLspId());
+		req.setRequestParameters(reqparams);
 		requestList.add(req);
 		
 		cr.setRequestList(requestList);
@@ -249,6 +250,35 @@ public class RequestDispatcher {
 		
 		pathComputingRequestQueue.add(cr);
 	}
+	
+	public void dispathRequests(PCEPInitiate iniMessage, DataOutputStream out, Inet4Address remotePCEId)
+	{	    	
+		log.info("Dispatching Request from Initiate message!");
+		
+		ComputingRequest cr=new ComputingRequest();
+		cr.setOut(out);
+
+		LinkedList<Request> requestList = new LinkedList<Request>();
+		Request req = new Request();
+		ObjectiveFunction of=new ObjectiveFunction();//FIXME: FIRE!!!
+		of.setOFcode(1002);
+		req.setObjectiveFunction(of);
+		req.setEndPoints(iniMessage.getPcepIntiatedLSPList().get(0).getEndPoint());
+		req.setBandwidth(iniMessage.getPcepIntiatedLSPList().get(0).getBandwidth());
+		RequestParameters reqparams=new RequestParameters();
+		reqparams.setRequestID(iniMessage.getPcepIntiatedLSPList().get(0).getLsp().getLspId());
+		req.setRequestParameters(reqparams);
+		requestList.add(req);
+		
+		cr.setRequestList(requestList);
+		
+		cr.setTimeStampNs(System.nanoTime());
+		cr.setMaxTimeInPCE(120000);
+		cr.getEcodingType(PCEPMessageTypes.MESSAGE_INITIATE);
+		
+		pathComputingRequestQueue.add(cr);
+	}
+	
     public void dispathRequests(PCEPRequest reqMessage, DataOutputStream out, Inet4Address remotePCEId){	    
     	if (out==null){
     		log.severe("OUT ESTA A NULL!!!!");

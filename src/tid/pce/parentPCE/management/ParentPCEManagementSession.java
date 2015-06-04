@@ -184,6 +184,15 @@ public class ParentPCEManagementSession extends Thread {
 				}else if (command.equals("show number lsas")){
 					out.print(mdtu.sizeLSAList());
 					out.print("\r\n");
+				}else if (command.equals("show capabilities")){
+					out.print(pcepSessionManager.getLocalPcepCapability().toString());
+					out.print("\r\n");
+				}else if (command.equals("show peers")){
+					out.print(pcepSessionManager.printPeersInfo());
+					out.print("\r\n");
+				}else if (command.equals("show peers detail")){
+					out.print(pcepSessionManager.printFullPeersInfo());
+					out.print("\r\n");
 				}
 				
 				else if (command.equals("help")){
