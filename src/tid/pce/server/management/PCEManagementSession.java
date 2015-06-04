@@ -37,7 +37,7 @@ import es.tid.pce.pcep.objects.RequestParameters;
 import es.tid.pce.pcep.objects.SRP;
 import es.tid.pce.pcep.objects.XifiUniCastEndPoints;
 import es.tid.pce.pcep.objects.tlvs.LSPDatabaseVersionTLV;
-import es.tid.pce.pcep.objects.tlvs.LSPIdentifiersTLV;
+import es.tid.pce.pcep.objects.tlvs.IPv4LSPIdentifiersTLV;
 import es.tid.pce.pcep.objects.tlvs.SymbolicPathNameTLV;
 import es.tid.rsvp.objects.subobjects.IPv4prefixEROSubobject;
 import es.tid.rsvp.objects.subobjects.UnnumberIfIDEROSubobject;
@@ -759,7 +759,7 @@ public class PCEManagementSession extends Thread {
 		lsp.setLspId(1);
 
 
-		LSPIdentifiersTLV lspIdTLV = new LSPIdentifiersTLV();
+		IPv4LSPIdentifiersTLV lspIdTLV = new IPv4LSPIdentifiersTLV();
 		//lspIdTLV.setLspID((lspte.getIdLSP().intValue()));
 		lspIdTLV.setTunnelID(1234);
 		lspIdTLV.setTunnelSenderIPAddress((Inet4Address)Inet4Address.getLocalHost());

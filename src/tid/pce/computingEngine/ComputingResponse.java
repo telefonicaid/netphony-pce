@@ -7,7 +7,11 @@ import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.LinkedList;
 import java.util.logging.Logger;
-
+import es.tid.pce.pcep.constructs.ErrorConstruct;
+import es.tid.pce.pcep.constructs.StateReport;
+import es.tid.pce.pcep.messages.PCEPError;
+import es.tid.pce.pcep.messages.PCEPReport;
+import es.tid.pce.pcep.objects.PCEPErrorObject;
 import es.tid.pce.pcep.PCEPProtocolViolationException;
 import es.tid.pce.pcep.constructs.PCEPIntiatedLSP;
 import es.tid.pce.pcep.constructs.Response;
@@ -36,8 +40,16 @@ public class ComputingResponse
 	private int encodingType = PCEPMessageTypes.MESSAGE_PCREP;
 	
 	public LinkedList<Response> ResponseList;
-	//private Logger log=Logger.getLogger("PCEPParser");
 	private Logger log=Logger.getLogger("PCEP listener");
+	public LinkedList<StateReport> ReportList;
+	
+	public LinkedList<StateReport> getReportList() {
+		return ReportList;
+	}
+
+	public void setReportList(LinkedList<StateReport> reportList) {
+		ReportList = reportList;
+	}
 	
 	private ReachabilityManager reachabilityManager;
 	
@@ -48,6 +60,7 @@ public class ComputingResponse
 	{
 		super();
 		ResponseList=new LinkedList<Response>();
+		ReportList = new LinkedList<StateReport>();
 	}
 	
 	public void addResponse(Response response)
@@ -58,6 +71,17 @@ public class ComputingResponse
 	{
 		return this.ResponseList.get(index);
 	}
+	
+	public void addReport(StateReport report)
+	{		
+		this.ReportList.add(report);
+	}
+	public StateReport getResport(int index)
+	{
+		return this.ReportList.get(index);
+	}
+	
+	
 
 	public LinkedList<Response> getResponseList() 
 	{
@@ -160,6 +184,27 @@ public class ComputingResponse
 				}
 
 			break;
+			case PCEPMessageTypes.MESSAGE_REPORT:
+				if (ReportList.isEmpty()){
+					PCEPError perror = new PCEPError();
+					ErrorConstruct error = new ErrorConstruct();
+					PCEPErrorObject e = new PCEPErrorObject();
+					e.setErrorType(24);
+					e.setErrorValue(3);
+					error.getErrorObjList().add(e);
+					perror.setError(error);
+					
+				}
+				else {
+					PCEPReport p_rep = new PCEPReport();
+					p_rep.setStateReportList(ReportList);
+					p_rep.encode();
+					setMessageBytes(p_rep.getBytes());
+				}
+				
+				
+				break;
+				
 		}
 	}
 	

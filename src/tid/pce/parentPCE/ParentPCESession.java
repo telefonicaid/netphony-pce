@@ -3,18 +3,23 @@ package tid.pce.parentPCE;
 import java.io.IOException;
 import java.net.Socket;
 import java.util.Calendar;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Timer;
 import java.util.logging.Logger;
 
 import es.tid.pce.pcep.PCEPProtocolViolationException;
+import es.tid.pce.pcep.constructs.StateReport;
 import es.tid.pce.pcep.messages.PCEPClose;
+import es.tid.pce.pcep.messages.PCEPInitiate;
 import es.tid.pce.pcep.messages.PCEPMessage;
 import es.tid.pce.pcep.messages.PCEPMessageTypes;
 import es.tid.pce.pcep.messages.PCEPNotification;
+import es.tid.pce.pcep.messages.PCEPReport;
 import es.tid.pce.pcep.messages.PCEPRequest;
 import es.tid.pce.pcep.messages.PCEPResponse;
 import es.tid.pce.pcep.objects.ObjectParameters;
+import es.tid.pce.pcep.objects.SRP;
 import es.tid.pce.pcep.objects.tlvs.ReachabilityTLV;
 import es.tid.rsvp.objects.subobjects.EROSubobject;
 import tid.pce.computingEngine.RequestDispatcher;
@@ -130,12 +135,12 @@ public class ParentPCESession extends GenericPCEPSession{
 					break;
 					
 				case PCEPMessageTypes.MESSAGE_KEEPALIVE:
-					log.fine("KEEPALIVE message received");
+					log.fine("PCEP KEEPALIVE message received from "+this.remotePeerIP);
 					//The Keepalive message allows to reset the deadtimer
 					break;
 					
 				case PCEPMessageTypes.MESSAGE_CLOSE:
-					log.fine("CLOSE message received");
+					log.fine("CLOSE message received from "+this.remotePeerIP);
 					try {
 						PCEPClose m_close=new PCEPClose(this.msg);
 						log.warning("Closing due to reason "+m_close.getReason());
@@ -148,7 +153,38 @@ public class ParentPCESession extends GenericPCEPSession{
 					return;
 					
 				case PCEPMessageTypes.MESSAGE_REPORT:
-					log.warning("We should not receive this kind of message");			
+					if (this.localPcepCapability.isStateful()) {
+						log.info("Received report from "+this.remotePeerIP);
+						PCEPReport pcrpt;
+						try {
+							pcrpt=new PCEPReport(msg);
+							Iterator<StateReport> it= pcrpt.getStateReportList().iterator();
+							while (it.hasNext()){
+								StateReport sr=it.next();
+								SRP srp=sr.getSRP();
+								if (srp!=null) {
+									log.info("SRP Id: "+ sr.getSRP().getSRP_ID_number());
+									Object lock=childPCERequestManager.inilocks.get(sr.getSRP().getSRP_ID_number());
+									if (lock!=null){
+										synchronized (lock) {
+											childPCERequestManager.notifyReport(sr);
+										}	
+									}
+								}
+								
+							}
+							
+							
+							
+						} catch (PCEPProtocolViolationException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+							break;
+						}					
+					}else {
+						log.warning("PCE is NOT stateful, ignored report from "+this.remotePeerIP);		
+					}
+						
 					break;
 					
 				case PCEPMessageTypes.MESSAGE_ERROR:
@@ -232,7 +268,19 @@ public class ParentPCESession extends GenericPCEPSession{
 					}
 					requestDispatcher.dispathRequests(p_req,out,this.remotePCEId);
 					break;
-
+					
+				case PCEPMessageTypes.MESSAGE_INITIATE:
+					log.info("PCREQ message received");
+					PCEPInitiate p_ini;
+					try {
+						p_ini=new PCEPInitiate(msg);
+						log.info(p_ini.toString());
+					} catch (PCEPProtocolViolationException e) {
+						e.printStackTrace();
+						break;
+					}
+					requestDispatcher.dispathRequests(p_ini,out,this.remotePCEId);
+					break;
 				default:
 					log.warning("ERROR: unexpected message received");
 					pceMsg = false;

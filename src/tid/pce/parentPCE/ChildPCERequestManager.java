@@ -13,9 +13,14 @@ import java.util.concurrent.TimeoutException;
 import java.util.logging.Logger;
 
 import es.tid.pce.pcep.PCEPProtocolViolationException;
+import es.tid.pce.pcep.constructs.StateReport;
+import es.tid.pce.pcep.messages.PCEPInitiate;
+import es.tid.pce.pcep.messages.PCEPMessage;
+import es.tid.pce.pcep.messages.PCEPReport;
 import es.tid.pce.pcep.messages.PCEPRequest;
 import es.tid.pce.pcep.messages.PCEPResponse;
 import tid.pce.computingEngine.ComputingResponse;
+import tid.pce.computingEngine.algorithms.ChildPCEInitiate;
 import tid.pce.computingEngine.algorithms.ChildPCERequest;
 
 /**
@@ -38,7 +43,11 @@ public class ChildPCERequestManager {
 	private Hashtable<Inet4Address,Inet4Address> domainIdpceId;
 	
 	public Hashtable<Long,Object> locks;
-	private Hashtable<Long,PCEPResponse> responses;
+	public Hashtable<Long,Object> inilocks;
+	private Hashtable<Long,PCEPMessage> responses;
+	private Hashtable<Long,StateReport> reports;
+	
+	
 	
 	
 	private ThreadPoolExecutor executor;
@@ -52,7 +61,9 @@ public class ChildPCERequestManager {
 	
 	public ChildPCERequestManager(){
 		locks = new Hashtable<Long, Object>();	
-		responses=new Hashtable<Long, PCEPResponse>();
+		inilocks = new Hashtable<Long, Object>();
+		
+		responses=new Hashtable<Long, PCEPMessage>();
 		domainIdOutputStream=new Hashtable<Inet4Address,DataOutputStream>();
 		domainIdpceId=new Hashtable<Inet4Address,Inet4Address>();
 		int corePoolSize=5;
@@ -120,6 +131,60 @@ public class ChildPCERequestManager {
 		return response;
 	}
 	
+	public LinkedList<ComputingResponse> executeInitiates(LinkedList<PCEPInitiate> initiateList, LinkedList<Object> domainList){
+		LinkedList<ComputingResponse> response= new  LinkedList<ComputingResponse>();
+		ChildPCEInitiate cpr;
+		LinkedList<FutureTask<ComputingResponse>> ftList=new LinkedList<FutureTask<ComputingResponse>>();
+		FutureTask<ComputingResponse> ft;
+		for (int i=0;i<initiateList.size();++i){
+			 cpr=new ChildPCEInitiate(this, initiateList.get(i), domainList.get(i));
+			 ft=new FutureTask<ComputingResponse>(cpr);
+			 ftList.add(ft);
+			 executor.execute(ft);
+		}
+		long time=120000;
+		//log.info("The time is "+time+" miliseconds");
+		long timeIni=System.currentTimeMillis();
+		long time2;
+		ComputingResponse resp;
+		for (int i=0;i<initiateList.size();++i){
+			
+			try {
+				log.info("Waiting "+time+" miliseconds for initiating in domain "+domainList.get(i));
+				resp=ftList.get(i).get(time, TimeUnit.MILLISECONDS);
+				time2=System.currentTimeMillis();
+				long timePassed=time2-timeIni;
+				if (timePassed>=120000){
+					time=0;
+				}
+				else {
+					time=time-timePassed;	
+				}
+				 response.add(resp);
+//			} catch (InterruptedException e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			} catch (ExecutionException e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+			} catch (TimeoutException e) {
+				resp=null;
+				time2=System.currentTimeMillis();
+				time=time-time2-timeIni;
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+//			}
+			} catch (Exception e){
+				return null; //FIXME: REPARAR PARA MANDAR MAS!!!!
+				
+			}
+			
+			
+		}
+		
+		return response;
+	}
+	
 //	public void addRequest(PCEPRequest pcreq, Inet4Address domain){
 //		ChildPCERequest cpr=new ChildPCERequest(this, pcreq, domain);
 //		FutureTask<PCEPResponse> ft=new FutureTask<PCEPResponse>(cpr);
@@ -134,6 +199,17 @@ public class ChildPCERequestManager {
 		log.info("Entrando en Notify Response de idRequest "+idRequest);
 		Object object_lock=locks.get(new Long(idRequest));
 		responses.put(new Long(idRequest), pcres);
+		if (object_lock!=null){
+			object_lock.notifyAll();	
+		}
+		locks.remove(object_lock);
+	}
+	
+	public void notifyReport(StateReport sr){
+		long idRequest=sr.getSRP().getSRP_ID_number();
+		log.info("Entrando en Notify Report de id "+idRequest);
+		Object object_lock=locks.get(new Long(idRequest));
+		reports.put(new Long(idRequest), sr);
 		if (object_lock!=null){
 			object_lock.notifyAll();	
 		}
@@ -174,7 +250,43 @@ public class ChildPCERequestManager {
 		}
 		log.fine("Request or timeout");
 		
-		PCEPResponse resp=responses.get(new Long(idRequest));
+		PCEPResponse resp=(PCEPResponse)responses.get(new Long(idRequest));
+		if (resp==null){
+			log.warning("NO RESPONSE!!!!!");
+		}
+		return resp;
+		
+	}
+	
+	
+	public PCEPReport newIni( PCEPInitiate pcini, Object domain){
+		log.info("New Request to Child PCE");
+		Object object_lock=new Object();
+//		RequestLock rl=new RequestLock();
+		
+		
+		//((RequestParameters)(((Request)pcreq.getRequest(0)).getReqObject(0))).getRequestID();
+		//long idRequest=((RequestParameters)(((Request)pcreq.getRequest(0)).getReqObject(0))).getRequestID();
+		long idRequest=pcini.getPcepIntiatedLSPList().get(0).getRsp().getSRP_ID_number();
+		log.info("Creo lock con srp_id "+idRequest);
+		inilocks.put(new Long(idRequest), object_lock);
+		try {		
+			sendInitiate(pcini,domain);
+		} catch (IOException e1) {
+			locks.remove(object_lock); 
+			return null;
+		}
+		synchronized (object_lock) { 
+			try {
+				log.fine("Request sent, waiting for response");
+				object_lock.wait(30000);
+			} catch (InterruptedException e){
+			//	FIXME: Ver que hacer
+			}
+		}
+		log.fine("Request or timeout");
+		
+		PCEPReport resp=(PCEPReport)responses.get(new Long(idRequest));
 		if (resp==null){
 			log.warning("NO RESPONSE!!!!!");
 		}
@@ -204,6 +316,27 @@ public class ChildPCERequestManager {
 		}
 	}
 
+	synchronized public  void sendInitiate(PCEPInitiate ini, Object domain) throws IOException{
+		try {
+			ini.encode();
+		} catch (PCEPProtocolViolationException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		DataOutputStream out= domainIdOutputStream.get(domain);
+		if (out==null){
+			log.warning("There is no PCE for domain "+domain);
+			throw new IOException();
+		}
+		try {
+			log.info("Sending Request message to domain "+domain);
+						out.write(ini.getBytes());
+			out.flush();
+		} catch (IOException e) {
+			log.warning("Error sending REQ: " + e.getMessage());
+			throw e;
+		}
+	}
 
 	void registerDomainSession(Inet4Address domain, Inet4Address pceId, DataOutputStream out){
 		if (domain!=null){
