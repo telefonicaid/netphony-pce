@@ -5,11 +5,7 @@ import java.net.ServerSocket;
 import java.util.logging.FileHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.logging.SimpleFormatter;
-
 import tid.bgp.bgp4Peer.pruebas.BGPPeer;
-import tid.log.StrongestGUIFormatter;
-import tid.log.StrongestGUIHandler;
 import tid.pce.computingEngine.ReportDispatcher;
 import tid.pce.computingEngine.RequestDispatcher;
 import tid.pce.computingEngine.algorithms.ComputingAlgorithmManager;
@@ -64,26 +60,9 @@ public class ParentPCEServer {
 			log3.addHandler(fh3);
 			log3.setLevel(Level.ALL);
 
-			if (params.isStrongestLog()){
-				Logger logGUI=Logger.getLogger("GUILogger");
-				log.info("Adding GUI Logger");
-				StrongestGUIFormatter sgf=new StrongestGUIFormatter();
-				sgf.setHost(params.getGUIHost());
-				log.info("RemoteHost: "+sgf.getHost());
-				sgf.setLocalAddress(params.getParentPCEServerAddress());
-				log.info("Localhost: "+sgf.getLocalAddress());
-				StrongestGUIHandler sgh=new StrongestGUIHandler();				
-				sgh.setHost(params.getGUIHost());
-				log.info("RemoteHost: "+sgh.getHost());
-				sgh.setPort(params.getGUIPort());
-				log.info("RemotePort: "+sgh.getPort());
-				logGUI.addHandler(sgh);
-				sgh.setFormatter(sgf);				
-				logGUI.setLevel(Level.ALL);				
-			}else {
-				Logger logGUI=Logger.getLogger("GUILogger");
-				logGUI.setLevel(Level.SEVERE);
-			}
+
+			Logger logGUI=Logger.getLogger("GUILogger");
+			logGUI.setLevel(Level.SEVERE);
 			
 		} catch (Exception e1) {
 			e1.printStackTrace();

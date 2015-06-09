@@ -2,6 +2,7 @@ package tid.pce.computingEngine.algorithms;
 
 import java.util.concurrent.Callable;
 
+import es.tid.pce.pcep.constructs.StateReport;
 import es.tid.pce.pcep.messages.PCEPInitiate;
 import es.tid.pce.pcep.messages.PCEPReport;
 import es.tid.pce.pcep.messages.PCEPRequest;
@@ -24,8 +25,8 @@ public class ChildPCEInitiate implements Callable<ComputingResponse> {
 	
 	public ComputingResponse call() throws Exception {
 		ComputingResponse compResp = new ComputingResponse();
-		PCEPReport p_rep = childPCERequestManager.newIni(pcini, domain);
-		compResp.setReportList(p_rep.getStateReportList());
+		StateReport rep = childPCERequestManager.newIni(pcini, domain);
+		compResp.getReportList().add(rep);
 		return compResp;
 	}
 

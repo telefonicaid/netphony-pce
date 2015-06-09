@@ -73,14 +73,14 @@ public class ClientRequestManager {
 	
 	public PCEPMessage newRequest( PCEPMessage pcreq)
 	{
-		return newRequest(pcreq,30000);
+		return newRequest(pcreq,60000);
 	}
 	
 	
 	//Generic function in case instead of PCEPRequest/PCEPResponse it's PCEPInitate/PCEPReport
 	public PCEPResponse newRequest( PCEPRequest pcreq)
 	{
-		return newRequest(pcreq,30000);
+		return newRequest(pcreq,60000);
 	}
 	
 	
@@ -197,7 +197,7 @@ public class ClientRequestManager {
 		synchronized (object_lock) { 
 			try {
 				log.fine("Request sent, waiting for response");
-				object_lock.wait(30000);
+				object_lock.wait(60000);
 			} catch (InterruptedException e){
 			//	FIXME: Ver que hacer
 			}

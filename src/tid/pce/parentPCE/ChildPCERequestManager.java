@@ -66,6 +66,7 @@ public class ChildPCERequestManager {
 		responses=new Hashtable<Long, PCEPMessage>();
 		domainIdOutputStream=new Hashtable<Inet4Address,DataOutputStream>();
 		domainIdpceId=new Hashtable<Inet4Address,Inet4Address>();
+		reports = new Hashtable<Long,StateReport>();
 		int corePoolSize=5;
 		int maximumPoolSize=10;
 		long keepAliveTime=120;
@@ -208,12 +209,12 @@ public class ChildPCERequestManager {
 	public void notifyReport(StateReport sr){
 		long idRequest=sr.getSRP().getSRP_ID_number();
 		log.info("Entrando en Notify Report de id "+idRequest);
-		Object object_lock=locks.get(new Long(idRequest));
+		Object object_lock=inilocks.get(new Long(idRequest));
 		reports.put(new Long(idRequest), sr);
 		if (object_lock!=null){
 			object_lock.notifyAll();	
 		}
-		locks.remove(object_lock);
+		inilocks.remove(object_lock);
 	}
 	
 	public PCEPResponse newRequest( PCEPRequest pcreq, Object domain){
@@ -259,7 +260,7 @@ public class ChildPCERequestManager {
 	}
 	
 	
-	public PCEPReport newIni( PCEPInitiate pcini, Object domain){
+	public StateReport newIni( PCEPInitiate pcini, Object domain){
 		log.info("New Request to Child PCE");
 		Object object_lock=new Object();
 //		RequestLock rl=new RequestLock();
@@ -273,7 +274,7 @@ public class ChildPCERequestManager {
 		try {		
 			sendInitiate(pcini,domain);
 		} catch (IOException e1) {
-			locks.remove(object_lock); 
+			inilocks.remove(object_lock); 
 			return null;
 		}
 		synchronized (object_lock) { 
@@ -283,12 +284,12 @@ public class ChildPCERequestManager {
 			} catch (InterruptedException e){
 			//	FIXME: Ver que hacer
 			}
-		}
-		log.fine("Request or timeout");
-		
-		PCEPReport resp=(PCEPReport)responses.get(new Long(idRequest));
+		}	
+		StateReport resp=reports.get(new Long(idRequest));
 		if (resp==null){
 			log.warning("NO RESPONSE!!!!!");
+		}else {
+			log.info("HA respondido LA ID "+idRequest);
 		}
 		return resp;
 		

@@ -100,7 +100,7 @@ public class ParentPCESession extends GenericPCEPSession{
 		String domain ="hola";//FIXME de donde saco el domain?... SOLO SE puede sacar de la sesion...
 		childPCERequestManager.registerDomainSession(this.remoteDomainId,this.remotePCEId, out);
 		//Session is UP now, start timers
-		log.info("PCE Session succesfully established!!");				
+		log.info("PCE Session succesfully established with "+this.remotePeerIP+" and deadTimerLocal "+this.deadTimerLocal);				
 		this.deadTimerT=new DeadTimerThread(this, this.deadTimerLocal);
 		startDeadTimer();	
 		this.keepAliveT=new KeepAliveThread(out, this.keepAliveLocal);
@@ -287,7 +287,7 @@ public class ParentPCESession extends GenericPCEPSession{
 				}
 				
 				if (pceMsg) {
-					log.fine("Reseting Dead Timer as PCEP Message has arrived");
+					log.info("Reseting Dead Timer as PCEP Message has arrived in "+this.remotePeerIP);
 					resetDeadTimer();
 				}
 			} 
