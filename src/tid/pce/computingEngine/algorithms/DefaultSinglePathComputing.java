@@ -90,8 +90,10 @@ public class DefaultSinglePathComputing implements ComputingAlgorithm {
 		EndPoints  EP= req.getEndPoints();	
 		Object source_router_id_addr = null;
 		Object dest_router_id_addr = null;
+		Object router_xro = null;
 		DataPathID source = new DataPathID();
 		DataPathID dest = new DataPathID();	
+		DataPathID xro = new DataPathID();
 
 
 		if (EP.getOT()==ObjectParameters.PCEP_OBJECT_TYPE_ENDPOINTS_IPV4){
@@ -122,6 +124,12 @@ public class DefaultSinglePathComputing implements ComputingAlgorithm {
 					source_router_id_addr=source;
 					dest_router_id_addr=dest;
 
+					//Case XRO is not null
+					if(req.getXro()!=null){
+						router_xro=req.getXro().getEROSubobjectList().getFirst().toString().substring(0,23);
+						xro.setDataPathID((String)router_xro);
+						log.info("Algorithm.getXro ::"+xro);
+					}
 				}
 			}
 			if(gep.getGeneralizedEndPointsType()==ObjectParameters.PCEP_GENERALIZED_END_POINTS_TYPE_P2MP_NEW_LEAVES){
@@ -140,15 +148,18 @@ public class DefaultSinglePathComputing implements ComputingAlgorithm {
 			}
 		}
 
-
-
-		//		Object source_router_id_addr=ep.getSourceIP();
-		//		Object dest_router_id_addr=ep.getDestIP();			
-		//log.info("Algorithm->  Source:: "+source_router_id_addr+" Destination:: "+dest_router_id_addr);
 		log.info("Algorithm->  Source:: "+source_router_id_addr+" Destination:: "+dest_router_id_addr);
 		log.info("Check if we have source and destination in our TED");
-		//((SimpleTEDB)ted).printTopology();
-		//log.info("networkGraph DefaultSinglePathComputing:: "+networkGraph.toString());
+
+
+		//Case XRO is not null
+		if(router_xro!=null){
+			log.info("Router_xro is not null");
+			if (networkGraph.containsVertex(xro)){
+				log.info("Delete node in graph:: "+xro);
+				networkGraph.removeVertex(xro);
+			}
+		}
 
 		if (!((networkGraph.containsVertex(source_router_id_addr))&&(networkGraph.containsVertex(dest_router_id_addr)))){
 			log.warning("DefaultSinglePathComputing:: Source or destination are NOT in the TED");	
@@ -204,11 +215,11 @@ public class DefaultSinglePathComputing implements ComputingAlgorithm {
 				erosodp.setLoosehop(false);
 				ero.addEROSubobject(erosodp);
 			}
-			
+
 		}
 		IPv4prefixEROSubobject eroso= new IPv4prefixEROSubobject();
 		DataPathIDEROSubobject erosodp = new DataPathIDEROSubobject();
-		
+
 		try {
 			eroso.setIpv4address((Inet4Address)edge_list.get(edge_list.size()-1).getTarget());
 			eroso.setPrefix(32);
@@ -217,11 +228,11 @@ public class DefaultSinglePathComputing implements ComputingAlgorithm {
 			erosodp.setDataPath((DataPathID)edge_list.get(edge_list.size()-1).getTarget());
 			ero.addEROSubobject(erosodp);
 		}
-		
+
 		log.info("Algorithm.ero :: "+ero.toString());
 		path.seteRO(ero);
 		log.info("Algorithm.path:: "+path.toString());
-		
+
 		if (req.getMetricList().size()!=0){
 			Metric metric=new Metric();
 			metric.setMetricType(req.getMetricList().get(0).getMetricType() );

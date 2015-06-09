@@ -456,7 +456,7 @@ public class RequestProcessorThread extends Thread{
 							log.info("RequestProcessorThread GeneralizedEndPoints -> sourceDataPath:: "+p2pep.getSourceEndPoint()+" destDataPath :: "+p2pep.getDestinationEndPoint());
 
 							GeneralizedEndPoints ep= new GeneralizedEndPoints();
-							ep.setP2PEndpoints(p2pep); 
+							ep.setP2PEndpoints(p2pep); 						
 
 							pathCompReq.getRequestList().get(0).setEndPoints(ep);
 						}
