@@ -4,11 +4,13 @@ import java.io.DataOutputStream;
 import java.net.Inet4Address;
 import java.util.LinkedList;
 
+import es.tid.pce.pcep.constructs.PCEPIntiatedLSP;
 import es.tid.pce.pcep.constructs.Request;
 import es.tid.pce.pcep.constructs.SVECConstruct;
 import es.tid.pce.pcep.messages.PCEPMessageTypes;
 import es.tid.pce.pcep.objects.Monitoring;
 import es.tid.pce.pcep.objects.PccReqId;
+import es.tid.pce.pcep.objects.tlvs.SymbolicPathNameTLV;
 
 /**
  * 
@@ -38,6 +40,19 @@ public class ComputingRequest
 	
 	private int encodinType = PCEPMessageTypes.MESSAGE_PCREP;
 	
+	
+	private  PCEPIntiatedLSP iniLSP;
+	
+	
+	
+	public PCEPIntiatedLSP getIniLSP() {
+		return iniLSP;
+	}
+
+	public void setIniLSP(PCEPIntiatedLSP iniLSP) {
+		this.iniLSP = iniLSP;
+	}
+
 	/**
 	 * DataOutputStream to send the response to the peer PCC
 	 */
@@ -127,6 +142,8 @@ public class ComputingRequest
 	public Inet4Address getRemotePCEId() {
 		return remotePCEId;
 	}
+
+
 
 	public void setRemotePCEId(Inet4Address remotePCEId) {
 		this.remotePCEId = remotePCEId;

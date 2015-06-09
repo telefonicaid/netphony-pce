@@ -5,12 +5,14 @@ import java.net.Inet4Address;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Hashtable;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.logging.Logger;
 
+import es.tid.pce.pcep.constructs.PCEPIntiatedLSP;
 import es.tid.pce.pcep.constructs.Request;
 import es.tid.pce.pcep.constructs.SVECConstruct;
 import es.tid.pce.pcep.messages.PCEPInitiate;
@@ -19,6 +21,7 @@ import es.tid.pce.pcep.messages.PCEPRequest;
 import es.tid.pce.pcep.objects.ObjectiveFunction;
 import es.tid.pce.pcep.objects.RequestParameters;
 import es.tid.pce.pcep.objects.tlvs.MaxRequestTimeTLV;
+import es.tid.pce.pcep.objects.tlvs.SymbolicPathNameTLV;
 import tid.pce.computingEngine.algorithms.ComputingAlgorithmManager;
 import tid.pce.computingEngine.algorithms.ComputingAlgorithmManagerSSON;
 import tid.pce.computingEngine.algorithms.multiLayer.OperationsCounter;
@@ -74,6 +77,12 @@ public class RequestDispatcher {
 	 private LinkedBlockingQueue<ComputingRequest> pathComputingRequestRetryQueue;	 
 
 	 /**
+	  * Queue to add path computing requests.
+	  * This queue is read by the request processor threads. 
+	  */
+	 private LinkedBlockingQueue<InitiationRequest> lspIniRequestQueue;
+	 
+	 /**
 	  * Constructor
 	  * @param nThreads
 	  * @param ted
@@ -85,6 +94,7 @@ public class RequestDispatcher {
 		log=Logger.getLogger("PCEServer");
 	    this.nThreads = nThreads;
 	    pathComputingRequestQueue = new LinkedBlockingQueue<ComputingRequest>();
+	    lspIniRequestQueue = new LinkedBlockingQueue<InitiationRequest>();
 	    pathComputingRequestRetryQueue= new LinkedBlockingQueue<ComputingRequest>();
 	    pendingRequestList=new Hashtable<Long,ComputingRequest>();
 	    threads = new RequestProcessorThread[nThreads];
@@ -253,7 +263,7 @@ public class RequestDispatcher {
 	
 	public void dispathRequests(PCEPInitiate iniMessage, DataOutputStream out, Inet4Address remotePCEId)
 	{	    	
-		log.info("Dispatching Request from Initiate message!");
+		log.info("Dispatching Initiate message");
 		
 		ComputingRequest cr=new ComputingRequest();
 		cr.setOut(out);
@@ -269,14 +279,28 @@ public class RequestDispatcher {
 		reqparams.setRequestID(iniMessage.getPcepIntiatedLSPList().get(0).getLsp().getLspId());
 		req.setRequestParameters(reqparams);
 		requestList.add(req);
-		
+		cr.setIniLSP(iniMessage.getPcepIntiatedLSPList().get(0));
 		cr.setRequestList(requestList);
-		
+	    
 		cr.setTimeStampNs(System.nanoTime());
 		cr.setMaxTimeInPCE(120000);
 		cr.getEcodingType(PCEPMessageTypes.MESSAGE_INITIATE);
 		
 		pathComputingRequestQueue.add(cr);
+	}
+	
+	public void dispathInitiate(PCEPInitiate iniMessage, DataOutputStream out, Inet4Address remotePeerIP)
+	{	    	
+		log.info("Dispatching Initiate message from "+remotePeerIP);	
+		Iterator<PCEPIntiatedLSP> it=iniMessage.getPcepIntiatedLSPList().iterator();
+		while (it.hasNext()){
+			InitiationRequest ir=new InitiationRequest();
+			ir.setOut(out);
+			ir.setRemotePeerIP(remotePeerIP);
+			ir.setLspIniRequest(it.next());
+			lspIniRequestQueue.add(ir);
+		}
+		
 	}
 	
     public void dispathRequests(PCEPRequest reqMessage, DataOutputStream out, Inet4Address remotePCEId){	    

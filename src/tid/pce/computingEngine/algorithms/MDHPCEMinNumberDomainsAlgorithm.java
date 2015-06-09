@@ -530,6 +530,8 @@ public class MDHPCEMinNumberDomainsAlgorithm implements ComputingAlgorithm{
 		//LinkedList<NCF> ncflist=new LinkedList<NCF>();
 		byte[] bitmap=null;
 		DWDMWavelengthLabel label=null;
+		LinkedList<ExplicitRouteObject> eroList =new LinkedList<ExplicitRouteObject>();
+		LinkedList<ExplicitRouteObject> eroList2 =new LinkedList<ExplicitRouteObject>();
 		for (i=0;i<respList.size();++i){
 			if (respList.get(i)==null){
 				childrenFailed=true;
@@ -575,6 +577,9 @@ public class MDHPCEMinNumberDomainsAlgorithm implements ComputingAlgorithm{
 							}
 						}
 					}
+					ExplicitRouteObject ero2= new ExplicitRouteObject();
+					ero2.addEROSubobjectList(cleanEro.getEROSubobjectList());
+					eroList.add(ero2);
 					//ero.addEROSubobjectList(eroInternal.EROSubobjectList);
 					ero.addEROSubobjectList(cleanEro.getEROSubobjectList());
 					UnnumberIfIDEROSubobject unnumberIfDEROSubobj = new UnnumberIfIDEROSubobject(); 
@@ -585,9 +590,11 @@ public class MDHPCEMinNumberDomainsAlgorithm implements ComputingAlgorithm{
 							log.info(" eroExternal "+unnumberIfDEROSubobj.toString());
 							//ero.addEROSubobject(unnumberIfDEROSubobj);
 							addEROifnotexists(ero,unnumberIfDEROSubobj);
+							addEROifnotexists(ero2,unnumberIfDEROSubobj);
 							j++;
 						}
 					}
+					;
 				}
 			}
 		}
@@ -609,6 +616,14 @@ public class MDHPCEMinNumberDomainsAlgorithm implements ComputingAlgorithm{
 							int n=getFirstN(bitmap,m);
 							label.setN(n);
 							ero=addELC(ero,label,original_end_points);
+							Iterator<ExplicitRouteObject> it= eroList.iterator();
+							int k=0;
+							while (it.hasNext()){
+								ExplicitRouteObject erori=it.next();
+								ExplicitRouteObject ero3=addELC(erori,label,reqList.get(k).getRequest(0).getEndPoints());
+								eroList2.add(ero3);
+							}
+
 							path.seteRO(ero);
 							response.addPath(path);	
 						}else {
@@ -629,10 +644,11 @@ public class MDHPCEMinNumberDomainsAlgorithm implements ComputingAlgorithm{
 			}
 
 		}
-		
-		
+
+
 		//OSCAR INI
-		
+		log.info("VAMOS A MANDAR LOS INIS ");
+		LinkedList <ComputingResponse> respList2=null;
 		if (pathReq.getEcodingType()==PCEPMessageTypes.MESSAGE_INITIATE){
 			LinkedList<PCEPInitiate> iniList= new LinkedList<PCEPInitiate>();
 			for (i=0;i<respList.size();++i){
@@ -643,20 +659,25 @@ public class MDHPCEMinNumberDomainsAlgorithm implements ComputingAlgorithm{
 				srp.setSRP_ID_number(ParentPCESession.getNewReqIDCounter());
 				inilsp.setRsp(srp);
 				inilsp.setEndPoint(reqList.get(i).getRequest(0).getEndPoints());
-				inilsp.setEro(respList.get(i).getResponse(0).getPath(0).geteRO());
+				inilsp.setEro(eroList2.get(i));
+				inilsp.setBandwidth(pathReq.getRequestList().get(0).getBandwidth().duplicate());
 				LSP lsp =new LSP();
 				lsp.setLspId(0);
 				SymbolicPathNameTLV symbolicPathNameTLV_tlv = new SymbolicPathNameTLV();
-				String name ="IDEALIST "+ParentPCESession.getNewReqIDCounter();
+				//String name =pathReq.getIniLSP().getLsp().getSymbolicPathNameTLV_tlv().toString()+"-segment-"+i;
+				String name ="IDEALIST "+ ParentPCESession.getNewReqIDCounter()+"-segment-"+i;
 				byte [] symbolicPathNameID= name.getBytes();
 				symbolicPathNameTLV_tlv.setSymbolicPathNameID(symbolicPathNameID);
-				
+
 				lsp.setSymbolicPathNameTLV_tlv(symbolicPathNameTLV_tlv);
 				inilsp.setLsp(lsp);
 				iniList.add(ini);
 			}
 			try {
-				respList= childPCERequestManager.executeInitiates(iniList, domainList);	
+				log.info("VAAAAAAAAMOS ");
+				respList2= childPCERequestManager.executeInitiates(iniList, domainList);
+				log.info("SE LLAMOOOOOOO ");
+
 			}catch (Exception e){
 				log.severe("PROBLEM SENDING THE INITIATES");
 				NoPath noPath2= new NoPath();
@@ -668,27 +689,87 @@ public class MDHPCEMinNumberDomainsAlgorithm implements ComputingAlgorithm{
 				return m_resp;
 			}
 		}
-		
-		for (i=0;i<respList.size();++i){
-			if (respList.get(i)==null){
-				childrenFailed=true;
+		log.info("A VER QUE SE RESPONDE ");
+		if (respList2==null){
+			log.warning("RESPLIST = NULL");
+			childrenFailed=true;
+		}else {
+			for (i=0;i<respList2.size();++i){
+				log.info("viendo  "+i);
+				if (respList2.get(i)==null){
+					childrenFailed=true;
+				}
 			}
 		}
-		if (childrenFailed) {
-			log.warning("Some child has failed to initiate");
+		if (respList2!=null){
 
-		} else {
-			StateReport sr = new StateReport();
-			LSP lsp=new LSP();
-			sr.setLSP(lsp);
-			m_resp.addReport(sr);
+			if (childrenFailed) {
+				log.warning("Some child has failed to initiate");
+				LinkedList<PCEPInitiate> deleteList= new LinkedList<PCEPInitiate>();
+				LinkedList<Object> domainList2 = new LinkedList<Object>();
+				for (i=0;i<respList2.size();++i){
+					if (respList2.get(i)!=null){
+						domainList2.add(domainList.get(i));
+						//Send delete
+						PCEPInitiate ini = new PCEPInitiate();
+						PCEPIntiatedLSP inilsp = new PCEPIntiatedLSP();
+						ini.getPcepIntiatedLSPList().add(inilsp);
+						SRP srp= new SRP();
+						srp.setSRP_ID_number(ParentPCESession.getNewReqIDCounter());
+						srp.setrFlag(true);
+						inilsp.setRsp(srp);
+						inilsp.setEndPoint(reqList.get(i).getRequest(0).getEndPoints());
+						inilsp.setEro(respList2.get(i).getResponse(0).getPath(0).geteRO());
+						LSP lsp =new LSP();
+						lsp.setLspId((respList2.get(i).getReportList().getFirst().getLSP().getLspId()));
+
+						lsp.setSymbolicPathNameTLV_tlv(respList2.get(i).getReportList().getFirst().getLSP().getSymbolicPathNameTLV_tlv());
+						inilsp.setLsp(lsp);
+						deleteList.add(ini);
+
+					}
+				}
+					try {
+						respList= childPCERequestManager.executeInitiates(deleteList, domainList2);	
+					}catch (Exception e){
+						log.severe("PROBLEM SENDING THE DELETES");
+						NoPath noPath2= new NoPath();
+						noPath2.setNatureOfIssue(ObjectParameters.NOPATH_NOPATH_SAT_CONSTRAINTS);
+						NoPathTLV noPathTLV=new NoPathTLV();
+						noPath2.setNoPathTLV(noPathTLV);				
+						response.setNoPath(noPath2);
+						m_resp.addResponse(response);
+						return m_resp;
+					}
+				
+
+			} else {
+				StateReport sr = new StateReport();
+				
+				LSP lsp=new LSP();
+				lsp.setLspId(1);
+				SymbolicPathNameTLV symbolicPathNameTLV_tlv = new SymbolicPathNameTLV();
+				String name="IDEALIST";
+				
+				symbolicPathNameTLV_tlv.setSymbolicPathNameID(name.getBytes());
+				lsp.setSymbolicPathNameTLV_tlv(symbolicPathNameTLV_tlv);
+				sr.setLSP(lsp);
+				SRP srp = new SRP();
+				
+				srp.setSRP_ID_number(pathReq.getIniLSP().getRsp().getSRP_ID_number());
+				sr.setSRP(srp);
+				Path path2 = new Path();
+				path2.seteRO(ero);
+				sr.setPath(path2);
+				m_resp.addReport(sr);
+			}
 		}
-		
-		
-		
-		
+
+
+
+
 		//OSCAR FIN
-		
+
 		long tiempofin =System.nanoTime();
 		long tiempotot=tiempofin-tiempoini;
 		log.info("Ha tardado "+tiempotot+" nanosegundos");
@@ -704,14 +785,14 @@ public class MDHPCEMinNumberDomainsAlgorithm implements ComputingAlgorithm{
 
 	private ExplicitRouteObject prepareERO(ExplicitRouteObject ero, boolean removeELC, EndPoints ep,boolean first, boolean last, boolean removeFirstNode ){
 		// boolean removeFirstNode=false;
-//		 if (ep instanceof GeneralizedEndPoints){
-//			if (((GeneralizedEndPoints)ep).getP2PEndpoints()!=null){
-//				if (((GeneralizedEndPoints)ep).getP2PEndpoints().getSourceEndPoint().getUnnumberedEndpoint()!=null){
-//					removeFirstNode=true;
-//				}
-//			}
-//		 }
-				
+		//		 if (ep instanceof GeneralizedEndPoints){
+		//			if (((GeneralizedEndPoints)ep).getP2PEndpoints()!=null){
+		//				if (((GeneralizedEndPoints)ep).getP2PEndpoints().getSourceEndPoint().getUnnumberedEndpoint()!=null){
+		//					removeFirstNode=true;
+		//				}
+		//			}
+		//		 }
+
 		ExplicitRouteObject eroClean= new ExplicitRouteObject();
 		for (int i=0;i<ero.getEROSubobjectList().size();++i) {
 			if (ero.getEROSubobjectList().get(i) instanceof GeneralizedLabelEROSubobject){
@@ -725,66 +806,66 @@ public class MDHPCEMinNumberDomainsAlgorithm implements ComputingAlgorithm{
 			} else{
 				eroClean.addEROSubobject(ero.getEROSubobjectList().get(i));
 			}
-				//				if (first){
-				//					log.info("Primer dominio");
-				//					if (i==0){
-				//						if (removeFirstNode) {
-				//							if (ep instanceof GeneralizedEndPoints){
-				//								if (((GeneralizedEndPoints)ep).getP2PEndpoints()!=null){
-				//									if (((GeneralizedEndPoints)ep).getP2PEndpoints().getSourceEndPoint().getEndPointIPv4TLV()!=null){
-				//										if (ero.getEROSubobjectList().get(i) instanceof IPv4prefixEROSubobject){
-				//											if (((GeneralizedEndPoints)ep).getP2PEndpoints().getSourceEndPoint().getEndPointIPv4TLV().getIPv4address().equals(((IPv4prefixEROSubobject)ero.getEROSubobjectList().get(i)).getIpv4address())){
-				//												//First node needs to be removed
-				//											}else {
-				//												//The first subobject is not the sources... we add it
-				//												eroClean.addEROSubobject(ero.getEROSubobjectList().get(i));
-				//											}
-				//										}
-				//										else if (ero.getEROSubobjectList().get(i) instanceof UnnumberIfIDEROSubobject){
-				//											eroClean.addEROSubobject(ero.getEROSubobjectList().get(i));
-				//										}
-				//									} else if (((GeneralizedEndPoints)ep).getP2PEndpoints().getSourceEndPoint().getUnnumberedEndpoint()!=null){
-				//										if (ero.getEROSubobjectList().get(i) instanceof IPv4prefixEROSubobject){
-				//											//The source is an input interface that needs to be added
-				//											UnnumberIfIDEROSubobject uu=new UnnumberIfIDEROSubobject();
-				//											uu.setInterfaceID(((GeneralizedEndPoints)ep).getP2PEndpoints().getSourceEndPoint().getUnnumberedEndpoint().getIfID());
-				//											uu.setRouterID(((GeneralizedEndPoints)ep).getP2PEndpoints().getSourceEndPoint().getUnnumberedEndpoint().getIPv4address());
-				//												eroClean.addEROSubobject(ero.getEROSubobjectList().get(i));
-				//										}
-				//										else if (ero.getEROSubobjectList().get(i) instanceof UnnumberIfIDEROSubobject){
-				//											if (((GeneralizedEndPoints)ep).getP2PEndpoints().getSourceEndPoint().getUnnumberedEndpoint().getIfID()==((UnnumberIfIDEROSubobject)ero.getEROSubobjectList().get(i)).getInterfaceID()){
-				//												//its the same interface ID
-				//												if (((GeneralizedEndPoints)ep).getP2PEndpoints().getSourceEndPoint().getUnnumberedEndpoint().getIPv4address().equals(((UnnumberIfIDEROSubobject)ero.getEROSubobjectList().get(i)).getRouterID())){
-				//													//its the same router ID
-				//													eroClean.addEROSubobject(ero.getEROSubobjectList().get(i));
-				//												}else {
-				//													//The source is an input interface that needs to be added
-				//													UnnumberIfIDEROSubobject uu=new UnnumberIfIDEROSubobject();
-				//													uu.setInterfaceID(((GeneralizedEndPoints)ep).getP2PEndpoints().getSourceEndPoint().getUnnumberedEndpoint().getIfID());
-				//													uu.setRouterID(((GeneralizedEndPoints)ep).getP2PEndpoints().getSourceEndPoint().getUnnumberedEndpoint().getIPv4address());
-				//														eroClean.addEROSubobject(ero.getEROSubobjectList().get(i));
-				//												}
-				//											}else {
-				//												//The source is an input interface that needs to be added
-				//												UnnumberIfIDEROSubobject uu=new UnnumberIfIDEROSubobject();
-				//												uu.setInterfaceID(((GeneralizedEndPoints)ep).getP2PEndpoints().getSourceEndPoint().getUnnumberedEndpoint().getIfID());
-				//												uu.setRouterID(((GeneralizedEndPoints)ep).getP2PEndpoints().getSourceEndPoint().getUnnumberedEndpoint().getIPv4address());
-				//												eroClean.addEROSubobject(ero.getEROSubobjectList().get(i));
-				//											}											
-				//										}
-				//									}
-				//										
-				//										
-				//								}
-				//							}else {
-				//								
-				//							}
-				//						}
-				//					}
+			//				if (first){
+			//					log.info("Primer dominio");
+			//					if (i==0){
+			//						if (removeFirstNode) {
+			//							if (ep instanceof GeneralizedEndPoints){
+			//								if (((GeneralizedEndPoints)ep).getP2PEndpoints()!=null){
+			//									if (((GeneralizedEndPoints)ep).getP2PEndpoints().getSourceEndPoint().getEndPointIPv4TLV()!=null){
+			//										if (ero.getEROSubobjectList().get(i) instanceof IPv4prefixEROSubobject){
+			//											if (((GeneralizedEndPoints)ep).getP2PEndpoints().getSourceEndPoint().getEndPointIPv4TLV().getIPv4address().equals(((IPv4prefixEROSubobject)ero.getEROSubobjectList().get(i)).getIpv4address())){
+			//												//First node needs to be removed
+			//											}else {
+			//												//The first subobject is not the sources... we add it
+			//												eroClean.addEROSubobject(ero.getEROSubobjectList().get(i));
+			//											}
+			//										}
+			//										else if (ero.getEROSubobjectList().get(i) instanceof UnnumberIfIDEROSubobject){
+			//											eroClean.addEROSubobject(ero.getEROSubobjectList().get(i));
+			//										}
+			//									} else if (((GeneralizedEndPoints)ep).getP2PEndpoints().getSourceEndPoint().getUnnumberedEndpoint()!=null){
+			//										if (ero.getEROSubobjectList().get(i) instanceof IPv4prefixEROSubobject){
+			//											//The source is an input interface that needs to be added
+			//											UnnumberIfIDEROSubobject uu=new UnnumberIfIDEROSubobject();
+			//											uu.setInterfaceID(((GeneralizedEndPoints)ep).getP2PEndpoints().getSourceEndPoint().getUnnumberedEndpoint().getIfID());
+			//											uu.setRouterID(((GeneralizedEndPoints)ep).getP2PEndpoints().getSourceEndPoint().getUnnumberedEndpoint().getIPv4address());
+			//												eroClean.addEROSubobject(ero.getEROSubobjectList().get(i));
+			//										}
+			//										else if (ero.getEROSubobjectList().get(i) instanceof UnnumberIfIDEROSubobject){
+			//											if (((GeneralizedEndPoints)ep).getP2PEndpoints().getSourceEndPoint().getUnnumberedEndpoint().getIfID()==((UnnumberIfIDEROSubobject)ero.getEROSubobjectList().get(i)).getInterfaceID()){
+			//												//its the same interface ID
+			//												if (((GeneralizedEndPoints)ep).getP2PEndpoints().getSourceEndPoint().getUnnumberedEndpoint().getIPv4address().equals(((UnnumberIfIDEROSubobject)ero.getEROSubobjectList().get(i)).getRouterID())){
+			//													//its the same router ID
+			//													eroClean.addEROSubobject(ero.getEROSubobjectList().get(i));
+			//												}else {
+			//													//The source is an input interface that needs to be added
+			//													UnnumberIfIDEROSubobject uu=new UnnumberIfIDEROSubobject();
+			//													uu.setInterfaceID(((GeneralizedEndPoints)ep).getP2PEndpoints().getSourceEndPoint().getUnnumberedEndpoint().getIfID());
+			//													uu.setRouterID(((GeneralizedEndPoints)ep).getP2PEndpoints().getSourceEndPoint().getUnnumberedEndpoint().getIPv4address());
+			//														eroClean.addEROSubobject(ero.getEROSubobjectList().get(i));
+			//												}
+			//											}else {
+			//												//The source is an input interface that needs to be added
+			//												UnnumberIfIDEROSubobject uu=new UnnumberIfIDEROSubobject();
+			//												uu.setInterfaceID(((GeneralizedEndPoints)ep).getP2PEndpoints().getSourceEndPoint().getUnnumberedEndpoint().getIfID());
+			//												uu.setRouterID(((GeneralizedEndPoints)ep).getP2PEndpoints().getSourceEndPoint().getUnnumberedEndpoint().getIPv4address());
+			//												eroClean.addEROSubobject(ero.getEROSubobjectList().get(i));
+			//											}											
+			//										}
+			//									}
+			//										
+			//										
+			//								}
+			//							}else {
+			//								
+			//							}
+			//						}
+			//					}
 
-				//				}
-				//If it is not the last leg 
-				
+			//				}
+			//If it is not the last leg 
+
 
 			//}
 
@@ -814,7 +895,7 @@ public class MDHPCEMinNumberDomainsAlgorithm implements ComputingAlgorithm{
 
 		return list;
 	}
-	
+
 	public void restrictBitmap(byte[] bitmap, byte[] bitmap2) {
 		if (bitmap2==null){
 			log.info("BORRAAAANDO");
@@ -826,9 +907,9 @@ public class MDHPCEMinNumberDomainsAlgorithm implements ComputingAlgorithm{
 				bitmap[i]=(byte)((bitmap[i]&0xFF)&(bitmap2[i]&0xFF));
 			}
 		}
-		
+
 	}
-	
+
 	public boolean isLabelFree(byte[] bitmap){
 		boolean isFree=false;
 		for (int i=0;i<bitmap.length;++i){
@@ -838,21 +919,21 @@ public class MDHPCEMinNumberDomainsAlgorithm implements ComputingAlgorithm{
 		}
 		return isFree;
 	}
-	
-//	public int getFirstN(byte[] bitmap){
-//		int n=-1;
-//		int max_lambdas=bitmap.length*8;
-//		for (int i=0; i<max_lambdas;++i){
-//			int num_byte=i/8;
-//			int pos=i%8;
-//			//log.info("mirando lambda "+i+" en el byte "+num_byte+" con valor "+bitmap[num_byte]+" en la posicion "+(i%8));
-//			if ( (bitmap[num_byte]&(0x80>>>(i%8)))==(0x80>>>(i%8))){				
-//				return i;
-//			}			
-//		}
-//		return n;
-//	}
-	
+
+	//	public int getFirstN(byte[] bitmap){
+	//		int n=-1;
+	//		int max_lambdas=bitmap.length*8;
+	//		for (int i=0; i<max_lambdas;++i){
+	//			int num_byte=i/8;
+	//			int pos=i%8;
+	//			//log.info("mirando lambda "+i+" en el byte "+num_byte+" con valor "+bitmap[num_byte]+" en la posicion "+(i%8));
+	//			if ( (bitmap[num_byte]&(0x80>>>(i%8)))==(0x80>>>(i%8))){				
+	//				return i;
+	//			}			
+	//		}
+	//		return n;
+	//	}
+
 	public int getFirstN(byte[] bitmap, int m){
 		int n=-1;
 		int max_lambdas=bitmap.length*8;
@@ -872,30 +953,30 @@ public class MDHPCEMinNumberDomainsAlgorithm implements ComputingAlgorithm{
 			if (free==true){
 				return i;
 			}
-						
+
 		}
 		return n;
 	}
-	
+
 
 	public ExplicitRouteObject addELC(ExplicitRouteObject ero,DWDMWavelengthLabel dwdmWavelengthLabel, EndPoints ep){
-//		boolean unNumberedIf=false;
-//		if (ep instanceof GeneralizedEndPoints){
-//			if (((GeneralizedEndPoints)ep).getP2PEndpoints()!=null){
-//				if (((GeneralizedEndPoints)ep).getP2PEndpoints().getSourceEndPoint().getUnnumberedEndpoint()!=null){
-//					unNumberedIf=true;
-//				}
-//			}
-//		 }
+		//		boolean unNumberedIf=false;
+		//		if (ep instanceof GeneralizedEndPoints){
+		//			if (((GeneralizedEndPoints)ep).getP2PEndpoints()!=null){
+		//				if (((GeneralizedEndPoints)ep).getP2PEndpoints().getSourceEndPoint().getUnnumberedEndpoint()!=null){
+		//					unNumberedIf=true;
+		//				}
+		//			}
+		//		 }
 		ExplicitRouteObject ero2 = new ExplicitRouteObject();
 		int i=0;
 		for (i=0;i<ero.getEROSubobjectList().size();++i) {
 			ero2.addEROSubobject(ero.getEROSubobjectList().get(i));	
-				if (ero.getEROSubobjectList().get(i) instanceof UnnumberIfIDEROSubobject){
-					GeneralizedLabelEROSubobject ge= new GeneralizedLabelEROSubobject();
-					ge.setDwdmWavelengthLabel(dwdmWavelengthLabel);
-					ero2.addEROSubobject(ge);
-				}
+			if (ero.getEROSubobjectList().get(i) instanceof UnnumberIfIDEROSubobject){
+				GeneralizedLabelEROSubobject ge= new GeneralizedLabelEROSubobject();
+				ge.setDwdmWavelengthLabel(dwdmWavelengthLabel);
+				ero2.addEROSubobject(ge);
+			}
 		}
 		return ero2;
 	}

@@ -255,7 +255,7 @@ public abstract class GenericPCEPSession extends Thread implements PCEPSession {
 				offset++;
 			}
 			else if (r==-1){
-				log.info("End of stream has been reached");
+				log.info("End of stream has been reached from "+this.remotePeerIP);
 				throw new IOException();
 			}
 		}
@@ -357,7 +357,7 @@ public abstract class GenericPCEPSession extends Thread implements PCEPSession {
 	 * @return PCEP Session closed OK
 	 */
 	public void close(int reason){
-		log.info("Closing PCEP Session"); 
+		log.info("Closing PCEP Session with "+this.remotePeerIP); 
 		PCEPClose p_close=new PCEPClose();
 		p_close.setReason(reason);
 		sendPCEPMessage(p_close);
@@ -395,7 +395,7 @@ public abstract class GenericPCEPSession extends Thread implements PCEPSession {
 	 * Ends the DeadTimer Thread
 	 */
 	protected void cancelDeadTimer() {
-		log.fine("Cancelling DeadTimer");
+		log.fine("Cancelling DeadTimer from "+this.remotePeerIP);
 		if (this.deadTimerT != null) {
 			this.deadTimerT.stopRunning();
 			this.deadTimerT.interrupt();
@@ -414,7 +414,7 @@ public abstract class GenericPCEPSession extends Thread implements PCEPSession {
 	 * Ends the KeepAlive Thread
 	 */
 	public void cancelKeepAlive() {
-		log.fine("Cancelling KeepAliveTimer");
+		log.fine("Cancelling KeepAliveTimer from "+this.remotePeerIP);
 		if (this.keepAliveT != null) {
 			this.keepAliveT.stopRunning();
 			this.keepAliveT.interrupt();
@@ -435,7 +435,7 @@ public abstract class GenericPCEPSession extends Thread implements PCEPSession {
 				out.close();
 			}
 			if (this.socket != null) {
-				log.info("Closing socket");
+				log.info("Closing socket with "+this.remotePeerIP);
 				this.socket.close();
 			}
 
@@ -453,7 +453,7 @@ public abstract class GenericPCEPSession extends Thread implements PCEPSession {
 	}
 
 	public void killSession(){	
-		log.info("Killing Session");
+		log.info("Killing Session with "+this.remotePeerIP);
 		pcepSessionManager.notifyPeerSessionInactive((Inet4Address)this.socket.getInetAddress());
 		timer.cancel();
 		this.endConnections();
