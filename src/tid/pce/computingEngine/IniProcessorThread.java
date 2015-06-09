@@ -153,114 +153,114 @@ public class IniProcessorThread extends Thread{
 			}
 		}
 	}	
-	
-	private void provisionToChildPCES(){
-		log.info("Goint ");
-		LinkedList <ComputingResponse> respList2=null;
-		LinkedList<PCEPInitiate> iniList= new LinkedList<PCEPInitiate>();
-		//Create the domain list
-		Iterator eroi= 
-		for ()
-			for (i=0;i<respList.size();++i){
-				PCEPInitiate ini = new PCEPInitiate();
-				PCEPIntiatedLSP inilsp = new PCEPIntiatedLSP();
-				ini.getPcepIntiatedLSPList().add(inilsp);
-				SRP srp= new SRP();
-				srp.setSRP_ID_number(ParentPCESession.getNewReqIDCounter());
-				inilsp.setRsp(srp);
-				inilsp.setEndPoint(reqList.get(i).getRequest(0).getEndPoints());
-				inilsp.setEro(eroList2.get(i));
-				inilsp.setBandwidth(pathReq.getRequestList().get(0).getBandwidth().duplicate());
-				LSP lsp =new LSP();
-				lsp.setLspId(0);
-				SymbolicPathNameTLV symbolicPathNameTLV_tlv = new SymbolicPathNameTLV();
-				String name ="IDEALIST "+ParentPCESession.getNewReqIDCounter();
-				byte [] symbolicPathNameID= name.getBytes();
-				symbolicPathNameTLV_tlv.setSymbolicPathNameID(symbolicPathNameID);
-
-				lsp.setSymbolicPathNameTLV_tlv(symbolicPathNameTLV_tlv);
-				inilsp.setLsp(lsp);
-				iniList.add(ini);
-			}
-			try {
-				log.info("VAAAAAAAAMOS ");
-				respList2= childPCERequestManager.executeInitiates(iniList, domainList);
-				log.info("SE LLAMOOOOOOO ");
-
-			}catch (Exception e){
-				log.severe("PROBLEM SENDING THE INITIATES");
-				NoPath noPath2= new NoPath();
-				noPath2.setNatureOfIssue(ObjectParameters.NOPATH_NOPATH_SAT_CONSTRAINTS);
-				NoPathTLV noPathTLV=new NoPathTLV();
-				noPath2.setNoPathTLV(noPathTLV);				
-				response.setNoPath(noPath2);
-				m_resp.addResponse(response);
-				return m_resp;
-			}
-		}
-		log.info("A VER QUE SE RESPONDE ");
-		if (respList2==null){
-			log.warning("RESPLIST = NULL");
-			childrenFailed=true;
-		}else {
-			for (i=0;i<respList.size();++i){
-				log.info("viendo  "+i);
-				if (respList2.get(i)==null){
-					childrenFailed=true;
-				}
-			}
-		}
-		if (respList2!=null){
-
-			if (childrenFailed) {
-				log.warning("Some child has failed to initiate");
-				LinkedList<PCEPInitiate> deleteList= new LinkedList<PCEPInitiate>();
-				LinkedList<Object> domainList2 = new LinkedList<Object>();
-				for (i=0;i<respList2.size();++i){
-					if (respList2.get(i)!=null){
-						domainList2.add(domainList.get(i));
-						//Send delete
-						PCEPInitiate ini = new PCEPInitiate();
-						PCEPIntiatedLSP inilsp = new PCEPIntiatedLSP();
-						ini.getPcepIntiatedLSPList().add(inilsp);
-						SRP srp= new SRP();
-						srp.setSRP_ID_number(ParentPCESession.getNewReqIDCounter());
-						srp.setrFlag(true);
-						inilsp.setRsp(srp);
-						inilsp.setEndPoint(reqList.get(i).getRequest(0).getEndPoints());
-						inilsp.setEro(respList2.get(i).getResponse(0).getPath(0).geteRO());
-						LSP lsp =new LSP();
-						lsp.setLspId((respList2.get(i).getReportList().getFirst().getLSP().getLspId()));
-
-						lsp.setSymbolicPathNameTLV_tlv(respList2.get(i).getReportList().getFirst().getLSP().getSymbolicPathNameTLV_tlv());
-						inilsp.setLsp(lsp);
-						deleteList.add(ini);
-
-					}
-				}
-					try {
-						respList= childPCERequestManager.executeInitiates(deleteList, domainList2);	
-					}catch (Exception e){
-						log.severe("PROBLEM SENDING THE DELETES");
-						NoPath noPath2= new NoPath();
-						noPath2.setNatureOfIssue(ObjectParameters.NOPATH_NOPATH_SAT_CONSTRAINTS);
-						NoPathTLV noPathTLV=new NoPathTLV();
-						noPath2.setNoPathTLV(noPathTLV);				
-						response.setNoPath(noPath2);
-						m_resp.addResponse(response);
-						return m_resp;
-					}
-				
-
-			} else {
-				StateReport sr = new StateReport();
-				LSP lsp=new LSP();
-				sr.setLSP(lsp);
-				m_resp.addReport(sr);
-			}
-		
-	}
-	
+//	
+//	private void provisionToChildPCES(){
+//		log.info("Goint ");
+//		LinkedList <ComputingResponse> respList2=null;
+//		LinkedList<PCEPInitiate> iniList= new LinkedList<PCEPInitiate>();
+//		//Create the domain list
+//		Iterator eroi= 
+//		for ()
+//			for (i=0;i<respList.size();++i){
+//				PCEPInitiate ini = new PCEPInitiate();
+//				PCEPIntiatedLSP inilsp = new PCEPIntiatedLSP();
+//				ini.getPcepIntiatedLSPList().add(inilsp);
+//				SRP srp= new SRP();
+//				srp.setSRP_ID_number(ParentPCESession.getNewReqIDCounter());
+//				inilsp.setRsp(srp);
+//				inilsp.setEndPoint(reqList.get(i).getRequest(0).getEndPoints());
+//				inilsp.setEro(eroList2.get(i));
+//				inilsp.setBandwidth(pathReq.getRequestList().get(0).getBandwidth().duplicate());
+//				LSP lsp =new LSP();
+//				lsp.setLspId(0);
+//				SymbolicPathNameTLV symbolicPathNameTLV_tlv = new SymbolicPathNameTLV();
+//				String name ="IDEALIST "+ParentPCESession.getNewReqIDCounter();
+//				byte [] symbolicPathNameID= name.getBytes();
+//				symbolicPathNameTLV_tlv.setSymbolicPathNameID(symbolicPathNameID);
+//
+//				lsp.setSymbolicPathNameTLV_tlv(symbolicPathNameTLV_tlv);
+//				inilsp.setLsp(lsp);
+//				iniList.add(ini);
+//			}
+//			try {
+//				log.info("VAAAAAAAAMOS ");
+//				respList2= childPCERequestManager.executeInitiates(iniList, domainList);
+//				log.info("SE LLAMOOOOOOO ");
+//
+//			}catch (Exception e){
+//				log.severe("PROBLEM SENDING THE INITIATES");
+//				NoPath noPath2= new NoPath();
+//				noPath2.setNatureOfIssue(ObjectParameters.NOPATH_NOPATH_SAT_CONSTRAINTS);
+//				NoPathTLV noPathTLV=new NoPathTLV();
+//				noPath2.setNoPathTLV(noPathTLV);				
+//				response.setNoPath(noPath2);
+//				m_resp.addResponse(response);
+//				return m_resp;
+//			}
+//		}
+//		log.info("A VER QUE SE RESPONDE ");
+//		if (respList2==null){
+//			log.warning("RESPLIST = NULL");
+//			childrenFailed=true;
+//		}else {
+//			for (i=0;i<respList.size();++i){
+//				log.info("viendo  "+i);
+//				if (respList2.get(i)==null){
+//					childrenFailed=true;
+//				}
+//			}
+//		}
+//		if (respList2!=null){
+//
+//			if (childrenFailed) {
+//				log.warning("Some child has failed to initiate");
+//				LinkedList<PCEPInitiate> deleteList= new LinkedList<PCEPInitiate>();
+//				LinkedList<Object> domainList2 = new LinkedList<Object>();
+//				for (i=0;i<respList2.size();++i){
+//					if (respList2.get(i)!=null){
+//						domainList2.add(domainList.get(i));
+//						//Send delete
+//						PCEPInitiate ini = new PCEPInitiate();
+//						PCEPIntiatedLSP inilsp = new PCEPIntiatedLSP();
+//						ini.getPcepIntiatedLSPList().add(inilsp);
+//						SRP srp= new SRP();
+//						srp.setSRP_ID_number(ParentPCESession.getNewReqIDCounter());
+//						srp.setrFlag(true);
+//						inilsp.setRsp(srp);
+//						inilsp.setEndPoint(reqList.get(i).getRequest(0).getEndPoints());
+//						inilsp.setEro(respList2.get(i).getResponse(0).getPath(0).geteRO());
+//						LSP lsp =new LSP();
+//						lsp.setLspId((respList2.get(i).getReportList().getFirst().getLSP().getLspId()));
+//
+//						lsp.setSymbolicPathNameTLV_tlv(respList2.get(i).getReportList().getFirst().getLSP().getSymbolicPathNameTLV_tlv());
+//						inilsp.setLsp(lsp);
+//						deleteList.add(ini);
+//
+//					}
+//				}
+//					try {
+//						respList= childPCERequestManager.executeInitiates(deleteList, domainList2);	
+//					}catch (Exception e){
+//						log.severe("PROBLEM SENDING THE DELETES");
+//						NoPath noPath2= new NoPath();
+//						noPath2.setNatureOfIssue(ObjectParameters.NOPATH_NOPATH_SAT_CONSTRAINTS);
+//						NoPathTLV noPathTLV=new NoPathTLV();
+//						noPath2.setNoPathTLV(noPathTLV);				
+//						response.setNoPath(noPath2);
+//						m_resp.addResponse(response);
+//						return m_resp;
+//					}
+//				
+//
+//			} else {
+//				StateReport sr = new StateReport();
+//				LSP lsp=new LSP();
+//				sr.setLSP(lsp);
+//				m_resp.addReport(sr);
+//			}
+//		
+//	}
+//	
 	
 }
 
