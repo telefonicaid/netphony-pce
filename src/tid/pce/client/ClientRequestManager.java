@@ -126,6 +126,7 @@ public class ClientRequestManager {
 	public PCEPResponse newRequest( PCEPRequest pcreq, long maxTimeMs)
 	{
 		log.info("New Request. Request:"+pcreq.toString());
+		log.info("pcreq.getRequest(0).getXro(): "+pcreq.getRequest(0).getXro());
 		Object object_lock=new Object();		
 		long idRequest=pcreq.getRequest(0).getRequestParameters().getRequestID();
 
