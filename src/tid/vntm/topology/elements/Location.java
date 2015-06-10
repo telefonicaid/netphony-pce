@@ -1,4 +1,4 @@
-package tid.pce.computingEngine.algorithms.vlan;
+package tid.vntm.topology.elements;
 
 public class Location {
 	double xCoord;

@@ -22,7 +22,7 @@ import tid.pce.tedb.IntraDomainEdge;
 import tid.pce.tedb.SimpleTEDB;
 import tid.pce.tedb.TE_Information;
 import tid.pce.tedb.controllers.TEDUpdaterController.MyEdge;
-import tid.provisioningManager.objects.RouterInfoPM;
+import tid.topology.elements.RouterInfoPM;
 import tid.util.UtilsFunctions;
 
 public class TEDUpdaterTREMA extends TEDUpdaterController

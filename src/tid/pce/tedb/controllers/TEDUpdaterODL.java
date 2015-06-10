@@ -22,7 +22,7 @@ import tid.pce.tedb.DomainTEDB;
 import tid.pce.tedb.IntraDomainEdge;
 import tid.pce.tedb.SimpleTEDB;
 import tid.pce.tedb.TE_Information;
-import tid.provisioningManager.objects.RouterInfoPM;
+import tid.topology.elements.RouterInfoPM;
 import tid.util.UtilsFunctions;
 
 

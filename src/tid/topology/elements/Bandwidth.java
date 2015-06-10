@@ -1,4 +1,4 @@
-package tid.pce.computingEngine.algorithms.vlan;
+package tid.topology.elements;
 
 	public class Bandwidth {
 
