@@ -17,14 +17,11 @@ import es.tid.pce.pcep.objects.ExplicitRouteObject;
 import es.tid.pce.pcep.objects.LSP;
 import es.tid.pce.pcep.objects.SRP;
 import es.tid.rsvp.objects.subobjects.OpenFlowUnnumberIfIDEROSubobject;
-import tid.pce.client.PCCPCEPSession;
 import tid.pce.pcepsession.DeadTimerThread;
 import tid.pce.pcepsession.GenericPCEPSession;
 import tid.pce.pcepsession.KeepAliveThread;
 import tid.pce.pcepsession.PCEPSessionsInformation;
 import tid.util.UtilsFunctions;
-import tid.vntm.LSPManager;
-import tid.vntm.topology.VNTMGraph;
 
 
 
@@ -33,9 +30,6 @@ import tid.vntm.topology.VNTMGraph;
 
 public class PCEPClientSession extends GenericPCEPSession 
 {
-	LSPManager lspmanager;
-	private PCCPCEPSession NMSSession;
-	private VNTMGraph vntmGraph;
 	String source = null;
 	String dest = null;
 	private PCEPReport report;
