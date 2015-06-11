@@ -19,7 +19,6 @@ import es.tid.ospf.ospfv2.lsa.tlv.subtlv.UnreservedBandwidth;
 import es.tid.ospf.ospfv2.lsa.tlv.subtlv.complexFields.BitmapLabelSet;
 import es.tid.ospf.ospfv2.lsa.tlv.subtlv.complexFields.LabelSetField;
 import es.tid.ospf.ospfv2.lsa.tlv.subtlv.complexFields.LabelSetParameters;
-import tid.netManager.emulated.LayerTypes;
 import tid.pce.tedb.DomainTEDB;
 import tid.pce.tedb.IntraDomainEdge;
 import tid.pce.tedb.MultiLayerTEDB;
