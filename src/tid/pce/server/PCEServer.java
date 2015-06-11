@@ -211,10 +211,10 @@ public class PCEServer {
 		}
 
 		if(params.ITcapable==false){
-			if (params.isMultilayer() == false)
-			{
-				((SimpleTEDB)ted).setRequestDispatcher(PCCRequestDispatcher);
-			}
+//			if (params.isMultilayer() == false)
+//			{
+//				((SimpleTEDB)ted).setRequestDispatcher(PCCRequestDispatcher);
+//			}
 
 		}
 
