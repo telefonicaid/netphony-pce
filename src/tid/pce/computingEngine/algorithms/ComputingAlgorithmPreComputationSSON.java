@@ -8,33 +8,21 @@ import org.jgrapht.graph.SimpleDirectedWeightedGraph;
 
 import es.tid.ospf.ospfv2.lsa.tlv.subtlv.complexFields.BitmapLabelSet;
 import tid.pce.tedb.IntraDomainEdge;
+import tid.pce.tedb.SSONListener;
 import tid.pce.tedb.TEDB;
+import tid.pce.tedb.TEDListener;
 
-public interface ComputingAlgorithmPreComputationSSON {
+public interface ComputingAlgorithmPreComputationSSON extends SSONListener{
 
 	public void initialize();
 	
 	public void setTEDB(TEDB ted);
 	
-	public void notifyWavelengthReservation(LinkedList<Object> sourceVertexList, LinkedList<Object> targetVertexList, int wavelength);
-	public void notifyWavelengthEndReservation(LinkedList<Object> sourceVertexList, LinkedList<Object> targetVertexList, int wavelength);
-	
-	public void notifyWavelengthStatusChange(Object source, Object destination, BitmapLabelSet previousBitmapLabelSet, BitmapLabelSet newBitmapLabelSet);
+	public void notifyNewEdge_multiLink(Object source, Object destination, long srcIfId, long dstIfId);	
 
-	public void notifyNewVertex(Object vertex);
 
-	public void notifyNewEdge(Object source, Object destination);
-	public void notifyNewEdge_multiLink(Object source, Object destination, long srcIfId, long dstIfId);
-	
-	public void notifyTEDBFullUpdate();
-	
 
-	public void notifyWavelengthReservationSSON(LinkedList<Object> sourceVertexList,
-			LinkedList<Object> targetVertexList, int wavelength, int m);
 
-	void notifyWavelengthEndReservationSSON(
-			LinkedList<Object> sourceVertexList,
-			LinkedList<Object> targetVertexList, int wavelength, int m);
 	
 	public ArrayList<SimpleDirectedWeightedGraph<Object, IntraDomainEdge>> getNetworkGraphs();
 	

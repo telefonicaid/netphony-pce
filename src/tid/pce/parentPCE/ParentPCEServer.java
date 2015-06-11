@@ -5,6 +5,7 @@ import java.net.ServerSocket;
 import java.util.logging.FileHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
 import tid.bgp.bgp4Peer.pruebas.BGPPeer;
 import tid.pce.computingEngine.ReportDispatcher;
 import tid.pce.computingEngine.RequestDispatcher;
@@ -18,6 +19,7 @@ import tid.pce.tedb.FileTEDBUpdater;
 import tid.pce.tedb.ITMDTEDB;
 import tid.pce.tedb.MDTEDB;
 import tid.pce.tedb.MultiDomainTEDB;
+import tid.pce.tedb.ReachabilityManager;
 import tid.pce.tedb.SimpleITTEDB;
 import tid.pce.tedb.SimpleTEDB;
 import tid.pce.tedb.TEDB;

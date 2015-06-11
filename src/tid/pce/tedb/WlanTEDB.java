@@ -5,7 +5,6 @@ import java.util.Set;
 
 import es.tid.ospf.ospfv2.lsa.tlv.subtlv.complexFields.BitmapLabelSet;
 import tid.pce.computingEngine.algorithms.ComputingAlgorithmPreComputation;
-import tid.pce.parentPCE.ReachabilityEntry;
 
 public interface WlanTEDB 
 {

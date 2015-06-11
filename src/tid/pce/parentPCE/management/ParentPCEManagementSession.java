@@ -16,10 +16,10 @@ import tid.pce.computingEngine.RequestProcessorThread;
 import tid.pce.computingEngine.algorithms.ComputingAlgorithmManager;
 import tid.pce.parentPCE.ChildPCERequestManager;
 import tid.pce.parentPCE.MultiDomainTopologyUpdater;
-import tid.pce.parentPCE.ReachabilityManager;
 import tid.pce.pcepsession.PCEPSessionsInformation;
 import tid.pce.tedb.ITMDTEDB;
 import tid.pce.tedb.MDTEDB;
+import tid.pce.tedb.ReachabilityManager;
 import tid.pce.tedb.SimpleTEDB;
 
 public class ParentPCEManagementSession extends Thread {

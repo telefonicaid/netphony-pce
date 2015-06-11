@@ -28,6 +28,7 @@ import tid.pce.pcepsession.GenericPCEPSession;
 import tid.pce.pcepsession.KeepAliveThread;
 import tid.pce.pcepsession.PCEPSessionsInformation;
 import tid.pce.pcepsession.PCEPValues;
+import tid.pce.tedb.ReachabilityManager;
 import tid.pce.tedb.TEDB;
 
 /** Thread that maintains a PCEP Session with one PCC Client. 

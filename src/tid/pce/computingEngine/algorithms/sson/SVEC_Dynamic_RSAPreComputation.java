@@ -424,6 +424,27 @@ public class SVEC_Dynamic_RSAPreComputation implements ComputingAlgorithmPreComp
 			Object destination, long srcIfId, long dstIfId) {
 		// TODO Auto-generated method stub
 		
+	}
+
+	@Override
+	public void notifyNewEdgeIP(Object source, Object destination,
+			TE_Information informationTEDB) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void notificationEdgeIP_AuxGraph(Object src, Object dst,
+			TE_Information informationTEDB) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void notificationEdgeOPTICAL_AuxGraph(Object src, Object dst,
+			int lambda) {
+		// TODO Auto-generated method stub
+		
 	}	
 
 

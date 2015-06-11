@@ -1,4 +1,4 @@
-package tid.pce.parentPCE;
+package tid.pce.tedb;
 
 import java.net.Inet4Address;
 
@@ -9,7 +9,7 @@ public class ReachabilityEntry {
 	public int prefix;
 
 	//public byte[] aggregatedIPRange;
-	Inet4Address aggregatedIPRange;
+	public Inet4Address aggregatedIPRange;
 
 	public ReachabilityEntry(){
 		mask = new byte[4];

@@ -18,6 +18,7 @@ import tid.pce.tedb.IntraDomainEdge;
 import tid.pce.tedb.SSONInformation;
 import tid.pce.tedb.SimpleTEDB;
 import tid.pce.tedb.TEDB;
+import tid.pce.tedb.TE_Information;
 
 public class SVEC_AURE_SSON_algorithmPreComputation  implements ComputingAlgorithmPreComputationSSON{
 
@@ -365,6 +366,27 @@ public class SVEC_AURE_SSON_algorithmPreComputation  implements ComputingAlgorit
 	@Override
 	public void notifyNewEdge_multiLink(Object source,
 			Object destination, long srcIfId, long dstIfId) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void notifyNewEdgeIP(Object source, Object destination,
+			TE_Information informationTEDB) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void notificationEdgeIP_AuxGraph(Object src, Object dst,
+			TE_Information informationTEDB) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void notificationEdgeOPTICAL_AuxGraph(Object src, Object dst,
+			int lambda) {
 		// TODO Auto-generated method stub
 		
 	}

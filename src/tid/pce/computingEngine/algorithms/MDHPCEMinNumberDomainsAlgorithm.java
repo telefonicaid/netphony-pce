@@ -55,10 +55,10 @@ import tid.pce.computingEngine.ComputingResponse;
 import tid.pce.computingEngine.algorithms.multidomain.MDFunctions;
 import tid.pce.parentPCE.ChildPCERequestManager;
 import tid.pce.parentPCE.ParentPCESession;
-import tid.pce.parentPCE.ReachabilityManager;
 import tid.pce.tedb.ITMDTEDB;
 import tid.pce.tedb.InterDomainEdge;
 import tid.pce.tedb.MDTEDB;
+import tid.pce.tedb.ReachabilityManager;
 import tid.pce.tedb.TEDB;
 
 /**

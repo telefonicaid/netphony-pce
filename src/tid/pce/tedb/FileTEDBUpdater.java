@@ -31,8 +31,6 @@ import es.tid.pce.pcep.objects.tlvs.subtlvs.StorageSizeSubTLV;
 import es.tid.rsvp.constructs.gmpls.DWDMWavelengthLabel;
 import es.tid.rsvp.objects.subobjects.IPv4prefixEROSubobject;
 import tid.pce.computingEngine.algorithms.GraphEndPoint;
-import tid.pce.parentPCE.ReachabilityEntry;
-import tid.pce.parentPCE.ReachabilityManager;
 import tid.util.UtilsFunctions;
 
 /**

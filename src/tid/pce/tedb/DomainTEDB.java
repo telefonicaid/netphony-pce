@@ -5,9 +5,7 @@ import java.util.LinkedList;
 import java.util.Set;
 
 import es.tid.ospf.ospfv2.lsa.tlv.subtlv.complexFields.BitmapLabelSet;
-import tid.pce.computingEngine.algorithms.ComputingAlgorithmPreComputation;
-import tid.pce.computingEngine.algorithms.ComputingAlgorithmPreComputationSSON;
-import tid.pce.parentPCE.ReachabilityEntry;
+
 
 public interface DomainTEDB extends TEDB {
 	 
@@ -31,8 +29,8 @@ public interface DomainTEDB extends TEDB {
 	public void notifyWavelengthEndReservation(LinkedList<Object> sourceVertexList, LinkedList<Object> targetVertexList, int wavelength, boolean bidirectional);
 	public void notifyWavelengthChange(Object localInterfaceIPAddress,Object remoteInterfaceIPAddress,BitmapLabelSet previousBitmapLabelSet,BitmapLabelSet newBitmapLabelSet );
 	public void notifyNewEdgeIP(Object source, Object destination, TE_Information informationTEDB);
-	public void register(ComputingAlgorithmPreComputation compAlgPreComp);
-	public void registerSSON(ComputingAlgorithmPreComputationSSON compAlgPreComp);
+	public void register(TEDListener compAlgPreComp);
+	public void registerSSON(SSONListener compAlgPreComp);
 	
 	public void notifyNewVertex(Object vertex);
 	

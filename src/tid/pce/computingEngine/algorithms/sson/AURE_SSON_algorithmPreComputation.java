@@ -18,6 +18,7 @@ import tid.pce.tedb.IntraDomainEdge;
 import tid.pce.tedb.SSONInformation;
 import tid.pce.tedb.SimpleTEDB;
 import tid.pce.tedb.TEDB;
+import tid.pce.tedb.TE_Information;
 
 public class AURE_SSON_algorithmPreComputation  implements ComputingAlgorithmPreComputationSSON{
 
@@ -412,6 +413,27 @@ public class AURE_SSON_algorithmPreComputation  implements ComputingAlgorithmPre
 
 	public void setReservation(int M, int N, Object source, Object dest) {
 		((BitmapLabelSet) baseSimplegraph.getEdge(source, dest).getTE_info().getAvailableLabels().getLabelSet()).setReservation(M, N);
+		
+	}
+
+	@Override
+	public void notifyNewEdgeIP(Object source, Object destination,
+			TE_Information informationTEDB) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void notificationEdgeIP_AuxGraph(Object src, Object dst,
+			TE_Information informationTEDB) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void notificationEdgeOPTICAL_AuxGraph(Object src, Object dst,
+			int lambda) {
+		// TODO Auto-generated method stub
 		
 	}
 

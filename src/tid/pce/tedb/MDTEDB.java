@@ -9,8 +9,6 @@ import java.util.logging.Logger;
 import org.jgrapht.graph.DirectedWeightedMultigraph;
 import org.jgrapht.graph.SimpleDirectedWeightedGraph;
 
-import tid.pce.parentPCE.ReachabilityEntry;
-
 /**
  * Base de datos de ingenieria de trafico
  * CLASE DE PRUEBA REESTRUCTURAR DESPUES!!!!!!!!!!

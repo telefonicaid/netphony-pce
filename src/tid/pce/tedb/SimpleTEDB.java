@@ -17,7 +17,6 @@ import es.tid.ospf.ospfv2.lsa.tlv.subtlv.complexFields.BitmapLabelSet;
 import tid.pce.computingEngine.RequestDispatcher;
 import tid.pce.computingEngine.algorithms.ComputingAlgorithmPreComputation;
 import tid.pce.computingEngine.algorithms.ComputingAlgorithmPreComputationSSON;
-import tid.pce.parentPCE.ReachabilityEntry;
 import tid.util.UtilsFunctions;
 /**
  * Traffic Engineering Database of a Domain.
@@ -31,11 +30,11 @@ public class SimpleTEDB implements DomainTEDB{
 	/**
 	 * List of algorithms that will be notified when there are significant changes in the TED
 	 */
-	private ArrayList<ComputingAlgorithmPreComputation> registeredAlgorithms;
+	private ArrayList<TEDListener> registeredAlgorithms;
 	/**
 	 * List of algorithms SSON that will be notified when there are significant changes in the TED
 	 */
-	private ArrayList<ComputingAlgorithmPreComputationSSON> registeredAlgorithmssson;
+	private ArrayList<SSONListener> registeredAlgorithmssson;
 	/**
 	 * Graph of the Network
 	 */
@@ -79,8 +78,8 @@ public class SimpleTEDB implements DomainTEDB{
 	Logger log;
 	public SimpleTEDB(){
 		log=Logger.getLogger("TEDBParser");		
-		registeredAlgorithms= new ArrayList<ComputingAlgorithmPreComputation>();
-		registeredAlgorithmssson= new ArrayList<ComputingAlgorithmPreComputationSSON>();
+		registeredAlgorithms= new ArrayList<TEDListener>();
+		registeredAlgorithmssson= new ArrayList<SSONListener>();
 		TEDBlock=new ReentrantLock();
 		NodeTable = new Hashtable<Inet4Address, Node_Info>();
 		NodeTableDataPath = new Hashtable<DataPathID, Node_Info>();
@@ -499,9 +498,9 @@ public class SimpleTEDB implements DomainTEDB{
 			TEDBlock.unlock();
 		}
 		for (int i=0;i<registeredAlgorithmssson.size();++i){
-			((ComputingAlgorithmPreComputationSSON)registeredAlgorithmssson.get(i)).notifyWavelengthReservationSSON(sourceVertexList, targetVertexList, wavelength, m);
+			(registeredAlgorithmssson.get(i)).notifyWavelengthReservationSSON(sourceVertexList, targetVertexList, wavelength, m);
 			if (bidirectional == true){
-				((ComputingAlgorithmPreComputationSSON)registeredAlgorithmssson.get(i)).notifyWavelengthReservationSSON(targetVertexList, sourceVertexList, wavelength, m);
+				(registeredAlgorithmssson.get(i)).notifyWavelengthReservationSSON(targetVertexList, sourceVertexList, wavelength, m);
 			}
 		}
 	}
@@ -530,9 +529,9 @@ public class SimpleTEDB implements DomainTEDB{
 			TEDBlock.unlock();
 		}
 		for (int i=0;i<registeredAlgorithmssson.size();++i){
-			((ComputingAlgorithmPreComputationSSON)registeredAlgorithmssson.get(i)).notifyWavelengthEndReservationSSON(sourceVertexList, targetVertexList, wavelength, m);
+			(registeredAlgorithmssson.get(i)).notifyWavelengthEndReservationSSON(sourceVertexList, targetVertexList, wavelength, m);
 			if (bidirectional == true){
-				((ComputingAlgorithmPreComputationSSON)registeredAlgorithmssson.get(i)).notifyWavelengthEndReservationSSON(targetVertexList, sourceVertexList, wavelength, m);
+				(registeredAlgorithmssson.get(i)).notifyWavelengthEndReservationSSON(targetVertexList, sourceVertexList, wavelength, m);
 			}
 		}
 		//FIXME:TEMPORAL!!!!!!
@@ -593,11 +592,11 @@ public class SimpleTEDB implements DomainTEDB{
 		this.multidomain = multidomain;
 	}
 
-	public void registerSSON (ComputingAlgorithmPreComputationSSON algo){
+	public void registerSSON (SSONListener algo){
 		registeredAlgorithmssson.add(algo);		
 	}
 
-	public void register (ComputingAlgorithmPreComputation algo){
+	public void register (TEDListener algo){
 		registeredAlgorithms.add(algo);		
 	}
 

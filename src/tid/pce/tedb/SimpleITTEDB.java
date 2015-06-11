@@ -14,7 +14,6 @@ import es.tid.ospf.ospfv2.lsa.tlv.subtlv.complexFields.BitmapLabelSet;
 import es.tid.pce.pcep.objects.tlvs.StorageTLV;
 import tid.pce.computingEngine.algorithms.ComputingAlgorithmPreComputation;
 import tid.pce.computingEngine.algorithms.ComputingAlgorithmPreComputationSSON;
-import tid.pce.parentPCE.ReachabilityEntry;
 
 /**
  * Base de datos de ingenieria de trafico
@@ -250,7 +249,7 @@ String topoString="";
 
 
 	@Override
-	public void register(ComputingAlgorithmPreComputation compAlgPreComp) {
+	public void register(TEDListener compAlgPreComp) {
 		// TODO Auto-generated method stub
 		
 	}
@@ -330,7 +329,7 @@ String topoString="";
 		
 	}
 	@Override
-	public void registerSSON(ComputingAlgorithmPreComputationSSON compAlgPreComp) {
+	public void registerSSON(SSONListener compAlgPreComp) {
 		// TODO Auto-generated method stub
 		
 	}

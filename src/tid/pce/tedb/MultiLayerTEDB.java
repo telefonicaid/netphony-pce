@@ -16,11 +16,10 @@ import es.tid.ospf.ospfv2.lsa.tlv.subtlv.complexFields.BitmapLabelSet;
 import tid.pce.computingEngine.RequestDispatcher;
 import tid.pce.computingEngine.algorithms.ComputingAlgorithmPreComputation;
 import tid.pce.computingEngine.algorithms.ComputingAlgorithmPreComputationSSON;
-import tid.pce.parentPCE.ReachabilityEntry;
 
 public class MultiLayerTEDB implements DomainTEDB {
 	
-	private ArrayList<ComputingAlgorithmPreComputation> registeredAlgorithms;
+	private ArrayList<TEDListener> registeredAlgorithms;
 	/**
 	 * Graph of the Upper Layer Network
 	 */
@@ -63,7 +62,7 @@ public class MultiLayerTEDB implements DomainTEDB {
 
 
 	public MultiLayerTEDB(){
-		registeredAlgorithms= new ArrayList<ComputingAlgorithmPreComputation>(); 
+		registeredAlgorithms= new ArrayList<TEDListener>(); 
 		TEDBlock=new ReentrantLock();
 	}
 	
@@ -301,7 +300,7 @@ public class MultiLayerTEDB implements DomainTEDB {
 	}
 
 	@Override
-	public void register(ComputingAlgorithmPreComputation compAlgPreComp) {
+	public void register(TEDListener compAlgPreComp) {
 		registeredAlgorithms.add(compAlgPreComp);		
 	}
 
@@ -375,10 +374,6 @@ public class MultiLayerTEDB implements DomainTEDB {
 			boolean bidirectional, int m) {
 		// TODO Auto-generated method stub
 	}
-	@Override
-	public void registerSSON(ComputingAlgorithmPreComputationSSON compAlgPreComp) {
-		// TODO Auto-generated method stub
-	}
 
 	@Override
 	public SSONInformation getSSONinfo() {
@@ -399,6 +394,13 @@ public class MultiLayerTEDB implements DomainTEDB {
 			LinkedList<Object> sourceVertexList,
 			LinkedList<Object> targetVertexList,
 			LinkedList<Integer> wlans, boolean bidirectional) {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+	@Override
+	public void registerSSON(SSONListener compAlgPreComp) {
 		// TODO Auto-generated method stub
 		
 	}
