@@ -53,7 +53,7 @@ import org.jgrapht.graph.GraphPathImpl;
 import org.jgrapht.graph.SimpleDirectedWeightedGraph;
 
 import es.tid.ospf.ospfv2.lsa.tlv.subtlv.complexFields.BitmapLabelSet;
-import tid.pce.tedb.IntraDomainEdge;
+import es.tid.tedb.IntraDomainEdge;
 
 /**
  * An implementation of <a

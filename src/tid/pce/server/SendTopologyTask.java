@@ -14,8 +14,8 @@ import es.tid.pce.pcep.messages.PCEPNotification;
 import es.tid.pce.pcep.objects.Notification;
 import es.tid.pce.pcep.objects.ObjectParameters;
 import es.tid.pce.pcep.objects.tlvs.OSPFTE_LSA_TLV;
-import tid.pce.tedb.DomainTEDB;
-import tid.pce.tedb.InterDomainEdge;
+import es.tid.tedb.DomainTEDB;
+import es.tid.tedb.InterDomainEdge;
 
 /**
  * TimerTask in which the child PCE sends the inter-domain links to the Parent PCE  

@@ -19,7 +19,7 @@ import org.jgrapht.traverse.AbstractGraphIterator;
 import org.jgrapht.traverse.CrossComponentIterator;
 
 import es.tid.ospf.ospfv2.lsa.tlv.subtlv.complexFields.BitmapLabelSet;
-import tid.pce.tedb.IntraDomainEdge;
+import es.tid.tedb.IntraDomainEdge;
 
 
 /**

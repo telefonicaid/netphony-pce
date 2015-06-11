@@ -16,14 +16,14 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
+import es.tid.bgp.bgp4Peer.pruebas.BGPPeer;
 import es.tid.ospf.ospfv2.OSPFv2LinkStateUpdatePacket;
-import tid.bgp.bgp4Peer.pruebas.BGPPeer;
-import tid.pce.tedb.DomainTEDB;
-import tid.pce.tedb.IntraDomainEdge;
-import tid.pce.tedb.SimpleTEDB;
-import tid.pce.tedb.controllers.TEDUpdaterController;
-import tid.pce.tedb.ospfv2.OSPFSessionServer;
-import tid.pce.tedb.ospfv2.OSPFTCPSessionServer;
+import es.tid.tedb.DomainTEDB;
+import es.tid.tedb.IntraDomainEdge;
+import es.tid.tedb.SimpleTEDB;
+import es.tid.tedb.controllers.TEDUpdaterController;
+import es.tid.tedb.ospfv2.OSPFSessionServer;
+import es.tid.tedb.ospfv2.OSPFTCPSessionServer;
 import tid.util.UtilsFunctions;
 
 

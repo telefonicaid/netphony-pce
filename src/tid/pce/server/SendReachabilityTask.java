@@ -10,8 +10,8 @@ import es.tid.pce.pcep.objects.Notification;
 import es.tid.pce.pcep.objects.ObjectParameters;
 import es.tid.pce.pcep.objects.tlvs.ReachabilityTLV;
 import es.tid.rsvp.objects.subobjects.IPv4prefixEROSubobject;
-import tid.pce.tedb.DomainTEDB;
-import tid.pce.tedb.ReachabilityEntry;
+import es.tid.tedb.DomainTEDB;
+import es.tid.tedb.ReachabilityEntry;
 
 public class SendReachabilityTask extends TimerTask{
 	   private DomainTEDB tedb;

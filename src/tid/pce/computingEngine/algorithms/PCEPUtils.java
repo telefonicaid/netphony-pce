@@ -13,9 +13,9 @@ import es.tid.pce.pcep.constructs.Path;
 import es.tid.pce.pcep.constructs.Request;
 import es.tid.pce.pcep.objects.Metric;
 import es.tid.pce.pcep.objects.ObjectParameters;
-import tid.pce.tedb.DataPathID;
-import tid.pce.tedb.IntraDomainEdge;
-import tid.pce.tedb.TE_Information;
+import es.tid.tedb.DataPathID;
+import es.tid.tedb.IntraDomainEdge;
+import es.tid.tedb.TE_Information;
 
 /**
  * Convenient class for useful methods used in different algorithms.

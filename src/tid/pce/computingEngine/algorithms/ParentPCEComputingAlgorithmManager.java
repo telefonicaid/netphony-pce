@@ -1,7 +1,7 @@
 package tid.pce.computingEngine.algorithms;
 
+import es.tid.tedb.ReachabilityManager;
 import tid.pce.parentPCE.ChildPCERequestManager;
-import tid.pce.tedb.ReachabilityManager;
 
 public interface ParentPCEComputingAlgorithmManager extends ComputingAlgorithmManager{
 	

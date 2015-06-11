@@ -19,11 +19,11 @@ import es.tid.pce.pcep.objects.RequestParameters;
 import es.tid.pce.pcep.objects.tlvs.NoPathTLV;
 import es.tid.rsvp.objects.subobjects.IPv4prefixEROSubobject;
 import es.tid.rsvp.objects.subobjects.UnnumberIfIDEROSubobject;
+import es.tid.tedb.IntraDomainEdge;
+import es.tid.tedb.SimpleTEDB;
+import es.tid.tedb.TEDB;
 import tid.pce.computingEngine.ComputingRequest;
 import tid.pce.computingEngine.ComputingResponse;
-import tid.pce.tedb.IntraDomainEdge;
-import tid.pce.tedb.SimpleTEDB;
-import tid.pce.tedb.TEDB;
 
 
 public class DefaultSVECPathComputing implements ComputingAlgorithm {

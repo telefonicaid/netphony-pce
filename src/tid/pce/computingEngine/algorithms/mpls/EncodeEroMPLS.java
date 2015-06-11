@@ -5,7 +5,7 @@ import java.util.List;
 
 import es.tid.pce.pcep.objects.ExplicitRouteObject;
 import es.tid.rsvp.objects.subobjects.IPv4prefixEROSubobject;
-import tid.pce.tedb.IntraDomainEdge;
+import es.tid.tedb.IntraDomainEdge;
 
 public class EncodeEroMPLS {
 	public static void createEroMpls(ExplicitRouteObject ero, List<IntraDomainEdge> edge_list){

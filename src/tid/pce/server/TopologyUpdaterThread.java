@@ -19,11 +19,11 @@ import es.tid.ospf.ospfv2.lsa.tlv.subtlv.UnreservedBandwidth;
 import es.tid.ospf.ospfv2.lsa.tlv.subtlv.complexFields.BitmapLabelSet;
 import es.tid.ospf.ospfv2.lsa.tlv.subtlv.complexFields.LabelSetField;
 import es.tid.ospf.ospfv2.lsa.tlv.subtlv.complexFields.LabelSetParameters;
-import tid.pce.tedb.DomainTEDB;
-import tid.pce.tedb.IntraDomainEdge;
-import tid.pce.tedb.MultiLayerTEDB;
-import tid.pce.tedb.SimpleTEDB;
-import tid.pce.tedb.TE_Information;
+import es.tid.tedb.DomainTEDB;
+import es.tid.tedb.IntraDomainEdge;
+import es.tid.tedb.MultiLayerTEDB;
+import es.tid.tedb.SimpleTEDB;
+import es.tid.tedb.TE_Information;
 
 public class TopologyUpdaterThread extends Thread{
 

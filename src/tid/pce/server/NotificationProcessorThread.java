@@ -13,8 +13,8 @@ import es.tid.rsvp.objects.subobjects.GeneralizedLabelEROSubobject;
 import es.tid.rsvp.objects.subobjects.IPv4prefixEROSubobject;
 import es.tid.rsvp.objects.subobjects.SubObjectValues;
 import es.tid.rsvp.objects.subobjects.UnnumberIfIDEROSubobject;
+import es.tid.tedb.SimpleTEDB;
 import tid.pce.server.wson.ReservationManager;
-import tid.pce.tedb.SimpleTEDB;
 
 public class NotificationProcessorThread extends Thread {
 

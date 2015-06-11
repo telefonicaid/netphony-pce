@@ -8,7 +8,7 @@ import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 
-import tid.pce.tedb.DomainTEDB;
+import es.tid.tedb.DomainTEDB;
 
 public class ReservationManager {
 	

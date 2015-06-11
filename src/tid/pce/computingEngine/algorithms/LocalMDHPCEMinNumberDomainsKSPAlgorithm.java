@@ -38,18 +38,18 @@ import es.tid.pce.pcep.objects.tlvs.EndPointIPv4TLV;
 import es.tid.pce.pcep.objects.tlvs.NoPathTLV;
 import es.tid.rsvp.objects.subobjects.IPv4prefixEROSubobject;
 import es.tid.rsvp.objects.subobjects.UnnumberIfIDEROSubobject;
+import es.tid.tedb.ITMDTEDB;
+import es.tid.tedb.InterDomainEdge;
+import es.tid.tedb.IntraDomainEdge;
+import es.tid.tedb.MDTEDB;
+import es.tid.tedb.ReachabilityManager;
+import es.tid.tedb.SimpleTEDB;
+import es.tid.tedb.TEDB;
 import tid.pce.computingEngine.ComputingRequest;
 import tid.pce.computingEngine.ComputingResponse;
 import tid.pce.computingEngine.algorithms.multidomain.MDFunctions;
 import tid.pce.parentPCE.ChildPCERequestManager;
 import tid.pce.parentPCE.ParentPCESession;
-import tid.pce.tedb.ITMDTEDB;
-import tid.pce.tedb.InterDomainEdge;
-import tid.pce.tedb.IntraDomainEdge;
-import tid.pce.tedb.MDTEDB;
-import tid.pce.tedb.ReachabilityManager;
-import tid.pce.tedb.SimpleTEDB;
-import tid.pce.tedb.TEDB;
 
 public class LocalMDHPCEMinNumberDomainsKSPAlgorithm implements ComputingAlgorithm{
 	private DirectedWeightedMultigraph<Object,InterDomainEdge> networkGraph;

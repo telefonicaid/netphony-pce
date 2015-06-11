@@ -35,6 +35,10 @@ import es.tid.rsvp.constructs.gmpls.DWDMWavelengthLabel;
 import es.tid.rsvp.objects.subobjects.GeneralizedLabelEROSubobject;
 import es.tid.rsvp.objects.subobjects.IPv4prefixEROSubobject;
 import es.tid.rsvp.objects.subobjects.UnnumberIfIDEROSubobject;
+import es.tid.tedb.DomainTEDB;
+import es.tid.tedb.IntraDomainEdge;
+import es.tid.tedb.SSONInformation;
+import es.tid.tedb.TEDB;
 import tid.pce.computingEngine.ComputingRequest;
 import tid.pce.computingEngine.ComputingResponse;
 import tid.pce.computingEngine.algorithms.AlgorithmReservation;
@@ -43,10 +47,6 @@ import tid.pce.computingEngine.algorithms.PCEPUtils;
 import tid.pce.computingEngine.algorithms.utilities.bandwidthToSlotConversion;
 import tid.pce.computingEngine.algorithms.utilities.channel_generator;
 import tid.pce.server.wson.ReservationManager;
-import tid.pce.tedb.DomainTEDB;
-import tid.pce.tedb.IntraDomainEdge;
-import tid.pce.tedb.SSONInformation;
-import tid.pce.tedb.TEDB;
 import tid.util.UtilsFunctions;
 /**
  * Implementation of the algorithm "Dynamic Routing and Spectrum Allocation".

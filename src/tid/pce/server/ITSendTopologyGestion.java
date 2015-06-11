@@ -6,8 +6,8 @@ import java.util.TimerTask;
 import java.util.logging.Logger;
 
 import es.tid.pce.pcep.objects.tlvs.StorageTLV;
-import tid.pce.tedb.InterDomainEdge;
-import tid.pce.tedb.SimpleITTEDB;
+import es.tid.tedb.InterDomainEdge;
+import es.tid.tedb.SimpleITTEDB;
 
 public class ITSendTopologyGestion extends TimerTask {
 	   private SimpleITTEDB ITtedb;

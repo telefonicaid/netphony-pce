@@ -5,10 +5,10 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.logging.Logger;
 
 import es.tid.bgp.bgp4.messages.BGP4Update;
+import es.tid.bgp.bgp4Peer.updateTEDB.UpdateProccesorThread;
 import es.tid.pce.pcep.objects.Notification;
-import tid.bgp.bgp4Peer.updateTEDB.UpdateProccesorThread;
-import tid.pce.tedb.ITMDTEDB;
-import tid.pce.tedb.MDTEDB;
+import es.tid.tedb.ITMDTEDB;
+import es.tid.tedb.MDTEDB;
 
 public class MultiDomainTopologyUpdater {
 	

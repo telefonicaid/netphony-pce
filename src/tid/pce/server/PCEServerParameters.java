@@ -11,10 +11,10 @@ import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
+import es.tid.tedb.Layer;
 import tid.pce.computingEngine.AlgorithmRule;
 import tid.pce.computingEngine.MapAlgoRule;
 import tid.pce.server.lspdb.ReportDB_Handler;
-import tid.pce.tedb.Layer;
 
 /**
  * Configuration Parameters of the PCE.

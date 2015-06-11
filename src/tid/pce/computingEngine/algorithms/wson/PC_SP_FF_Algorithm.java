@@ -2,12 +2,12 @@ package tid.pce.computingEngine.algorithms.wson;
 
 import java.util.logging.Logger;
 
+import es.tid.tedb.DomainTEDB;
 import tid.pce.computingEngine.ComputingRequest;
 import tid.pce.computingEngine.ComputingResponse;
 import tid.pce.computingEngine.algorithms.AlgorithmReservation;
 import tid.pce.computingEngine.algorithms.ComputingAlgorithm;
 import tid.pce.server.wson.ReservationManager;
-import tid.pce.tedb.DomainTEDB;
 
 public class PC_SP_FF_Algorithm implements ComputingAlgorithm{
 	

@@ -8,7 +8,7 @@ import es.tid.ospf.ospfv2.OSPFv2LinkStateUpdatePacket;
 import es.tid.ospf.ospfv2.lsa.LSA;
 import es.tid.ospf.ospfv2.lsa.LSATypes;
 import es.tid.ospf.ospfv2.lsa.OSPFTEv2LSA;
-import tid.pce.tedb.DatabaseControlSimplifiedLSA;
+import es.tid.tedb.DatabaseControlSimplifiedLSA;
 
 public class RedisTEDUpdaterThread extends Thread{
 

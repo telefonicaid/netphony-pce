@@ -23,15 +23,15 @@ import es.tid.rsvp.RSVPProtocolViolationException;
 import es.tid.rsvp.constructs.WLANLabel;
 import es.tid.rsvp.objects.subobjects.GeneralizedLabelEROSubobject;
 import es.tid.rsvp.objects.subobjects.SwitchIDEROSubobject;
+import es.tid.tedb.DomainTEDB;
+import es.tid.tedb.IntraDomainEdge;
+import es.tid.tedb.TEDB;
 import tid.pce.computingEngine.ComputingRequest;
 import tid.pce.computingEngine.ComputingResponse;
 import tid.pce.computingEngine.algorithms.AlgorithmReservation;
 import tid.pce.computingEngine.algorithms.ComputingAlgorithm;
 import tid.pce.computingEngine.algorithms.PCEPUtils;
 import tid.pce.server.wson.ReservationManager;
-import tid.pce.tedb.DomainTEDB;
-import tid.pce.tedb.IntraDomainEdge;
-import tid.pce.tedb.TEDB;
 
 /**
  * Implementation of the algorithm "Adaptive Unconstrained Routing Exhaustive".

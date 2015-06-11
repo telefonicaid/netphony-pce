@@ -5,7 +5,7 @@ import java.util.logging.Logger;
 
 import org.jgrapht.GraphPath;
 
-import tid.pce.tedb.IntraDomainEdge;
+import es.tid.tedb.IntraDomainEdge;
 
 /**
  * Esta clase compara dos caminos para ver si son iguales.

@@ -1,5 +1,7 @@
 package tid.pce.computingEngine.algorithms.multidomain;
 
+import es.tid.tedb.ReachabilityManager;
+import es.tid.tedb.TEDB;
 import tid.pce.computingEngine.ComputingRequest;
 import tid.pce.computingEngine.algorithms.ComputingAlgorithm;
 import tid.pce.computingEngine.algorithms.ComputingAlgorithmPreComputation;
@@ -8,8 +10,6 @@ import tid.pce.computingEngine.algorithms.ParentPCEComputingAlgorithmManager;
 import tid.pce.computingEngine.algorithms.multiLayer.OperationsCounter;
 import tid.pce.parentPCE.ChildPCERequestManager;
 import tid.pce.server.wson.ReservationManager;
-import tid.pce.tedb.ReachabilityManager;
-import tid.pce.tedb.TEDB;
 
 public class MinTransitDomainsInterLayerAlgorithmManager implements
 ParentPCEComputingAlgorithmManager {

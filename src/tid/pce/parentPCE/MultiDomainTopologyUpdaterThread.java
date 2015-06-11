@@ -38,8 +38,8 @@ import es.tid.pce.pcep.objects.tlvs.subtlvs.TNANSAPSubTLV;
 import es.tid.pce.pcep.objects.tlvs.subtlvs.VolumeInfoSubTLV;
 import es.tid.pce.pcep.objects.tlvs.subtlvs.VolumeSizeSubTLV;
 import es.tid.pce.pcep.objects.tlvs.subtlvs.VolumeSubTLV;
-import tid.pce.tedb.ITMDTEDB;
-import tid.pce.tedb.MDTEDB;
+import es.tid.tedb.ITMDTEDB;
+import es.tid.tedb.MDTEDB;
 /**
  * Receives notifications with topology updates and maintains the multidomain topology
  * @author ogondio

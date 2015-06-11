@@ -10,6 +10,7 @@ import es.tid.pce.pcep.messages.PCEPClose;
 import es.tid.pce.pcep.messages.PCEPMessage;
 import es.tid.pce.pcep.messages.PCEPMessageTypes;
 import es.tid.pce.pcep.messages.PCEPNotification;
+import es.tid.tedb.TEDB;
 import tid.pce.pcepsession.DeadTimerThread;
 import tid.pce.pcepsession.GenericPCEPSession;
 import tid.pce.pcepsession.KeepAliveThread;
@@ -17,7 +18,6 @@ import tid.pce.pcepsession.PCEPSessionsInformation;
 import tid.pce.pcepsession.PCEPValues;
 import tid.pce.server.NotificationDispatcher;
 import tid.pce.server.NotificationProcessorThread;
-import tid.pce.tedb.TEDB;
 
 /**
  * STRONGEST: Collaborative PCEs

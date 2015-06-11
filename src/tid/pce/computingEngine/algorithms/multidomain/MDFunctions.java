@@ -11,8 +11,8 @@ import es.tid.pce.pcep.objects.ExcludeRouteObject;
 import es.tid.pce.pcep.objects.subobjects.UnnumberIfIDXROSubobject;
 import es.tid.pce.pcep.objects.subobjects.XROSubObjectValues;
 import es.tid.pce.pcep.objects.subobjects.XROSubobject;
-import tid.pce.tedb.InterDomainEdge;
-import tid.pce.tedb.ReachabilityManager;
+import es.tid.tedb.InterDomainEdge;
+import es.tid.tedb.ReachabilityManager;
 
 public class MDFunctions {
 	

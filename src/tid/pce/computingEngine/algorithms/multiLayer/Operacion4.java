@@ -7,7 +7,7 @@ import java.util.logging.Logger;
 import org.jgrapht.GraphPath;
 import org.jgrapht.graph.SimpleDirectedWeightedGraph;
 
-import tid.pce.tedb.IntraDomainEdge;
+import es.tid.tedb.IntraDomainEdge;
 
 public class Operacion4 {
 	

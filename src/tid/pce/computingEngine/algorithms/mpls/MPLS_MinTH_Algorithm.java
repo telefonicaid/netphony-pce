@@ -26,6 +26,9 @@ import es.tid.pce.pcep.objects.NoPath;
 import es.tid.pce.pcep.objects.ObjectParameters;
 import es.tid.pce.pcep.objects.RequestParameters;
 import es.tid.pce.pcep.objects.tlvs.NoPathTLV;
+import es.tid.tedb.DomainTEDB;
+import es.tid.tedb.IntraDomainEdge;
+import es.tid.tedb.TEDB;
 import tid.pce.computingEngine.ComputingRequest;
 import tid.pce.computingEngine.ComputingResponse;
 import tid.pce.computingEngine.algorithms.AlgorithmReservation;
@@ -38,9 +41,6 @@ import tid.pce.computingEngine.algorithms.multiLayer.Operacion3;
 import tid.pce.computingEngine.algorithms.multiLayer.OperationsCounter;
 import tid.pce.computingEngine.algorithms.wson.GenericLambdaReservation;
 import tid.pce.server.wson.ReservationManager;
-import tid.pce.tedb.DomainTEDB;
-import tid.pce.tedb.IntraDomainEdge;
-import tid.pce.tedb.TEDB;
 
 public class MPLS_MinTH_Algorithm implements ComputingAlgorithm {
 	

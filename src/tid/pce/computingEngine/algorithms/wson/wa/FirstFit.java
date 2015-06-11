@@ -4,7 +4,7 @@ package tid.pce.computingEngine.algorithms.wson.wa;
 import java.util.List;
 
 import es.tid.ospf.ospfv2.lsa.tlv.subtlv.complexFields.BitmapLabelSet;
-import tid.pce.tedb.IntraDomainEdge;
+import es.tid.tedb.IntraDomainEdge;
 
 public class FirstFit {
 		

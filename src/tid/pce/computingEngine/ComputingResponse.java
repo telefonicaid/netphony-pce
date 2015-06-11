@@ -25,8 +25,8 @@ import es.tid.pce.pcep.objects.SRP;
 import es.tid.rsvp.objects.subobjects.DataPathIDEROSubobject;
 import es.tid.rsvp.objects.subobjects.EROSubobject;
 import es.tid.rsvp.objects.subobjects.UnnumberIfIDEROSubobject;
-import tid.pce.tedb.DataPathID;
-import tid.pce.tedb.ReachabilityManager;
+import es.tid.tedb.DataPathID;
+import es.tid.tedb.ReachabilityManager;
 import tid.util.UtilsFunctions;
 
 /**

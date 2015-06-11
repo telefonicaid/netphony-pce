@@ -8,11 +8,11 @@ import org.jgrapht.graph.DirectedMultigraph;
 import org.jgrapht.graph.SimpleDirectedWeightedGraph;
 
 import es.tid.ospf.ospfv2.lsa.tlv.subtlv.complexFields.BitmapLabelSet;
+import es.tid.tedb.IntraDomainEdge;
+import es.tid.tedb.TEDB;
+import es.tid.tedb.TE_Information;
 import tid.pce.computingEngine.algorithms.ComputingAlgorithmPreComputation;
 import tid.pce.computingEngine.algorithms.wson.wa.FirstFitBBDD;
-import tid.pce.tedb.IntraDomainEdge;
-import tid.pce.tedb.TEDB;
-import tid.pce.tedb.TE_Information;
 
 public class SP_FF_RWA_AlgorithmPreComputation implements ComputingAlgorithmPreComputation{
 

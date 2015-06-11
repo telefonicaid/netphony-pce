@@ -18,9 +18,9 @@ import es.tid.pce.pcep.objects.ObjectParameters;
 import es.tid.pce.pcep.objects.tlvs.ITAdvertisementTLV;
 import es.tid.pce.pcep.objects.tlvs.OSPFTE_LSA_TLV;
 import es.tid.pce.pcep.objects.tlvs.StorageTLV;
-import tid.pce.tedb.DomainTEDB;
-import tid.pce.tedb.InterDomainEdge;
-import tid.pce.tedb.SimpleITTEDB;
+import es.tid.tedb.DomainTEDB;
+import es.tid.tedb.InterDomainEdge;
+import es.tid.tedb.SimpleITTEDB;
 
 /**
  * TimerTask in which the child PCE sends the inter-domain links to the Parent PCE  

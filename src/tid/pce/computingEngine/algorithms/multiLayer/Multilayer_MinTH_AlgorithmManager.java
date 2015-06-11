@@ -1,11 +1,11 @@
 package tid.pce.computingEngine.algorithms.multiLayer;
 
+import es.tid.tedb.TEDB;
 import tid.pce.computingEngine.ComputingRequest;
 import tid.pce.computingEngine.algorithms.ComputingAlgorithm;
 import tid.pce.computingEngine.algorithms.ComputingAlgorithmManager;
 import tid.pce.computingEngine.algorithms.ComputingAlgorithmPreComputation;
 import tid.pce.server.wson.ReservationManager;
-import tid.pce.tedb.TEDB;
 
 public class Multilayer_MinTH_AlgorithmManager implements ComputingAlgorithmManager{
 	

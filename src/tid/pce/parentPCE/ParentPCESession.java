@@ -22,14 +22,14 @@ import es.tid.pce.pcep.objects.ObjectParameters;
 import es.tid.pce.pcep.objects.SRP;
 import es.tid.pce.pcep.objects.tlvs.ReachabilityTLV;
 import es.tid.rsvp.objects.subobjects.EROSubobject;
+import es.tid.tedb.ReachabilityManager;
+import es.tid.tedb.TEDB;
 import tid.pce.computingEngine.RequestDispatcher;
 import tid.pce.pcepsession.DeadTimerThread;
 import tid.pce.pcepsession.GenericPCEPSession;
 import tid.pce.pcepsession.KeepAliveThread;
 import tid.pce.pcepsession.PCEPSessionsInformation;
 import tid.pce.pcepsession.PCEPValues;
-import tid.pce.tedb.ReachabilityManager;
-import tid.pce.tedb.TEDB;
 
 /** Thread that maintains a PCEP Session with one PCC Client. 
  * <p> Reads the first message, and if it is a valid OPEN Message, initiates a new 

@@ -38,6 +38,8 @@ import es.tid.pce.pcep.objects.tlvs.PathReservationTLV;
 import es.tid.rsvp.objects.subobjects.EROSubobject;
 import es.tid.rsvp.objects.subobjects.IPv4prefixEROSubobject;
 import es.tid.rsvp.objects.subobjects.UnnumberIfIDEROSubobject;
+import es.tid.tedb.DomainTEDB;
+import es.tid.tedb.TEDB;
 import tid.pce.computingEngine.algorithms.ComputingAlgorithm;
 import tid.pce.computingEngine.algorithms.ComputingAlgorithmManager;
 import tid.pce.computingEngine.algorithms.ComputingAlgorithmManagerSSON;
@@ -49,8 +51,6 @@ import tid.pce.computingEngine.algorithms.multiLayer.OperationsCounter;
 import tid.pce.server.ParentPCERequestManager;
 import tid.pce.server.communicationpce.CollaborationPCESessionManager;
 import tid.pce.server.wson.ReservationManager;
-import tid.pce.tedb.DomainTEDB;
-import tid.pce.tedb.TEDB;
 import tid.util.Analysis;
 import tid.util.UtilsFunctions;
 

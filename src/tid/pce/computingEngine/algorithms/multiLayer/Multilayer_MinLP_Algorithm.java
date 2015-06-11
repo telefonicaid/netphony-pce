@@ -32,6 +32,10 @@ import es.tid.rsvp.objects.subobjects.GeneralizedLabelEROSubobject;
 import es.tid.rsvp.objects.subobjects.IPv4prefixEROSubobject;
 import es.tid.rsvp.objects.subobjects.ServerLayerInfo;
 import es.tid.rsvp.objects.subobjects.UnnumberIfIDEROSubobject;
+import es.tid.tedb.DomainTEDB;
+import es.tid.tedb.IntraDomainEdge;
+import es.tid.tedb.MultiLayerTEDB;
+import es.tid.tedb.TEDB;
 import tid.pce.computingEngine.ComputingRequest;
 import tid.pce.computingEngine.ComputingResponse;
 import tid.pce.computingEngine.algorithms.AlgorithmReservation;
@@ -39,10 +43,6 @@ import tid.pce.computingEngine.algorithms.ComputingAlgorithm;
 import tid.pce.computingEngine.algorithms.PCEPUtils;
 import tid.pce.computingEngine.algorithms.wson.GenericLambdaReservation;
 import tid.pce.server.wson.ReservationManager;
-import tid.pce.tedb.DomainTEDB;
-import tid.pce.tedb.IntraDomainEdge;
-import tid.pce.tedb.MultiLayerTEDB;
-import tid.pce.tedb.TEDB;
 
 public class Multilayer_MinLP_Algorithm implements ComputingAlgorithm {
 	
