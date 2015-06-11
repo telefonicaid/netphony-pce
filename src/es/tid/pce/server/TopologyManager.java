@@ -16,7 +16,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
-import es.tid.bgp.bgp4Peer.pruebas.BGPPeer;
+import es.tid.bgp.bgp4Peer.peer.BGPPeer;
 import es.tid.ospf.ospfv2.OSPFv2LinkStateUpdatePacket;
 import es.tid.tedb.DomainTEDB;
 import es.tid.tedb.IntraDomainEdge;

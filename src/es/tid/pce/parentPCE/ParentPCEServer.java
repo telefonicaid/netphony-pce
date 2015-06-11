@@ -6,7 +6,7 @@ import java.util.logging.FileHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import es.tid.bgp.bgp4Peer.pruebas.BGPPeer;
+import es.tid.bgp.bgp4Peer.peer.BGPPeer;
 import es.tid.pce.computingEngine.ReportDispatcher;
 import es.tid.pce.computingEngine.RequestDispatcher;
 import es.tid.pce.computingEngine.algorithms.ComputingAlgorithmManager;

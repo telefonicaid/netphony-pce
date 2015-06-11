@@ -8,6 +8,7 @@ import org.jgrapht.GraphPath;
 import org.jgrapht.alg.DijkstraShortestPath;
 import org.jgrapht.graph.SimpleDirectedWeightedGraph;
 
+import es.tid.of.DataPathID;
 import es.tid.pce.computingEngine.ComputingRequest;
 import es.tid.pce.computingEngine.ComputingResponse;
 import es.tid.pce.pcep.constructs.EndPoint;
@@ -30,7 +31,6 @@ import es.tid.pce.pcep.objects.tlvs.NoPathTLV;
 import es.tid.rsvp.objects.subobjects.DataPathIDEROSubobject;
 import es.tid.rsvp.objects.subobjects.IPv4prefixEROSubobject;
 import es.tid.rsvp.objects.subobjects.UnnumberIfIDEROSubobject;
-import es.tid.tedb.DataPathID;
 import es.tid.tedb.IntraDomainEdge;
 import es.tid.tedb.MDTEDB;
 import es.tid.tedb.SimpleITTEDB;

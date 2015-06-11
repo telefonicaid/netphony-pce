@@ -1,11 +1,11 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <groupId>es.tid.netphony</groupId>
-  <artifactId>network-protocols</artifactId>
+  <artifactId>pce</artifactId>
   <version>1.0.1</version>
   <packaging>jar</packaging>
-  <name>Netphony Network Protocols</name>
-  <description>BGP-LS,OSPF-TE,PCEP and RSVP-TE protocol encodings.</description>
+  <name>PCE</name>
+  <description>Path Computation Element</description>
   <url>http://coretransport.tid.es/netphony</url>
   <licenses>
     <license>
@@ -15,9 +15,19 @@
   </licenses>
   <dependencies>
     <dependency>
+      <groupId>es.tid.netphony</groupId>
+      <artifactId>topology</artifactId>
+      <version>1.1.0</version>
+    </dependency>
+     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-api</artifactId>
       <version>1.7.7</version>
+    </dependency>
+      <dependency>
+      <groupId>es.tid.netphony</groupId>
+      <artifactId>network-protocols</artifactId>
+      <version>1.1.0</version>
     </dependency>
   </dependencies>
   <build>

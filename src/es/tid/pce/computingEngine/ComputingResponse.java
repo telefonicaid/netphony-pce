@@ -8,6 +8,7 @@ import java.net.UnknownHostException;
 import java.util.LinkedList;
 import java.util.logging.Logger;
 
+import es.tid.of.DataPathID;
 import es.tid.pce.pcep.constructs.ErrorConstruct;
 import es.tid.pce.pcep.constructs.StateReport;
 import es.tid.pce.pcep.messages.PCEPError;
@@ -25,7 +26,6 @@ import es.tid.pce.pcep.objects.SRP;
 import es.tid.rsvp.objects.subobjects.DataPathIDEROSubobject;
 import es.tid.rsvp.objects.subobjects.EROSubobject;
 import es.tid.rsvp.objects.subobjects.UnnumberIfIDEROSubobject;
-import es.tid.tedb.DataPathID;
 import es.tid.tedb.ReachabilityManager;
 import es.tid.util.UtilsFunctions;
 
