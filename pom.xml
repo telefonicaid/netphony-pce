@@ -17,7 +17,7 @@
     <dependency>
       <groupId>es.tid.netphony</groupId>
       <artifactId>topology</artifactId>
-      <version>1.1.0</version>
+      <version>1.1.1</version>
     </dependency>
      <dependency>
       <groupId>org.slf4j</groupId>
@@ -27,8 +27,19 @@
       <dependency>
       <groupId>es.tid.netphony</groupId>
       <artifactId>network-protocols</artifactId>
-      <version>1.1.0</version>
+      <version>1.1.1</version>
     </dependency>
+    <dependency>
+	<groupId>colt</groupId>
+	<artifactId>colt</artifactId>
+	<version>1.2.0</version>
+</dependency>
+    <dependency>
+	<groupId>redis.clients</groupId>
+	<artifactId>jedis</artifactId>
+	<version>2.1.0</version>
+</dependency>
+    
   </dependencies>
   <build>
     <sourceDirectory>${basedir}/src</sourceDirectory>
