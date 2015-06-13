@@ -5,15 +5,19 @@ Java based Path Computation Element and Test PCC
 
 #Parent PCE
 
-#PCE
+The PCE can act as a parent PCE, following the procedures described in RFC 6805.
 
-#QuickClient
+The main class to launch the Parent PCE is es.tid.pce.parentPCE.ParentPCEServer
+
+##PCE
+
+##QuickClient
 
 This is a command line tool that acts as PCC and sends PCEP messages to a PCE
 
 (*) Used for testing purposes only. 
 
-#Dependencies
+##Dependencies
 
 The dependencies are specified in the pom.xml file.
 Here is the dependency tree:
