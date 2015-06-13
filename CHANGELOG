@@ -1,0 +1,8 @@
+v1.1.0
+- Support for Stateful Active Parent PCE
+- Updated pom.xml with dependencies
+- Updates to be stateful Parent PCE
+- Support for Data Path IDs
+- TED moved outside PCE to other package & repository
+v1.0.0
+First Release
