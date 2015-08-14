@@ -286,7 +286,7 @@ public class ParentPCEServer {
 			requestDispatcher=new  RequestDispatcher(params.getChildPCERequestsProcessors(),ted,null,false);
 			for (int i=0;i<params.algorithmRuleList.size();++i){
 				 try {
-					Class aClass = Class.forName("tid.pce.computingEngine.algorithms."+params.algorithmRuleList.get(i).algoName+"Manager");
+					Class aClass = Class.forName("es.tid.pce.computingEngine.algorithms."+params.algorithmRuleList.get(i).algoName+"Manager");
 		        	log.info("Registering algorithm "+ params.algorithmRuleList.get(i).algoName+" for of = "+params.algorithmRuleList.get(i).ar.of+" and svec = "+params.algorithmRuleList.get(i).ar.svec);            
 					
 					if (params.algorithmRuleList.get(i).isParentPCEAlgorithm==false){

@@ -311,7 +311,7 @@ public class PCEServer {
 							}
 							try{
 
-								Class<?> aClass2 = Class.forName("tid.pce.computingEngine.algorithms."+params.algorithmRuleList.get(i).algoName+"PreComputation");
+								Class<?> aClass2 = Class.forName("es.tid.pce.computingEngine.algorithms."+params.algorithmRuleList.get(i).algoName+"PreComputation");
 								ComputingAlgorithmPreComputation cam2= ( ComputingAlgorithmPreComputation)aClass2.newInstance();
 								cam2.setTEDB(ted);
 								cam2.initialize();
