@@ -300,7 +300,7 @@ public class PCEServer {
 			//Registration of Algorithms
 			for (int i=0;i<params.algorithmRuleList.size();++i){
 				try {
-					Class<?> aClass = Class.forName("tid.pce.computingEngine.algorithms."+params.algorithmRuleList.get(i).algoName+"Manager");
+					Class<?> aClass = Class.forName("es.tid.pce.computingEngine.algorithms."+params.algorithmRuleList.get(i).algoName+"Manager");
 					log.info("Registering algorithm "+ params.algorithmRuleList.get(i).algoName+" for of = "+params.algorithmRuleList.get(i).ar.of+" and svec = "+params.algorithmRuleList.get(i).ar.svec);            
 					if (params.algorithmRuleList.get(i).isParentPCEAlgorithm==false){
 						if(params.algorithmRuleList.get(i).isSSSONAlgorithm==false){
@@ -321,7 +321,7 @@ public class PCEServer {
 							}
 							catch (Exception e2){
 								e2.printStackTrace();
-								log.warning("No precomputation in "+"tid.pce.computingEngine.algorithms."+params.algorithmRuleList.get(i).algoName+"PreComputation");						
+								log.warning("No precomputation in "+"es.tid.pce.computingEngine.algorithms."+params.algorithmRuleList.get(i).algoName+"PreComputation");						
 							}
 						}
 						else{
@@ -332,7 +332,7 @@ public class PCEServer {
 
 							}
 							try{
-								Class<?> aClass2 = Class.forName("tid.pce.computingEngine.algorithms."+params.algorithmRuleList.get(i).algoName+"PreComputation");
+								Class<?> aClass2 = Class.forName("es.tid.pce.computingEngine.algorithms."+params.algorithmRuleList.get(i).algoName+"PreComputation");
 								ComputingAlgorithmPreComputationSSON cam3= ( ComputingAlgorithmPreComputationSSON)aClass2.newInstance();
 								cam3.setTEDB(ted);
 								cam3.initialize();
@@ -342,7 +342,7 @@ public class PCEServer {
 							}
 							catch (Exception e2){
 								e2.printStackTrace();
-								log.warning("No precomputation in "+"tid.pce.computingEngine.algorithms."+params.algorithmRuleList.get(i).algoName+"PreComputation");						
+								log.warning("No precomputation in "+"es.tid.pce.computingEngine.algorithms."+params.algorithmRuleList.get(i).algoName+"PreComputation");						
 							}
 						}
 					}
