@@ -14,6 +14,7 @@ import es.tid.pce.computingEngine.algorithms.LocalChildRequestManager;
 import es.tid.pce.computingEngine.algorithms.ParentPCEComputingAlgorithmManager;
 import es.tid.pce.parentPCE.management.ParentPCEManagementSever;
 import es.tid.pce.pcepsession.PCEPSessionsInformation;
+import es.tid.pce.server.PCEServerParameters;
 import es.tid.pce.server.lspdb.ReportDB_Handler;
 import es.tid.tedb.FileTEDBUpdater;
 import es.tid.tedb.ITMDTEDB;
@@ -37,7 +38,13 @@ public class ParentPCEServer {
 	 */
 	public static void main(String[] args) {
 		//First, get the parameters from the configuration file
-		ParentPCEServerParameters params=new ParentPCEServerParameters();
+		ParentPCEServerParameters params;
+		if (args.length >=1 ){
+			params=new ParentPCEServerParameters(args[0]);
+		}else{
+			params=new ParentPCEServerParameters();
+		}
+		
 		params.initialize();
 		//Initiate the Loggers (general, PCEP Parsing, OSPF Parsing, GUI)		
 		FileHandler fh;
