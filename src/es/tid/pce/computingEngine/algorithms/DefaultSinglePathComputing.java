@@ -110,13 +110,18 @@ public class DefaultSinglePathComputing implements ComputingAlgorithm {
 				P2PEndpoints p2pep= gep.getP2PEndpoints();
 				EndPoint sourceep = p2pep.getSourceEndPoint();
 				EndPoint destep=p2pep.getDestinationEndPoint();
-				try { // router_id_addr type: Inet4Address
+								
+				if (sourceep.getEndPointIPv4TLV() != null && destep.getEndPointIPv4TLV() != null){
+					
+					
 					source_router_id_addr=sourceep.getEndPointIPv4TLV().IPv4address;
 					dest_router_id_addr=destep.getEndPointIPv4TLV().IPv4address;
-				} catch (Exception e) { // router_id_addr type: DataPathID
+					
+				}else if (sourceep.getEndPointDataPathTLV() != null && destep.getEndPointDataPathTLV() != null){
+					
 					log.info("router_id_addr type: DataPathID, "+sourceep.toString().toUpperCase()+"  "+destep.toString().toUpperCase());
-					source_router_id_addr=(sourceep.getEndPointDataPathTLV().switchID).toUpperCase();
-					dest_router_id_addr=(destep.getEndPointDataPathTLV().switchID).toUpperCase();
+					source_router_id_addr=(sourceep.getEndPointDataPathTLV().switchID.getDataPathID()).toUpperCase();
+					dest_router_id_addr=(destep.getEndPointDataPathTLV().switchID.getDataPathID()).toUpperCase();
 
 					source.setDataPathID((String)source_router_id_addr);
 					dest.setDataPathID((String)dest_router_id_addr);
@@ -130,7 +135,30 @@ public class DefaultSinglePathComputing implements ComputingAlgorithm {
 						xro.setDataPathID((String)router_xro);
 						log.info("Algorithm.getXro ::"+xro);
 					}
+				
+				}else if (sourceep.getEndPointUnnumberedDataPathTLV() != null && destep.getEndPointUnnumberedDataPathTLV() != null){
+					//UnnumberedDataPath
+					log.info("router_id_addr type: Unnumbered DataPathID, "+sourceep.toString().toUpperCase()+"  "+destep.toString().toUpperCase());
+					source_router_id_addr=(sourceep.getEndPointUnnumberedDataPathTLV().switchID.getDataPathID()).toUpperCase();
+					dest_router_id_addr=(destep.getEndPointUnnumberedDataPathTLV().switchID.getDataPathID()).toUpperCase();
+					
+					source.setDataPathID((String)source_router_id_addr);
+					dest.setDataPathID((String)dest_router_id_addr);
+
+					source_router_id_addr=source;
+					dest_router_id_addr=dest;
+
+					//Case XRO is not null
+					if(req.getXro()!=null){
+						router_xro=req.getXro().getEROSubobjectList().getFirst().toString().substring(0,23);
+						xro.setDataPathID((String)router_xro);
+						log.info("Algorithm.getXro ::"+xro);
+					}
+				
+				}else {
+					log.info("Error in the EndPoints -  not defined");
 				}
+
 			}
 			if(gep.getGeneralizedEndPointsType()==ObjectParameters.PCEP_GENERALIZED_END_POINTS_TYPE_P2MP_NEW_LEAVES){
 				P2MPEndpoints p2mpep= gep.getP2MPEndpoints();
@@ -150,7 +178,6 @@ public class DefaultSinglePathComputing implements ComputingAlgorithm {
 
 		log.info("Algorithm->  Source:: "+source_router_id_addr+" Destination:: "+dest_router_id_addr);
 		log.info("Check if we have source and destination in our TED");
-
 
 		//Case XRO is not null
 		if(router_xro!=null){
