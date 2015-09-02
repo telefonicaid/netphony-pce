@@ -140,6 +140,10 @@ public class ParentPCEServerParameters {
 	 */
 	private boolean knowsWholeTopology = false;
 	
+	/**
+	 * Name of the configuration file
+	 */
+	private String confFile;
 
 	
 	public String getParentPCEServerAddress() {
@@ -367,6 +371,27 @@ public class ParentPCEServerParameters {
 	public PcepCapability getLocalPcepCapability() {
 		return localPcepCapability;
 	}
+	
+	/**
+	 * Default Constructor.
+	 */
+	public ParentPCEServerParameters(){
+			this.confFile="ParentPCEServerConfiguration.xml";
+	}
+
+	
+	/**
+	 * Constructor with the name of the configuration file.
+	 * @param confFile Name of the configuration file.
+	 */
+	public ParentPCEServerParameters(String confFile){
+		if (confFile!=null){
+			this.confFile=confFile;
+		}else {
+			confFile="PCEServerConfiguration.xml";
+		}
+	}
+
 
 	public void initialize(){
 		algorithmList=new LinkedList<String>();
@@ -538,7 +563,7 @@ public class ParentPCEServerParameters {
 		     
 		     };
 		
-		saxParser.parse("ParentPCEServerConfiguration.xml", handler);     
+		saxParser.parse(confFile, handler);     
 		     
 		}catch (Exception e) {
 			  System.err.println("Problemas al leer la configuracion");	
