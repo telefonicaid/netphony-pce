@@ -2,7 +2,7 @@
 
 + ####ParentPCEServerAddress
 It details the Parent PCE server address.
- `<ParentPCEServerAddress> </ParentPCEServerAddress>`
+`<ParentPCEServerAddress> </ParentPCEServerAddress>`
 
 + ####ParentPCEServerPort
 PCE Server Port of the Parent PCE. Default value 4189. `<ParentPCEServerPort> </ParentPCEServerPort>`
@@ -20,25 +20,31 @@ File to send the logs. By default ParentPCEServer.log. `<ParentPCEServerLogFile>
 File to send logs of the PCEP Parser of the Parent PCE. By default ParentPCEPPareserServer.log `<ParentPCEPParserLogFile> <\ParentPCEPParserLogFile>`
 
 + ####networkDescriptionFile
+File to describe the network. It's necessary to include the route of the folder in which this file is located.
 `<networkDescriptionFile> <\networkDescriptionFile>`
 
 + ####ITnetworkDescriptionFile
+File to describe the IT network. It's necessary to include the route of the folder in which this file is located.
 `<ITnetworkDescriptionFile> <\ITnetworkDescriptionFile>`
 
 + ####MDnetworkDescriptionFile
+File to describe the MultiDomain network. It's necessary to include the route of the folder in which this file is located.
 `<MDnetworkDescriptionFile> <\MDnetworkDescriptionFile>`
 
 + ####ITMDnetworkDescriptionFile
+File to describe the IT MultiDomain network. It's necessary to include the route of the folder in which this file is located.
 `<ITMDnetworkDescriptionFile> <\ITMDnetworkDescriptionFile>`
 
 + ####initialSessionID
+ID of the initial session.
 `<initialSessionID> <\initialSessionID>`
 
 + ####KeepAliveTimer
+Keep Alive Timer.
 `<KeepAliveTimer> <\KeepAliveTimer>`
 
 + ####DeadTimer
-Dead Timer
+Dead Timer.
 `<DeadTimer> <\DeadTimer>`
 
 + ####ParentPCELogLevel
@@ -61,9 +67,6 @@ Dead Timer
 
 + ####fullTopologyMode
 `<fullTopologyMode> <\fullTopologyMode>`
-
-+ ####parentPCEManagementPort
-`<parentPCEManagementPort> <\parentPCEManagementPort>`
 
 + ####readMDTEDFromFile
 `<readMDTEDFromFile> <\readMDTEDFromFile>`
