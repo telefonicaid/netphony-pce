@@ -39,20 +39,3 @@ Here is the dependency tree:
 
  ```
  
-##PCE Parameters
-
-+ ####ParentPCEServerPort
-PCE Server Port of the Parent PCE. Default value 4189. `<ParentPCEServerPort> </ParentPCEServerPort>`
-
-+ ####parentPCEManagementPort
-TCP port to connect to manage the Parent PCE. `<parentPCEManagementPort> </parentPCEManagementPort>`
-
-+ ####ChildPCERequestsProcessors
-Number of Path Request Processor Threads. Default value 1. `<ChildPCERequestsProcessors> </ChildPCERequestsProcessors>`
-
-+ ####ParentPCEServerLogFile
-File to send the logs. By default ParentPCEServer.log. `<ParentPCEServerLogFile> </ParentPCEServerLogFile>`
-
-+ ####ParentPCEPParserLogFile
-
-
