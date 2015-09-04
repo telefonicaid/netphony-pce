@@ -97,5 +97,96 @@ If a deadTimer of 0 is accepted from the peer PCE/PCC.
 Dead timer of the pcep session.
 `<DeadTimer> </DeadTimer>`
 
++ ####defaultPCELayer
+Default layer of the PCE.
+`<defaultPCELayer> </defaultPCELayer>`
 
++ ####ITcapable
+If the PCE is IT capable
+`<ITcapable> </ITcapable>`
 
++ ####nodelay
+If the tcp no delay option is used or not.
+`<nodelay> </nodelay>`
+
++ ####multilayer
+`<multilayer> </multilayer>`
+
++ ####multidomain
+`<multidomain> </multidomain>`
+
++ ####useMaxReqTime
+`<useMaxReqTime> </useMaxReqTime>`
+
++ ####reservation
+If reservation is allowed
+`<reservation> </reservation>`
+
++ ####optimizedRead
+If the experimental optimized method to read is used. 
+`<optimizedRead> </optimizedRead>`
+
++ ####OSPFSession
+If OSPF with raw socket is used to receive topology.
+`<OSPFSession> </OSPFSession>`
+
++ ####OSPFListenerIP
+IP Address from which the OSPF is listen
+`<OSPFListenerIP> </OSPFListenerIP>`
+
++ ####OSPFMulticast
+If it is multicast OSPF
+`<OSPFMulticast> </OSPFMulticast>`
+
++ ####OSPFUnicast
+If it is unicast OSPF
+`<OSPFUnicast> </OSPFUnicast>`
+
++ ####OSPFTCPSession
+If a TCP socket, sending OSPF packets over it is used to receive topology.
+`<OSPFTCPSession> </OSPFTCPSession>`
+
++ ####analyzeRequestTime
+If the request Time is analyzed (for statistics only)
+`<analyzeRequestTime> </analyzeRequestTime>`
+
++ ####setTraces
+`<setTraces> </setTraces>`
+
++ ####isActive
+`<isActive> </isActive>`
+
++ ####isStateful
+`<isStateful> </isStateful>`
+
++ ####statefulDFlag
+`<statefulDFlag> </statefulDFlag>`
+
++ ####statefulSFlag
+`<statefulSFlag> </statefulSFlag>`
+
++ ####statefulTFlag
+`<statefulTFlag> </statefulTFlag>`
+
++ ####isSRCapable
+`<isSRCapable> </isSRCapable>`
+
++ ####MSD
+`<MSD> </MSD>`
+
++ ####timeSendTopologyTask
+`<timeSendTopologyTask> </timeSendTopologyTask>`
+
++ ####timeSendReachabilityTask
+`<timeSendReachabilityTask> </timeSendReachabilityTask>`
+
++ ####isCompletedAuxGraph
+`<isCompletedAuxGraph> </isCompletedAuxGraph>`
+
++ ####actingAsBGP4Peer
+BGP. This variable indeicates if the PCE has a BGP module. 
+`<actingAsBGP4Peer> </actingAsBGP4Peer>`
+
++ ####BGP4File
+File where read the BGP parameters to configure.
+`<BGP4File> </BGP4File>`
