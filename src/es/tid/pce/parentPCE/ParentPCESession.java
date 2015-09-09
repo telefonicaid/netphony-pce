@@ -69,14 +69,14 @@ public class ParentPCESession extends GenericPCEPSession{
 	 */
 	private static int reqIDCounter=0;
 		
-	
+	private MultiDomainInitiateDispatcher mdiniDispatcher;
 	
 	/**
 	 * Constructor of the PCE Session
 	 * @param s Socket of the PCC-PCE Communication
 	 * @param req RequestQueue to send path requests
 	 */
-	public ParentPCESession(Socket s, ParentPCEServerParameters params, RequestDispatcher requestDispatcher, TEDB ted, MultiDomainTopologyUpdater mdt, ChildPCERequestManager childPCERequestManager, ReachabilityManager rm, PCEPSessionsInformation pcepSessionManager){
+	public ParentPCESession(Socket s, ParentPCEServerParameters params, RequestDispatcher requestDispatcher, MultiDomainInitiateDispatcher mdiniDispatcher, TEDB ted, MultiDomainTopologyUpdater mdt, ChildPCERequestManager childPCERequestManager, ReachabilityManager rm, PCEPSessionsInformation pcepSessionManager){
 		super(pcepSessionManager);
 		//super("ParentPCESession");
 		this.setFSMstate(PCEPValues.PCEP_STATE_IDLE);
@@ -91,6 +91,7 @@ public class ParentPCESession extends GenericPCEPSession{
 		this.keepAliveLocal=params.getKeepAliveTimer();
 		this.deadTimerLocal=params.getDeadTimer();
 		this.childPCERequestManager=childPCERequestManager;
+		this.mdiniDispatcher=mdiniDispatcher;
 	}
 
 	/**
@@ -280,7 +281,7 @@ public class ParentPCESession extends GenericPCEPSession{
 						e.printStackTrace();
 						break;
 					}
-					requestDispatcher.dispathRequests(p_ini,out,this.remotePCEId);
+                     this.mdiniDispatcher.dispathInitiate(p_ini,out,this.remotePCEId);
 					break;
 				default:
 					log.warning("ERROR: unexpected message received");

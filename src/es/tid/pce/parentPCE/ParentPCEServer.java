@@ -87,6 +87,7 @@ public class ParentPCEServer {
 		
 		ReachabilityManager rm=new ReachabilityManager();
 		
+		
 		if(!params.isITCapable()){			
 			if ((params.isMultiDomain())&&(!params.isKnowsWholeTopology())){
 				//The PCE is multidomain
@@ -163,6 +164,11 @@ public class ParentPCEServer {
 			log.info("Inizializing "+ params.getChildPCERequestsProcessors()+" Path Request Processor Threads");
 			//pathRequestsQueue=new RequestQueue(params.getChildPCERequestsProcessors());
 			requestDispatcher=new  RequestDispatcher(params.getChildPCERequestsProcessors(),ted,null,false);
+			
+			log.info("Inizializing "+ params.getChildPCERequestsProcessors()+" Ini Dispatcher");
+			MultiDomainInitiateDispatcher mdiniDispatcher = new MultiDomainInitiateDispatcher(rm);
+
+			
 			for (int i=0;i<params.algorithmRuleList.size();++i){
 				 try {
 					Class aClass = Class.forName("es.tid.pce.computingEngine.algorithms."+params.algorithmRuleList.get(i).algoName+"Manager");
@@ -194,6 +200,7 @@ public class ParentPCEServer {
 					e.printStackTrace();
 				}
 			}
+			
 			ReportDispatcher stateReportDispatcher= null;
 			ReportDB_Handler rptdb = new ReportDB_Handler();
 			stateReportDispatcher = new ReportDispatcher( rptdb, 2);
@@ -244,7 +251,7 @@ public class ParentPCEServer {
 
 	        try {
 	        	while (listening) {
-	        		new ParentPCESession(serverSocket.accept(),params, requestDispatcher,ted,mdt,childPCERequestManager,rm,pcepSessionManager).start();
+	        		new ParentPCESession(serverSocket.accept(),params, requestDispatcher, mdiniDispatcher, ted,mdt,childPCERequestManager,rm,pcepSessionManager).start();
 	        	}
 	        	serverSocket.close();
 	        } catch (Exception e) {
@@ -291,6 +298,10 @@ public class ParentPCEServer {
 			log.info("Inizializing "+ params.getChildPCERequestsProcessors()+" Path Request Processor Threads");
 			//pathRequestsQueue=new RequestQueue(params.getChildPCERequestsProcessors());
 			requestDispatcher=new  RequestDispatcher(params.getChildPCERequestsProcessors(),ted,null,false);
+			log.info("Inizializing "+ params.getChildPCERequestsProcessors()+" Ini Dispatcher");
+			MultiDomainInitiateDispatcher mdiniDispatcher = new MultiDomainInitiateDispatcher(rm);
+
+			
 			for (int i=0;i<params.algorithmRuleList.size();++i){
 				 try {
 					Class aClass = Class.forName("es.tid.pce.computingEngine.algorithms."+params.algorithmRuleList.get(i).algoName+"Manager");
@@ -345,7 +356,7 @@ public class ParentPCEServer {
 	        try {
 	        	pcepSessionManager.setStateful(true);
 	        	while (listening) {
-	        		new ParentPCESession(serverSocket.accept(),params, requestDispatcher,(ITMDTEDB)ted,mdt,childPCERequestManager,rm,pcepSessionManager).start();
+	        		new ParentPCESession(serverSocket.accept(),params, requestDispatcher,mdiniDispatcher, (ITMDTEDB)ted,mdt,childPCERequestManager,rm,pcepSessionManager).start();
 	        	}
 	        	serverSocket.close();
 	        } catch (Exception e) {
