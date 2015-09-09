@@ -1,42 +1,109 @@
-cne-pce v1.1.0
-==============
+##Parent PCE Parameters
 
-Java based Path Computation Element and Test PCC
++ ####ParentPCEServerAddress
+It details the Parent PCE server address.
+`<ParentPCEServerAddress> </ParentPCEServerAddress>`
 
-#Parent PCE
++ ####ParentPCEServerPort
+PCE Server Port of the Parent PCE. Default value 4189. `<ParentPCEServerPort> </ParentPCEServerPort>`
 
-The PCE can act as a parent PCE, following the procedures described in RFC 6805.
++ ####parentPCEManagementPort
+TCP port to connect to manage the Parent PCE. `<parentPCEManagementPort> </parentPCEManagementPort>`
 
-The main class to launch the Parent PCE is es.tid.pce.parentPCE.ParentPCEServer
++ ####ChildPCERequestsProcessors
+Number of Path Request Processor Threads. Default value 1. `<ChildPCERequestsProcessors> </ChildPCERequestsProcessors>`
 
-##PCE
++ ####ParentPCEServerLogFile
+File to send the logs. By default ParentPCEServer.log. `<ParentPCEServerLogFile> </ParentPCEServerLogFile>`
 
-##QuickClient
++ ####ParentPCEPParserLogFile
+File to send logs of the PCEP Parser of the Parent PCE. By default ParentPCEPPareserServer.log `<ParentPCEPParserLogFile> <\ParentPCEPParserLogFile>`
 
-This is a command line tool that acts as PCC and sends PCEP messages to a PCE
++ ####networkDescriptionFile
+File to describe the network. It's necessary to include the route of the folder in which this file is located.
+`<networkDescriptionFile> <\networkDescriptionFile>`
 
-(*) Used for testing purposes only. 
++ ####ITnetworkDescriptionFile
+File to describe the IT network. It's necessary to include the route of the folder in which this file is located.
+`<ITnetworkDescriptionFile> <\ITnetworkDescriptionFile>`
 
-##Dependencies
++ ####MDnetworkDescriptionFile
+File to describe the MultiDomain network. It's necessary to include the route of the folder in which this file is located.
+`<MDnetworkDescriptionFile> <\MDnetworkDescriptionFile>`
 
-The dependencies are specified in the pom.xml file.
-Here is the dependency tree:
- ```
- es.tid.netphony:pce:jar:1.0.1
- +- es.tid.netphony:topology:jar:1.1.1:compile
- |  +- org.jgrapht:jgrapht-core:jar:0.9.1:compile
- |  +- com.google.code.gson:gson:jar:2.2.2:compile
- |  +- com.googlecode.json-simple:json-simple:jar:1.1.1:compile
- |  |  \- junit:junit:jar:4.10:compile
- |  |     \- org.hamcrest:hamcrest-core:jar:1.1:compile
- |  \- com.metaparadigm:json-rpc:jar:1.0:compile
- +- org.slf4j:slf4j-api:jar:1.7.7:compile
- +- es.tid.netphony:network-protocols:jar:1.1.1:compile
- +- colt:colt:jar:1.2.0:compile
- |  \- concurrent:concurrent:jar:1.3.4:compile
- \- redis.clients:jedis:jar:2.1.0:compile
-    \- commons-pool:commons-pool:jar:1.5.5:compile
++ ####ITMDnetworkDescriptionFile
+File to describe the IT MultiDomain network. It's necessary to include the route of the folder in which this file is located.
+`<ITMDnetworkDescriptionFile> <\ITMDnetworkDescriptionFile>`
 
- ```
++ ####initialSessionID
+ID of the initial session.
+`<initialSessionID> <\initialSessionID>`
+
++ ####KeepAliveTimer
+Keep Alive Timer.
+`<KeepAliveTimer> <\KeepAliveTimer>`
+
++ ####DeadTimer
+Dead Timer.
+`<DeadTimer> <\DeadTimer>`
+
++ ####ParentPCELogLevel
+`<ParentPCELogLevel> <\ParentPCELogLevel>`
+
++ ####PCEPParserLogLevel
+`<PCEPParserLogLevel> <\PCEPParserLogLevel>`
+
++ ####OSPFParserLogLevel
+`<OSPFParserLogLevel> <\OSPFParserLogLevel>`
+
++ ####strongestLog
+`<strongestLog> <\strongestLog>`
+
++ ####GUIHost
+`<GUIHost> <\GUIHost>`
+
++ ####GUIPort
+`<GUIPort> <\GUIPort>`
+
++ ####fullTopologyMode
+`<fullTopologyMode> <\fullTopologyMode>`
+
++ ####readMDTEDFromFile
+`<readMDTEDFromFile> <\readMDTEDFromFile>`
+
++ ####actingAsBGP4Peer
+BGP. This variable indeicates if the PCE has a BGP module.
+`<actingAsBGP4Peer> <\actingAsBGP4Peer>`
+
++ ####BGP4File
+BGP. File where read the BGP parameters to configure.
+`<BGP4File> <\BGP4File>`
+
++ ####multiDomain
+`<multiDomain> <\multiDomain>`
+
++ ####knowsWholeTopology
+The Parent PCE has a database with the whole topology. The interdomain and intradomain links.
+`<knowsWholeTopology> <\knowsWholeTopology>`
+
++ ####gmpls
+`<gmpls> <\gmpls>`
+
++ ####stateful
+`<stateful> <\stateful>`
+
++ ####lspUpdate
+`<lspUpdate> <\lspUpdate>`
+
++ ####parentPCE
+`<parentPCE> <\parentPCE>`
+
++ ####childPCE
+`<childPCE> <\childPCE>`
+
+
+
+
+
 
 

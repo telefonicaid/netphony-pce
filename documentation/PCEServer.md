@@ -1,42 +1,192 @@
-cne-pce v1.1.0
-==============
+##PCE Parameters
 
-Java based Path Computation Element and Test PCC
++ ####PCEServerPort
+TCP port where the PCE is listening for incoming pcep connections. `<PCEServerPort> </PCEServerPort>`
 
-#Parent PCE
++ ####LocalPCEAddress
+`<LocalPCEAddress> </LocalPCEAddress>`
 
-The PCE can act as a parent PCE, following the procedures described in RFC 6805.
++ ####PCEManagementPort
+TCP port to connect to manage the PCE.
+`<PCEManagementPort> </PCEManagementPort>`
 
-The main class to launch the Parent PCE is es.tid.pce.parentPCE.ParentPCEServer
++ ####timerOSPFupdatesToParentPCE
+Time betweeen updates to parent PCE.
+`<timerOSPFupdatesToParentPCE> </timerOSPFupdatesToParentPCE>`
 
-##PCE
++ ####isCompletedAuxGraph
+`<isCompletedAuxGraph> </isCompletedAuxGraph>`
 
-##QuickClient
++ ####isSSOn
+Parameter meaning SSON network computation.
+`<isSSOn> </isSSOn>`
 
-This is a command line tool that acts as PCC and sends PCEP messages to a PCE
++ ####isWLAN
+Parameter meaning WLAN network computation.
+`<isWLAN> </isWLAN>`
 
-(*) Used for testing purposes only. 
++ ####timeSendReachabilityTime
+Time between updates of reachability information to parent PCE.
+`<timeSendReachabilityTime> </timeSendReachabilityTime>`
 
-##Dependencies
++ ####OFCodeParentPCE
+Objective Function code for the Parent PCE Algorithm.
+`<OFCodeParentPCE> </OFCodeParentPCE>`
 
-The dependencies are specified in the pom.xml file.
-Here is the dependency tree:
- ```
- es.tid.netphony:pce:jar:1.0.1
- +- es.tid.netphony:topology:jar:1.1.1:compile
- |  +- org.jgrapht:jgrapht-core:jar:0.9.1:compile
- |  +- com.google.code.gson:gson:jar:2.2.2:compile
- |  +- com.googlecode.json-simple:json-simple:jar:1.1.1:compile
- |  |  \- junit:junit:jar:4.10:compile
- |  |     \- org.hamcrest:hamcrest-core:jar:1.1:compile
- |  \- com.metaparadigm:json-rpc:jar:1.0:compile
- +- org.slf4j:slf4j-api:jar:1.7.7:compile
- +- es.tid.netphony:network-protocols:jar:1.1.1:compile
- +- colt:colt:jar:1.2.0:compile
- |  \- concurrent:concurrent:jar:1.3.4:compile
- \- redis.clients:jedis:jar:2.1.0:compile
-    \- commons-pool:commons-pool:jar:1.5.5:compile
++ ####parentPCEAddress
+Address of the parent PCE. If it is null, there is no parent PCE.
+`<parentPCEAddress> </parentPCEAddress>`
 
- ```
++ ####parentPCEPort
+Port of the parent PCE.
+`<parentPCEPort> </parentPCEPort>`
 
++ ####OSPFTCPPort
+Port of the protocol OSPF over TCP.
+`<OSPFTCPPort> </OSPFTCPPort>`
 
++ ####PCCRequestsProcessors
+Number of computing processors to handle requests from PCCs.
+`<PCCRequestsProcessors> </PCCRequestsProcessors>`
+
++ ####ParentPCERequestProcessors
+Number of computing processors to handle requests from parent PCE.
+`<ParentPCERequestProcessors> </ParentPCERequestProcessors>`
+
++ ####PCEServerLogFile
+Log file.
+`<PCEServerLogFile> </PCEServerLogFile>`
+
++ ####PCEPParserLogFile
+Log file.
+`<PCEPParserLogFile> </PCEPParserLogFile>`
+
++ ####TEDBParserLogFile
+Log file.
+`<TEDBParserLogFile> </TEDBParserLogFile>`
+
++ ####OSPFParserLogFile
+Log file.
+`<OSPFParserLogFile> </OSPFParserLogFile>`
+
++ ####networkDescriptionFile
+Log file.
+`<networkDescriptionFile> </networkDescriptionFile>`
+
++ ####ITnetworkDescriptionFile
+Name of the file that describes the IT network (if there is any).
+`<ITnetworkDescriptionFile> </ITnetworkDescriptionFile>`
+
++ ####KeepAliveTimer
+KeepAlive Timer of the PCEP session.
+`<KeepAliveTimer> </KeepAliveTimer>`
+
++ ####minKeepAliveTimerPCCAccepted
+Minimum keepalive timer accepted from the peer PCE/PCC.
+`<minKeepAliveTimerPCCAccepted> </minKeepAliveTimerPCCAccepted>`
+
++ ####maxDeadTimerPCCAccepted
+Maximum DeadTimer accepted from the peer PCE/PCC.
+`<maxDeadTimerPCCAccepted> </maxDeadTimerPCCAccepted>`
+
++ ####zeroDeadTimerPCCAccepted
+If a deadTimer of 0 is accepted from the peer PCE/PCC.
+`<zeroDeadTimerPCCAccepted> </zeroDeadTimerPCCAccepted>`
+
++ ####DeadTimer
+Dead timer of the pcep session.
+`<DeadTimer> </DeadTimer>`
+
++ ####defaultPCELayer
+Default layer of the PCE.
+`<defaultPCELayer> </defaultPCELayer>`
+
++ ####ITcapable
+If the PCE is IT capable
+`<ITcapable> </ITcapable>`
+
++ ####nodelay
+If the tcp no delay option is used or not.
+`<nodelay> </nodelay>`
+
++ ####multilayer
+`<multilayer> </multilayer>`
+
++ ####multidomain
+`<multidomain> </multidomain>`
+
++ ####useMaxReqTime
+`<useMaxReqTime> </useMaxReqTime>`
+
++ ####reservation
+If reservation is allowed
+`<reservation> </reservation>`
+
++ ####optimizedRead
+If the experimental optimized method to read is used. 
+`<optimizedRead> </optimizedRead>`
+
++ ####OSPFSession
+If OSPF with raw socket is used to receive topology.
+`<OSPFSession> </OSPFSession>`
+
++ ####OSPFListenerIP
+IP Address from which the OSPF is listen
+`<OSPFListenerIP> </OSPFListenerIP>`
+
++ ####OSPFMulticast
+If it is multicast OSPF
+`<OSPFMulticast> </OSPFMulticast>`
+
++ ####OSPFUnicast
+If it is unicast OSPF
+`<OSPFUnicast> </OSPFUnicast>`
+
++ ####OSPFTCPSession
+If a TCP socket, sending OSPF packets over it is used to receive topology.
+`<OSPFTCPSession> </OSPFTCPSession>`
+
++ ####analyzeRequestTime
+If the request Time is analyzed (for statistics only)
+`<analyzeRequestTime> </analyzeRequestTime>`
+
++ ####setTraces
+`<setTraces> </setTraces>`
+
++ ####isActive
+`<isActive> </isActive>`
+
++ ####isStateful
+`<isStateful> </isStateful>`
+
++ ####statefulDFlag
+`<statefulDFlag> </statefulDFlag>`
+
++ ####statefulSFlag
+`<statefulSFlag> </statefulSFlag>`
+
++ ####statefulTFlag
+`<statefulTFlag> </statefulTFlag>`
+
++ ####isSRCapable
+`<isSRCapable> </isSRCapable>`
+
++ ####MSD
+`<MSD> </MSD>`
+
++ ####timeSendTopologyTask
+`<timeSendTopologyTask> </timeSendTopologyTask>`
+
++ ####timeSendReachabilityTask
+`<timeSendReachabilityTask> </timeSendReachabilityTask>`
+
++ ####isCompletedAuxGraph
+`<isCompletedAuxGraph> </isCompletedAuxGraph>`
+
++ ####actingAsBGP4Peer
+BGP. This variable indeicates if the PCE has a BGP module. 
+`<actingAsBGP4Peer> </actingAsBGP4Peer>`
+
++ ####BGP4File
+File where read the BGP parameters to configure.
+`<BGP4File> </BGP4File>`
