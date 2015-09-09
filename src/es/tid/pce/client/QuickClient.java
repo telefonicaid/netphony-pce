@@ -20,6 +20,7 @@ import es.tid.pce.pcep.messages.PCEPMessage;
 import es.tid.pce.pcep.messages.PCEPMessageTypes;
 import es.tid.pce.pcep.messages.PCEPRequest;
 import es.tid.pce.pcep.messages.PCEPResponse;
+import es.tid.pce.pcep.objects.BandwidthRequested;
 import es.tid.pce.pcep.objects.BandwidthRequestedGeneralizedBandwidth;
 import es.tid.pce.pcep.objects.EndPoints;
 import es.tid.pce.pcep.objects.EndPointsIPv4;
@@ -319,13 +320,38 @@ public class QuickClient {
 			}
 				
 			
+			int bw;
+			if (args.length>offset) {
+				if (args[offset].equals("-rbw")){		
+					offset=offset+1;
+					if (args.length>offset) {
+						bw=Integer.parseInt(args[offset]);	
+						offset=offset+1;
+						BandwidthRequested gw = new BandwidthRequested();
+						gw.setBw(bw);
+						req.setBandwidth(gw);
+							
+							
+					}
+				}
+				else if (args[offset].equals("-rgbw")){		
+					offset=offset+1;
+					if (args.length>offset) {
+						bw=Integer.parseInt(args[offset]);	
+						offset=offset+1;
+						BandwidthRequestedGeneralizedBandwidth gw = new BandwidthRequestedGeneralizedBandwidth();
+						GeneralizedBandwidthSSON gwsson = new GeneralizedBandwidthSSON();
+						gwsson.setM(bw);
+					    gw.setGeneralizedBandwidth(gwsson);
+						req.setBandwidth(gw);
+							
+					}
+				}	
+				
+			}
 			
+						
 			p_r.addRequest(req);
-			BandwidthRequestedGeneralizedBandwidth gw = new BandwidthRequestedGeneralizedBandwidth();
-			GeneralizedBandwidthSSON gwsson = new GeneralizedBandwidthSSON();
-			gwsson.setM(2);
-			gw.setGeneralizedBandwidth(gwsson);
-			req.setBandwidth(gw);
 			System.out.println("Peticion "+req.toString());
 			PCEPResponse pr=crm.newRequest(p_r);
 			messageList.add(pr);
