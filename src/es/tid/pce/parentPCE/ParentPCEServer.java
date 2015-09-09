@@ -133,8 +133,8 @@ public class ParentPCEServer {
 				bgpPeer.configure(params.getBGP4File());
 				if (params.isMultiDomain())
 					bgpPeer.setWriteMultiTEDB((MultiDomainTEDB)ted);				
-				if (params.isKnowsWholeTopology())
-					bgpPeer.setSimpleTEDB((SimpleTEDB)simple_ted);
+				//if (params.isKnowsWholeTopology())
+				//	bgpPeer.setSimpleTEDB((SimpleTEDB)simple_ted);
 				bgpPeer.createUpdateDispatcher();
 				bgpPeer.startClient();		
 				bgpPeer.startServer();

@@ -271,7 +271,7 @@ public class ParentPCESession extends GenericPCEPSession{
 					break;
 					
 				case PCEPMessageTypes.MESSAGE_INITIATE:
-					log.info("PCREQ message received");
+					log.info("PCINI message received");
 					PCEPInitiate p_ini;
 					try {
 						p_ini=new PCEPInitiate(msg);

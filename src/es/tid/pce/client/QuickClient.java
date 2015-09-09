@@ -301,9 +301,6 @@ public class QuickClient {
 				}
 			}
 
-
-
-			//req.getRequestParameters().s
 			int of_code=-1;
 			if (args.length>offset) {
 				if (args[offset].equals("-of")){		
@@ -316,7 +313,7 @@ public class QuickClient {
 			}
 			if (of_code!=-1){
 				ObjectiveFunction of=new ObjectiveFunction();
-				of.setOFcode(1002);
+				of.setOFcode(of_code);
 				of.setPbit(true);
 				req.setObjectiveFunction(of);
 			}

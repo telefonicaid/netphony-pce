@@ -41,6 +41,7 @@ import es.tid.pce.pcep.objects.LabelSetInclusiveList;
 import es.tid.pce.pcep.objects.Monitoring;
 import es.tid.pce.pcep.objects.NoPath;
 import es.tid.pce.pcep.objects.ObjectParameters;
+import es.tid.pce.pcep.objects.ObjectiveFunction;
 import es.tid.pce.pcep.objects.RequestParameters;
 import es.tid.pce.pcep.objects.SRP;
 import es.tid.pce.pcep.objects.subobjects.UnnumberIfIDXROSubobject;
@@ -73,7 +74,19 @@ public class MDHPCEMinNumberDomainsAlgorithm implements ComputingAlgorithm{
 	private ComputingRequest pathReq;
 	private ChildPCERequestManager childPCERequestManager;
 	private ReachabilityManager reachabilityManager;
-
+	
+	public static int GENERIC_CHANNEL = 0;
+	public static int MEDIA_CHANNEL = 1;
+	public static int OF_CODE_MUTIDOMAIN_MEDIA_CHANNEL = 60000;
+	public static int OF_CODE_MUTIDOMAIN_SBVT_CHANNEL = 60001;
+	public static int OF_CODE_MEDIA_CHANNEL = 58000;
+	public static int SBVT_CHANNEL = 2;
+	public static int OF_CODE_SBVT_CHANNEL = 58020;
+	
+	public int channelType;
+	
+	
+	
 	public MDHPCEMinNumberDomainsAlgorithm(ComputingRequest pathReq,TEDB ted,ChildPCERequestManager cprm , ReachabilityManager rm){
 		if(ted.isITtedb()){
 			this.networkGraph=((ITMDTEDB)ted).getDuplicatedMDNetworkGraph();
@@ -179,6 +192,30 @@ public class MDHPCEMinNumberDomainsAlgorithm implements ComputingAlgorithm{
 			return m_resp;
 		}
 		List<InterDomainEdge> edge_list=gp.getEdgeList();
+		
+		
+		//Let's check the OF code
+		
+		
+		int of=-1;
+		if(req.getObjectiveFunction()!=null){
+			of=req.getObjectiveFunction().getOFcode();
+			if (of==MDHPCEMinNumberDomainsAlgorithm.OF_CODE_MUTIDOMAIN_MEDIA_CHANNEL){
+				channelType=MDHPCEMinNumberDomainsAlgorithm.MEDIA_CHANNEL;
+				log.info("We are dealing with a MEDIA CHANNEL");
+			}else if (of==MDHPCEMinNumberDomainsAlgorithm.OF_CODE_MUTIDOMAIN_SBVT_CHANNEL){
+				channelType=MDHPCEMinNumberDomainsAlgorithm.SBVT_CHANNEL;
+				log.info("We are dealing with a SBVT CHANNEL");
+			}else {
+				channelType=MDHPCEMinNumberDomainsAlgorithm.GENERIC_CHANNEL;
+				log.info("We are dealing with a GENERIC CHANNEL");
+			}
+		}else {
+			channelType=MDHPCEMinNumberDomainsAlgorithm.GENERIC_CHANNEL;
+			log.info("We are dealing with a GENERIC CHANNEL AS NO OF WAS RECEIVED");
+		}
+		
+		
 		long tiempo2 =System.nanoTime();//FIXME: No se usa por ahora
 		boolean first_domain_equal=false;
 		if (source_domain_id.equals(dest_domain_id)){
@@ -199,7 +236,17 @@ public class MDHPCEMinNumberDomainsAlgorithm implements ComputingAlgorithm{
 			rpDomain.setRequestID(newRequestID);
 			rpDomain.setPbit(true);
 			requestToDomain.setRequestParameters(rpDomain);
+			if (channelType==MDHPCEMinNumberDomainsAlgorithm.MEDIA_CHANNEL){
+				ObjectiveFunction objectiveFunction = new ObjectiveFunction();
+				objectiveFunction.setOFcode(MDHPCEMinNumberDomainsAlgorithm.OF_CODE_MEDIA_CHANNEL);
+				requestToDomain.setObjectiveFunction(objectiveFunction);
+			}else if (channelType==MDHPCEMinNumberDomainsAlgorithm.SBVT_CHANNEL){
+				ObjectiveFunction objectiveFunction = new ObjectiveFunction();
+				objectiveFunction.setOFcode(MDHPCEMinNumberDomainsAlgorithm.OF_CODE_SBVT_CHANNEL);
+				requestToDomain.setObjectiveFunction(objectiveFunction);
+			}
 			pcreqToDomain.addRequest(requestToDomain);
+			
 			reqList.add(pcreqToDomain);
 			domainList.add(source_domain_id);
 			log.info("Sending ONLY ONE request: "+requestToDomain.toString()+" to domain "+source_domain_id);
@@ -288,6 +335,15 @@ public class MDHPCEMinNumberDomainsAlgorithm implements ComputingAlgorithm{
 				rpFirstDomain.setRequestID(requestID);
 				rpFirstDomain.setPbit(true);
 				requestToFirstDomain.setRequestParameters(rpFirstDomain);
+				if (channelType==MDHPCEMinNumberDomainsAlgorithm.MEDIA_CHANNEL){
+					ObjectiveFunction objectiveFunction = new ObjectiveFunction();
+					objectiveFunction.setOFcode(MDHPCEMinNumberDomainsAlgorithm.OF_CODE_MEDIA_CHANNEL);
+					requestToFirstDomain.setObjectiveFunction(objectiveFunction);
+				}else if (channelType==MDHPCEMinNumberDomainsAlgorithm.SBVT_CHANNEL){
+					ObjectiveFunction objectiveFunction = new ObjectiveFunction();
+					objectiveFunction.setOFcode(MDHPCEMinNumberDomainsAlgorithm.OF_CODE_SBVT_CHANNEL);
+					requestToFirstDomain.setObjectiveFunction(objectiveFunction);
+				}
 				pcreqToFirstDomain.addRequest(requestToFirstDomain);
 				reqList.add(pcreqToFirstDomain);
 				domainList.add(domain);
@@ -379,6 +435,15 @@ public class MDHPCEMinNumberDomainsAlgorithm implements ComputingAlgorithm{
 				rp2.setRequestID(requestID);
 				rp2.setPbit(true);
 				request.setRequestParameters(rp2);
+				if (channelType==MDHPCEMinNumberDomainsAlgorithm.MEDIA_CHANNEL){
+					ObjectiveFunction objectiveFunction = new ObjectiveFunction();
+					objectiveFunction.setOFcode(MDHPCEMinNumberDomainsAlgorithm.OF_CODE_MEDIA_CHANNEL);
+					request.setObjectiveFunction(objectiveFunction);
+				}else if (channelType==MDHPCEMinNumberDomainsAlgorithm.SBVT_CHANNEL){
+					ObjectiveFunction objectiveFunction = new ObjectiveFunction();
+					objectiveFunction.setOFcode(MDHPCEMinNumberDomainsAlgorithm.OF_CODE_SBVT_CHANNEL);
+					request.setObjectiveFunction(objectiveFunction);
+				}
 				pcreq.addRequest(request);
 				reqList.add(pcreq);
 				domainList.add(domain);
@@ -473,6 +538,15 @@ public class MDHPCEMinNumberDomainsAlgorithm implements ComputingAlgorithm{
 			rpLastDomain.setRequestID(requestID);
 			rpLastDomain.setPbit(true);
 			requestToLastDomain.setRequestParameters(rpLastDomain);
+			if (channelType==MDHPCEMinNumberDomainsAlgorithm.MEDIA_CHANNEL){
+				ObjectiveFunction objectiveFunction = new ObjectiveFunction();
+				objectiveFunction.setOFcode(MDHPCEMinNumberDomainsAlgorithm.OF_CODE_MEDIA_CHANNEL);
+				requestToLastDomain.setObjectiveFunction(objectiveFunction);
+			}else if (channelType==MDHPCEMinNumberDomainsAlgorithm.SBVT_CHANNEL){
+				ObjectiveFunction objectiveFunction = new ObjectiveFunction();
+				objectiveFunction.setOFcode(MDHPCEMinNumberDomainsAlgorithm.OF_CODE_SBVT_CHANNEL);
+				requestToLastDomain.setObjectiveFunction(objectiveFunction);
+			}
 			pcreqToLastDomain.addRequest(requestToLastDomain);
 
 			//Send the last request
