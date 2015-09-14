@@ -133,11 +133,13 @@ public class ChildPCERequestManager {
 	}
 	
 	public LinkedList<ComputingResponse> executeInitiates(LinkedList<PCEPInitiate> initiateList, LinkedList<Object> domainList){
+		log.info("EEEEEEEENTRANDO");
 		LinkedList<ComputingResponse> response= new  LinkedList<ComputingResponse>();
 		ChildPCEInitiate cpr;
 		LinkedList<FutureTask<ComputingResponse>> ftList=new LinkedList<FutureTask<ComputingResponse>>();
 		FutureTask<ComputingResponse> ft;
 		for (int i=0;i<initiateList.size();++i){
+			log.info("BOOONGO");
 			 cpr=new ChildPCEInitiate(this, initiateList.get(i), domainList.get(i));
 			 ft=new FutureTask<ComputingResponse>(cpr);
 			 ftList.add(ft);
@@ -162,12 +164,7 @@ public class ChildPCERequestManager {
 					time=time-timePassed;	
 				}
 				 response.add(resp);
-//			} catch (InterruptedException e) {
-//				// TODO Auto-generated catch block
-//				e.printStackTrace();
-//			} catch (ExecutionException e) {
-//				// TODO Auto-generated catch block
-//				e.printStackTrace();
+
 			} catch (TimeoutException e) {
 				resp=null;
 				time2=System.currentTimeMillis();

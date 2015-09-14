@@ -19,6 +19,7 @@ import es.tid.pce.computingEngine.algorithms.DefaultSinglePathComputing;
 import es.tid.pce.computingEngine.algorithms.multiLayer.OperationsCounter;
 import es.tid.pce.parentPCE.ChildPCERequestManager;
 import es.tid.pce.parentPCE.MD_LSP;
+import es.tid.pce.parentPCE.MultiDomainLSPDB;
 import es.tid.pce.parentPCE.ParentPCESession;
 import es.tid.pce.pcep.PCEPProtocolViolationException;
 import es.tid.pce.pcep.constructs.EndPoint;
@@ -27,6 +28,7 @@ import es.tid.pce.pcep.constructs.MetricPCE;
 import es.tid.pce.pcep.constructs.Notify;
 import es.tid.pce.pcep.constructs.P2PEndpoints;
 import es.tid.pce.pcep.constructs.PCEPIntiatedLSP;
+import es.tid.pce.pcep.constructs.Path;
 import es.tid.pce.pcep.constructs.Request;
 import es.tid.pce.pcep.constructs.Response;
 import es.tid.pce.pcep.constructs.StateReport;
@@ -34,6 +36,7 @@ import es.tid.pce.pcep.messages.PCEPError;
 import es.tid.pce.pcep.messages.PCEPInitiate;
 import es.tid.pce.pcep.messages.PCEPMessageTypes;
 import es.tid.pce.pcep.messages.PCEPNotification;
+import es.tid.pce.pcep.messages.PCEPReport;
 import es.tid.pce.pcep.messages.PCEPRequest;
 import es.tid.pce.pcep.messages.PCEPResponse;
 import es.tid.pce.pcep.objects.Bandwidth;
@@ -58,6 +61,7 @@ import es.tid.pce.pcep.objects.tlvs.NoPathTLV;
 import es.tid.pce.pcep.objects.tlvs.PathReservationTLV;
 import es.tid.pce.pcep.objects.tlvs.SymbolicPathNameTLV;
 import es.tid.pce.pcep.objects.tlvs.UnnumberedEndpointTLV;
+import es.tid.pce.pcep.objects.tlvs.subtlvs.SymbolicPathNameSubTLV;
 import es.tid.pce.server.ParentPCERequestManager;
 import es.tid.pce.server.communicationpce.CollaborationPCESessionManager;
 import es.tid.pce.server.wson.ReservationManager;
@@ -81,7 +85,9 @@ public class IniProcessorThread extends Thread{
 	
 	private static int lspIdSeq=1;
 	
-	private Hashtable <Integer,MD_LSP> multiDomain_LSP_list;
+	//private Hashtable <Integer,MD_LSP> multiDomain_LSP_list;
+	
+	private MultiDomainLSPDB multiDomainLSPDB;
 
 	 /** The queue to read the initation requests
 	 */
@@ -111,12 +117,13 @@ public class IniProcessorThread extends Thread{
 	 */
 	private Logger log;
 
-	public IniProcessorThread( LinkedBlockingQueue<InitiationRequest> lspInitiationRequestQueue, ReachabilityManager reachabilityManager,ChildPCERequestManager childPCERequestManager ){
+	public IniProcessorThread( LinkedBlockingQueue<InitiationRequest> lspInitiationRequestQueue, ReachabilityManager reachabilityManager,ChildPCERequestManager childPCERequestManager,MultiDomainLSPDB multiDomainLSPDB ){
 		log=Logger.getLogger("PCEServer");
 		this.lspInitiationRequestQueue=lspInitiationRequestQueue;
 		this.reachabilityManager=reachabilityManager;
 		this.childPCERequestManager=childPCERequestManager;
-		multiDomain_LSP_list=new Hashtable<Integer,MD_LSP>();
+		this.multiDomainLSPDB=multiDomainLSPDB;
+		running=true;
 		
 	}
 	
@@ -131,6 +138,7 @@ public class IniProcessorThread extends Thread{
 			try {
 				iniReq=lspInitiationRequestQueue.take();
 				PCEPIntiatedLSP pini=iniReq.getLspIniRequest();
+				long sRP_ID_number = pini.getRsp().getSRP_ID_number();
 				//Check if delete
 				if (pini.getRsp().isrFlag()){
 					delete(pini.getLsp().getLspId());
@@ -140,8 +148,10 @@ public class IniProcessorThread extends Thread{
 					boolean needComputation=false;
 					if (pini.getEro()!=null){
 						needComputation=false;
+						log.info("Provision Multidomain LSP  with ERO");
 					}else {
 						needComputation=true;
+						log.info("Provision Multidomain LSP that needs computation");
 					}
 					ExplicitRouteObject fullEro;
 					if (needComputation){
@@ -150,9 +160,10 @@ public class IniProcessorThread extends Thread{
 						fullEro=pini.getEro();
 					}
 
-					log.info("Provision Multidomain LSP ");
+					
 
 					LinkedList<PCEPInitiate> iniList= new LinkedList<PCEPInitiate>();
+					log.info("Creating the bandwidth");
 					Bandwidth bw=null;
 
 					//Get the Bandwidth
@@ -160,19 +171,20 @@ public class IniProcessorThread extends Thread{
 						bw= pini.getBandwidth().duplicate();
 					}
 					
-					
+					log.info("Creating the Domain list");
 					//Create the domain list
 					Iterator<EROSubobject> eroi= fullEro.getEROSubobjectList().iterator();
 					Inet4Address lastDomain=null;
 					Hashtable<Inet4Address,ExplicitRouteObject> eroSplit = new Hashtable<Inet4Address,ExplicitRouteObject>();
 					ExplicitRouteObject lastEro=null;
+					Inet4Address domain=null;
 					while (eroi.hasNext()){
 						EROSubobject eroso=eroi.next();
-						Inet4Address domain=null;
 						if (eroso instanceof IPv4prefixEROSubobject) {
 							domain=this.reachabilityManager.getDomain(((IPv4prefixEROSubobject) eroso).getIpv4address());
 						}else if (eroso instanceof UnnumberIfIDEROSubobject) {
 							domain=this.reachabilityManager.getDomain(((UnnumberIfIDEROSubobject) eroso).getRouterID());
+							log.info("A3: "+domain);
 						}
 						if (domain!=null){
 							if (lastDomain==null){
@@ -180,9 +192,13 @@ public class IniProcessorThread extends Thread{
 								lastEro=eeero;
 								eeero.addEROSubobject(eroso);
 								eroSplit.put(domain,eeero );
+								lastDomain=domain;
+								log.info("add first subo");
 							}else if (domain.equals(lastDomain)){
 								lastEro.addEROSubobject(eroso);
+								log.info("add more subo subo");
 							}else {
+								log.info("New domaiiin");
 								ExplicitRouteObject eeero=new ExplicitRouteObject();
 								lastEro=eeero;
 								eeero.addEROSubobject(eroso);
@@ -190,6 +206,7 @@ public class IniProcessorThread extends Thread{
 								lastDomain=domain;
 							}
 						}else {
+							log.info("add more subo subo2");
 							lastEro.addEROSubobject(eroso);
 						}
 						
@@ -197,14 +214,16 @@ public class IniProcessorThread extends Thread{
 					
 					Enumeration<Inet4Address> domains=eroSplit.keys();
 					LinkedList<Object> domainList=new  LinkedList<Object>();
-					while(domains.hasMoreElements()){
-						Inet4Address domain = domains.nextElement();
+					while(domains.hasMoreElements()){						
+						domain = domains.nextElement();
+						log.info("Starting with domain "+domain);
 						PCEPInitiate ini = new PCEPInitiate();
 						PCEPIntiatedLSP inilsp = new PCEPIntiatedLSP();
 						ini.getPcepIntiatedLSPList().add(inilsp);
 						SRP srp= new SRP();
 						srp.setSRP_ID_number(ParentPCESession.getNewReqIDCounter());
 						inilsp.setRsp(srp);
+						log.info("Getting endpoints of Domain "+domain);
 						inilsp.setEndPoint(getEndPoints(eroSplit.get(domain)));
 						inilsp.setEro(eroSplit.get(domain));
 						inilsp.setBandwidth(bw);
@@ -218,14 +237,50 @@ public class IniProcessorThread extends Thread{
 						lsp.setSymbolicPathNameTLV_tlv(symbolicPathNameTLV_tlv);
 						inilsp.setLsp(lsp);
 						iniList.add(ini);
+						log.info("meeeen "+ini.toString());
 						domainList.add(domain);
 					}
 					
 					
 					try {
-	     				childPCERequestManager.executeInitiates(iniList, domainList);
+						log.info("A LLAMAAAR");
+						if (childPCERequestManager==null){
+							log.severe("o ooooooooo");
+						}
+						LinkedList<ComputingResponse> reps=childPCERequestManager.executeInitiates(iniList, domainList);
+	     				log.info("Hay "+reps.size()+" reps");
+	     				MD_LSP mdlsp=new MD_LSP();
+	     				for (int i=0;i<reps.size();++i){
+	     					ComputingResponse cr=reps.get(i);
+	     					LinkedList<StateReport> lsr=cr.ReportList;
+	     					StateReport sr=lsr.get(0);
+	     					int id=sr.getLSP().getLspId();
+	     					mdlsp.getDomainLSPIDMap().put((Inet4Address)domainList.get(i), new Integer(id));
+	     					mdlsp.getDomainLSRMpa().put((Inet4Address)domainList.get(i), sr);
+	     				}
+	     				
+	     				int lspId = IniProcessorThread.getID();
+	     				multiDomainLSPDB.getMultiDomain_LSP_list().put(lspId, mdlsp);
 						log.info("SE LLAMOOOOOOO ");
+						StateReport srmd = new StateReport();
+						SRP srp = new SRP();
+						srp.setSRP_ID_number(sRP_ID_number);
+						srmd.setSRP(srp);
+						LSP lsp = new LSP();
+						lsp.setLspId(lspId);
+						srmd.setLSP(lsp);
+						Path p=new Path();
+						p.seteRO(fullEro);
+						srmd.setPath(p);
+						PCEPReport rep = new PCEPReport();
+						rep.getStateReportList().add(srmd);
+						rep.encode();
+						log.info("Mando: "+ rep.toString());					
+						iniReq.getOut().write(rep.getBytes());
+						iniReq.getOut().flush();
+						
 					}catch (Exception e){
+						e.printStackTrace();
 						log.severe("PROBLEM SENDING THE INITIATES");
 					}
 				}
@@ -349,6 +404,8 @@ public class IniProcessorThread extends Thread{
 //	}
 //	
 	public EndPoints getEndPoints(ExplicitRouteObject ero){
+		log.info("Getting EndPoints");
+		
 		Iterator<EROSubobject> eroi= ero.getEROSubobjectList().iterator();
 		EROSubobject eroso;
 		GeneralizedEndPoints gep = new GeneralizedEndPoints();
@@ -378,11 +435,17 @@ public class IniProcessorThread extends Thread{
 					UnnumberedEndpointTLV epipv4=new UnnumberedEndpointTLV();
 					epipv4.setIPv4address(((UnnumberIfIDEROSubobject)eroso).getRouterID());
 					epipv4.setIfID(((UnnumberIfIDEROSubobject)eroso).getInterfaceID());
-					sourceEndPoint.setUnnumberedEndpoint(epipv4);					
+					sourceEndPoint.setUnnumberedEndpoint(epipv4);		
+					destinationEndPoint=new EndPoint();
+					UnnumberedEndpointTLV epipv42=new UnnumberedEndpointTLV();
+					epipv42.setIPv4address(((UnnumberIfIDEROSubobject)eroso).getRouterID());
+					epipv42.setIfID(((UnnumberIfIDEROSubobject)eroso).getInterfaceID());
+					destinationEndPoint.setUnnumberedEndpoint(epipv42);
 				}
-				else if (!eroi.hasNext()){
+				else {
 					destinationEndPoint=new EndPoint();
 					UnnumberedEndpointTLV epipv4=new UnnumberedEndpointTLV();
+					epipv4.setIPv4address(((UnnumberIfIDEROSubobject)eroso).getRouterID());
 					epipv4.setIfID(((UnnumberIfIDEROSubobject)eroso).getInterfaceID());
 					destinationEndPoint.setUnnumberedEndpoint(epipv4);
 				}
@@ -390,15 +453,20 @@ public class IniProcessorThread extends Thread{
 		}
 		p2pEndpoints.setSourceEndPoints(sourceEndPoint);
 		p2pEndpoints.setDestinationEndPoints(destinationEndPoint);
-		return null;
+		return gep;
 		
 	}
 	
 	public void delete (int lspID){
-		MD_LSP mdlsp= this.multiDomain_LSP_list.get(lspID);
+		log.info("GOING TO DELTE "+lspID);
+		MD_LSP mdlsp= this.multiDomainLSPDB.getMultiDomain_LSP_list().get(lspID);
+		if (mdlsp==null) {
+			log.severe("LSP is NULL!!");
+		}
 		LinkedList<PCEPInitiate> iniList= new LinkedList<PCEPInitiate>();
 		LinkedList<Object> domainList=new  LinkedList<Object>();
 		if (mdlsp!=null){
+			log.info("LSP OK in DB!!!");
 			Enumeration<Inet4Address> domains=mdlsp.getDomainLSPIDMap().keys();
 			while(domains.hasMoreElements()){
 				Inet4Address domain = domains.nextElement();
@@ -410,23 +478,29 @@ public class IniProcessorThread extends Thread{
 				inilsp.setRsp(srp);
 				srp.setrFlag(true);
 				LSP lsp =new LSP();
+				SymbolicPathNameTLV symbolicPathNameTLV_tlv = new SymbolicPathNameTLV();
+				StateReport SR =mdlsp.getDomainLSRMpa().get(domain);
+				symbolicPathNameTLV_tlv.setSymbolicPathNameID(SR.getLSP().getSymbolicPathNameTLV_tlv().getSymbolicPathNameID() );
 				lsp.setLspId(mdlsp.getDomainLSPIDMap().get(domain));
+				lsp.setSymbolicPathNameTLV_tlv(symbolicPathNameTLV_tlv);
 				inilsp.setLsp(lsp);
 				iniList.add(ini);
 				domainList.add(domain);
 			}
 			try {
+				log.info("GOING TO send the deletes of "+lspID);
  				childPCERequestManager.executeInitiates(iniList, domainList);
-				log.info("SE LLAMOOOOOOO ");
+				log.info("Removing MD LSP "+lspID);
+				 this.multiDomainLSPDB.getMultiDomain_LSP_list().remove(lspID);
 			}catch (Exception e){
-				log.severe("PROBLEM SENDING THE INITIATES");
+				log.severe("PROBLEM SENDING THE DELETES");
 			}
 			
 		}
 	}
 	
 	
-	public synchronized int getID(){
+	public static synchronized int getID(){
 		IniProcessorThread.lspIdSeq+=1;
 		return IniProcessorThread.lspIdSeq;
 	}
