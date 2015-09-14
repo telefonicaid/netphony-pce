@@ -272,7 +272,7 @@ public class ParentPCESession extends GenericPCEPSession{
 					break;
 					
 				case PCEPMessageTypes.MESSAGE_INITIATE:
-					log.info("PCINI message received");
+					log.info("PCINI message received from "+this.remotePeerIP);
 					PCEPInitiate p_ini;
 					try {
 						p_ini=new PCEPInitiate(msg);
@@ -281,15 +281,15 @@ public class ParentPCESession extends GenericPCEPSession{
 						e.printStackTrace();
 						break;
 					}
-                     this.mdiniDispatcher.dispathInitiate(p_ini,out,this.remotePCEId);
+                     this.mdiniDispatcher.dispathInitiate(p_ini,out,this.remotePeerIP );
 					break;
 				default:
-					log.warning("ERROR: unexpected message received");
+					log.warning("ERROR: unexpected message from "+this.remotePeerIP);
 					pceMsg = false;
 				}
 				
 				if (pceMsg) {
-					log.info("Reseting Dead Timer as PCEP Message has arrived in "+this.remotePeerIP);
+					log.fine("Reseting Dead Timer as PCEP Message has arrived in "+this.remotePeerIP);
 					resetDeadTimer();
 				}
 			} 
@@ -310,7 +310,7 @@ public class ParentPCESession extends GenericPCEPSession{
 //	}
 //	
 	public void endSession(){
-		log.info("Removing domain "+this.remoteDomainId);
+		log.severe("Removing domain "+this.remoteDomainId+" due to endSession from "+this.remotePeerIP);
 		childPCERequestManager.removeDomain(this.remoteDomainId);
 	}
 	

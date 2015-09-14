@@ -19,22 +19,19 @@ public class MultiDomainInitiateDispatcher {
 	  */
 	 private LinkedBlockingQueue<InitiationRequest> lspIniRequestQueue;
 	 
-	 private Thread iniProcessorThread;
-	 
-	 private ChildPCERequestManager childPCERequestManager;
+	 private Thread iniProcessorThread; 
+
 	 
 	 /**
 	  * The logger
 	  */
 	 private Logger log;
 	 
-	 private ReachabilityManager reachabilityManager;
 
-	public MultiDomainInitiateDispatcher(ReachabilityManager reachabilityManager) {
+	public MultiDomainInitiateDispatcher(ReachabilityManager reachabilityManager, ChildPCERequestManager childPCERequestManager, MultiDomainLSPDB multiDomainLSPDB) {
 		log=Logger.getLogger("PCEServer");
-		this.reachabilityManager=reachabilityManager;
 	    lspIniRequestQueue = new LinkedBlockingQueue<InitiationRequest>();
-	    iniProcessorThread= new IniProcessorThread(lspIniRequestQueue, reachabilityManager, childPCERequestManager);
+	    iniProcessorThread= new IniProcessorThread(lspIniRequestQueue, reachabilityManager, childPCERequestManager, multiDomainLSPDB);
         iniProcessorThread.start();
 	}
 	
@@ -44,6 +41,7 @@ public class MultiDomainInitiateDispatcher {
 		log.info("Dispatching Initiate message from "+remotePeerIP);	
 		Iterator<PCEPIntiatedLSP> it=iniMessage.getPcepIntiatedLSPList().iterator();
 		while (it.hasNext()){
+			log.info("Dispaaaatch");
 			InitiationRequest ir=new InitiationRequest();
 			ir.setOut(out);
 			ir.setRemotePeerIP(remotePeerIP);

@@ -134,6 +134,8 @@ public class ParentPCEServer {
 				bgpPeer.configure(params.getBGP4File());
 				if (params.isMultiDomain())
 					bgpPeer.setWriteMultiTEDB((MultiDomainTEDB)ted);				
+				
+				
 				//if (params.isKnowsWholeTopology())
 				//	bgpPeer.setSimpleTEDB((SimpleTEDB)simple_ted);
 				bgpPeer.createUpdateDispatcher();
@@ -164,9 +166,9 @@ public class ParentPCEServer {
 			log.info("Inizializing "+ params.getChildPCERequestsProcessors()+" Path Request Processor Threads");
 			//pathRequestsQueue=new RequestQueue(params.getChildPCERequestsProcessors());
 			requestDispatcher=new  RequestDispatcher(params.getChildPCERequestsProcessors(),ted,null,false);
-			
+			MultiDomainLSPDB multiDomainLSPDB = new MultiDomainLSPDB();
 			log.info("Inizializing "+ params.getChildPCERequestsProcessors()+" Ini Dispatcher");
-			MultiDomainInitiateDispatcher mdiniDispatcher = new MultiDomainInitiateDispatcher(rm);
+			MultiDomainInitiateDispatcher mdiniDispatcher = new MultiDomainInitiateDispatcher(rm, childPCERequestManager, multiDomainLSPDB);
 
 			
 			for (int i=0;i<params.algorithmRuleList.size();++i){
@@ -228,7 +230,7 @@ public class ParentPCEServer {
 			
 
 			log.info("Initializing Management Server");
-			ParentPCEManagementSever pms=new ParentPCEManagementSever(childPCERequestManager,requestDispatcher,(MDTEDB)ted,(SimpleTEDB)simple_ted,rm,pcepSessionManager,mdt,params.getParentPCEManagementPort());		
+			ParentPCEManagementSever pms=new ParentPCEManagementSever(childPCERequestManager,requestDispatcher,(MDTEDB)ted,(SimpleTEDB)simple_ted,rm,pcepSessionManager,mdt,params.getParentPCEManagementPort(),multiDomainLSPDB);		
 			pms.start();
 			
 			//
@@ -299,7 +301,8 @@ public class ParentPCEServer {
 			//pathRequestsQueue=new RequestQueue(params.getChildPCERequestsProcessors());
 			requestDispatcher=new  RequestDispatcher(params.getChildPCERequestsProcessors(),ted,null,false);
 			log.info("Inizializing "+ params.getChildPCERequestsProcessors()+" Ini Dispatcher");
-			MultiDomainInitiateDispatcher mdiniDispatcher = new MultiDomainInitiateDispatcher(rm);
+			MultiDomainLSPDB multiDomainLSPDB= new MultiDomainLSPDB();
+			MultiDomainInitiateDispatcher mdiniDispatcher = new MultiDomainInitiateDispatcher(rm,childPCERequestManager, multiDomainLSPDB);
 
 			
 			for (int i=0;i<params.algorithmRuleList.size();++i){
