@@ -14,9 +14,15 @@ import redis.clients.jedis.Jedis;
 
 public class RedisDatabaseHandler {
 	
-    public boolean write(String key, String json){
+	String host="localhost";
 	
-    	Jedis jedis = new Jedis("localhost",6379);
+	int port=6379;
+	
+    public boolean write(String key, String json){
+    	
+    	System.out.println("WRITING IN "+host+" port "+port);
+	
+    	Jedis jedis = new Jedis(host,port);
 	    jedis.connect();
 	    
 	    String ret = jedis.set(key, json);
@@ -24,4 +30,22 @@ public class RedisDatabaseHandler {
 	    jedis.disconnect();
 	    return true;
 	}
+
+	public String getHost() {
+		return host;
+	}
+
+	public void setHost(String host) {
+		this.host = host;
+	}
+
+	public int getPort() {
+		return port;
+	}
+
+	public void setPort(int port) {
+		this.port = port;
+	}
+    
+    
 }
