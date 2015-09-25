@@ -5,6 +5,7 @@ import java.util.Enumeration;
 import java.util.Hashtable;
 
 import es.tid.pce.pcep.constructs.StateReport;
+import es.tid.pce.pcep.objects.ExplicitRouteObject;
 
 public class MD_LSP {
 	
@@ -13,6 +14,8 @@ public class MD_LSP {
 	public Hashtable<Inet4Address,Integer> domainLSPIDMap;//mapping of domain - pLSPID in the domain
 	
 	public Hashtable<Inet4Address,StateReport>domainLSRMpa; //mapping of domain - State Report 
+	
+	public ExplicitRouteObject fullERO;
 	
 	public MD_LSP(){
 		domainLSPIDMap=new Hashtable<Inet4Address,Integer>();
@@ -52,6 +55,16 @@ public class MD_LSP {
 		}
 		return ret;
 	}
+
+	public ExplicitRouteObject getFullERO() {
+		return fullERO;
+	}
+
+	public void setFullERO(ExplicitRouteObject fullERO) {
+		this.fullERO = fullERO;
+	}
+	
+	
 	
 	
 
