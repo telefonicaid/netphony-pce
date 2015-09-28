@@ -1,4 +1,4 @@
-package es.tid.pce.parentPCE;
+package es.tid.pce.parentPCE.MDLSPDB;
 
 import java.net.Inet4Address;
 import java.util.Enumeration;
@@ -10,9 +10,11 @@ import java.util.logging.Logger;
 import com.google.gson.Gson;
 
 import redis.clients.jedis.Jedis;
+import es.tid.pce.parentPCE.MD_LSP;
 import es.tid.pce.pcep.objects.ExplicitRouteObject;
 import es.tid.pce.server.RedisDatabaseHandler;
 import es.tid.rsvp.objects.subobjects.EROSubobject;
+import es.tid.rsvp.objects.subobjects.ETCEROSubobject;
 import es.tid.rsvp.objects.subobjects.GeneralizedLabelEROSubobject;
 import es.tid.rsvp.objects.subobjects.LabelEROSubobject;
 import es.tid.rsvp.objects.subobjects.UnnumberIfIDEROSubobject;
@@ -55,11 +57,13 @@ public class SaveLSPinRedis implements Runnable {
 	public void run(){	
 		log.info("Going to save LSP in DB");
 		//LSPs to add
+		multiDomain_LSP_list_to_add=new Hashtable <Integer,MD_LSP>(); 
+		multiDomain_LSP_list_to_del=new Hashtable <Integer,MD_LSP>(); 
 		if (multiDomain_LSP_list!=null){
 			
 			if (multiDomain_LSP_list_old==null){
 				multiDomain_LSP_list_old= new Hashtable <Integer,MD_LSP>();
-				multiDomain_LSP_list_to_add=new Hashtable <Integer,MD_LSP>(); 
+				
 				Enumeration<Integer>ids=multiDomain_LSP_list.keys();
 				while (ids.hasMoreElements()){	
 					Integer id=ids.nextElement();
@@ -122,7 +126,7 @@ public class SaveLSPinRedis implements Runnable {
 		
 		Gson gson = new Gson();
 		
-		SimpleLSPhop[] hops;
+		SimpleLSP slsp=new SimpleLSP();
 		
 		ExplicitRouteObject ero=lsp.getFullERO();
 		Iterator <EROSubobject> erosolist= ero.getEROSubobjectList().iterator();		
@@ -133,24 +137,32 @@ public class SaveLSPinRedis implements Runnable {
 				num+=1;
 			}
 		}
-		hops=new SimpleLSPhop[num];
+		slsp.data=new SimpleLSPhop[num];
+		
 		erosolist= ero.getEROSubobjectList().iterator();		
 		int i=-1;
 		while (erosolist.hasNext()){
 			EROSubobject eroso= erosolist.next();
 			if (eroso instanceof UnnumberIfIDEROSubobject){
 				i+=1;
-				hops[i]=new SimpleLSPhop();
-				hops[i].routerID= ((UnnumberIfIDEROSubobject)eroso).routerID.getHostAddress();
-				hops[i].ifID= ""+((UnnumberIfIDEROSubobject)eroso).interfaceID;				
+				slsp.data[i]=new SimpleLSPhop();
+				slsp.data[i].routerID= ((UnnumberIfIDEROSubobject)eroso).routerID.getHostAddress();
+				slsp.data[i].ifID= ""+((UnnumberIfIDEROSubobject)eroso).interfaceID;				
 			}else if (eroso instanceof GeneralizedLabelEROSubobject){
-				hops[i]=new SimpleLSPhop();
-				hops[i].n=""+ ((GeneralizedLabelEROSubobject)eroso).getDwdmWavelengthLabel().getN();
-				hops[i].m=""+ ((GeneralizedLabelEROSubobject)eroso).getDwdmWavelengthLabel().getM();				
+				if (slsp.data[i]!=null){
+					slsp.data[i].n=""+ ((GeneralizedLabelEROSubobject)eroso).getDwdmWavelengthLabel().getN();
+					slsp.data[i].m=""+ ((GeneralizedLabelEROSubobject)eroso).getDwdmWavelengthLabel().getM();		
+				}
+						
+			}else if (eroso instanceof ETCEROSubobject){
+				if (slsp.data[i]!=null){
+					slsp.data[i].transponder="TX "+((ETCEROSubobject)eroso).getSubTransponderList().get(0).getST_TLV_ModFormat().toString();
+				}
+				
 			}
 		}
 		
-   	 	String json = gson.toJson(hops);
+   	 	String json = gson.toJson(slsp);
    	 	
   	 	
    	 	return json;

@@ -1,10 +1,11 @@
-package es.tid.pce.parentPCE;
+package es.tid.pce.parentPCE.MDLSPDB;
 
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Set;
 
+import es.tid.pce.parentPCE.MD_LSP;
 import es.tid.tedb.IntraDomainEdge;
 
 public class MultiDomainLSPDB {

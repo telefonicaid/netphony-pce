@@ -5,8 +5,8 @@ import java.util.logging.Logger;
 
 import es.tid.pce.computingEngine.RequestDispatcher;
 import es.tid.pce.parentPCE.ChildPCERequestManager;
-import es.tid.pce.parentPCE.MultiDomainLSPDB;
 import es.tid.pce.parentPCE.MultiDomainTopologyUpdater;
+import es.tid.pce.parentPCE.MDLSPDB.MultiDomainLSPDB;
 import es.tid.pce.pcepsession.PCEPSessionsInformation;
 import es.tid.tedb.ITMDTEDB;
 import es.tid.tedb.MDTEDB;
