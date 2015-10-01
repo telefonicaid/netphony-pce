@@ -31,6 +31,7 @@ import es.tid.pce.pcep.objects.tlvs.NoPathTLV;
 import es.tid.rsvp.objects.subobjects.DataPathIDEROSubobject;
 import es.tid.rsvp.objects.subobjects.IPv4prefixEROSubobject;
 import es.tid.rsvp.objects.subobjects.UnnumberIfIDEROSubobject;
+import es.tid.rsvp.objects.subobjects.UnnumberedDataPathIDEROSubobject;
 import es.tid.tedb.IntraDomainEdge;
 import es.tid.tedb.MDTEDB;
 import es.tid.tedb.SimpleITTEDB;
@@ -70,6 +71,7 @@ public class DefaultSinglePathComputing implements ComputingAlgorithm {
 		Request req=pathReq.getRequestList().get(0);
 		long reqId=req.getRequestParameters().getRequestID();
 		log.info("Processing Single Path Computing Request id: "+reqId);
+		
 
 		//Start creating the response
 		Response response=new Response();
@@ -91,17 +93,17 @@ public class DefaultSinglePathComputing implements ComputingAlgorithm {
 		Object source_router_id_addr = null;
 		Object dest_router_id_addr = null;
 		Object router_xro = null;
-		DataPathID source = new DataPathID();
-		DataPathID dest = new DataPathID();	
+		long source_port = 0;
+		long destination_port = 0;
 		DataPathID xro = new DataPathID();
-
+		
 
 		if (EP.getOT()==ObjectParameters.PCEP_OBJECT_TYPE_ENDPOINTS_IPV4){
 			EndPointsIPv4  ep=(EndPointsIPv4) req.getEndPoints();
 			source_router_id_addr=ep.getSourceIP();
 			dest_router_id_addr=ep.getDestIP();
 		}else if (EP.getOT()==ObjectParameters.PCEP_OBJECT_TYPE_ENDPOINTS_IPV6){
-
+			log.info("ENDPOINTS IPv6 not supported");
 		}
 
 		if (EP.getOT()==ObjectParameters.PCEP_OBJECT_TYPE_GENERALIZED_ENDPOINTS){
@@ -112,49 +114,39 @@ public class DefaultSinglePathComputing implements ComputingAlgorithm {
 				EndPoint destep=p2pep.getDestinationEndPoint();
 								
 				if (sourceep.getEndPointIPv4TLV() != null && destep.getEndPointIPv4TLV() != null){
-					
-					
+					// IPv4 End Points					
 					source_router_id_addr=sourceep.getEndPointIPv4TLV().IPv4address;
 					dest_router_id_addr=destep.getEndPointIPv4TLV().IPv4address;
 					
+				}else if (sourceep.getUnnumberedEndpoint() != null && destep.getUnnumberedEndpoint() != null){
+					// IPv4 End Points					
+					source_router_id_addr=sourceep.getUnnumberedEndpoint().IPv4address;
+					dest_router_id_addr=destep.getUnnumberedEndpoint().IPv4address;
+					
+					source_port=sourceep.getUnnumberedEndpoint().getIfID();
+					destination_port=destep.getUnnumberedEndpoint().getIfID();
+					
 				}else if (sourceep.getEndPointDataPathTLV() != null && destep.getEndPointDataPathTLV() != null){
-					
+					// Datapath ID End Points
 					log.info("router_id_addr type: DataPathID, "+sourceep.toString().toUpperCase()+"  "+destep.toString().toUpperCase());
-					source_router_id_addr=(sourceep.getEndPointDataPathTLV().switchID.getDataPathID()).toUpperCase();
-					dest_router_id_addr=(destep.getEndPointDataPathTLV().switchID.getDataPathID()).toUpperCase();
-
-					source.setDataPathID((String)source_router_id_addr);
-					dest.setDataPathID((String)dest_router_id_addr);
-
-					source_router_id_addr=source;
-					dest_router_id_addr=dest;
-
+					source_router_id_addr=sourceep.getEndPointDataPathTLV().getDataPathID();
+					dest_router_id_addr=destep.getEndPointDataPathTLV().getDataPathID();
+/*Aqui no tiene sentido el xro porque no depende del endpoint
 					//Case XRO is not null
 					if(req.getXro()!=null){
 						router_xro=req.getXro().getEROSubobjectList().getFirst().toString().substring(0,23);
 						xro.setDataPathID((String)router_xro);
 						log.info("Algorithm.getXro ::"+xro);
 					}
-				
+				*/
 				}else if (sourceep.getEndPointUnnumberedDataPathTLV() != null && destep.getEndPointUnnumberedDataPathTLV() != null){
-					//UnnumberedDataPath
+					// UnnumberedDataPath ID End Points
 					log.info("router_id_addr type: Unnumbered DataPathID, "+sourceep.toString().toUpperCase()+"  "+destep.toString().toUpperCase());
-					source_router_id_addr=(sourceep.getEndPointUnnumberedDataPathTLV().switchID.getDataPathID()).toUpperCase();
-					dest_router_id_addr=(destep.getEndPointUnnumberedDataPathTLV().switchID.getDataPathID()).toUpperCase();
-					
-					source.setDataPathID((String)source_router_id_addr);
-					dest.setDataPathID((String)dest_router_id_addr);
+					source_router_id_addr=sourceep.getEndPointUnnumberedDataPathTLV().getDataPathID();
+					dest_router_id_addr=destep.getEndPointUnnumberedDataPathTLV().getDataPathID();
 
-					source_router_id_addr=source;
-					dest_router_id_addr=dest;
-
-					//Case XRO is not null
-					if(req.getXro()!=null){
-						router_xro=req.getXro().getEROSubobjectList().getFirst().toString().substring(0,23);
-						xro.setDataPathID((String)router_xro);
-						log.info("Algorithm.getXro ::"+xro);
-					}
-				
+					source_port=sourceep.getEndPointUnnumberedDataPathTLV().getIfID();
+					destination_port=destep.getEndPointUnnumberedDataPathTLV().getIfID();
 				}else {
 					log.info("Error in the EndPoints -  not defined");
 				}
@@ -178,10 +170,12 @@ public class DefaultSinglePathComputing implements ComputingAlgorithm {
 
 		log.info("Algorithm->  Source:: "+source_router_id_addr+" Destination:: "+dest_router_id_addr);
 		log.info("Check if we have source and destination in our TED");
-
+		
+		
 		//Case XRO is not null
-		if(router_xro!=null){
-			log.info("Router_xro is not null");
+		if(req.getXro()!=null){
+			xro.setDataPathID(req.getXro().getEROSubobjectList().getFirst().toString());
+			log.info("Algorithm.getXro ::"+xro);
 			if (networkGraph.containsVertex(xro)){
 				log.info("Delete node in graph:: "+xro);
 				networkGraph.removeVertex(xro);
@@ -214,7 +208,7 @@ public class DefaultSinglePathComputing implements ComputingAlgorithm {
 		GraphPath<Object,IntraDomainEdge> gp=dsp.getPath();
 
 		log.finest("Creating response");
-		if (  gp==null){
+		if (gp==null){
 			log.warning("DefaultSinglePathComputing:: No Path Found");	
 			NoPath noPath= new NoPath();
 			noPath.setNatureOfIssue(ObjectParameters.NOPATH_NOPATH_SAT_CONSTRAINTS);				
@@ -223,37 +217,81 @@ public class DefaultSinglePathComputing implements ComputingAlgorithm {
 			return m_resp;
 		}
 
+		// Code ERO Object
 		m_resp.addResponse(response);
 		Path path=new Path();
 		ExplicitRouteObject ero= new ExplicitRouteObject();
 		List<IntraDomainEdge> edge_list=gp.getEdgeList();
+		
+		// Add first hop in the ERO Object in there is an interface
+		if (source_port!=0){
+			if (edge_list.get(0).getSource() instanceof Inet4Address){
+				UnnumberIfIDEROSubobject eroso = new UnnumberIfIDEROSubobject();
+				eroso.setRouterID((Inet4Address)edge_list.get(0).getSource());
+				eroso.setInterfaceID(source_port);
+				eroso.setLoosehop(false);
+				ero.addEROSubobject(eroso);
+			}else if (edge_list.get(0).getSource() instanceof DataPathID){
+				UnnumberedDataPathIDEROSubobject eroso = new UnnumberedDataPathIDEROSubobject();
+				eroso.setDataPath((DataPathID)edge_list.get(0).getSource());
+				eroso.setInterfaceID(source_port);
+				eroso.setLoosehop(false);
+				ero.addEROSubobject(eroso);
+			}else{
+				log.info("Edge instance error");
+			}
+		} 
+		
+		// Add intermediate hops
 		int i;
 		for (i=0;i<edge_list.size();i++){
-			UnnumberIfIDEROSubobject eroso = new UnnumberIfIDEROSubobject();
-			DataPathIDEROSubobject erosodp = new DataPathIDEROSubobject();
-			try { //Inet4Address
+			if (edge_list.get(i).getSource() instanceof Inet4Address){
+				UnnumberIfIDEROSubobject eroso = new UnnumberIfIDEROSubobject();
 				eroso.setRouterID((Inet4Address)edge_list.get(i).getSource());
 				eroso.setInterfaceID(edge_list.get(i).getSrc_if_id());
 				eroso.setLoosehop(false);
 				ero.addEROSubobject(eroso);
-
-			} catch (Exception e) { //DataPathID
-				erosodp.setDataPath((DataPathID)edge_list.get(i).getSource());
-				erosodp.setLoosehop(false);
-				ero.addEROSubobject(erosodp);
+			}else if (edge_list.get(i).getSource() instanceof DataPathID){
+				UnnumberedDataPathIDEROSubobject eroso = new UnnumberedDataPathIDEROSubobject();
+				eroso.setDataPath((DataPathID)edge_list.get(i).getSource());
+				eroso.setInterfaceID(edge_list.get(i).getSrc_if_id());
+				eroso.setLoosehop(false);
+				ero.addEROSubobject(eroso);
+			}else{
+				log.info("Edge instance error");
 			}
-
 		}
-		IPv4prefixEROSubobject eroso= new IPv4prefixEROSubobject();
-		DataPathIDEROSubobject erosodp = new DataPathIDEROSubobject();
-
-		try {
-			eroso.setIpv4address((Inet4Address)edge_list.get(edge_list.size()-1).getTarget());
-			eroso.setPrefix(32);
-			ero.addEROSubobject(eroso);
-		} catch (Exception e) {
-			erosodp.setDataPath((DataPathID)edge_list.get(edge_list.size()-1).getTarget());
-			ero.addEROSubobject(erosodp);
+		// Add last hop in the ERO Object
+		log.info("jm dspc destination_port: "+ destination_port);
+		if (destination_port!=0){
+			if (edge_list.get(edge_list.size()-1).getTarget() instanceof Inet4Address){
+				log.info("jm defoultsingle ultima interfaz ip"+ edge_list.get(edge_list.size()-1));
+				UnnumberIfIDEROSubobject eroso = new UnnumberIfIDEROSubobject();
+				eroso.setRouterID((Inet4Address)edge_list.get(edge_list.size()-1).getTarget());
+				eroso.setInterfaceID(destination_port);
+				eroso.setLoosehop(false);
+				ero.addEROSubobject(eroso);
+			}else if (edge_list.get(edge_list.size()-1).getTarget() instanceof DataPathID){
+				log.info("jm defoultsingle ultima interfaz dpid"+ edge_list.get(edge_list.size()-1));
+				UnnumberedDataPathIDEROSubobject eroso = new UnnumberedDataPathIDEROSubobject();
+				eroso.setDataPath((DataPathID)edge_list.get(edge_list.size()-1).getTarget());
+				eroso.setInterfaceID(destination_port);
+				eroso.setLoosehop(false);
+				ero.addEROSubobject(eroso);
+			}			
+		} else {
+			if (edge_list.get(edge_list.size()-1).getTarget() instanceof Inet4Address){
+				IPv4prefixEROSubobject eroso= new IPv4prefixEROSubobject();
+				eroso.setIpv4address((Inet4Address)edge_list.get(edge_list.size()-1).getTarget());
+				eroso.setPrefix(32);
+				ero.addEROSubobject(eroso);
+			} else if (edge_list.get(edge_list.size()-1).getTarget() instanceof DataPathID){
+				DataPathIDEROSubobject eroso = new DataPathIDEROSubobject();
+				eroso.setDataPath((DataPathID)edge_list.get(edge_list.size()-1).getTarget());
+				ero.addEROSubobject(eroso);
+			}else{
+				log.info("Edge instance error");
+			}
 		}
 
 		log.info("Algorithm.ero :: "+ero.toString());
