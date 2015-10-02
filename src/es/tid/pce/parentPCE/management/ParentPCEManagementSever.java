@@ -6,6 +6,7 @@ import java.util.logging.Logger;
 import es.tid.pce.computingEngine.RequestDispatcher;
 import es.tid.pce.parentPCE.ChildPCERequestManager;
 import es.tid.pce.parentPCE.MultiDomainTopologyUpdater;
+import es.tid.pce.parentPCE.MDLSPDB.MultiDomainLSPDB;
 import es.tid.pce.pcepsession.PCEPSessionsInformation;
 import es.tid.tedb.ITMDTEDB;
 import es.tid.tedb.MDTEDB;
@@ -28,6 +29,8 @@ public class ParentPCEManagementSever extends Thread {
 	
 	private MDTEDB mdtedb;
 	
+	private MultiDomainLSPDB multiDomainLSPDB;
+	
 	private SimpleTEDB simpleTedb;
 	
 	private ITMDTEDB ITmdtedb;
@@ -42,7 +45,7 @@ public class ParentPCEManagementSever extends Thread {
 	
 	private int parentPCEManagementPort;
 	
-	public ParentPCEManagementSever(ChildPCERequestManager cprm, RequestDispatcher requestDispatcher, MDTEDB mdtedb,SimpleTEDB simpleTEDB, ReachabilityManager rm, PCEPSessionsInformation pcepSessionManager,MultiDomainTopologyUpdater mdtu,int parentPCEManagementPort){
+	public ParentPCEManagementSever(ChildPCERequestManager cprm, RequestDispatcher requestDispatcher, MDTEDB mdtedb,SimpleTEDB simpleTEDB, ReachabilityManager rm, PCEPSessionsInformation pcepSessionManager,MultiDomainTopologyUpdater mdtu,int parentPCEManagementPort, MultiDomainLSPDB multiDomainLSPDB){
 		log =Logger.getLogger("PCEServer");
 		this.cprm=cprm;
 		this.requestDispatcher=requestDispatcher;
@@ -53,6 +56,7 @@ public class ParentPCEManagementSever extends Thread {
 		this.pcepSessionManager=pcepSessionManager;
 		this.mdtu=mdtu;
 		this.parentPCEManagementPort=parentPCEManagementPort;
+		this.multiDomainLSPDB=multiDomainLSPDB;
 	}
 	
 	
@@ -87,7 +91,7 @@ public class ParentPCEManagementSever extends Thread {
 	        		if(isITcapable){
 	        			new ParentPCEManagementSession(serverSocket.accept(),cprm,requestDispatcher, ITmdtedb,rm,pcepSessionManager,mdtu).start();
 	        		}else{
-	        			new ParentPCEManagementSession(serverSocket.accept(),cprm,requestDispatcher, mdtedb,simpleTedb,rm,pcepSessionManager,mdtu).start();	
+	        			new ParentPCEManagementSession(serverSocket.accept(),cprm,requestDispatcher, mdtedb,simpleTedb,rm,pcepSessionManager,mdtu, multiDomainLSPDB).start();	
 	        		}
 	        	}
 	        	serverSocket.close();

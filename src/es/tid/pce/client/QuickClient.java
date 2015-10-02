@@ -20,6 +20,7 @@ import es.tid.pce.pcep.messages.PCEPMessage;
 import es.tid.pce.pcep.messages.PCEPMessageTypes;
 import es.tid.pce.pcep.messages.PCEPRequest;
 import es.tid.pce.pcep.messages.PCEPResponse;
+import es.tid.pce.pcep.objects.BandwidthRequested;
 import es.tid.pce.pcep.objects.BandwidthRequestedGeneralizedBandwidth;
 import es.tid.pce.pcep.objects.EndPoints;
 import es.tid.pce.pcep.objects.EndPointsIPv4;
@@ -139,6 +140,8 @@ public class QuickClient {
 				}
 				offset=createAndSendMessage(PCEsession2,offset, args, messageList);
 				
+			}else {
+				offset=createAndSendMessage(PCEsession,offset, args, messageList);
 			}
 			
 		}
@@ -301,9 +304,6 @@ public class QuickClient {
 				}
 			}
 
-
-
-			//req.getRequestParameters().s
 			int of_code=-1;
 			if (args.length>offset) {
 				if (args[offset].equals("-of")){		
@@ -316,19 +316,45 @@ public class QuickClient {
 			}
 			if (of_code!=-1){
 				ObjectiveFunction of=new ObjectiveFunction();
-				of.setOFcode(1002);
+				of.setOFcode(of_code);
 				of.setPbit(true);
 				req.setObjectiveFunction(of);
 			}
 				
 			
+			float bw;
+			int m;
+			if (args.length>offset) {
+				if (args[offset].equals("-rbw")){		
+					offset=offset+1;
+					if (args.length>offset) {
+						bw=Float.parseFloat(args[offset]);	
+						offset=offset+1;
+						BandwidthRequested gw = new BandwidthRequested();
+						gw.setBw(bw);
+						req.setBandwidth(gw);
+							
+							
+					}
+				}
+				else if (args[offset].equals("-rgbw")){		
+					offset=offset+1;
+					if (args.length>offset) {
+						m=Integer.parseInt(args[offset]);	
+						offset=offset+1;
+						BandwidthRequestedGeneralizedBandwidth gw = new BandwidthRequestedGeneralizedBandwidth();
+						GeneralizedBandwidthSSON gwsson = new GeneralizedBandwidthSSON();
+						gwsson.setM(m);
+					    gw.setGeneralizedBandwidth(gwsson);
+						req.setBandwidth(gw);
+							
+					}
+				}	
+				
+			}
 			
+						
 			p_r.addRequest(req);
-			BandwidthRequestedGeneralizedBandwidth gw = new BandwidthRequestedGeneralizedBandwidth();
-			GeneralizedBandwidthSSON gwsson = new GeneralizedBandwidthSSON();
-			gwsson.setM(2);
-			gw.setGeneralizedBandwidth(gwsson);
-			req.setBandwidth(gw);
 			System.out.println("Peticion "+req.toString());
 			PCEPResponse pr=crm.newRequest(p_r);
 			messageList.add(pr);
@@ -372,7 +398,6 @@ public class QuickClient {
 					p2mp=true;
 				}
 			}
-
 			System.out.println("OLEEEE");
 			
 			PCEPInitiate p_i = new PCEPInitiate();
@@ -511,7 +536,7 @@ public class QuickClient {
 				srp.setrFlag(false);
 
 			}
-			
+		
 			lsp_ini.setRsp(srp);
 			
 			LSP lsp = new LSP();
@@ -526,21 +551,68 @@ public class QuickClient {
 				symPathName.setSymbolicPathNameID("HOLA".getBytes());
 
 			}
+			if (args[offset].equals("-lspid")){
+				int lsp_id = Integer.valueOf(args[offset+1]).intValue();
+				offset=offset+2;
+				lsp.setLspId(lsp_id);
+
+			}else {
+				srp.setSRP_ID_number(1);
+
+			}
+			System.out.println("AAAAAAAAA"); 
 			
-			
-			
-			if (args[offset].equals("-bw")){
+		float bw;
+		int m;
+		if (args.length>offset) {
+			if (args[offset].equals("-rbw")){		
 				offset=offset+1;
-				if (args[offset].equals("m")){
+				if (args.length>offset) {
+					bw=Float.parseFloat(args[offset]);	
 					offset=offset+1;
-					BandwidthRequestedGeneralizedBandwidth bwgw = new BandwidthRequestedGeneralizedBandwidth();				
-					GeneralizedBandwidthSSON gs = new GeneralizedBandwidthSSON();
-					bwgw.setGeneralizedBandwidth(gs);
-					gs.setM(Integer.valueOf(args[offset+1]).intValue());
+					BandwidthRequested gw = new BandwidthRequested();
+					gw.setBw(bw);
+					lsp_ini.setBandwidth(gw);
+						
+						
+				}
+			}
+			else if (args[offset].equals("-rgbw")){		
+				offset=offset+1;
+				if (args.length>offset) {
+					m=Integer.parseInt(args[offset]);	
 					offset=offset+1;
-					lsp_ini.setBandwidth(bwgw);
-				}	
+					BandwidthRequestedGeneralizedBandwidth gw = new BandwidthRequestedGeneralizedBandwidth();
+					GeneralizedBandwidthSSON gwsson = new GeneralizedBandwidthSSON();
+					gwsson.setM(m);
+				    gw.setGeneralizedBandwidth(gwsson);
+				    lsp_ini.setBandwidth(gw);
+						
+				}
 			}	
+			
+		}
+		System.out.println("bbbbbbbb"); 
+		if (args.length>offset) {
+			if (args[offset].equals("-ero")){
+				System.out.println("HAY ERROO");
+				PCEPResponse rep =(PCEPResponse)messageList.get(0);
+				lsp_ini.setEro(rep.getResponse(0).getPath(0).geteRO());
+			}
+		}
+		
+//			if (args[offset].equals("-bw")){
+//				offset=offset+1;
+//				if (args[offset].equals("m")){
+//					offset=offset+1;
+//					BandwidthRequestedGeneralizedBandwidth bwgw = new BandwidthRequestedGeneralizedBandwidth();				
+//					GeneralizedBandwidthSSON gs = new GeneralizedBandwidthSSON();
+//					bwgw.setGeneralizedBandwidth(gs);
+//					gs.setM(Integer.valueOf(args[offset+1]).intValue());
+//					offset=offset+1;
+//					lsp_ini.setBandwidth(bwgw);
+//				}	
+//			}	
 			
 			
 			

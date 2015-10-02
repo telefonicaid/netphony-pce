@@ -69,14 +69,14 @@ public class ParentPCESession extends GenericPCEPSession{
 	 */
 	private static int reqIDCounter=0;
 		
-	
+	private MultiDomainInitiateDispatcher mdiniDispatcher;
 	
 	/**
 	 * Constructor of the PCE Session
 	 * @param s Socket of the PCC-PCE Communication
 	 * @param req RequestQueue to send path requests
 	 */
-	public ParentPCESession(Socket s, ParentPCEServerParameters params, RequestDispatcher requestDispatcher, TEDB ted, MultiDomainTopologyUpdater mdt, ChildPCERequestManager childPCERequestManager, ReachabilityManager rm, PCEPSessionsInformation pcepSessionManager){
+	public ParentPCESession(Socket s, ParentPCEServerParameters params, RequestDispatcher requestDispatcher, MultiDomainInitiateDispatcher mdiniDispatcher, TEDB ted, MultiDomainTopologyUpdater mdt, ChildPCERequestManager childPCERequestManager, ReachabilityManager rm, PCEPSessionsInformation pcepSessionManager){
 		super(pcepSessionManager);
 		//super("ParentPCESession");
 		this.setFSMstate(PCEPValues.PCEP_STATE_IDLE);
@@ -91,6 +91,7 @@ public class ParentPCESession extends GenericPCEPSession{
 		this.keepAliveLocal=params.getKeepAliveTimer();
 		this.deadTimerLocal=params.getDeadTimer();
 		this.childPCERequestManager=childPCERequestManager;
+		this.mdiniDispatcher=mdiniDispatcher;
 	}
 
 	/**
@@ -271,7 +272,7 @@ public class ParentPCESession extends GenericPCEPSession{
 					break;
 					
 				case PCEPMessageTypes.MESSAGE_INITIATE:
-					log.info("PCREQ message received");
+					log.info("PCINI message received from "+this.remotePeerIP);
 					PCEPInitiate p_ini;
 					try {
 						p_ini=new PCEPInitiate(msg);
@@ -280,15 +281,15 @@ public class ParentPCESession extends GenericPCEPSession{
 						e.printStackTrace();
 						break;
 					}
-					requestDispatcher.dispathRequests(p_ini,out,this.remotePCEId);
+                     this.mdiniDispatcher.dispathInitiate(p_ini,out,this.remotePeerIP );
 					break;
 				default:
-					log.warning("ERROR: unexpected message received");
+					log.warning("ERROR: unexpected message from "+this.remotePeerIP);
 					pceMsg = false;
 				}
 				
 				if (pceMsg) {
-					log.info("Reseting Dead Timer as PCEP Message has arrived in "+this.remotePeerIP);
+					log.fine("Reseting Dead Timer as PCEP Message has arrived in "+this.remotePeerIP);
 					resetDeadTimer();
 				}
 			} 
@@ -309,7 +310,7 @@ public class ParentPCESession extends GenericPCEPSession{
 //	}
 //	
 	public void endSession(){
-		log.info("Removing domain "+this.remoteDomainId);
+		log.severe("Removing domain "+this.remoteDomainId+" due to endSession from "+this.remotePeerIP);
 		childPCERequestManager.removeDomain(this.remoteDomainId);
 	}
 	

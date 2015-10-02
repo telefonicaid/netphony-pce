@@ -16,6 +16,7 @@ import es.tid.pce.computingEngine.RequestProcessorThread;
 import es.tid.pce.computingEngine.algorithms.ComputingAlgorithmManager;
 import es.tid.pce.parentPCE.ChildPCERequestManager;
 import es.tid.pce.parentPCE.MultiDomainTopologyUpdater;
+import es.tid.pce.parentPCE.MDLSPDB.MultiDomainLSPDB;
 import es.tid.pce.pcepsession.PCEPSessionsInformation;
 import es.tid.tedb.ITMDTEDB;
 import es.tid.tedb.MDTEDB;
@@ -48,7 +49,9 @@ public class ParentPCEManagementSession extends Thread {
 	
 	private MultiDomainTopologyUpdater mdtu;
 	
-	public ParentPCEManagementSession(Socket s, ChildPCERequestManager cprm, RequestDispatcher requestDispatcher, MDTEDB mdtedb,SimpleTEDB simpleTedb, ReachabilityManager rm, PCEPSessionsInformation pcepSessionManager,MultiDomainTopologyUpdater mdtu){
+	private MultiDomainLSPDB multiDomainLSPDB;
+	
+	public ParentPCEManagementSession(Socket s, ChildPCERequestManager cprm, RequestDispatcher requestDispatcher, MDTEDB mdtedb,SimpleTEDB simpleTedb, ReachabilityManager rm, PCEPSessionsInformation pcepSessionManager,MultiDomainTopologyUpdater mdtu, MultiDomainLSPDB multiDomainLSPDB){
 		this.socket=s;
 		this.cprm=cprm;
 		this.requestDispatcher=requestDispatcher;
@@ -59,6 +62,7 @@ public class ParentPCEManagementSession extends Thread {
 		this.pcepSessionManager=pcepSessionManager;
 		this.mdtu=mdtu;
 		this.simpleTedb=simpleTedb;
+		this.multiDomainLSPDB=multiDomainLSPDB;
 	}
 
 	
@@ -168,6 +172,11 @@ public class ParentPCEManagementSession extends Thread {
 					
 				}else if (command.equals("show reachability")){
 					out.print( rm.printReachability());
+					
+				}else if (command.equals("show mdlspdb")){
+					if (this.multiDomainLSPDB!=null) {
+						out.print( this.multiDomainLSPDB.toString());
+					}
 					
 				}else if (command.equals("queue size")){
 					out.print("num pets "+requestDispatcher.queueSize());

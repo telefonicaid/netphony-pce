@@ -12,8 +12,10 @@ import es.tid.pce.computingEngine.RequestDispatcher;
 import es.tid.pce.computingEngine.algorithms.ComputingAlgorithmManager;
 import es.tid.pce.computingEngine.algorithms.LocalChildRequestManager;
 import es.tid.pce.computingEngine.algorithms.ParentPCEComputingAlgorithmManager;
+import es.tid.pce.parentPCE.MDLSPDB.MultiDomainLSPDB;
 import es.tid.pce.parentPCE.management.ParentPCEManagementSever;
 import es.tid.pce.pcepsession.PCEPSessionsInformation;
+import es.tid.pce.server.PCEServerParameters;
 import es.tid.pce.server.lspdb.ReportDB_Handler;
 import es.tid.tedb.FileTEDBUpdater;
 import es.tid.tedb.ITMDTEDB;
@@ -37,7 +39,13 @@ public class ParentPCEServer {
 	 */
 	public static void main(String[] args) {
 		//First, get the parameters from the configuration file
-		ParentPCEServerParameters params=new ParentPCEServerParameters();
+		ParentPCEServerParameters params;
+		if (args.length >=1 ){
+			params=new ParentPCEServerParameters(args[0]);
+		}else{
+			params=new ParentPCEServerParameters();
+		}
+		
 		params.initialize();
 		//Initiate the Loggers (general, PCEP Parsing, OSPF Parsing, GUI)		
 		FileHandler fh;
@@ -79,6 +87,7 @@ public class ParentPCEServer {
 		LocalChildRequestManager localChildRequestManager=null;
 		
 		ReachabilityManager rm=new ReachabilityManager();
+		
 		
 		if(!params.isITCapable()){			
 			if ((params.isMultiDomain())&&(!params.isKnowsWholeTopology())){
@@ -126,8 +135,10 @@ public class ParentPCEServer {
 				bgpPeer.configure(params.getBGP4File());
 				if (params.isMultiDomain())
 					bgpPeer.setWriteMultiTEDB((MultiDomainTEDB)ted);				
-				if (params.isKnowsWholeTopology())
-					bgpPeer.setSimpleTEDB((SimpleTEDB)simple_ted);
+				
+				
+				//if (params.isKnowsWholeTopology())
+				//	bgpPeer.setSimpleTEDB((SimpleTEDB)simple_ted);
 				bgpPeer.createUpdateDispatcher();
 				bgpPeer.startClient();		
 				bgpPeer.startServer();
@@ -156,9 +167,14 @@ public class ParentPCEServer {
 			log.info("Inizializing "+ params.getChildPCERequestsProcessors()+" Path Request Processor Threads");
 			//pathRequestsQueue=new RequestQueue(params.getChildPCERequestsProcessors());
 			requestDispatcher=new  RequestDispatcher(params.getChildPCERequestsProcessors(),ted,null,false);
+			MultiDomainLSPDB multiDomainLSPDB = new MultiDomainLSPDB();
+			log.info("Inizializing "+ params.getChildPCERequestsProcessors()+" Ini Dispatcher");
+			MultiDomainInitiateDispatcher mdiniDispatcher = new MultiDomainInitiateDispatcher(rm, childPCERequestManager, multiDomainLSPDB);
+
+			
 			for (int i=0;i<params.algorithmRuleList.size();++i){
 				 try {
-					Class aClass = Class.forName("tid.pce.computingEngine.algorithms."+params.algorithmRuleList.get(i).algoName+"Manager");
+					Class aClass = Class.forName("es.tid.pce.computingEngine.algorithms."+params.algorithmRuleList.get(i).algoName+"Manager");
 		        	log.info("Registering algorithm "+ params.algorithmRuleList.get(i).algoName+" for of = "+params.algorithmRuleList.get(i).ar.of+" and svec = "+params.algorithmRuleList.get(i).ar.svec);            
 					
 					if (params.algorithmRuleList.get(i).isParentPCEAlgorithm==false){
@@ -187,6 +203,7 @@ public class ParentPCEServer {
 					e.printStackTrace();
 				}
 			}
+			
 			ReportDispatcher stateReportDispatcher= null;
 			ReportDB_Handler rptdb = new ReportDB_Handler();
 			stateReportDispatcher = new ReportDispatcher( rptdb, 2);
@@ -214,7 +231,7 @@ public class ParentPCEServer {
 			
 
 			log.info("Initializing Management Server");
-			ParentPCEManagementSever pms=new ParentPCEManagementSever(childPCERequestManager,requestDispatcher,(MDTEDB)ted,(SimpleTEDB)simple_ted,rm,pcepSessionManager,mdt,params.getParentPCEManagementPort());		
+			ParentPCEManagementSever pms=new ParentPCEManagementSever(childPCERequestManager,requestDispatcher,(MDTEDB)ted,(SimpleTEDB)simple_ted,rm,pcepSessionManager,mdt,params.getParentPCEManagementPort(),multiDomainLSPDB);		
 			pms.start();
 			
 			//
@@ -237,7 +254,7 @@ public class ParentPCEServer {
 
 	        try {
 	        	while (listening) {
-	        		new ParentPCESession(serverSocket.accept(),params, requestDispatcher,ted,mdt,childPCERequestManager,rm,pcepSessionManager).start();
+	        		new ParentPCESession(serverSocket.accept(),params, requestDispatcher, mdiniDispatcher, ted,mdt,childPCERequestManager,rm,pcepSessionManager).start();
 	        	}
 	        	serverSocket.close();
 	        } catch (Exception e) {
@@ -284,9 +301,14 @@ public class ParentPCEServer {
 			log.info("Inizializing "+ params.getChildPCERequestsProcessors()+" Path Request Processor Threads");
 			//pathRequestsQueue=new RequestQueue(params.getChildPCERequestsProcessors());
 			requestDispatcher=new  RequestDispatcher(params.getChildPCERequestsProcessors(),ted,null,false);
+			log.info("Inizializing "+ params.getChildPCERequestsProcessors()+" Ini Dispatcher");
+			MultiDomainLSPDB multiDomainLSPDB= new MultiDomainLSPDB();
+			MultiDomainInitiateDispatcher mdiniDispatcher = new MultiDomainInitiateDispatcher(rm,childPCERequestManager, multiDomainLSPDB);
+
+			
 			for (int i=0;i<params.algorithmRuleList.size();++i){
 				 try {
-					Class aClass = Class.forName("tid.pce.computingEngine.algorithms."+params.algorithmRuleList.get(i).algoName+"Manager");
+					Class aClass = Class.forName("es.tid.pce.computingEngine.algorithms."+params.algorithmRuleList.get(i).algoName+"Manager");
 		        	log.info("Registering algorithm "+ params.algorithmRuleList.get(i).algoName+" for of = "+params.algorithmRuleList.get(i).ar.of+" and svec = "+params.algorithmRuleList.get(i).ar.svec);            
 					
 					if (params.algorithmRuleList.get(i).isParentPCEAlgorithm==false){
@@ -338,7 +360,7 @@ public class ParentPCEServer {
 	        try {
 	        	pcepSessionManager.setStateful(true);
 	        	while (listening) {
-	        		new ParentPCESession(serverSocket.accept(),params, requestDispatcher,(ITMDTEDB)ted,mdt,childPCERequestManager,rm,pcepSessionManager).start();
+	        		new ParentPCESession(serverSocket.accept(),params, requestDispatcher,mdiniDispatcher, (ITMDTEDB)ted,mdt,childPCERequestManager,rm,pcepSessionManager).start();
 	        	}
 	        	serverSocket.close();
 	        } catch (Exception e) {

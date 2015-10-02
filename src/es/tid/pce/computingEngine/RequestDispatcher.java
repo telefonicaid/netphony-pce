@@ -76,11 +76,7 @@ public class RequestDispatcher {
 	  */
 	 private LinkedBlockingQueue<ComputingRequest> pathComputingRequestRetryQueue;	 
 
-	 /**
-	  * Queue to add path computing requests.
-	  * This queue is read by the request processor threads. 
-	  */
-	 private LinkedBlockingQueue<InitiationRequest> lspIniRequestQueue;
+
 	 
 	 /**
 	  * Constructor
@@ -94,7 +90,6 @@ public class RequestDispatcher {
 		log=Logger.getLogger("PCEServer");
 	    this.nThreads = nThreads;
 	    pathComputingRequestQueue = new LinkedBlockingQueue<ComputingRequest>();
-	    lspIniRequestQueue = new LinkedBlockingQueue<InitiationRequest>();
 	    pathComputingRequestRetryQueue= new LinkedBlockingQueue<ComputingRequest>();
 	    pendingRequestList=new Hashtable<Long,ComputingRequest>();
 	    threads = new RequestProcessorThread[nThreads];
@@ -106,6 +101,7 @@ public class RequestDispatcher {
 	            threads[i].start();
 	            
 	        }
+	        
 	    }
 	 /**
 	  * Constructor
@@ -289,19 +285,7 @@ public class RequestDispatcher {
 		pathComputingRequestQueue.add(cr);
 	}
 	
-	public void dispathInitiate(PCEPInitiate iniMessage, DataOutputStream out, Inet4Address remotePeerIP)
-	{	    	
-		log.info("Dispatching Initiate message from "+remotePeerIP);	
-		Iterator<PCEPIntiatedLSP> it=iniMessage.getPcepIntiatedLSPList().iterator();
-		while (it.hasNext()){
-			InitiationRequest ir=new InitiationRequest();
-			ir.setOut(out);
-			ir.setRemotePeerIP(remotePeerIP);
-			ir.setLspIniRequest(it.next());
-			lspIniRequestQueue.add(ir);
-		}
-		
-	}
+
 	
     public void dispathRequests(PCEPRequest reqMessage, DataOutputStream out, Inet4Address remotePCEId){	    
     	if (out==null){
