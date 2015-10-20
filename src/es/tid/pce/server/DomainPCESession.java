@@ -21,6 +21,8 @@ import es.tid.pce.pcep.messages.PCEPNotification;
 import es.tid.pce.pcep.messages.PCEPReport;
 import es.tid.pce.pcep.messages.PCEPRequest;
 import es.tid.pce.pcep.objects.EndPointsIPv4;
+import es.tid.pce.pcep.objects.EndPointsUnnumberedIntf;
+import es.tid.pce.pcep.objects.GeneralizedEndPoints;
 import es.tid.pce.pcep.objects.OPEN;
 import es.tid.pce.pcepsession.DeadTimerThread;
 import es.tid.pce.pcepsession.GenericPCEPSession;
@@ -342,13 +344,19 @@ public class DomainPCESession extends GenericPCEPSession{
 						else
 						{
 							log.info("INITIATE with info, sending to node");
-
-							EndPointsIPv4 endP_IP = (EndPointsIPv4)pcepInitiate.getPcepIntiatedLSPList().get(0).getEndPoint();
+							//log.info("m obtener tipo endpoint: "+pcepInitiate.getPcepIntiatedLSPList().get(0).getEndPoint().getClass().getName());
+							//if (pcepInitiate.getPcepIntiatedLSPList().get(0).getEndPoint()!= null){
+							if (pcepInitiate.getPcepIntiatedLSPList().get(0).getEndPoint()!= null){
+								log.info("jm endPoint NO es null");								
+							}else log.info("jm endPoint es null");
+							String miIP=getSourceIP(pcepInitiate.getPcepIntiatedLSPList().get(0).getEndPoint());
+							log.info("jm ver ip to socket connect: "+miIP);
+							
 
 							try 
 							{	
 								//Sending message to tn1
-								Socket clientSocket = new Socket(endP_IP.getSourceIP(), 2222);			
+								Socket clientSocket = new Socket(miIP, 2222);			
 								log.info("Socket opened");	
 								DataOutputStream outToServer = new DataOutputStream(clientSocket.getOutputStream());
 								try 
@@ -414,5 +422,55 @@ public class DomainPCESession extends GenericPCEPSession{
 
 	public long getInternalSessionID() {
 		return internalSessionID;
+	}
+	
+	public String getSourceIP(Object endPoint) {
+		
+		String sourceIP=null;
+		
+		if (endPoint == null){
+			log.info("jm endPoint es null");
+			
+		}else if (endPoint instanceof EndPointsIPv4){
+			log.info("jm endPoint es de tipo EndPointsIPv4");
+			sourceIP = ((EndPointsIPv4) endPoint).getSourceIP().toString();
+			
+			
+		}else if (endPoint instanceof EndPointsUnnumberedIntf){
+			log.info("jm endPoint es de tipo EndPointsUnnumberedIntf");
+			sourceIP = ((EndPointsUnnumberedIntf) endPoint).getSourceIP().toString();
+			
+		}else if (endPoint instanceof GeneralizedEndPoints){
+			log.info("jm endPoint es de tipo GeneralizedEndPoints");
+			sourceIP = ((GeneralizedEndPoints) endPoint).getP2PEndpoints().getSourceEndPoint().toString();
+			
+		}else log.info("jm endPoint NO es de tipo conocido");
+		
+		return sourceIP;
+	}
+	
+public String getDestinationIP(Object endPoint) {
+		
+		String destinationIP=null;
+		
+		if (endPoint == null){
+			log.info("jm endPoint es null");
+			
+		}else if (endPoint instanceof EndPointsIPv4){
+			log.info("jm endPoint es de tipo EndPointsIPv4");
+			destinationIP = ((EndPointsIPv4) endPoint).getDestIP().toString();
+			
+			
+		}else if (endPoint instanceof EndPointsUnnumberedIntf){
+			log.info("jm endPoint es de tipo EndPointsUnnumberedIntf");
+			destinationIP = ((EndPointsUnnumberedIntf) endPoint).getDestIP().toString();
+			
+		}else if (endPoint instanceof GeneralizedEndPoints){
+			log.info("jm endPoint es de tipo GeneralizedEndPoints");
+			destinationIP = ((GeneralizedEndPoints) endPoint).getP2PEndpoints().getDestinationEndPoint().toString();
+			
+		}else log.info("jm endPoint NO es de tipo conocido");
+		
+		return destinationIP;
 	}
 }
