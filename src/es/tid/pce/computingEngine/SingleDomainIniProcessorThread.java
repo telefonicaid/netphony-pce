@@ -243,6 +243,13 @@ public class SingleDomainIniProcessorThread extends Thread{
 							log.info("Mando: "+ rep.toString());					
 							iniReq.getOut().write(rep.getBytes());
 							iniReq.getOut().flush();
+							SD_LSP sd_lsp=new SD_LSP();
+							sd_lsp.setpLSPID(lspId);
+							sd_lsp.setFullERO(fullEro);
+							sd_lsp.setStateRport(sr);
+							
+							singleDomainLSPDB.getSingleDomain_LSP_list().put(lspId,sd_lsp );
+							this.savelsp.run();
 						}else {
 							//FIXME: Mandar error
 						}
@@ -257,7 +264,7 @@ public class SingleDomainIniProcessorThread extends Thread{
 				
 				
 
-				//this.savelsp.run();
+				
 
 		}
 
