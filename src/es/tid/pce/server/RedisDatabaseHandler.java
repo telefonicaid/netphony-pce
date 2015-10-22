@@ -20,7 +20,7 @@ public class RedisDatabaseHandler {
 	
     public boolean write(String key, String json){
     	
-    	System.out.println("WRITING IN "+host+" port "+port);
+    	//System.out.println("WRITING IN "+host+" port "+port);
 	
     	Jedis jedis = new Jedis(host,port);
 	    jedis.connect();
