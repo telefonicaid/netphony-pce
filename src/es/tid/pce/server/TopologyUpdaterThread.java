@@ -262,7 +262,7 @@ public class TopologyUpdaterThread extends Thread{
 												if (newAvailableLabels.getLabelSet().getAction()==LabelSetParameters.BitmapLabelSet){
 													//We store here the previous BitmapLabelSet, to know the differences	
 
-													log.info("TEMA BITMAP LABEL");
+													//log.info("TEMA BITMAP LABEL");
 
 													if (informationTEDB.getAvailableLabels() ==  null){
 														informationTEDB.setAvailableLabels(new AvailableLabels());
@@ -270,7 +270,7 @@ public class TopologyUpdaterThread extends Thread{
 													//Primera vez que llega la topologia. Creamos el LABELSET
 													if (informationTEDB.getAvailableLabels().getLabelSet() == null){
 
-														log.info("TEMA BITMAP LABEL POR PRIMERA VEZ");
+														//log.info("TEMA BITMAP LABEL POR PRIMERA VEZ");
 
 														newBitmapLabelSet = new BitmapLabelSet();
 														previousBitmapLabelSet=newBitmapLabelSet;

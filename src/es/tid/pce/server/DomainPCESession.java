@@ -6,12 +6,14 @@ import java.net.Inet4Address;
 import java.net.Socket;
 import java.net.SocketException;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Timer;
 import java.util.logging.Logger;
 
 import es.tid.pce.computingEngine.ReportDispatcher;
 import es.tid.pce.computingEngine.RequestDispatcher;
 import es.tid.pce.pcep.PCEPProtocolViolationException;
+import es.tid.pce.pcep.constructs.StateReport;
 import es.tid.pce.pcep.messages.PCEPClose;
 import es.tid.pce.pcep.messages.PCEPInitiate;
 import es.tid.pce.pcep.messages.PCEPMessage;
@@ -24,6 +26,7 @@ import es.tid.pce.pcep.objects.EndPointsIPv4;
 import es.tid.pce.pcep.objects.EndPointsUnnumberedIntf;
 import es.tid.pce.pcep.objects.GeneralizedEndPoints;
 import es.tid.pce.pcep.objects.OPEN;
+import es.tid.pce.pcep.objects.SRP;
 import es.tid.pce.pcepsession.DeadTimerThread;
 import es.tid.pce.pcepsession.GenericPCEPSession;
 import es.tid.pce.pcepsession.KeepAliveThread;
@@ -71,8 +74,12 @@ public class DomainPCESession extends GenericPCEPSession{
 	private static long lastInternalSessionID=0;
 
 	private  CollaborationPCESessionManager collaborationPCESessionManager=null;
+	
+	private SingleDomainInitiateDispatcher iniDispatcher;
 		
 	ReportDispatcher reportDispatcher = null;
+	
+	private IniPCCManager iniManager;
 	/**
 	 * Constructor of the PCE Session
 	 * @param s Socket of the PCC-PCE Communication
@@ -81,7 +88,7 @@ public class DomainPCESession extends GenericPCEPSession{
 	public DomainPCESession(Socket s, PCEServerParameters params, 
 			RequestDispatcher requestDispatcher, TEDB ted,NotificationDispatcher notificationDispatcher, 
 			ReservationManager rm, PCEPSessionsInformation pcepSessionInformation,
-			ReportDispatcher reportDispatcher){
+			ReportDispatcher reportDispatcher, SingleDomainInitiateDispatcher iniDispatcher){
 		super(pcepSessionInformation);
 		this.setFSMstate(PCEPValues.PCEP_STATE_IDLE);
 		log=Logger.getLogger("PCEServer");
@@ -101,6 +108,8 @@ public class DomainPCESession extends GenericPCEPSession{
 		this.rm=rm;
 		this.internalSessionID=getNewInternalSessionID();
 		this.reportDispatcher = reportDispatcher;
+		this.iniDispatcher=iniDispatcher;
+		
 	}
 
 	/**
@@ -148,7 +157,14 @@ public class DomainPCESession extends GenericPCEPSession{
 		
 		//log.info("Database version we are concerned right now: "+params.getLspDB().getPCCDatabaseVersion(remotePCEId)+"destIp address:"+socket.getRemoteSocketAddress());
 		initializePCEPSession(params.isZeroDeadTimerPCCAccepted(),params.getMinKeepAliveTimerPCCAccepted(),params.getMaxDeadTimerPCCAccepted(),false,false,null,null, params.getLspDB()==null ? 0 : params.getLspDB().getPCCDatabaseVersion(remotePCEId));
-		
+		if (iniDispatcher!=null){
+			this.iniManager=iniDispatcher.getIniManager();
+			if (iniManager!=null){
+				this.iniManager.getPccOutputStream().put(this.remotePeerIP, this.getOut());
+
+			}
+			//FIXME: eliminar si la sesión desaparece
+		}
 		if (isSessionStateful && pcepSessionManager.isStateful())
 		{
 			processOpen(this.open);
@@ -243,14 +259,46 @@ public class DomainPCESession extends GenericPCEPSession{
 						PCEPReport m_report = null;
 						try {
 							m_report=new PCEPReport(this.msg);
-							if (reportDispatcher != null)
-							{
-								reportDispatcher.dispatchReport(m_report);
+							log.info("Report from "+this.remotePeerIP+": "+m_report);
+							
+							if (this.localPcepCapability.isStateful()) {
+								log.info("Received report from "+this.remotePeerIP);
+								PCEPReport pcrpt;
+								try {
+									pcrpt=new PCEPReport(msg);
+									Iterator<StateReport> it= pcrpt.getStateReportList().iterator();
+									while (it.hasNext()){
+										StateReport sr=it.next();
+										SRP srp=sr.getSRP();
+										if (srp!=null) {
+											log.info("SRP Id: "+ sr.getSRP().getSRP_ID_number());
+											Object lock=iniManager.inilocks.get(sr.getSRP().getSRP_ID_number());
+											if (lock!=null){
+												synchronized (lock) {
+													iniManager.notifyReport(sr);
+												}	
+											}else {
+												if (reportDispatcher != null)
+												{
+													reportDispatcher.dispatchReport(m_report);
+												}
+											}
+										}
+										
+									}
+									
+									
+									
+								} catch (PCEPProtocolViolationException e) {
+									// TODO Auto-generated catch block
+									e.printStackTrace();
+									break;
+								}					
+							}else {
+								log.warning("PCE is NOT stateful, ignored report from "+this.remotePeerIP);		
 							}
-							else
-							{
-								log.info("Received Report Message when session wasn't stateful");
-							}
+								
+						
 						} catch (PCEPProtocolViolationException e1) {
 							log.warning("Problem decoding report message, ignoring message"+e1.getMessage());
 							e1.printStackTrace();
@@ -309,12 +357,16 @@ public class DomainPCESession extends GenericPCEPSession{
 						try 
 						{
 							pcepInitiate = new PCEPInitiate(msg);
+							log.info("Initiate from "+this.remotePeerIP+": "+pcepInitiate);
 						} 
 						catch (PCEPProtocolViolationException e) 
 						{
 							log.info(UtilsFunctions.exceptionToString(e));
 						}
-						
+						if (iniDispatcher!=null){
+							iniDispatcher.dispathInitiate(pcepInitiate, this.out, this.remotePeerIP);
+						}
+						/*
 						//In this case there is not an LSP in the PCEPInitiate
 						//It must be resolved in the PCE, afterwards the PCEPInitiate is completed and
 						//sent to the corresponding node
@@ -344,8 +396,7 @@ public class DomainPCESession extends GenericPCEPSession{
 						else
 						{
 							log.info("INITIATE with info, sending to node");
-							//log.info("m obtener tipo endpoint: "+pcepInitiate.getPcepIntiatedLSPList().get(0).getEndPoint().getClass().getName());
-							//if (pcepInitiate.getPcepIntiatedLSPList().get(0).getEndPoint()!= null){
+							
 							if (pcepInitiate.getPcepIntiatedLSPList().get(0).getEndPoint()!= null){
 								log.info("jm endPoint NO es null");								
 							}else log.info("jm endPoint es null");
@@ -377,7 +428,7 @@ public class DomainPCESession extends GenericPCEPSession{
 								log.severe("Couldn't get I/O for connection to port" + 2222);
 							}
 							
-						}
+						}*/
 						
 						break;
 					case PCEPMessageTypes.MESSAGE_PCMONREP:

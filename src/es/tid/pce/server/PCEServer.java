@@ -31,6 +31,7 @@ import es.tid.pce.pcepsession.PCEPSessionsInformation;
 import es.tid.pce.server.communicationpce.BackupSessionManagerTask;
 import es.tid.pce.server.communicationpce.CollaborationPCESessionManager;
 import es.tid.pce.server.lspdb.ReportDB_Handler;
+import es.tid.pce.server.lspdb.SingleDomainLSPDB;
 import es.tid.pce.server.management.PCEManagementSever;
 import es.tid.pce.server.wson.ReservationManager;
 import es.tid.tedb.DomainTEDB;
@@ -136,6 +137,12 @@ public class PCEServer {
 		pcepSessionsInformation.setActive(params.isActive());
 		pcepSessionsInformation.setSRCapable(params.isSRCapable());
 		pcepSessionsInformation.setMSD(params.getMSD());
+		
+		SingleDomainInitiateDispatcher iniDispatcher=null;
+		
+		SingleDomainLSPDB singleDomainLSPDB=null;
+		 IniPCCManager iniManager=null;
+		
 		if (params.isSRCapable())
 			log.info("PCEServer: PCE is SR capable with MSD="+pcepSessionsInformation.getMSD());
 
@@ -158,6 +165,9 @@ public class PCEServer {
 		if (params.isStateful())
 		{
 			log.info("Stateful PCE with T="+params.isStatefulTFlag()+" D="+params.isStatefulDFlag()+" S="+params.isStatefulSFlag());
+			singleDomainLSPDB=new SingleDomainLSPDB();
+			iniManager= new IniPCCManager();
+			iniDispatcher = new SingleDomainInitiateDispatcher(singleDomainLSPDB,iniManager);
 		}
 
 
@@ -395,7 +405,7 @@ public class PCEServer {
 				if (params.isCollaborativePCEs())
 					new DomainPCESession(serverSocket.accept(),params,PCCRequestDispatcher,ted,nd,reservationManager,collaborationPCESessionManager,pcepSessionsInformation,PCCReportDispatcher).start();
 				else {
-					new DomainPCESession(serverSocket.accept(),params,PCCRequestDispatcher,ted,nd,reservationManager,pcepSessionsInformation,PCCReportDispatcher).start();
+					new DomainPCESession(serverSocket.accept(),params,PCCRequestDispatcher,ted,nd,reservationManager,pcepSessionsInformation,PCCReportDispatcher,iniDispatcher).start();
 				}
 			}
 			serverSocket.close();
