@@ -623,8 +623,11 @@ public class RequestProcessorThread extends Thread{
 							algortithmManager =singleAlgorithmList.get(new Integer(of));
 							if (singleAlgorithmListsson != null){
 								algortithmManagerSSON = singleAlgorithmListsson.get(new Integer(of));
+								
 							}
-							log.info("algortithmManager= "+algortithmManager);
+//							log.info("algortithmManager = "+algortithmManager);
+//							log.info(" XXXX algortithmManagerSSON ="+algortithmManagerSSON);
+							
 							if (algortithmManager==null && algortithmManagerSSON==null){
 								if (objectiveFunctionObject.isPbit()==true){
 									log.warning("OF not supported!!");
@@ -659,7 +662,7 @@ public class RequestProcessorThread extends Thread{
 									DefaultSinglePathComputing dspc=new DefaultSinglePathComputing(pathCompReq,ted);
 									ft=new ComputingTask(dspc);
 								}
-							}else {
+						}else {
 								log.info("Choosing algorithm of OF "+of);
 								boolean ssonAlgorithm = false;
 								if (singleAlgorithmListsson != null){
@@ -698,7 +701,7 @@ public class RequestProcessorThread extends Thread{
 				try {
 					ft.run();
 					rep=ft.get(pathCompReq.getMaxTimeInPCE(),TimeUnit.MILLISECONDS);
-
+					
 				}
 				catch(Exception e){
 					log.warning("Computation failed: "+e.getMessage()+" || "+UtilsFunctions.exceptionToString(e)+"  || " +",MAXTIME: "+pathCompReq.getMaxTimeInPCE());
@@ -719,6 +722,7 @@ public class RequestProcessorThread extends Thread{
 							rep=repRes;							
 						}
 						timeEndNanos=System.nanoTime();
+//						log.info("xxxx");
 						double compTimeMicroSec=(timeEndNanos-timeIniNanos)/(double)1000;
 						double toTimeMicroSec=(timeEndNanos-pathCompReq.getTimeStampNs())/(double)1000;
 						double toTimeMiliSec=(timeEndNanos-pathCompReq.getTimeStampNs())/(double)1000000;

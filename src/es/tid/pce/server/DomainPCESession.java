@@ -304,6 +304,7 @@ public class DomainPCESession extends GenericPCEPSession{
 							e1.printStackTrace();
 						}
 						log.info("Report message decoded!");
+						log.info("XXXX m_report: "+m_report);
 						//This means it was a report received from an initiate
 						//and that a report to the sender should be send
 						//This is the whole point of the initiate_report_pair variable

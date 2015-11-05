@@ -183,6 +183,7 @@ public class SingleDomainIniProcessorThread extends Thread{
 						fullEro=null;
 					}else {
 						fullEro=pini.getEro();
+						log.info("XXXX fullEro=pini.getEro();"+fullEro);
 					}
 					piniToNode.setEro(fullEro);
 					LSP lsp= new LSP();
@@ -237,9 +238,14 @@ public class SingleDomainIniProcessorThread extends Thread{
 							Path p=new Path();
 							p.seteRO(fullEro);
 							srmd.setPath(p);
+							
+							log.info(" XXXX fullEro: "+fullEro);
+							log.info(" XXXX srmd: "+srmd);
+							
 							PCEPReport rep = new PCEPReport();
 							rep.getStateReportList().add(srmd);
 							rep.encode();
+							
 							log.info("Mando: "+ rep.toString());					
 							iniReq.getOut().write(rep.getBytes());
 							iniReq.getOut().flush();
@@ -247,7 +253,6 @@ public class SingleDomainIniProcessorThread extends Thread{
 							sd_lsp.setpLSPID(lspId);
 							sd_lsp.setFullERO(fullEro);
 							sd_lsp.setStateRport(sr);
-							
 							singleDomainLSPDB.getSingleDomain_LSP_list().put(lspId,sd_lsp );
 							this.savelsp.run();
 						}else {
