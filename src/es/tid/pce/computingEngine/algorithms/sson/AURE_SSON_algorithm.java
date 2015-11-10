@@ -132,28 +132,51 @@ public class AURE_SSON_algorithm implements ComputingAlgorithm {
 		//if (getObjectType(req.getEndPoints()))
 		EndPoints  EP= req.getEndPoints();
 		
-		BandwidthRequested  Bw= (BandwidthRequested)req.getBandwidth(); // Objeto bandwidth para saber la demanda de la peticion.
-		Object source_router_id_addr = null;
-		Object dest_router_id_addr = null;
-		graphs_comparator grc = new graphs_comparator ();
-		
-		log.info("BW: "+Bw.getBw());
-		
 		int num_slots = 0;
 		int cs;
 		int m=0;
+		
 		// Conversión Bw a numero de slots en función de la grid.
 
 		bandwidthToSlotConversion conversion= new bandwidthToSlotConversion();
 		
-		// Conversión Bw a numero de slots en función de la grid.	
-		if (Bw.getBw()!=0){
-			SSONInfo=((DomainTEDB)ted).getSSONinfo();
-			cs = SSONInfo.getCs();
-			num_slots=conversion.getNumSlots(Bw.getBw(), cs);
+		BandwidthRequested Bw = null;
+		BandwidthRequestedGeneralizedBandwidth  bw =null;
+		//ERROR
+		log.info(" XXXX req.getBandwidth(): " + req.getBandwidth());
+		if (req.getBandwidth() instanceof BandwidthRequested){
+			Bw = (BandwidthRequested)req.getBandwidth();	
+			log.info("BW: "+Bw.getBw());
+			// Conversión Bw a numero de slots en función de la grid.	
+			if (Bw.getBw()!=0){
+				SSONInfo=((DomainTEDB)ted).getSSONinfo();
+				cs = SSONInfo.getCs();
+				num_slots=conversion.getNumSlots(Bw.getBw(), cs);
+				
+			}
+		}else if (req.getBandwidth() instanceof BandwidthRequestedGeneralizedBandwidth){
+			bw= (BandwidthRequestedGeneralizedBandwidth)req.getBandwidth(); 
+			log.info("BW: "+bw.getGeneralizedBandwidth());
+			if(bw.getGeneralizedBandwidth()!= null){
+				
+				if(bw.getGeneralizedBandwidth() instanceof GeneralizedBandwidthSSON ){
+				log.info("bw.getGeneralizedBandwidth() is GeneralizedBandwidthSSON type");
+				GeneralizedBandwidthSSON a = (GeneralizedBandwidthSSON)bw.getGeneralizedBandwidth();
+				m=a.getM();
+				num_slots=m*2;
+				log.info("XXXX num_slots:"+num_slots);
+				}else 
+					log.info("XXXX bw.getGeneralizedBandwidth() is NOT GeneralizedBandwidthSSON:" +  bw.getGeneralizedBandwidth());
+			}
 		}
-			
-		log.info("Request num_slots: "+num_slots);
+		
+		
+		//BandwidthRequestedGeneralizedBandwidth  bw= (BandwidthRequestedGeneralizedBandwidth)req.getBandwidth(); // Objeto bandwidth para saber la demanda de la peticion.
+		Object source_router_id_addr = null;
+		Object dest_router_id_addr = null;
+		graphs_comparator grc = new graphs_comparator ();
+		
+			log.info("Request num_slots: "+num_slots);
 		
 		if (EP.getOT()==ObjectParameters.PCEP_OBJECT_TYPE_ENDPOINTS_IPV4){
 			EndPointsIPv4  ep=(EndPointsIPv4) req.getEndPoints();
@@ -162,6 +185,7 @@ public class AURE_SSON_algorithm implements ComputingAlgorithm {
 		}else if (EP.getOT()==ObjectParameters.PCEP_OBJECT_TYPE_ENDPOINTS_IPV6){
 
 		}else if (EP.getOT()==ObjectParameters.PCEP_OBJECT_TYPE_GENERALIZED_ENDPOINTS){
+			log.info("EP.getOT()==ObjectParameters.PCEP_OBJECT_TYPE_GENERALIZED_ENDPOINTS");
 			GeneralizedEndPoints  gep=(GeneralizedEndPoints) req.getEndPoints();
 			if(gep.getGeneralizedEndPointsType()==ObjectParameters.PCEP_GENERALIZED_END_POINTS_TYPE_P2P){
 				P2PEndpoints p2pep= gep.getP2PEndpoints();
@@ -183,7 +207,7 @@ public class AURE_SSON_algorithm implements ComputingAlgorithm {
 					dest_router_id_addr=destep.getEndPointIPv4TLV().IPv4address;
 
 				}
-			}
+			} 
 		}
 		//aqu� acaba lo que he a�adido
 
@@ -287,6 +311,7 @@ public class AURE_SSON_algorithm implements ComputingAlgorithm {
 					
 				}
 				else{
+					
 					if (counter==0){
 						if (lambda>=preComp.getSSONInfo().getNumLambdas()-1){
 							if (nopath==true){
@@ -431,6 +456,7 @@ public class AURE_SSON_algorithm implements ComputingAlgorithm {
 				GeneralizedLabelEROSubobject genLabel= new GeneralizedLabelEROSubobject();
 				ero.addEROSubobject(genLabel);
 				genLabel.setLabel(WDMlabel.getBytes());	
+				log.info("ero:" +ero);
 				
 				if(req.getRequestParameters().isBidirect()==true){
 					//ITU-T Format
@@ -453,8 +479,9 @@ public class AURE_SSON_algorithm implements ComputingAlgorithm {
 					ero.addEROSubobject(genLabel_bidirect);
 					genLabel_bidirect.setLabel(WDMlabel_bidirect.getBytes());	
 				}
-				
+				log.info("ero:" +ero);
 			}
+			log.info("ero:" +ero);
 			
 			//log.info("Label bit map: "+ted.getWSONinfo().getCommonAvailableLabels().getLabelSet().toString());
 			BandwidthRequestedGeneralizedBandwidth gb = new BandwidthRequestedGeneralizedBandwidth ();
@@ -469,7 +496,11 @@ public class AURE_SSON_algorithm implements ComputingAlgorithm {
 			path.seteRO(ero);
 			path.setBandwidth(gb);
 			PCEPUtils.completeMetric(path, req, edge_list);
-			response.setBandwidth(Bw);
+			if (Bw!=null){
+				response.setBandwidth(Bw);
+			}else if (bw!=null){
+				response.setBandwidth(bw);
+			}
 			response.addPath(path);
 			
 			//FIXME: RESERVATION NEEDS TO BE IMPROVED!!!

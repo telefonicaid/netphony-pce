@@ -71,20 +71,20 @@ public class TopologyUpdaterThread extends Thread{
 		while(true){
 			try {
 				ospfv2Packet = ospfv2PacketQueue.take();
-				log.info("OSPF PACKET READ");
+				//log.info("OSPF PACKET READ");
 
-				System.out.println("OSPF AREA: "+ospfv2Packet.getAreaID().toString());
+				//System.out.println("OSPF AREA: "+ospfv2Packet.getAreaID().toString());
 
 				Inet4Address domainId = (Inet4Address) Inet4Address.getByName("0.0.0.1");
 				TEDB.getReachabilityEntry().setDomainId(domainId);
-				System.out.println("MY AREA: "+TEDB.getReachabilityEntry().getDomainId());
+				//System.out.println("MY AREA: "+TEDB.getReachabilityEntry().getDomainId());
 
 
 				// Filtered by domain ID
 				if ((TEDB.getReachabilityEntry().getDomainId())!=null){
 					if(ospfv2Packet.getAreaID().toString().equalsIgnoreCase(this.TEDB.getReachabilityEntry().getDomainId().toString())){
 
-						System.out.println("Adding OSPF Message");
+						//System.out.println("Adding OSPF Message");
 
 						// If ospf packet is from my domain 
 						Inet4Address localInterfaceIPAddress = ospfv2Packet.getRouterID();
@@ -94,7 +94,7 @@ public class TopologyUpdaterThread extends Thread{
 						for (int i =0;i< lsaList.size();i++){
 							if (lsaList.get(i).getLStype() == LSATypes.TYPE_10_OPAQUE_LSA){
 								lsa=(OSPFTEv2LSA)lsaList.get(i);
-								log.info("Starting to process LSA");
+								//log.info("Starting to process LSA");
 								LinkTLV linkTLV = lsa.getLinkTLV();
 								if (linkTLV!=null){
 									//log.info("Link TLV ha llegado "+lsa.toString());

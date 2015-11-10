@@ -23,6 +23,7 @@ import es.tid.pce.server.lspdb.SingleDomainLSPDB;
 import es.tid.rsvp.objects.subobjects.EROSubobject;
 import es.tid.rsvp.objects.subobjects.ETCEROSubobject;
 import es.tid.rsvp.objects.subobjects.GeneralizedLabelEROSubobject;
+import es.tid.rsvp.objects.subobjects.IPv4prefixEROSubobject;
 import es.tid.rsvp.objects.subobjects.LabelEROSubobject;
 import es.tid.rsvp.objects.subobjects.UnnumberIfIDEROSubobject;
 import es.tid.tedb.IntraDomainEdge;
@@ -129,53 +130,144 @@ public class SaveLSPinRedisSingleDom implements Runnable {
 	}
 	
 	
-	public String lspToJSON(SD_LSP lsp){
+	
+public String lspToJSON(SD_LSP lsp){
 		
 		Gson gson = new Gson();
 		
 		SimpleLSP slsp=new SimpleLSP();
+		slsp.setLSP_Id(lsp.getpLSPID());
 		
-		// ¿Tengo que añadir el fullERO en la clase LSP?
 		ExplicitRouteObject ero=lsp.getFullERO();
+		log.info("lsp.getFullERO(): "+ero.toString());
+		
 		Iterator <EROSubobject> erosolist= ero.getEROSubobjectList().iterator();		
 		int num=0;
 		while (erosolist.hasNext()){
 			EROSubobject eroso= erosolist.next();
 			if (eroso instanceof UnnumberIfIDEROSubobject){
 				num+=1;
+			}else if(eroso instanceof IPv4prefixEROSubobject){
+				num+=1;
 			}
 		}
 		slsp.data=new SimpleLSPhop[num];
+		//slsp.data=new SimpleLSPhop[15];
 		
 		erosolist= ero.getEROSubobjectList().iterator();		
 		int i=-1;
 		while (erosolist.hasNext()){
+			//i++;
 			EROSubobject eroso= erosolist.next();
-			if (eroso instanceof UnnumberIfIDEROSubobject){
+			log.info("eroso: "+eroso.toString());
+			log.info("ero num: eroso.getType(): "+eroso.getType());
+			log.info("ero class "+eroso.getClass().getCanonicalName());
+//			i+=1;
+//			slsp.data[i]=new SimpleLSPhop();
+			if (eroso instanceof UnnumberIfIDEROSubobject){//type 4
 				i+=1;
+				log.info("EROSubObject: UnnumberIfIDEROSubobject");
+				log.info("UnnumberIfIDEROSubobject i:"+i);
 				slsp.data[i]=new SimpleLSPhop();
 				slsp.data[i].routerID= ((UnnumberIfIDEROSubobject)eroso).routerID.getHostAddress();
-				slsp.data[i].ifID= ""+((UnnumberIfIDEROSubobject)eroso).interfaceID;				
-			}else if (eroso instanceof GeneralizedLabelEROSubobject){
+				slsp.data[i].ifID= ""+((UnnumberIfIDEROSubobject)eroso).interfaceID;
+				log.info("UnnumberIfIDEROSubobject slsp.data[i].routerID is: " +slsp.data[i].routerID);
+				log.info("UnnumberIfIDEROSubobject slsp.data[i].ifID is: " +slsp.data[i].ifID);
+				
+			}else if (eroso instanceof GeneralizedLabelEROSubobject){//type 2
+				log.info("EROSubObject: GeneralizedLabelEROSubobject");
+				log.info("GeneralizedLabelEROSubobject i:"+i);
 				if (slsp.data[i]!=null){
 					slsp.data[i].n=""+ ((GeneralizedLabelEROSubobject)eroso).getDwdmWavelengthLabel().getN();
-					slsp.data[i].m=""+ ((GeneralizedLabelEROSubobject)eroso).getDwdmWavelengthLabel().getM();		
+					slsp.data[i].m=""+ ((GeneralizedLabelEROSubobject)eroso).getDwdmWavelengthLabel().getM();	
+					log.info("GeneralizedLabelEROSubobject slsp.data[i].n is: " +slsp.data[i].n);
+					log.info("GeneralizedLabelEROSubobject slsp.data[i].m is: " +slsp.data[i].m);
+					
 				}
-						
 			}else if (eroso instanceof ETCEROSubobject){
+				log.info("EROSubObject: ETCEROSubobject");
+				log.info("ETCEROSubobject i:"+i);
 				if (slsp.data[i]!=null){
 					slsp.data[i].transponder="TX "+((ETCEROSubobject)eroso).getSubTransponderList().get(0).getST_TLV_ModFormat().toString();
+					
 				}
-				
+						
+			}else if (eroso instanceof IPv4prefixEROSubobject){ //type 1
+				i+=1;
+				log.info("EROSubObject: IPv4prefixEROSubobject");
+				log.info("IPv4prefixEROSubobject i:"+i);
+				slsp.data[i]=new SimpleLSPhop();
+				if (slsp.data[i]!=null){
+					log.info("slsp.data[i] is: " +slsp.data[i]);
+					slsp.data[i].routerID= ((IPv4prefixEROSubobject)eroso).getIpv4address().toString();
+					log.info("slsp.data[i].routerID is: " +slsp.data[i].routerID);
+				}else{
+					log.info("slsp.data[i] is: " +slsp.data[i]);}
+							
 			}
 		}
 		
-   	 	String json = gson.toJson(slsp);
-   	 	
-  	 	
+		String json = gson.toJson(slsp);
+   	 	log.info("json:"+json.toString());  	 	
    	 	return json;
 		
 	}
+	
+	
+	//Este es el que funciona
+	
+//	public String lspToJSON(SD_LSP lsp){
+//		
+//		Gson gson = new Gson();
+//		
+//		SimpleLSP slsp=new SimpleLSP();
+//		
+//		log.info("XXXX LSP_Id JSON: lsp.getpLSPID()" + lsp.getpLSPID());
+//		log.info("XXXX LSP_Id JSON: slsp.getLSP_Id()" + slsp.getLSP_Id());
+//		
+//		
+//		ExplicitRouteObject ero=lsp.getFullERO();
+//		Iterator <EROSubobject> erosolist= ero.getEROSubobjectList().iterator();		
+//		int num=0;
+//		while (erosolist.hasNext()){
+//			EROSubobject eroso= erosolist.next();
+//			if (eroso instanceof UnnumberIfIDEROSubobject){
+//				num+=1;
+//			}
+//		}
+//		slsp.data=new SimpleLSPhop[num];
+//		
+//		erosolist= ero.getEROSubobjectList().iterator();		
+//		int i=-1;
+//		while (erosolist.hasNext()){
+//			EROSubobject eroso= erosolist.next();
+//			if (eroso instanceof UnnumberIfIDEROSubobject){
+//				i+=1;
+//				slsp.data[i]=new SimpleLSPhop();
+//				slsp.data[i].routerID= ((UnnumberIfIDEROSubobject)eroso).routerID.getHostAddress();
+//				slsp.data[i].ifID= ""+((UnnumberIfIDEROSubobject)eroso).interfaceID;				
+//			}else if (eroso instanceof GeneralizedLabelEROSubobject){
+//				if (slsp.data[i]!=null){
+//					slsp.data[i].n=""+ ((GeneralizedLabelEROSubobject)eroso).getDwdmWavelengthLabel().getN();
+//					slsp.data[i].m=""+ ((GeneralizedLabelEROSubobject)eroso).getDwdmWavelengthLabel().getM();		
+//				}
+//						
+//			}else if (eroso instanceof ETCEROSubobject){
+//				if (slsp.data[i]!=null){
+//					slsp.data[i].transponder="TX "+((ETCEROSubobject)eroso).getSubTransponderList().get(0).getST_TLV_ModFormat().toString();
+//				}
+//				
+//			}
+//		}
+//		
+//		log.info("XXXX LSP_Id JSON1: lsp.getpLSPID()" + lsp.getpLSPID());
+//		log.info("XXXX LSP_Id JSON1: slsp.getLSP_Id()" + slsp.getLSP_Id());
+//   	 	String json = gson.toJson(slsp);
+//   	 	
+//  	 	
+//   	 	return json;
+//		
+//	}
 	
 	
 	
