@@ -199,7 +199,7 @@ public String lspToJSON(SD_LSP lsp){
 				slsp.data[i]=new SimpleLSPhop();
 				if (slsp.data[i]!=null){
 					log.info("slsp.data[i] is: " +slsp.data[i]);
-					slsp.data[i].routerID= ((IPv4prefixEROSubobject)eroso).getIpv4address().toString();
+					slsp.data[i].routerID= ((IPv4prefixEROSubobject)eroso).getIpv4address().getHostAddress();
 					log.info("slsp.data[i].routerID is: " +slsp.data[i].routerID);
 				}else{
 					log.info("slsp.data[i] is: " +slsp.data[i]);}
