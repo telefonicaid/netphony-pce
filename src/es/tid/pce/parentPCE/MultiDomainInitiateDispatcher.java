@@ -42,7 +42,6 @@ public class MultiDomainInitiateDispatcher {
 		log.info("Dispatching Initiate message from "+remotePeerIP);	
 		Iterator<PCEPIntiatedLSP> it=iniMessage.getPcepIntiatedLSPList().iterator();
 		while (it.hasNext()){
-			log.info("Dispaaaatch");
 			InitiationRequest ir=new InitiationRequest();
 			ir.setOut(out);
 			ir.setRemotePeerIP(remotePeerIP);

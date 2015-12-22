@@ -168,7 +168,7 @@ public class IniProcessorThread extends Thread{
 					
 
 					LinkedList<PCEPInitiate> iniList= new LinkedList<PCEPInitiate>();
-					log.info("Creating the bandwidth");
+					log.fine("Creating the bandwidth");
 					Bandwidth bw=null;
 
 					//Get the Bandwidth
@@ -198,10 +198,10 @@ public class IniProcessorThread extends Thread{
 								eeero.addEROSubobject(eroso);
 								eroSplit.put(domain,eeero );
 								lastDomain=domain;
-								log.info("add first subo");
+								
 							}else if (domain.equals(lastDomain)){
 								lastEro.addEROSubobject(eroso);
-								log.info("add more subo subo");
+								
 							}else {
 								log.info("New domaiiin");
 								ExplicitRouteObject eeero=new ExplicitRouteObject();
@@ -211,7 +211,7 @@ public class IniProcessorThread extends Thread{
 								lastDomain=domain;
 							}
 						}else {
-							log.info("add more subo subo2");
+							
 							lastEro.addEROSubobject(eroso);
 						}
 						
@@ -242,13 +242,12 @@ public class IniProcessorThread extends Thread{
 						lsp.setSymbolicPathNameTLV_tlv(symbolicPathNameTLV_tlv);
 						inilsp.setLsp(lsp);
 						iniList.add(ini);
-						log.info("meeeen "+ini.toString());
 						domainList.add(domain);
 					}
 					
 					
 					try {
-						log.info("A LLAMAAAR");
+						
 						if (childPCERequestManager==null){
 							log.severe("o ooooooooo");
 						}
@@ -267,7 +266,6 @@ public class IniProcessorThread extends Thread{
 	     				
 	     				int lspId = IniProcessorThread.getID();
 	     				multiDomainLSPDB.getMultiDomain_LSP_list().put(lspId, mdlsp);
-						log.info("SE LLAMOOOOOOO ");
 						StateReport srmd = new StateReport();
 						SRP srp = new SRP();
 						srp.setSRP_ID_number(sRP_ID_number);
@@ -278,9 +276,12 @@ public class IniProcessorThread extends Thread{
 						Path p=new Path();
 						p.seteRO(fullEro);
 						srmd.setPath(p);
+												
 						PCEPReport rep = new PCEPReport();
 						rep.getStateReportList().add(srmd);
 						rep.encode();
+						
+						
 						log.info("Mando: "+ rep.toString());					
 						iniReq.getOut().write(rep.getBytes());
 						iniReq.getOut().flush();
@@ -291,9 +292,13 @@ public class IniProcessorThread extends Thread{
 					}
 				}
 				
-				
-
-				this.savelsp.run();
+				try{
+					this.savelsp.run();
+				}catch (Exception e){
+					log.warning("Save LSP in Redis fail");
+					e.printStackTrace();
+					break;
+				}
 
 			} catch (InterruptedException e) {
 				log.warning("There is no ini to make");
@@ -304,8 +309,7 @@ public class IniProcessorThread extends Thread{
 	}	
 
 	public EndPoints getEndPoints(ExplicitRouteObject ero){
-		log.info("Getting EndPoints");
-		
+				
 		Iterator<EROSubobject> eroi= ero.getEROSubobjectList().iterator();
 		EROSubobject eroso;
 		GeneralizedEndPoints gep = new GeneralizedEndPoints();
@@ -380,9 +384,14 @@ public class IniProcessorThread extends Thread{
 				LSP lsp =new LSP();
 				SymbolicPathNameTLV symbolicPathNameTLV_tlv = new SymbolicPathNameTLV();
 				StateReport SR =mdlsp.getDomainLSRMpa().get(domain);
-				symbolicPathNameTLV_tlv.setSymbolicPathNameID(SR.getLSP().getSymbolicPathNameTLV_tlv().getSymbolicPathNameID() );
+				if (SR.getLSP().getSymbolicPathNameTLV_tlv()!=null){
+					symbolicPathNameTLV_tlv.setSymbolicPathNameID(SR.getLSP().getSymbolicPathNameTLV_tlv().getSymbolicPathNameID() );
+					lsp.setSymbolicPathNameTLV_tlv(symbolicPathNameTLV_tlv);
+				}else {
+					log.warning("NO SYMBOLIC PATH NAME TLV!!!" );
+				}
+				//FIXME: CREATE ENDPOINTS
 				lsp.setLspId(mdlsp.getDomainLSPIDMap().get(domain));
-				lsp.setSymbolicPathNameTLV_tlv(symbolicPathNameTLV_tlv);
 				inilsp.setLsp(lsp);
 				iniList.add(ini);
 				domainList.add(domain);
@@ -391,7 +400,9 @@ public class IniProcessorThread extends Thread{
 				log.info("GOING TO send the deletes of "+lspID);
  				childPCERequestManager.executeInitiates(iniList, domainList);
 				log.info("Removing MD LSP "+lspID);
-				 this.multiDomainLSPDB.getMultiDomain_LSP_list().remove(lspID);
+				this.multiDomainLSPDB.getMultiDomain_LSP_list().remove(lspID);
+				 
+				 
 			}catch (Exception e){
 				log.severe("PROBLEM SENDING THE DELETES");
 			}

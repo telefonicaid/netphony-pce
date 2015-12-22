@@ -31,7 +31,7 @@ public class MultiDomainLSPDB {
 		dbString="Multi Domain LSPs: \r\n";
 		while (iter.hasMoreElements()){
 			Integer id= iter.nextElement();
-			dbString=dbString+"\tid: "+id;
+			dbString=dbString+"\nid: "+id;
 			MD_LSP mdlsp= this.multiDomain_LSP_list.get(id);
 			dbString=dbString+mdlsp.toString();
 		}

@@ -239,8 +239,6 @@ public class ClientRequestManager {
 	{
 		log.info("Sending Initiate:"+pcini.toString());
 		
-		
-		
 		byte[] LSPname=pcini.getPcepIntiatedLSPList().get(0).getLsp().getSymbolicPathNameTLV_tlv().getSymbolicPathNameID();
 		long idIni=pcini.getPcepIntiatedLSPList().get(0).getRsp().getSRP_ID_number();
 		System.out.println("Sending with id " +idIni);

@@ -144,6 +144,8 @@ public class ParentPCEServer {
 				bgpPeer.startServer();
 				bgpPeer.startManagementServer();
 				bgpPeer.startSendTopology();
+				if (bgpPeer.isSaveTopology() == true)
+					bgpPeer.startSaveTopology();
 				
 			}else{
 				//Create the multidomain topology updater

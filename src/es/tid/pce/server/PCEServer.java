@@ -186,7 +186,7 @@ public class PCEServer {
 			//For the session between the Domain (Child) PCE and the parent PCE
 			log.info("Initializing Manager of the ChildPCE - Parent PCE Session");	
 			PCCRequestDispatcherChild=new  RequestDispatcher(1,ted,null,params.isAnalyzeRequestTime());
-			pcm=new ChildPCESessionManager(PCCRequestDispatcherChild, params,ted,ted.getReachabilityEntry().getDomainId(),pcepSessionsInformation);
+			pcm=new ChildPCESessionManager(PCCRequestDispatcherChild, params,ted,ted.getReachabilityEntry().getDomainId(),pcepSessionsInformation,iniDispatcher);
 		}else {
 			log.info("There is no parent PCE");
 

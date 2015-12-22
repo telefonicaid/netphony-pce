@@ -89,11 +89,11 @@ public class PcepPeer {
 	}
 	
 	public String toString(){
-		return addr.getHostAddress();
+		return "\n" + addr.getHostAddress();
 	}
 	
 	public String fullInfo(){
-		return "\n"+addr.getHostAddress() + "num_sess_setup_ok "+num_sess_setup_ok
-				+ " num_sess_setup_fail "+num_sess_setup_fail;
+		return "\n"+addr.getHostAddress() +" -----> " + "num_sess_setup_ok: "+num_sess_setup_ok
+				+ "   num_sess_setup_fail: "+num_sess_setup_fail;
 	}
 }

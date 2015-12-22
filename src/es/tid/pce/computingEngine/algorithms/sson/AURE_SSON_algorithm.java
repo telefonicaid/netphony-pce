@@ -455,6 +455,7 @@ public class AURE_SSON_algorithm implements ComputingAlgorithm {
 				
 				GeneralizedLabelEROSubobject genLabel= new GeneralizedLabelEROSubobject();
 				ero.addEROSubobject(genLabel);
+				
 				genLabel.setLabel(WDMlabel.getBytes());	
 				log.info("ero:" +ero);
 				
