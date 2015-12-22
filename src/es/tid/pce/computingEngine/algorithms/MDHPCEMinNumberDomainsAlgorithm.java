@@ -18,6 +18,8 @@ import es.tid.pce.parentPCE.ChildPCERequestManager;
 import es.tid.pce.parentPCE.ParentPCESession;
 import es.tid.pce.pcep.constructs.EndPoint;
 import es.tid.pce.pcep.constructs.EndPointAndRestrictions;
+import es.tid.pce.pcep.constructs.GeneralizedBandwidth;
+import es.tid.pce.pcep.constructs.GeneralizedBandwidthSSON;
 import es.tid.pce.pcep.constructs.NCF;
 import es.tid.pce.pcep.constructs.P2MPEndpoints;
 import es.tid.pce.pcep.constructs.P2PEndpoints;
@@ -31,6 +33,8 @@ import es.tid.pce.pcep.messages.PCEPMessageTypes;
 import es.tid.pce.pcep.messages.PCEPReport;
 import es.tid.pce.pcep.messages.PCEPRequest;
 import es.tid.pce.pcep.objects.Bandwidth;
+import es.tid.pce.pcep.objects.BandwidthRequested;
+import es.tid.pce.pcep.objects.BandwidthRequestedGeneralizedBandwidth;
 import es.tid.pce.pcep.objects.BitmapLabelSet;
 import es.tid.pce.pcep.objects.EndPoints;
 import es.tid.pce.pcep.objects.EndPointsIPv4;
@@ -54,9 +58,12 @@ import es.tid.pce.pcep.objects.tlvs.SymbolicPathNameTLV;
 import es.tid.pce.pcep.objects.tlvs.UnnumberedEndpointTLV;
 import es.tid.pce.pcep.objects.tlvs.subtlvs.SymbolicPathNameSubTLV;
 import es.tid.rsvp.constructs.gmpls.DWDMWavelengthLabel;
+import es.tid.rsvp.objects.subobjects.EROSubobject;
 import es.tid.rsvp.objects.subobjects.GeneralizedLabelEROSubobject;
 import es.tid.rsvp.objects.subobjects.IPv4prefixEROSubobject;
+import es.tid.rsvp.objects.subobjects.LabelEROSubobject;
 import es.tid.rsvp.objects.subobjects.UnnumberIfIDEROSubobject;
+import es.tid.tedb.DomainTEDB;
 import es.tid.tedb.ITMDTEDB;
 import es.tid.tedb.InterDomainEdge;
 import es.tid.tedb.MDTEDB;
@@ -87,6 +94,8 @@ public class MDHPCEMinNumberDomainsAlgorithm implements ComputingAlgorithm{
 	public int channelType;
 	
 	public long reqId;
+	
+	boolean explicit_label = false;
 
 	EndPoints  original_end_points; // Original EndPoints of the Request
 
@@ -109,6 +118,7 @@ public class MDHPCEMinNumberDomainsAlgorithm implements ComputingAlgorithm{
 		m_resp.setReachabilityManager(reachabilityManager);
 		//FIXME: Remove ASAP
 		m_resp.setEncodingType(pathReq.getEcodingType());
+		int m = 0;
 
 		Request req=pathReq.getRequestList().get(0); // Get the original request
 		this.reqId=req.getRequestParameters().getRequestID(); //Get the request ID.
@@ -286,6 +296,8 @@ public class MDHPCEMinNumberDomainsAlgorithm implements ComputingAlgorithm{
 			log.info("First part of the LSP is in domain: "+ domain+" from "+ source_router_id_addr+" to "+destIP);
 			//FIXME: METRICA? OF? BW?
 			long requestID;
+			
+			
 
 			if (source_router_id_addr.equals(destIP)){
 				log.info("Origin and destination are the same");
@@ -301,7 +313,27 @@ public class MDHPCEMinNumberDomainsAlgorithm implements ComputingAlgorithm{
 				}
 				Request requestToFirstDomain=new Request();
 				log.info("Llega BW "+pathReq.getRequestList().get(0).getBandwidth().toString());
-
+				
+								
+				Request req1=pathReq.getRequestList().get(0);
+				BandwidthRequestedGeneralizedBandwidth  bw =null;
+				
+				if (req1.getBandwidth() instanceof BandwidthRequestedGeneralizedBandwidth){
+					bw= (BandwidthRequestedGeneralizedBandwidth)req1.getBandwidth(); 
+					
+					if(bw.getGeneralizedBandwidth()!= null){
+						
+						if(bw.getGeneralizedBandwidth() instanceof GeneralizedBandwidthSSON ){
+						
+						GeneralizedBandwidthSSON a = (GeneralizedBandwidthSSON)bw.getGeneralizedBandwidth();
+						m=a.getM();
+						
+						}
+							
+					}
+				}
+				
+				
 				//requestToFirstDomain.setObjectiveFunction(pathReq.getRequestList().get(0).getObjectiveFunction());
 				requestToFirstDomain.setBandwidth(pathReq.getRequestList().get(0).getBandwidth().duplicate());
 				if(pathReq.getRequestList().get(0).getReservation()!=null){
@@ -586,6 +618,8 @@ public class MDHPCEMinNumberDomainsAlgorithm implements ComputingAlgorithm{
 		//LinkedList<NCF> ncflist=new LinkedList<NCF>();
 		byte[] bitmap=null;
 		DWDMWavelengthLabel label=null;
+		DWDMWavelengthLabel label2=null;
+		boolean no_lambda = false;
 		LinkedList<ExplicitRouteObject> eroList =new LinkedList<ExplicitRouteObject>();
 		LinkedList<ExplicitRouteObject> eroList2 =new LinkedList<ExplicitRouteObject>();
 		for (i=0;i<respList.size();++i){
@@ -613,7 +647,7 @@ public class MDHPCEMinNumberDomainsAlgorithm implements ComputingAlgorithm{
 						ero.addEROSubobjectList(eroInternal.getEROSubobjectList());
 					}
 					else {
-						log.info("A limpiar 1 ");
+						
 						if (this.channelType==MDHPCEMinNumberDomainsAlgorithm.MEDIA_CHANNEL){
 							label_continuity=true;
 						}
@@ -622,11 +656,13 @@ public class MDHPCEMinNumberDomainsAlgorithm implements ComputingAlgorithm{
 						}
 						ExplicitRouteObject cleanEro=prepareERO(eroInternal,channelType,  remove_elcs, original_end_points, first,  last,  removeFirstNode);
 						if (label_continuity) {
-							log.info("A limpiar 2");
+							
 							if (i==0){
 								if ((respList.get(i).getResponse(0).getPath(0).getLabelSet())!=null){
 									log.info("TENEMOS BITMAP LABEL SET");
 									bitmap=new byte[(((BitmapLabelSet)respList.get(i).getResponse(0).getPath(0).getLabelSet()).getBytesBitmap().length)];
+									label=new DWDMWavelengthLabel();
+									label.setM(m);
 									System.arraycopy(((BitmapLabelSet)respList.get(i).getResponse(0).getPath(0).getLabelSet()).getBytesBitmap(), 0, bitmap, 0, (((BitmapLabelSet)respList.get(i).getResponse(0).getPath(0).getLabelSet()).getBytesBitmap().length));								
 								} else {
 									log.info("NO TENEMOS LABEL SET");
@@ -637,11 +673,18 @@ public class MDHPCEMinNumberDomainsAlgorithm implements ComputingAlgorithm{
 									//
 								}
 							}else {
+																
 								if ((respList.get(i).getResponse(0).getPath(0).getLabelSet())!=null){
 									//bitmap=restrictNCFList(ncflist,((LabelSetInclusiveList)respList.get(i).getResponse(0).getPath(0).getLabelSet()).getNCFList() );	
 									restrictBitmap(bitmap,((BitmapLabelSet)respList.get(i).getResponse(0).getPath(0).getLabelSet()).getBytesBitmap());
 								} else {
-									restrictBitmap(bitmap,null);
+									
+									label2=getELCfromERO(eroInternal);
+									if (label==null){
+										label=label2;
+									}else if(label!=label2){
+										no_lambda = true;
+									}
 								}
 							}
 						}
@@ -656,14 +699,14 @@ public class MDHPCEMinNumberDomainsAlgorithm implements ComputingAlgorithm{
 								if (j<edge_list.size()){						
 									unnumberIfDEROSubobj.setInterfaceID(edge_list.get(j).getSrc_if_id());
 									unnumberIfDEROSubobj.setRouterID((Inet4Address)edge_list.get(j).getSrc_router_id());
-									log.info(" eroExternal "+unnumberIfDEROSubobj.toString());
+									log.fine(" eroExternal "+unnumberIfDEROSubobj.toString());
 									//ero.addEROSubobject(unnumberIfDEROSubobj);
 									addEROifnotexists(ero,unnumberIfDEROSubobj);
 									addEROifnotexists(ero2,unnumberIfDEROSubobj);
 									j++;
 								}
 							}
-							;
+							
 						}
 					}
 
@@ -671,39 +714,51 @@ public class MDHPCEMinNumberDomainsAlgorithm implements ComputingAlgorithm{
 				}
 			}
 		}
+		
+		
+		
+		
 		if (childrenFailed==true){
 			log.warning("Some child has failed");
 			NoPath noPath= new NoPath();
 			response.setNoPath(noPath);
 		}
 		else {
-			log.warning("AAAA");
+			log.fine("AAAA");
 			if (label_continuity) {
-				log.warning("bbbb");
+				log.fine("bbbb");
 				if (use_elc){
-					log.warning("cccc");
+					log.fine("cccc");
 					if (label!=null) {
-						log.warning("ddd");
-						if (isLabelFree(bitmap)){
-							int m=label.getM();
-							int n=getFirstN(bitmap,m);
-							label.setN(n);
-							ero=addELC(ero,label,original_end_points,this.channelType);
-							Iterator<ExplicitRouteObject> it= eroList.iterator();
-							int k=0;
-							while (it.hasNext()){
-								ExplicitRouteObject erori=it.next();
-								ExplicitRouteObject ero3=addELC(erori,label,reqList.get(k).getRequest(0).getEndPoints(),this.channelType);
-								eroList2.add(ero3);
-							}
-
-							path.seteRO(ero);
-							response.addPath(path);	
-						}else {
+						
+						explicit_label =true;
+						log.fine("ddd");
+						if (no_lambda==true){
 							log.warning("NO LABEL!!!");
 							NoPath noPath= new NoPath();
 							response.setNoPath(noPath);
+								
+						}else{			
+							
+							if (explicit_label == true)	{
+								ero=addELC(ero,label,original_end_points,this.channelType);
+								Iterator<ExplicitRouteObject> it= eroList.iterator();
+								int k=0;
+								while (it.hasNext()){
+									ExplicitRouteObject erori=it.next();
+									ExplicitRouteObject ero3=addELC(erori,label,reqList.get(k).getRequest(0).getEndPoints(),this.channelType);
+									eroList2.add(ero3);
+								}
+			
+								path.seteRO(ero);
+								response.addPath(path);	
+							}else {
+								log.warning("NO LABEL!!!");
+								NoPath noPath= new NoPath();
+								response.setNoPath(noPath);
+							}
 						}
+							
 					}else {
 						log.warning("NO LABEL!!!");
 						NoPath noPath= new NoPath();
@@ -734,6 +789,23 @@ public class MDHPCEMinNumberDomainsAlgorithm implements ComputingAlgorithm{
 		return m_resp;
 	}
 
+	private DWDMWavelengthLabel getELCfromERO(ExplicitRouteObject eroInternal) {
+		DWDMWavelengthLabel label=null;
+		
+		Iterator<EROSubobject> iterEro= eroInternal.getEROSubobjectList().iterator();
+		while (iterEro.hasNext()){
+			EROSubobject eroSubobject = iterEro.next();
+			if (eroSubobject instanceof GeneralizedLabelEROSubobject){
+				//log.info("Es de tipo GeneralizedLabelEROSubobject");
+				label = ((GeneralizedLabelEROSubobject)eroSubobject).getDwdmWavelengthLabel();
+			}
+		}
+		
+		return label;
+	}
+
+	
+	
 	private ExplicitRouteObject prepareERO(ExplicitRouteObject ero, int channelType, boolean removeELC, EndPoints ep,boolean first, boolean last, boolean removeFirstNode ){
 		ExplicitRouteObject eroClean= new ExplicitRouteObject();
 		if (channelType==MDHPCEMinNumberDomainsAlgorithm.MEDIA_CHANNEL){
@@ -790,6 +862,7 @@ public class MDHPCEMinNumberDomainsAlgorithm implements ComputingAlgorithm{
 	public void restrictBitmap(byte[] bitmap, byte[] bitmap2) {
 		if (bitmap2==null){
 			log.info("BORRAAAANDO");
+			
 			for (int i=0;i<bitmap.length;++i){
 				bitmap[i]=0;
 			}
@@ -803,9 +876,13 @@ public class MDHPCEMinNumberDomainsAlgorithm implements ComputingAlgorithm{
 
 	public boolean isLabelFree(byte[] bitmap){
 		boolean isFree=false;
-		for (int i=0;i<bitmap.length;++i){
-			if ((bitmap[i]&0xFF)>0){
-				isFree=true;
+		if (bitmap==null){
+			isFree=true;
+		}else{
+			for (int i=0;i<bitmap.length;++i){
+				if ((bitmap[i]&0xFF)>0){
+					isFree=true;
+				}
 			}
 		}
 		return isFree;

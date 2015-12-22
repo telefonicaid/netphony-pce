@@ -208,13 +208,13 @@ public class ParentPCESession extends GenericPCEPSession{
 								LinkedList<ReachabilityTLV>  reachabilityTLVList=m_not.getNotifyList().get(i).getNotificationList().get(0).getReachabilityTLVList();
 								//DomainIDTLV domainIDTLV ==m_not.getNotifyList().get(i).getNotificationList().get(0).g
 								if (reachabilityTLVList!=null){
-									log.info("Reachability TLV List not null and size "+reachabilityTLVList.size());
+									log.fine("Reachability TLV List not null and size "+reachabilityTLVList.size());
 
 									for (int ii=0;ii<reachabilityTLVList.size();++ii){
 										LinkedList<EROSubobject> EROSubobjectList= reachabilityTLVList.get(ii).getEROSubobjectList();
-										log.info("EROSubobjectList size "+EROSubobjectList.size());
+										log.fine("EROSubobjectList size "+EROSubobjectList.size());
 										for (int jj=0;jj< EROSubobjectList.size();++jj){
-											log.info("ADD EROSO ");
+										
 											//rm.addEROSubobject(remoteDomainId, reachabilityTLVList.get(ii).EROSubobjectList.get(jj));											
 										}
 									}

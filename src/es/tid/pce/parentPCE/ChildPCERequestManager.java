@@ -12,6 +12,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.logging.Logger;
 
+import es.tid.abno.modules.Path_Computation;
 import es.tid.pce.computingEngine.ComputingResponse;
 import es.tid.pce.computingEngine.algorithms.ChildPCEInitiate;
 import es.tid.pce.computingEngine.algorithms.ChildPCERequest;
@@ -22,6 +23,7 @@ import es.tid.pce.pcep.messages.PCEPMessage;
 import es.tid.pce.pcep.messages.PCEPReport;
 import es.tid.pce.pcep.messages.PCEPRequest;
 import es.tid.pce.pcep.messages.PCEPResponse;
+import es.tid.pce.pcep.objects.GeneralizedEndPoints;
 
 /**
  * Manages the requests to the Child PCEs
@@ -90,14 +92,14 @@ public class ChildPCERequestManager {
 			 executor.execute(ft);
 		}
 		long time=120000;
-		log.info("The time is "+time+" miliseconds");
+		log.fine("The time is "+time+" miliseconds");
 		long timeIni=System.currentTimeMillis();
 		long time2;
 		ComputingResponse resp;
 		for (int i=0;i<requestList.size();++i){
 			
 			try {
-				log.info("Waiting "+time+" miliseconds for domain "+domainList.get(i));
+				log.fine("Waiting "+time+" miliseconds for domain "+domainList.get(i));
 				resp=ftList.get(i).get(time, TimeUnit.MILLISECONDS);
 				time2=System.currentTimeMillis();
 				long timePassed=time2-timeIni;
@@ -133,13 +135,12 @@ public class ChildPCERequestManager {
 	}
 	
 	public LinkedList<ComputingResponse> executeInitiates(LinkedList<PCEPInitiate> initiateList, LinkedList<Object> domainList){
-		log.info("EEEEEEEENTRANDO");
+		
 		LinkedList<ComputingResponse> response= new  LinkedList<ComputingResponse>();
 		ChildPCEInitiate cpr;
 		LinkedList<FutureTask<ComputingResponse>> ftList=new LinkedList<FutureTask<ComputingResponse>>();
 		FutureTask<ComputingResponse> ft;
 		for (int i=0;i<initiateList.size();++i){
-			log.info("BOOONGO");
 			 cpr=new ChildPCEInitiate(this, initiateList.get(i), domainList.get(i));
 			 ft=new FutureTask<ComputingResponse>(cpr);
 			 ftList.add(ft);
@@ -194,7 +195,7 @@ public class ChildPCERequestManager {
 	
 	public void notifyResponse(PCEPResponse pcres){
 		long idRequest=pcres.getResponse(0).getRequestParameters().getRequestID();
-		log.info("Entrando en Notify Response de idRequest "+idRequest);
+		log.fine("Entrando en Notify Response de idRequest "+idRequest);
 		Object object_lock=locks.get(new Long(idRequest));
 		responses.put(new Long(idRequest), pcres);
 		if (object_lock!=null){
@@ -205,7 +206,7 @@ public class ChildPCERequestManager {
 	
 	public void notifyReport(StateReport sr){
 		long idRequest=sr.getSRP().getSRP_ID_number();
-		log.info("Entrando en Notify Report de id "+idRequest);
+		log.fine("Entrando en Notify Report de id "+idRequest);
 		Object object_lock=inilocks.get(new Long(idRequest));
 		reports.put(new Long(idRequest), sr);
 		if (object_lock!=null){
@@ -223,7 +224,7 @@ public class ChildPCERequestManager {
 		//((RequestParameters)(((Request)pcreq.getRequest(0)).getReqObject(0))).getRequestID();
 		//long idRequest=((RequestParameters)(((Request)pcreq.getRequest(0)).getReqObject(0))).getRequestID();
 		long idRequest=pcreq.getRequest(0).getRequestParameters().getRequestID();
-		log.info("Creo lock con idRequest "+idRequest);
+		log.fine("Creo lock con idRequest "+idRequest);
 		locks.put(new Long(idRequest), object_lock);
 		try {
 			if (pcreq.getPccReqId()!=null){
@@ -258,19 +259,15 @@ public class ChildPCERequestManager {
 	
 	
 	public StateReport newIni( PCEPInitiate pcini, Object domain){
-		log.info("New Request to Child PCE");
 		Object object_lock=new Object();
-//		RequestLock rl=new RequestLock();
 		
-		
-		//((RequestParameters)(((Request)pcreq.getRequest(0)).getReqObject(0))).getRequestID();
-		//long idRequest=((RequestParameters)(((Request)pcreq.getRequest(0)).getReqObject(0))).getRequestID();
-		long idRequest=pcini.getPcepIntiatedLSPList().get(0).getRsp().getSRP_ID_number();
-		log.info("Creo lock con srp_id "+idRequest);
-		inilocks.put(new Long(idRequest), object_lock);
+		long idSRP=pcini.getPcepIntiatedLSPList().get(0).getRsp().getSRP_ID_number();
+		log.info("Sending PCEPInitiate to domain "+domain+"srp_id "+idSRP+" : "+pcini.toString());
+		inilocks.put(new Long(idSRP), object_lock);
 		try {		
 			sendInitiate(pcini,domain);
 		} catch (IOException e1) {
+			log.warning("Problem with response from domain "+domain+" to initiate with srp_id "+idSRP);
 			inilocks.remove(object_lock); 
 			return null;
 		}
@@ -282,11 +279,11 @@ public class ChildPCERequestManager {
 			//	FIXME: Ver que hacer
 			}
 		}	
-		StateReport resp=reports.get(new Long(idRequest));
+		StateReport resp=reports.get(new Long(idSRP));
 		if (resp==null){
-			log.warning("NO RESPONSE!!!!!");
+			log.warning("No response from domain "+domain+" to initiate with srp_id "+idSRP);
 		}else {
-			log.info("HA respondido LA ID "+idRequest);
+			log.info("Domain "+domain+" replied to Initiate with srp_id "+idSRP+" : "+resp.toString());
 		}
 		return resp;
 		
@@ -327,7 +324,7 @@ public class ChildPCERequestManager {
 			throw new IOException();
 		}
 		try {
-			log.info("Sending Request message to domain "+domain);
+			log.info("Sending Initiate message to domain "+domain);
 						out.write(ini.getBytes());
 			out.flush();
 		} catch (IOException e) {

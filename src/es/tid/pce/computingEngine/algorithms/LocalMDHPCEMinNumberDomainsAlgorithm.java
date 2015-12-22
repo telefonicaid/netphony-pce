@@ -43,6 +43,7 @@ import es.tid.pce.pcep.objects.tlvs.EndPointIPv4TLV;
 import es.tid.pce.pcep.objects.tlvs.NoPathTLV;
 import es.tid.rsvp.objects.subobjects.IPv4prefixEROSubobject;
 import es.tid.rsvp.objects.subobjects.UnnumberIfIDEROSubobject;
+import es.tid.tedb.DomainTEDB;
 import es.tid.tedb.ITMDTEDB;
 import es.tid.tedb.InterDomainEdge;
 import es.tid.tedb.IntraDomainEdge;
@@ -96,9 +97,9 @@ public class LocalMDHPCEMinNumberDomainsAlgorithm implements ComputingAlgorithm{
 		}
 		if(cam_sson==null){
 			try {
-				Class<?> aClass_SSON = Class.forName("tid.pce.computingEngine.algorithms.sson.Dynamic_RSAManager");
+				Class<?> aClass_SSON = Class.forName("es.tid.pce.computingEngine.algorithms.sson.Dynamic_RSAManager");
 				try{
-					Class<?> aClass2_SSON =  Class.forName("tid.pce.computingEngine.algorithms.sson.Dynamic_RSAPreComputation");
+					Class<?> aClass2_SSON =  Class.forName("es.tid.pce.computingEngine.algorithms.sson.Dynamic_RSAPreComputation");
 					cam_sson= (ComputingAlgorithmManagerSSON)aClass_SSON.newInstance();
 					cam2_sson= (ComputingAlgorithmPreComputationSSON) aClass2_SSON.newInstance();
 					cam2_sson.setTEDB(this.ted);

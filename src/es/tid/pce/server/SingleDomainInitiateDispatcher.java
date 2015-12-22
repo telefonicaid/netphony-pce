@@ -45,6 +45,7 @@ public class SingleDomainInitiateDispatcher {
 	public void dispathInitiate(PCEPInitiate iniMessage, DataOutputStream out, Inet4Address remotePeerIP)
 	{	    	
 		log.info("Dispatching Initiate message from "+remotePeerIP);	
+		log.info("XXX iniMessage: "+iniMessage);
 		Iterator<PCEPIntiatedLSP> it=iniMessage.getPcepIntiatedLSPList().iterator();
 		while (it.hasNext()){
 			log.info("Dispaaaatch");

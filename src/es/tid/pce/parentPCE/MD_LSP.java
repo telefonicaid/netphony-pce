@@ -50,8 +50,9 @@ public class MD_LSP {
 	public String toString() {
 		String ret="";
 		Enumeration<Inet4Address> enu=domainLSPIDMap.keys();
+		
 		while (enu.hasMoreElements()){
-			ret=ret+"Dom: "+enu.nextElement();
+			ret=ret+" Dom: "+enu.nextElement();
 		}
 		return ret;
 	}

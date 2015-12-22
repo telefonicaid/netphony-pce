@@ -428,6 +428,17 @@ public class RequestProcessorThread extends Thread{
 			//POR AHORA PONGO TRY CATH Y MANDO NOPATH
 			long sourceIF=0;
 			long destIF=0;
+			
+			
+			
+			
+			
+			P2PEndpoints p2pep=null;
+			
+			
+			
+			
+			
 			try{
 				//For the IT case
 				if (ted.isITtedb()){
@@ -449,16 +460,23 @@ public class RequestProcessorThread extends Thread{
 						}
 						source = ((EndPointsIPv4)pathCompReq.getRequestList().get(0).getEndPoints()).getSourceIP();
 						dest = ((EndPointsIPv4)pathCompReq.getRequestList().get(0).getEndPoints()).getDestIP();
+						log.info(" XXXX try source: "+source);
+						log.info(" XXXX try dest: "+dest);
+						
 					} catch (Exception e) {  //GeneralizedEndPoints
 						if (pathCompReq.getRequestList().get(0).getEndPoints() instanceof GeneralizedEndPoints){
+							
+							p2pep = ((GeneralizedEndPoints)pathCompReq.getRequestList().get(0).getEndPoints()).getP2PEndpoints();			
 
-							P2PEndpoints p2pep = ((GeneralizedEndPoints)pathCompReq.getRequestList().get(0).getEndPoints()).getP2PEndpoints();			
+							//P2PEndpoints p2pep = ((GeneralizedEndPoints)pathCompReq.getRequestList().get(0).getEndPoints()).getP2PEndpoints();			
 							log.info("RequestProcessorThread GeneralizedEndPoints -> sourceDataPath:: "+p2pep.getSourceEndPoint()+" destDataPath :: "+p2pep.getDestinationEndPoint());
 
 							GeneralizedEndPoints ep= new GeneralizedEndPoints();
-							ep.setP2PEndpoints(p2pep); 						
-
+							ep.setP2PEndpoints(p2pep); 	
 							pathCompReq.getRequestList().get(0).setEndPoints(ep);
+							
+							source = p2pep.getSourceEndPoint().getEndPointIPv4TLV().getIPv4address();
+							dest = p2pep.getDestinationEndPoint().getEndPointIPv4TLV().getIPv4address();
 						}
 					}
 				}
@@ -471,11 +489,16 @@ public class RequestProcessorThread extends Thread{
 			}
 			//In case it is a child PCE with a parent, requestToParent = true
 			boolean requestToParent = false;
+		
 			if (this.isChildPCE==true){
 				//Before sending to the parent, check that the source and destinations don't belong to the domain
+				
 				if((!(((DomainTEDB)ted).belongsToDomain(source))||(!(((DomainTEDB)ted).belongsToDomain(dest))))){					
 					requestToParent = true;
 				}
+				
+				
+				
 			}
 			//In case we need to send the request to the parent... this way...
 			if (requestToParent == true) {
@@ -625,8 +648,6 @@ public class RequestProcessorThread extends Thread{
 								algortithmManagerSSON = singleAlgorithmListsson.get(new Integer(of));
 								
 							}
-//							log.info("algortithmManager = "+algortithmManager);
-//							log.info(" XXXX algortithmManagerSSON ="+algortithmManagerSSON);
 							
 							if (algortithmManager==null && algortithmManagerSSON==null){
 								if (objectiveFunctionObject.isPbit()==true){
@@ -722,7 +743,7 @@ public class RequestProcessorThread extends Thread{
 							rep=repRes;							
 						}
 						timeEndNanos=System.nanoTime();
-//						log.info("xxxx");
+
 						double compTimeMicroSec=(timeEndNanos-timeIniNanos)/(double)1000;
 						double toTimeMicroSec=(timeEndNanos-pathCompReq.getTimeStampNs())/(double)1000;
 						double toTimeMiliSec=(timeEndNanos-pathCompReq.getTimeStampNs())/(double)1000000;

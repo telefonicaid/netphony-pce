@@ -42,7 +42,9 @@ public class ChildPCESessionManager extends TimerTask{
 	
 	PCEPSessionsInformation pcepSessionInformation;
 	
-	public ChildPCESessionManager(RequestDispatcher PCCRequestDispatcherChild, PCEServerParameters params, TEDB ted, Inet4Address domainId, PCEPSessionsInformation pcepSessionInformation){
+	private SingleDomainInitiateDispatcher iniDispatcher;
+	
+	public ChildPCESessionManager(RequestDispatcher PCCRequestDispatcherChild, PCEServerParameters params, TEDB ted, Inet4Address domainId, PCEPSessionsInformation pcepSessionInformation, SingleDomainInitiateDispatcher iniDispatcher){
 		this.params=params;  
 		this.ted=ted;
 		this.PCCRequestDispatcherChild=PCCRequestDispatcherChild;
@@ -52,19 +54,20 @@ public class ChildPCESessionManager extends TimerTask{
 		sendingQueue=new LinkedBlockingQueue<PCEPMessage>();
 		childPCERequestManager=new ParentPCERequestManager(sendingQueue);
 		this.domainId=domainId;
+		this.iniDispatcher=iniDispatcher;
 		log=Logger.getLogger("PCEServer");
 	}
 	
 	
-	public ChildPCESessionManager(PCEServerParameters params, TEDB ted, Inet4Address domainId, PCEPSessionsInformation pcepSessionInformation){
+	public ChildPCESessionManager(PCEServerParameters params, TEDB ted, Inet4Address domainId, PCEPSessionsInformation pcepSessionInformation, SingleDomainInitiateDispatcher iniDispatcher){
 		this.params=params;  
 		this.ted=ted;
 		this.pcepSessionInformation=pcepSessionInformation;
-//		this.timer=new Timer();
 		this.parentPCERequestQueue=new RequestQueue(params.getParentPCERequestProcessors());
 		sendingQueue=new LinkedBlockingQueue<PCEPMessage>();
 		childPCERequestManager=new ParentPCERequestManager(sendingQueue);
 		this.domainId=domainId;
+		this.iniDispatcher=iniDispatcher;
 		log=Logger.getLogger("PCEServer");
 	}
 	public ChildPCESession getChildPCEParentPCESession() {
@@ -95,7 +98,7 @@ public class ChildPCESessionManager extends TimerTask{
 			else{
 				log.warning("Session with parent PCE dead, trying to establish new session");
 				Timer timer=new Timer();
-				childPCEParentPCESession= new ChildPCESession(PCCRequestDispatcherChild, params, parentPCERequestQueue,ted,timer,sendingQueue,childPCERequestManager,domainId,pcepSessionInformation);
+				childPCEParentPCESession= new ChildPCESession(PCCRequestDispatcherChild, params, parentPCERequestQueue,ted,timer,sendingQueue,childPCERequestManager,domainId,pcepSessionInformation, iniDispatcher);
 				childPCEParentPCESession.start();
 				return;
 			}
@@ -103,7 +106,7 @@ public class ChildPCESessionManager extends TimerTask{
 			log.warning("No Session with parent PCE, trying to establish new session");
 			sendingQueue.clear();//Borramos lo que haya????
 			Timer timer=new Timer();
-			childPCEParentPCESession= new ChildPCESession(PCCRequestDispatcherChild, params, parentPCERequestQueue,ted,timer,sendingQueue,childPCERequestManager,domainId,pcepSessionInformation);
+			childPCEParentPCESession= new ChildPCESession(PCCRequestDispatcherChild, params, parentPCERequestQueue,ted,timer,sendingQueue,childPCERequestManager,domainId,pcepSessionInformation,iniDispatcher);
 			childPCEParentPCESession.start();
 
 			return;
@@ -132,12 +135,6 @@ public class ChildPCESessionManager extends TimerTask{
 		
 	}
 	
-//	public void scheduleChildPCESession(long millis){
-//		
-//		timer.schedule(new NewChildPCESessionTask(this), millis);
-//		
-//	}
-
 	public RequestQueue getParentPCERequestQueue() {
 		return parentPCERequestQueue;
 	}

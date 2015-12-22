@@ -162,12 +162,11 @@ public class SingleDomainIniProcessorThread extends Thread{
 				srp.setrFlag(pini.getRsp().isrFlag());
 				
 				long sRP_ID_number = pini.getRsp().getSRP_ID_number();
-				log.info("Starting to process Init with SRP ID "+sRP_ID_number);
-
+				
 				
 				//Check if delete
 				if (pini.getRsp().isrFlag()){
-					delete(pini.getLsp().getLspId());
+					delete(pini.getLsp().getLspId(), sRP_ID_number, iniReq);
 				}
 				else {
 					//Check if need to take path computation
@@ -190,7 +189,7 @@ public class SingleDomainIniProcessorThread extends Thread{
 					lsp.setSymbolicPathNameTLV_tlv(pini.getLsp().getSymbolicPathNameTLV_tlv());
 					piniToNode.setLsp(lsp);
 					LinkedList<PCEPInitiate> iniList= new LinkedList<PCEPInitiate>();
-					log.info("Creating the bandwidth");
+					//log.info("Creating the bandwidth");
 					Bandwidth bw=null;
 
 					//Get the Bandwidth
@@ -211,14 +210,14 @@ public class SingleDomainIniProcessorThread extends Thread{
 						log.info("INITIATE with info, sending to node");
 						String miIP;	
 						Inet4Address ip;
-					if (pini.getEndPoint()!= null){
-							log.info("jm endPoint NO es null");								
-						}
-					else {
-						log.info("jm endPoint es null");
-					}
+//					if (pini.getEndPoint()!= null){
+//							log.info("jm endPoint NO es null");								
+//						}
+//					else {
+//						log.info("jm endPoint es null");
+//					}
 						miIP=getSourceIP(pini.getEndPoint());
-						log.info("jm ver ip to socket connect: "+miIP);
+						log.info("ver ip to socket connect: "+miIP);
 				      
 						ip=(Inet4Address)Inet4Address.getByName(miIP);
 				
@@ -226,8 +225,7 @@ public class SingleDomainIniProcessorThread extends Thread{
 						if (sr!=null){
 
 		     				int lspId = sr.getLSP().getLspId();
-		     				//multiDomainLSPDB.getMultiDomain_LSP_list().put(lspId, mdlsp);
-							log.info("SE LLAMOOOOOOO ");
+		     									
 							StateReport srmd = new StateReport();
 							SRP srpp = new SRP();
 							srpp.setSRP_ID_number(sRP_ID_number);
@@ -239,20 +237,28 @@ public class SingleDomainIniProcessorThread extends Thread{
 							p.seteRO(fullEro);
 							srmd.setPath(p);
 							
-							log.info(" XXXX fullEro: "+fullEro);
-							log.info(" XXXX srmd: "+srmd);
 							
+							SymbolicPathNameTLV symbolicPathNameTLV_tlv = new SymbolicPathNameTLV();
+							if (sr.getLSP().getSymbolicPathNameTLV_tlv()!=null){
+								symbolicPathNameTLV_tlv.setSymbolicPathNameID(sr.getLSP().getSymbolicPathNameTLV_tlv().getSymbolicPathNameID() );
+								lspp.setSymbolicPathNameTLV_tlv(symbolicPathNameTLV_tlv);
+							}else {
+								log.warning("NO SYMBOLIC PATH NAME TLV!!!" );
+							}
+																			
 							PCEPReport rep = new PCEPReport();
 							rep.getStateReportList().add(srmd);
 							rep.encode();
 							
-							log.info("Mando: "+ rep.toString());					
+														
+							log.info("Send: "+ rep.toString());					
 							iniReq.getOut().write(rep.getBytes());
 							iniReq.getOut().flush();
 							SD_LSP sd_lsp=new SD_LSP();
 							sd_lsp.setpLSPID(lspId);
 							sd_lsp.setFullERO(fullEro);
 							sd_lsp.setStateRport(sr);
+							sd_lsp.setEndpoints(pini.getEndPoint());
 							singleDomainLSPDB.getSingleDomain_LSP_list().put(lspId,sd_lsp );
 							this.savelsp.run();
 						}else {
@@ -278,24 +284,55 @@ public class SingleDomainIniProcessorThread extends Thread{
 	public String getSourceIP(Object endPoint) {
 		
 		String sourceIP=null;
+		//String source=null;
 		
 		if (endPoint == null){
-			log.info("jm endPoint es null");
+			log.info(" endPoint es null");
 			
-		}else if (endPoint instanceof EndPointsIPv4){
-			log.info("jm endPoint es de tipo EndPointsIPv4");
-			sourceIP = ((EndPointsIPv4) endPoint).getSourceIP().toString();
+		}else 
 			
+			if (endPoint instanceof EndPointsIPv4){
+				log.info(" endPoint es de tipo EndPointsIPv4");
+				sourceIP = ((EndPointsIPv4) endPoint).getSourceIP().toString();
+						
+			}else 
+				
+				if (endPoint instanceof EndPointsUnnumberedIntf){
+						log.info("endPoint es de tipo EndPointsUnnumberedIntf");
+						sourceIP = ((EndPointsUnnumberedIntf) endPoint).getSourceIP().toString();
 			
-		}else if (endPoint instanceof EndPointsUnnumberedIntf){
-			log.info("jm endPoint es de tipo EndPointsUnnumberedIntf");
-			sourceIP = ((EndPointsUnnumberedIntf) endPoint).getSourceIP().toString();
-			
-		}else if (endPoint instanceof GeneralizedEndPoints){
-			log.info("jm endPoint es de tipo GeneralizedEndPoints");
-			sourceIP = ((GeneralizedEndPoints) endPoint).getP2PEndpoints().getSourceEndPoint().toString();
-			
-		}else log.info("jm endPoint NO es de tipo conocido");
+				}else{ 
+					
+					if (endPoint instanceof GeneralizedEndPoints){   
+						log.info(" endPoint es de tipo GeneralizedEndPoints");
+												
+						//sourceIP 
+						
+						EndPoint sourceEndPoint= ((GeneralizedEndPoints) endPoint).getP2PEndpoints().getSourceEndPoint();
+						if (sourceEndPoint.getEndPointIPv4TLV()!=null){
+							sourceIP=sourceEndPoint.getEndPointIPv4TLV().getIPv4address().getHostAddress();
+						}else if (sourceEndPoint.getUnnumberedEndpoint()!=null) {
+							sourceIP=sourceEndPoint.getUnnumberedEndpoint().getIPv4address().getHostAddress();
+						}
+//						
+//						if( endPoint1 instanceof EndPointsIPv4){
+//							log.info(" endPoint es de tipo GeneralizedEndPoints y EndPointsIPv4");
+//							sourceIP = ((EndPointsIPv4) endPoint1).getSourceIP().toString();
+//						}
+//						else{
+//							
+//							if( endPoint1 instanceof EndPointsUnnumberedIntf){
+//								
+//								log.info(" endPoint es de tipo GeneralizedEndPoints y EndPointsUnnumberedIntf");
+//								sourceIP = ((EndPointsUnnumberedIntf) endPoint1).getSourceIP().toString();
+//							}else
+//								log.info(" endPoint solo GeneralizedEndPoints");
+//							
+//						}
+						
+					}else log.info(" endPoint NO es de tipo conocido");
+				}
+	
 		
 		return sourceIP;
 	}
@@ -355,7 +392,7 @@ public class SingleDomainIniProcessorThread extends Thread{
 		
 	}
 	
-	public void delete (int lspID){
+	public void delete (int lspID, long sRP_ID_number, InitiationRequest iniReq){
 		log.info("GOING TO DELTE "+lspID);
 		SD_LSP sdlsp= this.singleDomainLSPDB.getSingleDomain_LSP_list().get(lspID);
 		if (sdlsp==null) {
@@ -388,10 +425,53 @@ public class SingleDomainIniProcessorThread extends Thread{
 				//domainList.add(domain);
 		
 			try {
+				String miIP=getSourceIP(sdlsp.getEndpoints());
+				log.info("ver ip to socket connect: "+miIP);
+		      
+				
+				ExplicitRouteObject ero =new ExplicitRouteObject();
+				
+				ero.addEROSubobjectList(sdlsp.getFullERO().getEROSubobjectList()); 
+				
+				Path path = new Path();
+				path.seteRO(ero);
+				
+				Inet4Address ip=(Inet4Address)Inet4Address.getByName(miIP);
 				log.info("GOING TO send the deletes of "+lspID);
- 				//childPCERequestManager.executeInitiates(iniList, domainList);
+				StateReport sr=this.iniManager.newIni(ini, ip);
 				log.info("Removing SD LSP "+lspID);
-				 this.singleDomainLSPDB.getSingleDomain_LSP_list().remove(lspID); 
+				this.singleDomainLSPDB.getSingleDomain_LSP_list().remove(lspID); 
+				log.info(" XXXX State Report");
+				StateReport srmd = new StateReport();
+				SRP srpp = new SRP();
+				srpp.setSRP_ID_number(sRP_ID_number);
+				srpp.setrFlag(true);
+				srmd.setSRP(srpp);
+				LSP lspp = new LSP();
+				
+				
+				lspp.setLspId(lspID);
+				srmd.setLSP(lspp);			
+				
+				srmd.setPath(path);
+				
+				symbolicPathNameTLV_tlv = new SymbolicPathNameTLV();
+				if (sr.getLSP().getSymbolicPathNameTLV_tlv()!=null){
+					symbolicPathNameTLV_tlv.setSymbolicPathNameID(sr.getLSP().getSymbolicPathNameTLV_tlv().getSymbolicPathNameID() );
+					lspp.setSymbolicPathNameTLV_tlv(symbolicPathNameTLV_tlv);
+				}else {
+					log.warning("NO SYMBOLIC PATH NAME TLV!!!" );
+				}
+																
+				PCEPReport rep = new PCEPReport();
+				rep.getStateReportList().add(srmd);
+				rep.encode();
+				
+											
+				log.info("Send Report to parent: "+ rep.toString());					
+				iniReq.getOut().write(rep.getBytes());
+				iniReq.getOut().flush();
+				 
 			}catch (Exception e){
 				log.severe("PROBLEM SENDING THE DELETES");
 			}

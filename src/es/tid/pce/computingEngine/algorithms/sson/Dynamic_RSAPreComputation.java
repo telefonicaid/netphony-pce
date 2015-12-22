@@ -117,8 +117,13 @@ public class Dynamic_RSAPreComputation  implements ComputingAlgorithmPreComputat
 			e.printStackTrace();
 			System.exit(0);
 		}
+		
+		log.info(" XXXX ted: "+ted);
+		log.info(" XXXX (DomainTEDB)ted: "+(DomainTEDB)ted);
 		SSONInfo=((DomainTEDB)ted).getSSONinfo();
 		this.ted=(DomainTEDB)ted;
+		log.info(" XXXX SSONInfo: " + SSONInfo);
+		log.info(" XXXX SSONInfo.getNumLambdas(): " + SSONInfo.getNumLambdas());
 		this.numLambdas=SSONInfo.getNumLambdas();
 		log.info(">>>>>Viendo informacion de copia:");
 		log.info(this.ted.printTopology());

@@ -48,16 +48,16 @@ public class IniPCCManager {
 		
 	}
 	
-	public StateReport newIni( PCEPInitiate pcini, Object domain){
-		log.info("New Request to Child PCE");
+	public StateReport newIni( PCEPInitiate pcini, Object node){
 		Object object_lock=new Object();
 
-		long idRequest=pcini.getPcepIntiatedLSPList().get(0).getRsp().getSRP_ID_number();
-		log.info("Creo lock con srp_id "+idRequest);
-		inilocks.put(new Long(idRequest), object_lock);
+		long idSRP=pcini.getPcepIntiatedLSPList().get(0).getRsp().getSRP_ID_number();
+		log.info("Sending PCEPInitiate to node "+node+"srp_id "+idSRP+" : "+pcini.toString());
+		inilocks.put(new Long(idSRP), object_lock);
 		try {		
-			sendInitiate(pcini,domain);
+			sendInitiate(pcini,node);
 		} catch (IOException e1) {
+			log.warning("Problem with response from node "+node+" to initiate with srp_id "+idSRP);
 			inilocks.remove(object_lock); 
 			return null;
 		}
@@ -69,11 +69,11 @@ public class IniPCCManager {
 			//	FIXME: Ver que hacer
 			}
 		}	
-		StateReport resp=reports.get(new Long(idRequest));
+		StateReport resp=reports.get(new Long(idSRP));
 		if (resp==null){
-			log.warning("NO RESPONSE!!!!!");
+			log.warning("No response from node "+node+" to initiate with srp_id "+idSRP);
 		}else {
-			log.info("HA respondido LA ID "+idRequest);
+			log.info("Node "+node+" replied to Initiate with srp_id "+idSRP+" : "+resp.toString());
 		}
 		return resp;
 		

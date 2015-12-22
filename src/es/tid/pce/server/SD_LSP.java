@@ -1,10 +1,7 @@
 package es.tid.pce.server;
 
-import java.net.Inet4Address;
-import java.util.Enumeration;
-import java.util.Hashtable;
-
 import es.tid.pce.pcep.constructs.StateReport;
+import es.tid.pce.pcep.objects.EndPoints;
 import es.tid.pce.pcep.objects.ExplicitRouteObject;
 
 public class SD_LSP {
@@ -14,6 +11,8 @@ public class SD_LSP {
 	public StateReport stateRport; //mapping of domain - State Report 
 	
 	public ExplicitRouteObject fullERO;
+	
+	public EndPoints endpoints;
 	
 	public SD_LSP(){
 	}
@@ -47,6 +46,14 @@ public class SD_LSP {
 
 	public void setFullERO(ExplicitRouteObject fullERO) {
 		this.fullERO = fullERO;
+	}
+
+	public EndPoints getEndpoints() {
+		return endpoints;
+	}
+
+	public void setEndpoints(EndPoints endpoints) {
+		this.endpoints = endpoints;
 	}
 	
 	

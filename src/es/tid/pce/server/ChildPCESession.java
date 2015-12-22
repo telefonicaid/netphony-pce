@@ -13,6 +13,7 @@ import java.util.logging.Logger;
 
 import es.tid.pce.computingEngine.RequestDispatcher;
 import es.tid.pce.pcep.PCEPProtocolViolationException;
+import es.tid.pce.pcep.messages.PCEPInitiate;
 import es.tid.pce.pcep.messages.PCEPMessage;
 import es.tid.pce.pcep.messages.PCEPMessageTypes;
 import es.tid.pce.pcep.messages.PCEPRequest;
@@ -23,6 +24,7 @@ import es.tid.pce.pcepsession.KeepAliveThread;
 import es.tid.pce.pcepsession.PCEPSessionsInformation;
 import es.tid.pce.pcepsession.PCEPValues;
 import es.tid.tedb.TEDB;
+import es.tid.util.UtilsFunctions;
 
 /**
  * PCEP Session between the Child PCE and the parent PCE. 
@@ -67,6 +69,9 @@ public class ChildPCESession  extends GenericPCEPSession{
 	private int state;
 	
 	private RequestDispatcher PCCRequestDispatcherChild;
+	
+	private SingleDomainInitiateDispatcher iniDispatcher;
+
 			
 	
 	/**
@@ -74,7 +79,7 @@ public class ChildPCESession  extends GenericPCEPSession{
 	 * @param s Socket of the PCC-PCE Communication
 	 * @param req RequestQueue to send path requests
 	 */
-	public ChildPCESession(RequestDispatcher PCCRequestDispatcherChild, PCEServerParameters params, RequestQueue parentPCERequestQueue, TEDB ted, Timer timer,LinkedBlockingQueue<PCEPMessage> parentPCESendingQueue,ParentPCERequestManager childPCERequestManager, Inet4Address domainId, PCEPSessionsInformation pcepSessionInformation) {
+	public ChildPCESession(RequestDispatcher PCCRequestDispatcherChild, PCEServerParameters params, RequestQueue parentPCERequestQueue, TEDB ted, Timer timer,LinkedBlockingQueue<PCEPMessage> parentPCESendingQueue,ParentPCERequestManager childPCERequestManager, Inet4Address domainId, PCEPSessionsInformation pcepSessionInformation, SingleDomainInitiateDispatcher iniDispatcher) {
 		super(pcepSessionInformation);
 		this.PCCRequestDispatcherChild=PCCRequestDispatcherChild;
 		this.state=PCEPValues.PCEP_STATE_IDLE;
@@ -88,6 +93,7 @@ public class ChildPCESession  extends GenericPCEPSession{
 		this.childPCERequestManager=childPCERequestManager;	
 		this.keepAliveLocal=30;
 		this.deadTimerLocal=120;
+		this.iniDispatcher=iniDispatcher;
 		//this.sendingThread = new Sender(new LinkedBlockingQueue<PCEPMessage>(), output);
 		try {
 			this.domainId=domainId;
@@ -107,7 +113,7 @@ public class ChildPCESession  extends GenericPCEPSession{
 	 * @param s Socket of the PCC-PCE Communication
 	 * @param req RequestQueue to send path requests
 	 */
-	public ChildPCESession(PCEServerParameters params, RequestQueue parentPCERequestQueue, TEDB ted, Timer timer,LinkedBlockingQueue<PCEPMessage> parentPCESendingQueue,ParentPCERequestManager childPCERequestManager, Inet4Address domainId, PCEPSessionsInformation pcepSessionInformation) {
+	public ChildPCESession(PCEServerParameters params, RequestQueue parentPCERequestQueue, TEDB ted, Timer timer,LinkedBlockingQueue<PCEPMessage> parentPCESendingQueue,ParentPCERequestManager childPCERequestManager, Inet4Address domainId, PCEPSessionsInformation pcepSessionInformation, SingleDomainInitiateDispatcher iniDispatcher) {
 		super(pcepSessionInformation);
 		this.state=PCEPValues.PCEP_STATE_IDLE;
 		this.parentPCERequestQueue=parentPCERequestQueue;
@@ -119,6 +125,7 @@ public class ChildPCESession  extends GenericPCEPSession{
 		this.childPCERequestManager=childPCERequestManager;	
 		this.keepAliveLocal=30;
 		this.deadTimerLocal=120;
+		this.iniDispatcher=iniDispatcher;
 		//this.sendingThread = new Sender(new LinkedBlockingQueue<PCEPMessage>(), output);
 		try {
 			this.domainId=domainId;
@@ -236,6 +243,28 @@ public class ChildPCESession  extends GenericPCEPSession{
 					/*RequestProcessor rp=new RequestProcessor(p_req,out, ted,null);	
 					this.parentPCERequestQueue.execute(rp);*/
 					PCCRequestDispatcherChild.dispathRequests(p_req, out);
+					break;
+					
+				case PCEPMessageTypes.MESSAGE_INITIATE:
+					
+					log.info("INITIATE RECEIVED");
+					PCEPInitiate pcepInitiate = null;
+					try 
+					{
+						log.info(" XXXX try");
+						pcepInitiate = new PCEPInitiate(msg);
+						log.info("pcepInitiate: "+pcepInitiate);
+						log.info("Initiate from "+this.remotePeerIP+": "+pcepInitiate);
+					
+					} 
+					catch (PCEPProtocolViolationException e) 
+					{
+						log.info(UtilsFunctions.exceptionToString(e));
+					}
+					if (iniDispatcher!=null){
+						iniDispatcher.dispathInitiate(pcepInitiate, this.out, this.remotePeerIP);
+					}
+					
 					break;
 
 				default:
