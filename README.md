@@ -3,6 +3,12 @@ cne-pce v1.1.0
 
 Java based Path Computation Element and Test PCC
 
+# License
+
+The sofware includes a modification of the rocksaw 1.0.1 library to include OSPF multicast support. Rockswaw library is licensed under Apache License Version 2.0, which is included in the file LICENSE_rocksaw
+
+The rest of the software (es.* packages) is licenced under GNU AFFERO GENERAL PUBLIC LICENSE
+
 #Parent PCE
 
 The PCE can act as a parent PCE, following the procedures described in RFC 6805.

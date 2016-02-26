@@ -2,7 +2,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>es.tid.netphony</groupId>
   <artifactId>pce</artifactId>
-  <version>1.1.0</version>
+  <version>1.2</version>
   <packaging>jar</packaging>
   <name>PCE</name>
   <description>Path Computation Element</description>
@@ -17,7 +17,7 @@
     <dependency>
       <groupId>es.tid.netphony</groupId>
       <artifactId>topology</artifactId>
-      <version>1.1.1</version>
+      <version>1.2.1</version>
     </dependency>
      <dependency>
       <groupId>org.slf4j</groupId>
@@ -27,7 +27,7 @@
       <dependency>
       <groupId>es.tid.netphony</groupId>
       <artifactId>network-protocols</artifactId>
-      <version>1.1.1</version>
+      <version>1.2.1</version>
     </dependency>
     <dependency>
 	<groupId>colt</groupId>
@@ -42,7 +42,7 @@
     
   </dependencies>
   <build>
-    <sourceDirectory>${basedir}/src</sourceDirectory>
+    <sourceDirectory>${basedir}/src/main/java</sourceDirectory>
     <plugins>
       <plugin>
         <artifactId>maven-compiler-plugin</artifactId>
