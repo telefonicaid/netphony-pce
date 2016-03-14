@@ -29,8 +29,6 @@ public class ParentPCESessionsControler extends SecurityManager  {
 	
 	/**
 	 * Checks if the session is accepted
-	 * @param s
-	 * @return
 	 */
 	public void checkAccept(String host,int port) throws SecurityException,NullPointerException{
 		log.info("checkAccept host "+host+" port "+port);

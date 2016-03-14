@@ -354,8 +354,8 @@ public abstract class GenericPCEPSession extends Thread implements PCEPSession {
           5          Reception of an unacceptable number of unrecognized
                      PCEP messages
 	 * @param reason Reason for closing the PCEP Session
-	 * @return PCEP Session closed OK
 	 */
+	//* @return PCEP Session closed OK
 	public void close(int reason){
 		log.info("Closing PCEP Session with "+this.remotePeerIP); 
 		PCEPClose p_close=new PCEPClose();

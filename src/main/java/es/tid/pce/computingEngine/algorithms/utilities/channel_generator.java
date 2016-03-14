@@ -5,6 +5,9 @@ import java.util.logging.Logger;
 
 import es.tid.ospf.ospfv2.lsa.tlv.subtlv.complexFields.BitmapLabelSet;
 
+/**
+ * @author Amll
+ */
 public class channel_generator{
 	
 	private Logger log;
@@ -33,9 +36,8 @@ public class channel_generator{
 	 * 11111001
 	 * 11111100
 	 * 
-	 * @author: Amll
+	 * 
 	 */
-	
 	public void getSetChannels(int num_labels, int num_slots, ArrayList<BitmapLabelSet> setChannels){
 		
 		int bitCounter=0;

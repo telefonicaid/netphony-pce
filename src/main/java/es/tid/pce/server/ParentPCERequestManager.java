@@ -51,7 +51,6 @@ public class ParentPCERequestManager {
 	 * Send new request to the PCE and wait for its response.
 	 * It blocks until a response is received.
 	 * @param pcreq
-	 * @return
 	 */
 	public PCEPResponse newRequest( PCEPRequest pcreq){
 		log.info("New Request");
