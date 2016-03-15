@@ -19,40 +19,97 @@
       <artifactId>topology</artifactId>
       <version>1.2.1</version>
     </dependency>
-     <dependency>
+    <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-api</artifactId>
       <version>1.7.7</version>
     </dependency>
-      <dependency>
+    <dependency>
       <groupId>es.tid.netphony</groupId>
       <artifactId>network-protocols</artifactId>
       <version>1.2.3</version>
     </dependency>
     <dependency>
-	<groupId>colt</groupId>
-	<artifactId>colt</artifactId>
-	<version>1.2.0</version>
-</dependency>
-    <dependency>
-	<groupId>redis.clients</groupId>
-	<artifactId>jedis</artifactId>
-	<version>2.1.0</version>
-</dependency>
-    
-  </dependencies>
-  <build>
-    <sourceDirectory>${basedir}/src/main/java</sourceDirectory>
-    <plugins>
-      <plugin>
-        <artifactId>maven-compiler-plugin</artifactId>
-        <version>3.1</version>
-        <configuration>
-          <source>1.6</source>
-          <target>1.6</target>
-        </configuration>
-      </plugin>
-    </plugins>
-  </build>
+     <groupId>colt</groupId>
+     <artifactId>colt</artifactId>
+     <version>1.2.0</version>
+   </dependency>
+   <dependency>
+     <groupId>redis.clients</groupId>
+     <artifactId>jedis</artifactId>
+     <version>2.1.0</version>
+   </dependency>
+
+ </dependencies>
+ <build>
+  <sourceDirectory>${basedir}/src/main/java</sourceDirectory>
+  <plugins>
+    <plugin>
+      <artifactId>maven-compiler-plugin</artifactId>
+      <version>3.1</version>
+      <configuration>
+        <source>1.6</source>
+        <target>1.6</target>
+      </configuration>
+    </plugin>
+
+    <plugin>
+      <artifactId>maven-assembly-plugin</artifactId>
+      <version>2.6</version>
+      <configuration>
+        <descriptorRefs>
+          <descriptorRef>jar-with-dependencies</descriptorRef>
+        </descriptorRefs>
+      </configuration>
+      <executions>
+        <execution>
+          <id>PCC</id>
+          <phase>package</phase>
+          <goals>
+            <goal>single</goal>
+          </goals>
+          <configuration>
+            <finalName>PCC-QuickClient</finalName>
+            <archive>
+              <manifest>
+                <mainClass>es.tid.pce.client.QuickClient</mainClass>
+              </manifest>
+            </archive>
+          </configuration>
+        </execution>
+        <execution>
+          <id>PCEServer</id>
+          <phase>package</phase>
+          <goals>
+            <goal>single</goal>
+          </goals>
+          <configuration>
+            <finalName>PCEServer</finalName>
+            <archive>
+              <manifest>
+                <mainClass>es.tid.pce.server.PCEServer</mainClass>
+              </manifest>
+            </archive>
+          </configuration>
+        </execution>
+         <execution>
+          <id>parentPCE</id>
+          <phase>package</phase>
+          <goals>
+            <goal>single</goal>
+          </goals>
+          <configuration>
+            <finalName>parentPCE</finalName>
+            <archive>
+              <manifest>
+                <mainClass>es.tid.pce.parentPCE.parentPCEServer</mainClass>
+              </manifest>
+            </archive>
+          </configuration>
+        </execution>
+      </executions>
+    </plugin>
+  </plugins>
+</build>
 
 </project>

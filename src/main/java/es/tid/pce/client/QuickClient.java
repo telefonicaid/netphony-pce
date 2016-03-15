@@ -592,7 +592,9 @@ public class QuickClient {
 			}	
 			
 		}
-		System.out.println("bbbbbbbb"); 
+		System.out.println("bbbbbbbb");
+		System.out.println("offset vale "+offset+" y la length "+args.length + " Actual param="+args[offset]);
+		
 		if (args.length>offset) {
 			if (args[offset].equals("-ero")){
 				System.out.println("HAY ERROO");

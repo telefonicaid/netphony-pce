@@ -1,0 +1,51 @@
+MEDIA CHANNEL CTTC
+java -jar target/PCC-QuickClient-jar-with-dependencies.jar localhost 4189 192.168.1.1:1 192.168.1.2:2 -g -of 1002 -rgbw 2
+ 
+java -jar target/PCC-QuickClient-jar-with-dependencies.jar localhost 4189 192.168.1.1:1 192.168.1.2:2 -g -of 1002 -rgbw 2 -ini  192.168.1.1:1 192.168.1.2:2 -g -srpid 7 -spn TEST2 -rgbw 2 -ero
+ 
+DELETE MEDIA CHANNEL
+ 
+java -jar target/PCC-QuickClient-jar-with-dependencies.jar localhost 4189 -ini  192.168.1.1:1 192.168.1.2:2 -g -srpid 8 -srpd -lspid 2
+ 
+SBVT CHANNEL cttc
+ 
+java -jar target/PCC-QuickClient-jar-with-dependencies.jar localhost 4189 192.168.1.1:70 172.16.102.162:101 -g -of 60001 -rbw 107.1
+ 
+java -jar target/PCC-QuickClient-jar-with-dependencies.jar localhost 4189 192.168.1.1:70 172.16.102.162:101 -g -of 60001 -rbw 107.1  -ini  192.168.1.1:70 172.16.102.162:101 -g -srpid 7 -spn TEST2 -rbw 107.1 -ero 
+ 
+java -jar target/PCC-QuickClient-jar-with-dependencies.jar localhost 4189 -ini 192.168.1.1:70 172.16.102.162:101 -g -srpid 8 -srpd -lspid 2
+ 
+MEDIA CHANNEL CNIT
+ 
+java -jar target/PCC-QuickClient-jar-with-dependencies.jar localhost 4189 172.16.101.16:11 172.16.101.13:2 -g -of 1002 -rgbw 2 
+ 
+java -jar target/PCC-QuickClient-jar-with-dependencies.jar localhost 4189 172.16.101.16:11 172.16.101.13:2 -g -of 1002 -rgbw 2 -ini 172.16.101.16:11 172.16.101.13:2 -g -srpid 13 -spn TEST2 -rgbw 2 -ero
+ 
+DELETE CHANNEL
+ 
+java -jar target/PCC-QuickClient-jar-with-dependencies.jar localhost 4189 -ini 172.16.101.16:11 172.16.101.13:2 -g -srpid 8 -srpd -lspid 2
+ 
+ 
+SVBT CHANNEL CNIT 
+ 
+java -jar target/PCC-QuickClient-jar-with-dependencies.jar localhost 4189 172.16.101.11:11  172.16.101.13:101 -g -of 60001 -rbw 107.1
+ 
+java -jar target/PCC-QuickClient-jar-with-dependencies.jar localhost 4189 172.16.101.11:11  172.16.101.13:101 -g -of 60001 -rbw 107.1  -ini 172.16.101.11:11  172.16.101.13:101 -g -srpid 13 -spn TEST2 -rbw 107.1 -ero
+ 
+DELETE 
+ 
+ 
+ 
+ 
+MD MEDIA CHANNEL…
+java -jar target/PCC-QuickClient-jar-with-dependencies.jar localhost 4189 192.168.1.1:1 172.16.101.13:2 -g -of 1002 -rgbw 2 -ini  192.168.1.1:1 172.16.101.13:2  -g -srpid 13 -spn TEST2 -rgbw 2 -ero
+java -jar target/PCC-QuickClient-jar-with-dependencies.jar localhost 4189 192.168.1.1:1 172.16.101.13:2 -g -of 1002 -rgbw 2 -ini 192.168.1.1:1 172.16.101.13:2 -g -srpid 13 -spn TEST2 -rgbw 2 -ero
+java -jar target/PCC-QuickClient-jar-with-dependencies.jar localhost 4189 -ini 192.168.1.1:1 172.16.101.13:2 -g -srpid 8 -srpd -lspid 2
+ 
+MD SBVT CHANNEL 
+java -jar target/PCC-QuickClient-jar-with-dependencies.jar localhost 4189 192.168.1.1:70  172.16.101.13:101 -g -of 60001 -rbw 107.1
+ 
+java -jar target/PCC-QuickClient-jar-with-dependencies.jar localhost 4189 192.168.1.1:70  172.16.101.13:101 -g -of 60001 -rbw 107.1 -ini  192.168.1.1:70  172.16.101.13:101 -g  -srpid 13 -spn TEST2 rbw 107.1 -ero
+ 
+ 
+java -jar target/PCC-QuickClient-jar-with-dependencies.jar localhost 4189 192.168.1.1:70 172.16.102.162:101 -g -of 60001 -rbw 107.1  -ini  192.168.1.1:70 172.16.102.162:101 -g -srpid 7 -spn TEST2 -rbw 107.1 -ero 

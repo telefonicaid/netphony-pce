@@ -166,6 +166,10 @@ public class PCEServer {
 		{
 			log.info("Stateful PCE with T="+params.isStatefulTFlag()+" D="+params.isStatefulDFlag()+" S="+params.isStatefulSFlag());
 			singleDomainLSPDB=new SingleDomainLSPDB();
+			if(params.getDbType().equals("_"))
+			{
+				singleDomainLSPDB.setExportDb(false);
+			}
 			iniManager= new IniPCCManager();
 			iniDispatcher = new SingleDomainInitiateDispatcher(singleDomainLSPDB,iniManager);
 		}

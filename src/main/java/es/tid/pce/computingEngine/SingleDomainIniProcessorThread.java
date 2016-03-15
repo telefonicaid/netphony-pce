@@ -130,9 +130,12 @@ public class SingleDomainIniProcessorThread extends Thread{
 		this.singleDomainLSPDB=singleDomainLSPDB;
 		this.iniManager=iniManager;	
 		//FIXME
-		savelsp=new SaveLSPinRedisSingleDom();
-		savelsp.configure(singleDomainLSPDB, "127.0.0.1",6379);
-		running=true;
+		if(singleDomainLSPDB.isExportDb())
+		{
+			savelsp=new SaveLSPinRedisSingleDom();
+			savelsp.configure(singleDomainLSPDB, "127.0.0.1",6379);
+			running=true;
+		}
 		
 	}
 	
@@ -259,8 +262,12 @@ public class SingleDomainIniProcessorThread extends Thread{
 							sd_lsp.setFullERO(fullEro);
 							sd_lsp.setStateRport(sr);
 							sd_lsp.setEndpoints(pini.getEndPoint());
+							
 							singleDomainLSPDB.getSingleDomain_LSP_list().put(lspId,sd_lsp );
-							this.savelsp.run();
+							if(singleDomainLSPDB.isExportDb())
+							{
+								this.savelsp.run();
+							}
 						}else {
 							//FIXME: Mandar error
 						}
