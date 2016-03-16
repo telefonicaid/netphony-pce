@@ -1,6 +1,8 @@
 package es.tid.pce.client;
 
 
+import static org.junit.Assert.assertTrue;
+
 import java.net.Inet4Address;
 import java.net.UnknownHostException;
 import java.util.LinkedList;
@@ -114,19 +116,17 @@ public class QuickClientMain {
 			PCEPResponse res = qcObj.sendReqMessage(p_r, messageList);
 			System.out.println("Enviado!!!");
 			System.out.println("Respuesta "+res.toString());
-			res = qcObj.sendReqMessage(p_r, messageList);
-			System.out.println("Enviado!!!");
-			System.out.println("Respuesta 2 "+res.toString());
+			
 		}
 		catch( ParseException exp ) {
 			System.err.println( "Parsing failed.  Reason: " + exp.getMessage() );
 			HelpFormatter formatter = new HelpFormatter();
 			formatter.printHelp( "PCC-QuickClient <host> <port> <src> <dst> [options]", options );
-			System.exit(1);
+			
 		}
 		
 		
-		System.exit(-1);
+		
 		
 		
 		

@@ -2,212 +2,212 @@
 <!DOCTYPE log SYSTEM "logger.dtd">
 <log>
 <record>
-  <date>2016-03-16T16:15:58</date>
-  <millis>1458141358401</millis>
+  <date>2016-03-16T17:42:45</date>
+  <millis>1458146565688</millis>
   <sequence>0</sequence>
   <logger>PCEServer</logger>
   <level>INFO</level>
   <class>es.tid.pce.server.PCEServer</class>
   <method>main</method>
-  <thread>1</thread>
+  <thread>8</thread>
   <message>Configuration file: src/test/resources/PCEServerConfiguration_SSON.xml</message>
 </record>
 <record>
-  <date>2016-03-16T16:15:58</date>
-  <millis>1458141358423</millis>
+  <date>2016-03-16T17:42:45</date>
+  <millis>1458146565700</millis>
   <sequence>1</sequence>
   <logger>PCEServer</logger>
   <level>INFO</level>
   <class>es.tid.pce.server.PCEServer</class>
   <method>main</method>
-  <thread>1</thread>
+  <thread>8</thread>
   <message>Inizializing TID PCE Server!!</message>
 </record>
 <record>
-  <date>2016-03-16T16:15:58</date>
-  <millis>1458141358426</millis>
+  <date>2016-03-16T17:42:45</date>
+  <millis>1458146565702</millis>
   <sequence>2</sequence>
   <logger>PCEServer</logger>
   <level>INFO</level>
   <class>es.tid.pce.server.PCEServer</class>
   <method>main</method>
-  <thread>1</thread>
+  <thread>8</thread>
   <message>GENERIC PCE</message>
 </record>
 <record>
-  <date>2016-03-16T16:15:58</date>
-  <millis>1458141358428</millis>
+  <date>2016-03-16T17:42:45</date>
+  <millis>1458146565705</millis>
   <sequence>3</sequence>
   <logger>PCEServer</logger>
   <level>INFO</level>
   <class>es.tid.pce.server.PCEServer</class>
   <method>main</method>
-  <thread>1</thread>
+  <thread>8</thread>
   <message>Stateful PCE with T=false D=false S=false</message>
 </record>
 <record>
-  <date>2016-03-16T16:15:58</date>
-  <millis>1458141358435</millis>
+  <date>2016-03-16T17:42:45</date>
+  <millis>1458146565713</millis>
   <sequence>4</sequence>
   <logger>PCEServer</logger>
   <level>INFO</level>
   <class>es.tid.pce.server.TopologyManager</class>
   <method>initFromFile</method>
-  <thread>1</thread>
+  <thread>8</thread>
   <message>Initializing Single Layer TEDB</message>
 </record>
 <record>
-  <date>2016-03-16T16:15:58</date>
-  <millis>1458141358437</millis>
+  <date>2016-03-16T17:42:45</date>
+  <millis>1458146565714</millis>
   <sequence>5</sequence>
   <logger>PCEServer</logger>
   <level>INFO</level>
   <class>es.tid.pce.server.TopologyManager</class>
   <method>initFromFile</method>
-  <thread>1</thread>
+  <thread>8</thread>
   <message>Entro en el else:::true,params.isWLAN()false</message>
 </record>
 <record>
-  <date>2016-03-16T16:15:58</date>
-  <millis>1458141358437</millis>
+  <date>2016-03-16T17:42:45</date>
+  <millis>1458146565715</millis>
   <sequence>6</sequence>
   <logger>PCEServer</logger>
   <level>INFO</level>
   <class>es.tid.pce.server.TopologyManager</class>
   <method>initFromFile</method>
-  <thread>1</thread>
+  <thread>8</thread>
   <message>params.getNetworkDescriptionFile()::/home/victoruceda/workspace/ABNO-completo/cne-pce/src/test/resources/topologia.xml</message>
 </record>
 <record>
-  <date>2016-03-16T16:15:58</date>
-  <millis>1458141358583</millis>
+  <date>2016-03-16T17:42:45</date>
+  <millis>1458146565908</millis>
   <sequence>59</sequence>
   <logger>PCEServer</logger>
   <level>INFO</level>
   <class>es.tid.pce.server.PCEServer</class>
   <method>main</method>
-  <thread>1</thread>
+  <thread>8</thread>
   <message>There is no parent PCE</message>
 </record>
 <record>
-  <date>2016-03-16T16:15:58</date>
-  <millis>1458141358584</millis>
+  <date>2016-03-16T17:42:45</date>
+  <millis>1458146565909</millis>
   <sequence>60</sequence>
   <logger>PCEServer</logger>
   <level>INFO</level>
   <class>es.tid.pce.server.PCEServer</class>
   <method>main</method>
-  <thread>1</thread>
+  <thread>8</thread>
   <message>Initializing Request Dispatcher</message>
 </record>
 <record>
-  <date>2016-03-16T16:15:58</date>
-  <millis>1458141358585</millis>
+  <date>2016-03-16T17:42:45</date>
+  <millis>1458146565911</millis>
   <sequence>61</sequence>
   <logger>PCEServer</logger>
   <level>INFO</level>
   <class>es.tid.pce.server.PCEServer</class>
   <method>main</method>
-  <thread>1</thread>
+  <thread>8</thread>
   <message>Launching Reservation Manager</message>
 </record>
 <record>
-  <date>2016-03-16T16:15:58</date>
-  <millis>1458141358591</millis>
+  <date>2016-03-16T17:42:45</date>
+  <millis>1458146565919</millis>
   <sequence>62</sequence>
   <logger>PCEServer</logger>
   <level>INFO</level>
   <class>es.tid.pce.computingEngine.RequestDispatcher</class>
   <method>&lt;init&gt;</method>
-  <thread>1</thread>
+  <thread>8</thread>
   <message>1. Starting Request Processor Thread!</message>
 </record>
 <record>
-  <date>2016-03-16T16:15:58</date>
-  <millis>1458141358595</millis>
+  <date>2016-03-16T17:42:45</date>
+  <millis>1458146565927</millis>
   <sequence>63</sequence>
   <logger>PCEServer</logger>
   <level>INFO</level>
   <class>es.tid.pce.computingEngine.RequestProcessorThread</class>
   <method>run</method>
-  <thread>10</thread>
+  <thread>11</thread>
   <message>Waiting for a new Computing Request to process</message>
 </record>
 <record>
-  <date>2016-03-16T16:15:58</date>
-  <millis>1458141358597</millis>
+  <date>2016-03-16T17:42:45</date>
+  <millis>1458146565930</millis>
   <sequence>64</sequence>
   <logger>PCEServer</logger>
   <level>INFO</level>
   <class>es.tid.pce.server.management.PCEManagementSever</class>
   <method>run</method>
-  <thread>13</thread>
+  <thread>14</thread>
   <message>Listening on port 6666</message>
 </record>
 <record>
-  <date>2016-03-16T16:15:58</date>
-  <millis>1458141358597</millis>
+  <date>2016-03-16T17:42:45</date>
+  <millis>1458146565931</millis>
   <sequence>65</sequence>
   <logger>PCEServer</logger>
   <level>INFO</level>
   <class>es.tid.pce.server.PCEServer</class>
   <method>main</method>
-  <thread>1</thread>
+  <thread>8</thread>
   <message>There are no collaborative PCEs</message>
 </record>
 <record>
-  <date>2016-03-16T16:15:58</date>
-  <millis>1458141358598</millis>
+  <date>2016-03-16T17:42:45</date>
+  <millis>1458146565934</millis>
   <sequence>66</sequence>
   <logger>PCEServer</logger>
   <level>INFO</level>
   <class>es.tid.pce.server.PCEServer</class>
   <method>main</method>
-  <thread>1</thread>
+  <thread>8</thread>
   <message>Listening on port: 4189</message>
 </record>
 <record>
-  <date>2016-03-16T16:15:58</date>
-  <millis>1458141358599</millis>
+  <date>2016-03-16T17:42:45</date>
+  <millis>1458146565935</millis>
   <sequence>67</sequence>
   <logger>PCEServer</logger>
   <level>INFO</level>
   <class>es.tid.pce.server.PCEServer</class>
   <method>main</method>
-  <thread>1</thread>
+  <thread>8</thread>
   <message>Listening on address: 127.0.0.1</message>
 </record>
 <record>
-  <date>2016-03-16T16:15:58</date>
-  <millis>1458141358602</millis>
+  <date>2016-03-16T17:42:45</date>
+  <millis>1458146565938</millis>
   <sequence>68</sequence>
   <logger>PCEServer</logger>
   <level>INFO</level>
   <class>es.tid.pce.server.PCEServer</class>
   <method>main</method>
-  <thread>1</thread>
+  <thread>8</thread>
   <message>Registering algorithm sson.AURE_SSON_algorithm for of = 1002 and svec = false</message>
 </record>
 <record>
-  <date>2016-03-16T16:15:58</date>
-  <millis>1458141358602</millis>
+  <date>2016-03-16T17:42:45</date>
+  <millis>1458146565939</millis>
   <sequence>69</sequence>
   <logger>PCEServer</logger>
   <level>INFO</level>
   <class>es.tid.pce.computingEngine.RequestDispatcher</class>
   <method>registerAlgorithmSSON</method>
-  <thread>1</thread>
+  <thread>8</thread>
   <message>Registering algorithm im processor</message>
 </record>
 <record>
-  <date>2016-03-16T16:15:58</date>
-  <millis>1458141358609</millis>
+  <date>2016-03-16T17:42:45</date>
+  <millis>1458146565945</millis>
   <sequence>70</sequence>
   <logger>PCEServer</logger>
   <level>INFO</level>
   <class>es.tid.pce.computingEngine.algorithms.sson.AURE_SSON_algorithmPreComputation</class>
   <method>setTEDB</method>
-  <thread>1</thread>
+  <thread>8</thread>
   <message>Grafo Nodes: 
 	/192.168.1.1
 	/192.168.1.2
@@ -244,862 +244,1054 @@ Bytes Reserved Bitmap: 0000000000000000000000000000000000000000
 </message>
 </record>
 <record>
-  <date>2016-03-16T16:15:58</date>
-  <millis>1458141358611</millis>
+  <date>2016-03-16T17:42:45</date>
+  <millis>1458146565947</millis>
   <sequence>71</sequence>
   <logger>PCEServer</logger>
   <level>INFO</level>
   <class>es.tid.pce.computingEngine.algorithms.sson.AURE_SSON_algorithmPreComputation</class>
   <method>setTEDB</method>
-  <thread>1</thread>
+  <thread>8</thread>
   <message>Using SimpleTEDB</message>
 </record>
 <record>
-  <date>2016-03-16T16:15:58</date>
-  <millis>1458141358612</millis>
+  <date>2016-03-16T17:42:45</date>
+  <millis>1458146565948</millis>
   <sequence>72</sequence>
   <logger>PCEServer</logger>
   <level>INFO</level>
   <class>es.tid.pce.computingEngine.algorithms.sson.AURE_SSON_algorithmPreComputation</class>
   <method>initialize</method>
-  <thread>1</thread>
+  <thread>8</thread>
   <message>initializing AURE_SSON Algorithm</message>
 </record>
 <record>
-  <date>2016-03-16T16:15:58</date>
-  <millis>1458141358633</millis>
+  <date>2016-03-16T17:42:45</date>
+  <millis>1458146565971</millis>
   <sequence>73</sequence>
   <logger>PCEServer</logger>
   <level>INFO</level>
   <class>es.tid.pce.computingEngine.algorithms.sson.AURE_SSON_algorithmPreComputation</class>
   <method>initialize</method>
-  <thread>1</thread>
+  <thread>8</thread>
   <message>Algoritmo inicializado</message>
 </record>
 <record>
-  <date>2016-03-16T16:15:58</date>
-  <millis>1458141358634</millis>
+  <date>2016-03-16T17:42:45</date>
+  <millis>1458146565972</millis>
   <sequence>74</sequence>
   <logger>PCEServer</logger>
   <level>INFO</level>
   <class>es.tid.pce.server.PCEServer</class>
   <method>main</method>
-  <thread>1</thread>
+  <thread>8</thread>
   <message>redis: _ _</message>
 </record>
 <record>
-  <date>2016-03-16T16:15:58</date>
-  <millis>1458141358637</millis>
+  <date>2016-03-16T17:42:45</date>
+  <millis>1458146565973</millis>
   <sequence>75</sequence>
   <logger>PCEServer</logger>
   <level>INFO</level>
   <class>es.tid.pce.server.PCEServer</class>
   <method>main</method>
-  <thread>1</thread>
+  <thread>8</thread>
   <message>Creando dispatchers para el LSP DB</message>
 </record>
 <record>
-  <date>2016-03-16T16:15:58</date>
-  <millis>1458141358639</millis>
+  <date>2016-03-16T17:42:45</date>
+  <millis>1458146565975</millis>
   <sequence>76</sequence>
   <logger>PCEServer</logger>
   <level>INFO</level>
   <class>es.tid.pce.computingEngine.ReportDispatcher</class>
   <method>&lt;init&gt;</method>
-  <thread>1</thread>
+  <thread>8</thread>
   <message>Starting Request Processor Thread</message>
 </record>
 <record>
-  <date>2016-03-16T16:15:58</date>
-  <millis>1458141358641</millis>
+  <date>2016-03-16T17:42:45</date>
+  <millis>1458146565976</millis>
   <sequence>77</sequence>
   <logger>PCEServer</logger>
   <level>INFO</level>
   <class>es.tid.pce.computingEngine.ReportDispatcher</class>
   <method>&lt;init&gt;</method>
-  <thread>1</thread>
+  <thread>8</thread>
   <message>Starting Request Processor Thread</message>
 </record>
 <record>
-  <date>2016-03-16T16:16:01</date>
-  <millis>1458141361448</millis>
+  <date>2016-03-16T17:42:47</date>
+  <millis>1458146567688</millis>
   <sequence>78</sequence>
   <logger>PCEServer</logger>
   <level>INFO</level>
   <class>es.tid.pce.server.DomainPCESession</class>
   <method>&lt;init&gt;</method>
-  <thread>1</thread>
-  <message>New Domain PCESession: Socket[addr=/127.0.0.1,port=53160,localport=4189]</message>
+  <thread>8</thread>
+  <message>New Domain PCESession: Socket[addr=/127.0.0.1,port=53466,localport=4189]</message>
 </record>
 <record>
-  <date>2016-03-16T16:16:01</date>
-  <millis>1458141361450</millis>
+  <date>2016-03-16T17:42:47</date>
+  <millis>1458146567694</millis>
   <sequence>79</sequence>
   <logger>PCEServer</logger>
   <level>INFO</level>
   <class>es.tid.pce.pcepsession.GenericPCEPSession</class>
   <method>initializePCEPSession</method>
-  <thread>17</thread>
+  <thread>20</thread>
   <message>Entering PCEP_STATE_OPEN_WAIT</message>
 </record>
 <record>
-  <date>2016-03-16T16:16:01</date>
-  <millis>1458141361451</millis>
+  <date>2016-03-16T17:42:47</date>
+  <millis>1458146567695</millis>
   <sequence>80</sequence>
   <logger>PCEServer</logger>
   <level>INFO</level>
   <class>es.tid.pce.pcepsession.GenericPCEPSession</class>
   <method>initializePCEPSession</method>
-  <thread>17</thread>
+  <thread>20</thread>
   <message>Scheduling Open Wait Timer</message>
 </record>
 <record>
-  <date>2016-03-16T16:16:01</date>
-  <millis>1458141361452</millis>
+  <date>2016-03-16T17:42:47</date>
+  <millis>1458146567696</millis>
   <sequence>81</sequence>
   <logger>PCEServer</logger>
   <level>INFO</level>
   <class>es.tid.pce.pcepsession.GenericPCEPSession</class>
   <method>initializePCEPSession</method>
-  <thread>17</thread>
+  <thread>20</thread>
   <message>Sending OPEN Message</message>
 </record>
 <record>
-  <date>2016-03-16T16:16:01</date>
-  <millis>1458141361455</millis>
+  <date>2016-03-16T17:42:47</date>
+  <millis>1458146567697</millis>
   <sequence>82</sequence>
   <logger>PCEServer</logger>
   <level>INFO</level>
   <class>es.tid.pce.pcepsession.GenericPCEPSession</class>
   <method>initializePCEPSession</method>
-  <thread>17</thread>
+  <thread>20</thread>
   <message>Stateful: true Active: false Trigger sync: false Incremental sync: false include the LSP-DB-VERSION: false</message>
 </record>
 <record>
-  <date>2016-03-16T16:16:01</date>
-  <millis>1458141361477</millis>
+  <date>2016-03-16T17:42:47</date>
+  <millis>1458146567702</millis>
   <sequence>83</sequence>
   <logger>PCEServer</logger>
   <level>INFO</level>
   <class>es.tid.pce.pcepsession.GenericPCEPSession</class>
   <method>initializePCEPSession</method>
-  <thread>17</thread>
+  <thread>20</thread>
   <message>OPEN Message Received</message>
 </record>
 <record>
-  <date>2016-03-16T16:16:01</date>
-  <millis>1458141361478</millis>
+  <date>2016-03-16T17:42:47</date>
+  <millis>1458146567704</millis>
   <sequence>84</sequence>
   <logger>PCEServer</logger>
   <level>FINEST</level>
   <class>es.tid.pce.pcepsession.GenericPCEPSession</class>
   <method>initializePCEPSession</method>
-  <thread>17</thread>
+  <thread>20</thread>
   <message>
 Ver: 1 Flags: Parent PCE Indication Bit: falseParent PCE Request Bit: false Keepalive30 Deadtimer: 120 SID: 1</message>
 </record>
 <record>
-  <date>2016-03-16T16:16:01</date>
-  <millis>1458141361478</millis>
+  <date>2016-03-16T17:42:47</date>
+  <millis>1458146567704</millis>
   <sequence>85</sequence>
   <logger>PCEServer</logger>
   <level>INFO</level>
   <class>es.tid.pce.pcepsession.GenericPCEPSession</class>
   <method>initializePCEPSession</method>
-  <thread>17</thread>
+  <thread>20</thread>
   <message>I'm expeting Stateful session</message>
 </record>
 <record>
-  <date>2016-03-16T16:16:01</date>
-  <millis>1458141361479</millis>
+  <date>2016-03-16T17:42:47</date>
+  <millis>1458146567705</millis>
   <sequence>86</sequence>
   <logger>PCEServer</logger>
   <level>INFO</level>
   <class>es.tid.pce.pcepsession.GenericPCEPSession</class>
   <method>initializePCEPSession</method>
-  <thread>17</thread>
+  <thread>20</thread>
   <message>Neither of us are SR capable :(</message>
 </record>
 <record>
-  <date>2016-03-16T16:16:01</date>
-  <millis>1458141361480</millis>
+  <date>2016-03-16T17:42:47</date>
+  <millis>1458146567706</millis>
   <sequence>87</sequence>
   <logger>PCEServer</logger>
   <level>FINE</level>
   <class>es.tid.pce.pcepsession.GenericPCEPSession</class>
   <method>initializePCEPSession</method>
-  <thread>17</thread>
+  <thread>20</thread>
   <message>Sending KA to confirm</message>
 </record>
 <record>
-  <date>2016-03-16T16:16:01</date>
-  <millis>1458141361480</millis>
+  <date>2016-03-16T17:42:47</date>
+  <millis>1458146567706</millis>
   <sequence>88</sequence>
   <logger>PCEServer</logger>
   <level>FINE</level>
   <class>es.tid.pce.pcepsession.GenericPCEPSession</class>
   <method>initializePCEPSession</method>
-  <thread>17</thread>
+  <thread>20</thread>
   <message>Sending Keepalive message</message>
 </record>
 <record>
-  <date>2016-03-16T16:16:01</date>
-  <millis>1458141361480</millis>
+  <date>2016-03-16T17:42:47</date>
+  <millis>1458146567706</millis>
   <sequence>89</sequence>
   <logger>PCEServer</logger>
   <level>INFO</level>
   <class>es.tid.pce.pcepsession.GenericPCEPSession</class>
   <method>initializePCEPSession</method>
-  <thread>17</thread>
+  <thread>20</thread>
   <message>Entering STATE_KEEP_WAIT</message>
 </record>
 <record>
-  <date>2016-03-16T16:16:01</date>
-  <millis>1458141361481</millis>
+  <date>2016-03-16T17:42:47</date>
+  <millis>1458146567707</millis>
   <sequence>90</sequence>
   <logger>PCEServer</logger>
   <level>FINE</level>
   <class>es.tid.pce.pcepsession.GenericPCEPSession</class>
   <method>initializePCEPSession</method>
-  <thread>17</thread>
+  <thread>20</thread>
   <message>Scheduling KeepwaitTimer</message>
 </record>
 <record>
-  <date>2016-03-16T16:16:01</date>
-  <millis>1458141361482</millis>
+  <date>2016-03-16T17:42:47</date>
+  <millis>1458146567708</millis>
   <sequence>91</sequence>
   <logger>PCEServer</logger>
   <level>INFO</level>
   <class>es.tid.pce.pcepsession.GenericPCEPSession</class>
   <method>initializePCEPSession</method>
-  <thread>17</thread>
+  <thread>20</thread>
   <message>open object saved: 
 Ver: 1 Flags: Parent PCE Indication Bit: falseParent PCE Request Bit: false Keepalive30 Deadtimer: 120 SID: 1</message>
 </record>
 <record>
-  <date>2016-03-16T16:16:01</date>
-  <millis>1458141361483</millis>
+  <date>2016-03-16T17:42:47</date>
+  <millis>1458146567709</millis>
   <sequence>92</sequence>
   <logger>PCEServer</logger>
   <level>INFO</level>
   <class>es.tid.pce.pcepsession.GenericPCEPSession</class>
   <method>initializePCEPSession</method>
-  <thread>17</thread>
+  <thread>20</thread>
   <message>KeepAlive Message Received</message>
 </record>
 <record>
-  <date>2016-03-16T16:16:01</date>
-  <millis>1458141361484</millis>
+  <date>2016-03-16T17:42:47</date>
+  <millis>1458146567709</millis>
   <sequence>93</sequence>
   <logger>PCEServer</logger>
   <level>INFO</level>
   <class>es.tid.pce.pcepsession.GenericPCEPSession</class>
   <method>initializePCEPSession</method>
-  <thread>17</thread>
+  <thread>20</thread>
   <message>Entering STATE_SESSION_UP</message>
 </record>
 <record>
-  <date>2016-03-16T16:16:01</date>
-  <millis>1458141361487</millis>
+  <date>2016-03-16T17:42:47</date>
+  <millis>1458146567712</millis>
   <sequence>95</sequence>
   <logger>PCEServer</logger>
   <level>INFO</level>
   <class>es.tid.pce.server.DomainPCESession</class>
   <method>run</method>
-  <thread>17</thread>
+  <thread>20</thread>
   <message>PCE Session succesfully established!!</message>
 </record>
 <record>
-  <date>2016-03-16T16:16:01</date>
-  <millis>1458141361501</millis>
+  <date>2016-03-16T17:42:47</date>
+  <millis>1458146567719</millis>
   <sequence>96</sequence>
   <logger>PCEServer</logger>
   <level>INFO</level>
   <class>es.tid.pce.server.DomainPCESession</class>
   <method>run</method>
-  <thread>17</thread>
+  <thread>20</thread>
   <message>PCREQ message received</message>
 </record>
 <record>
-  <date>2016-03-16T16:16:01</date>
-  <millis>1458141361506</millis>
+  <date>2016-03-16T17:42:47</date>
+  <millis>1458146567720</millis>
   <sequence>97</sequence>
   <logger>PCEServer</logger>
   <level>FINEST</level>
   <class>es.tid.pce.computingEngine.RequestDispatcher</class>
   <method>dispathRequests</method>
-  <thread>17</thread>
+  <thread>20</thread>
   <message>There are 1 requests</message>
 </record>
 <record>
-  <date>2016-03-16T16:16:01</date>
-  <millis>1458141361507</millis>
+  <date>2016-03-16T17:42:47</date>
+  <millis>1458146567720</millis>
   <sequence>98</sequence>
   <logger>PCEServer</logger>
   <level>INFO</level>
   <class>es.tid.pce.computingEngine.RequestDispatcher</class>
   <method>dispathRequests</method>
-  <thread>17</thread>
+  <thread>20</thread>
   <message>Dispatching Request!</message>
 </record>
 <record>
-  <date>2016-03-16T16:16:01</date>
-  <millis>1458141361508</millis>
+  <date>2016-03-16T17:42:47</date>
+  <millis>1458146567722</millis>
   <sequence>99</sequence>
   <logger>PCEServer</logger>
   <level>FINE</level>
   <class>es.tid.pce.server.DomainPCESession</class>
   <method>run</method>
-  <thread>17</thread>
+  <thread>20</thread>
   <message>Reseting Dead Timer as PCEP Message has arrived</message>
 </record>
 <record>
-  <date>2016-03-16T16:16:01</date>
-  <millis>1458141361508</millis>
+  <date>2016-03-16T17:42:47</date>
+  <millis>1458146567722</millis>
   <sequence>100</sequence>
   <logger>PCEServer</logger>
   <level>INFO</level>
   <class>es.tid.pce.computingEngine.RequestProcessorThread</class>
   <method>run</method>
-  <thread>10</thread>
-  <message>Processing New Path Computing request, id: &lt;RP ReqID: 1 Prio: 1 Reopt: 0 Bid: 0 Loose: 0 SupOF: false retry false&gt;Source IP: /192.168.1.1 Destination IP: /192.168.1.3&lt;GENW= GenBW SSON m: 4&gt;</message>
+  <thread>11</thread>
+  <message>Processing New Path Computing request, id: &lt;RP ReqID: 47 Prio: 1 Reopt: 0 Bid: 0 Loose: 0 SupOF: false retry false&gt;&lt;GEP_P2P src = 192.168.1.2 dst = 192.168.1.5&gt;&lt;GENW= GenBW SSON m: 2&gt;&lt;OF code= 1002&gt;</message>
 </record>
 <record>
-  <date>2016-03-16T16:16:01</date>
-  <millis>1458141361509</millis>
+  <date>2016-03-16T17:42:47</date>
+  <millis>1458146567722</millis>
   <sequence>101</sequence>
-  <logger>PCEServer</logger>
-  <level>INFO</level>
-  <class>es.tid.pce.computingEngine.RequestProcessorThread</class>
-  <method>run</method>
-  <thread>10</thread>
-  <message> XXXX try source: /192.168.1.1</message>
-</record>
-<record>
-  <date>2016-03-16T16:16:01</date>
-  <millis>1458141361510</millis>
-  <sequence>103</sequence>
-  <logger>PCEServer</logger>
-  <level>INFO</level>
-  <class>es.tid.pce.computingEngine.RequestProcessorThread</class>
-  <method>run</method>
-  <thread>10</thread>
-  <message> XXXX try dest: /192.168.1.3</message>
-</record>
-<record>
-  <date>2016-03-16T16:16:01</date>
-  <millis>1458141361509</millis>
-  <sequence>102</sequence>
   <logger>PCEServer</logger>
   <level>FINE</level>
   <class>es.tid.pce.pcepsession.DeadTimerThread</class>
   <method>run</method>
-  <thread>19</thread>
+  <thread>24</thread>
   <message>Reseting Dead Timer</message>
 </record>
 <record>
-  <date>2016-03-16T16:16:01</date>
-  <millis>1458141361511</millis>
+  <date>2016-03-16T17:42:47</date>
+  <millis>1458146567723</millis>
+  <sequence>102</sequence>
+  <logger>PCEServer</logger>
+  <level>INFO</level>
+  <class>es.tid.pce.computingEngine.RequestProcessorThread</class>
+  <method>run</method>
+  <thread>11</thread>
+  <message>RequestProcessorThread GeneralizedEndPoints -&gt; sourceDataPath:: 192.168.1.2 destDataPath :: 192.168.1.5</message>
+</record>
+<record>
+  <date>2016-03-16T17:42:47</date>
+  <millis>1458146567724</millis>
+  <sequence>103</sequence>
+  <logger>PCEServer</logger>
+  <level>FINE</level>
+  <class>es.tid.pce.computingEngine.RequestProcessorThread</class>
+  <method>run</method>
+  <thread>11</thread>
+  <message>Non-svec request</message>
+</record>
+<record>
+  <date>2016-03-16T17:42:47</date>
+  <millis>1458146567724</millis>
   <sequence>104</sequence>
   <logger>PCEServer</logger>
   <level>FINE</level>
   <class>es.tid.pce.computingEngine.RequestProcessorThread</class>
   <method>run</method>
-  <thread>10</thread>
-  <message>Non-svec request</message>
+  <thread>11</thread>
+  <message>ObjectiveFunction code 1002</message>
 </record>
 <record>
-  <date>2016-03-16T16:16:01</date>
-  <millis>1458141361511</millis>
+  <date>2016-03-16T17:42:47</date>
+  <millis>1458146567724</millis>
   <sequence>105</sequence>
   <logger>PCEServer</logger>
   <level>INFO</level>
   <class>es.tid.pce.computingEngine.RequestProcessorThread</class>
   <method>run</method>
-  <thread>10</thread>
-  <message>Choosing default algotithm 2</message>
+  <thread>11</thread>
+  <message>Choosing algorithm of OF 1002</message>
 </record>
 <record>
-  <date>2016-03-16T16:16:01</date>
-  <millis>1458141361517</millis>
+  <date>2016-03-16T17:42:47</date>
+  <millis>1458146567728</millis>
   <sequence>106</sequence>
   <logger>PCEServer</logger>
-  <level>INFO</level>
-  <class>es.tid.pce.computingEngine.algorithms.DefaultSinglePathComputing</class>
+  <level>FINEST</level>
+  <class>es.tid.pce.computingEngine.algorithms.sson.AURE_SSON_algorithm</class>
   <method>call</method>
-  <thread>10</thread>
-  <message>Processing Single Path Computing Request id: 1</message>
+  <thread>11</thread>
+  <message>Starting AURE Algorithm</message>
 </record>
 <record>
-  <date>2016-03-16T16:16:01</date>
-  <millis>1458141361519</millis>
+  <date>2016-03-16T17:42:47</date>
+  <millis>1458146567729</millis>
   <sequence>107</sequence>
   <logger>PCEServer</logger>
   <level>INFO</level>
-  <class>es.tid.pce.computingEngine.algorithms.DefaultSinglePathComputing</class>
+  <class>es.tid.pce.computingEngine.algorithms.sson.AURE_SSON_algorithm</class>
   <method>call</method>
-  <thread>10</thread>
-  <message>Algorithm-&gt;  Source:: /192.168.1.1 Destination:: /192.168.1.3</message>
+  <thread>11</thread>
+  <message>Request id: 47, getting endpoints</message>
 </record>
 <record>
-  <date>2016-03-16T16:16:01</date>
-  <millis>1458141361520</millis>
+  <date>2016-03-16T17:42:47</date>
+  <millis>1458146567731</millis>
   <sequence>108</sequence>
   <logger>PCEServer</logger>
   <level>INFO</level>
-  <class>es.tid.pce.computingEngine.algorithms.DefaultSinglePathComputing</class>
+  <class>es.tid.pce.computingEngine.algorithms.sson.AURE_SSON_algorithm</class>
   <method>call</method>
-  <thread>10</thread>
-  <message>Check if we have source and destination in our TED</message>
+  <thread>11</thread>
+  <message> XXXX req.getBandwidth(): &lt;GENW= GenBW SSON m: 2&gt;</message>
 </record>
 <record>
-  <date>2016-03-16T16:16:01</date>
-  <millis>1458141361521</millis>
+  <date>2016-03-16T17:42:47</date>
+  <millis>1458146567732</millis>
   <sequence>109</sequence>
   <logger>PCEServer</logger>
-  <level>FINEST</level>
-  <class>es.tid.pce.computingEngine.algorithms.DefaultSinglePathComputing</class>
+  <level>INFO</level>
+  <class>es.tid.pce.computingEngine.algorithms.sson.AURE_SSON_algorithm</class>
   <method>call</method>
-  <thread>10</thread>
-  <message>Computing path</message>
+  <thread>11</thread>
+  <message>BW: GenBW SSON m: 2</message>
 </record>
 <record>
-  <date>2016-03-16T16:16:01</date>
-  <millis>1458141361529</millis>
+  <date>2016-03-16T17:42:47</date>
+  <millis>1458146567732</millis>
   <sequence>110</sequence>
   <logger>PCEServer</logger>
-  <level>FINEST</level>
-  <class>es.tid.pce.computingEngine.algorithms.DefaultSinglePathComputing</class>
+  <level>INFO</level>
+  <class>es.tid.pce.computingEngine.algorithms.sson.AURE_SSON_algorithm</class>
   <method>call</method>
-  <thread>10</thread>
-  <message>Creating response</message>
+  <thread>11</thread>
+  <message>bw.getGeneralizedBandwidth() is GeneralizedBandwidthSSON type</message>
 </record>
 <record>
-  <date>2016-03-16T16:16:01</date>
-  <millis>1458141361534</millis>
+  <date>2016-03-16T17:42:47</date>
+  <millis>1458146567733</millis>
   <sequence>111</sequence>
   <logger>PCEServer</logger>
   <level>INFO</level>
-  <class>es.tid.pce.computingEngine.algorithms.DefaultSinglePathComputing</class>
+  <class>es.tid.pce.computingEngine.algorithms.sson.AURE_SSON_algorithm</class>
   <method>call</method>
-  <thread>10</thread>
-  <message>jm dspc destination_port: 0</message>
+  <thread>11</thread>
+  <message>XXXX num_slots:4</message>
 </record>
 <record>
-  <date>2016-03-16T16:16:01</date>
-  <millis>1458141361536</millis>
+  <date>2016-03-16T17:42:47</date>
+  <millis>1458146567734</millis>
   <sequence>112</sequence>
   <logger>PCEServer</logger>
   <level>INFO</level>
-  <class>es.tid.pce.computingEngine.algorithms.DefaultSinglePathComputing</class>
+  <class>es.tid.pce.computingEngine.algorithms.sson.AURE_SSON_algorithm</class>
   <method>call</method>
-  <thread>10</thread>
-  <message>Algorithm.ero :: &lt;ERO: /192.168.1.1:1 /192.168.1.2:2 /192.168.1.3/32 &gt;</message>
+  <thread>11</thread>
+  <message>Request num_slots: 4</message>
 </record>
 <record>
-  <date>2016-03-16T16:16:01</date>
-  <millis>1458141361537</millis>
+  <date>2016-03-16T17:42:47</date>
+  <millis>1458146567735</millis>
   <sequence>113</sequence>
   <logger>PCEServer</logger>
   <level>INFO</level>
-  <class>es.tid.pce.computingEngine.algorithms.DefaultSinglePathComputing</class>
+  <class>es.tid.pce.computingEngine.algorithms.sson.AURE_SSON_algorithm</class>
   <method>call</method>
-  <thread>10</thread>
-  <message>Algorithm.path:: PATH={ &lt;ERO: /192.168.1.1:1 /192.168.1.2:2 /192.168.1.3/32 &gt; }</message>
+  <thread>11</thread>
+  <message>EP.getOT()==ObjectParameters.PCEP_OBJECT_TYPE_GENERALIZED_ENDPOINTS</message>
 </record>
 <record>
-  <date>2016-03-16T16:16:01</date>
-  <millis>1458141361538</millis>
+  <date>2016-03-16T17:42:47</date>
+  <millis>1458146567736</millis>
   <sequence>114</sequence>
   <logger>PCEServer</logger>
   <level>INFO</level>
-  <class>es.tid.pce.computingEngine.algorithms.DefaultSinglePathComputing</class>
+  <class>es.tid.pce.computingEngine.algorithms.sson.AURE_SSON_algorithm</class>
   <method>call</method>
-  <thread>10</thread>
-  <message>Ha tardado 21220792 nanosegundos</message>
+  <thread>11</thread>
+  <message>Source: /192.168.1.2; Destination:/192.168.1.5</message>
 </record>
 <record>
-  <date>2016-03-16T16:16:01</date>
-  <millis>1458141361539</millis>
+  <date>2016-03-16T17:42:47</date>
+  <millis>1458146567738</millis>
   <sequence>115</sequence>
   <logger>PCEServer</logger>
   <level>INFO</level>
-  <class>es.tid.pce.computingEngine.RequestProcessorThread</class>
-  <method>run</method>
-  <thread>10</thread>
-  <message>ReppPP:::RESP: &lt;RP ReqID: 1 Prio: 0 Reopt: 0 Bid: 0 Loose: 0 SupOF: false retry false&gt;PATH={ &lt;ERO: /192.168.1.1:1 /192.168.1.2:2 /192.168.1.3/32 &gt; }</message>
+  <class>es.tid.pce.computingEngine.algorithms.sson.AURE_SSON_algorithm</class>
+  <method>call</method>
+  <thread>11</thread>
+  <message>Source or destination are NOT in the TED</message>
 </record>
 <record>
-  <date>2016-03-16T16:16:01</date>
-  <millis>1458141361540</millis>
+  <date>2016-03-16T17:42:47</date>
+  <millis>1458146567740</millis>
   <sequence>116</sequence>
   <logger>PCEServer</logger>
-  <level>INFO</level>
-  <class>es.tid.pce.computingEngine.RequestProcessorThread</class>
-  <method>run</method>
-  <thread>10</thread>
-  <message>RESP: &lt;RP ReqID: 1 Prio: 0 Reopt: 0 Bid: 0 Loose: 0 SupOF: false retry false&gt;PATH={ &lt;ERO: /192.168.1.1:1 /192.168.1.2:2 /192.168.1.3/32 &gt; }</message>
+  <level>FINEST</level>
+  <class>es.tid.pce.computingEngine.algorithms.sson.AURE_SSON_algorithm</class>
+  <method>call</method>
+  <thread>11</thread>
+  <message>Unknown destination</message>
 </record>
 <record>
-  <date>2016-03-16T16:16:01</date>
-  <millis>1458141361542</millis>
+  <date>2016-03-16T17:42:47</date>
+  <millis>1458146567740</millis>
   <sequence>117</sequence>
   <logger>PCEServer</logger>
   <level>INFO</level>
   <class>es.tid.pce.computingEngine.RequestProcessorThread</class>
   <method>run</method>
-  <thread>10</thread>
-  <message>Request processeed, about to send response</message>
+  <thread>11</thread>
+  <message>ReppPP:::RESP: &lt;RP ReqID: 47 Prio: 0 Reopt: 0 Bid: 0 Loose: 0 SupOF: false retry false&gt;&lt;NOPATH&gt;</message>
 </record>
 <record>
-  <date>2016-03-16T16:16:01</date>
-  <millis>1458141361548</millis>
+  <date>2016-03-16T17:42:47</date>
+  <millis>1458146567741</millis>
   <sequence>118</sequence>
   <logger>PCEServer</logger>
   <level>INFO</level>
   <class>es.tid.pce.computingEngine.RequestProcessorThread</class>
   <method>run</method>
-  <thread>10</thread>
-  <message>Waiting for a new Computing Request to process</message>
+  <thread>11</thread>
+  <message>RESP: &lt;RP ReqID: 47 Prio: 0 Reopt: 0 Bid: 0 Loose: 0 SupOF: false retry false&gt;&lt;NOPATH&gt;</message>
 </record>
 <record>
-  <date>2016-03-16T16:16:01</date>
-  <millis>1458141361554</millis>
+  <date>2016-03-16T17:42:47</date>
+  <millis>1458146567743</millis>
   <sequence>119</sequence>
-  <logger>PCEServer</logger>
-  <level>INFO</level>
-  <class>es.tid.pce.server.DomainPCESession</class>
-  <method>run</method>
-  <thread>17</thread>
-  <message>PCREQ message received</message>
-</record>
-<record>
-  <date>2016-03-16T16:16:01</date>
-  <millis>1458141361557</millis>
-  <sequence>120</sequence>
-  <logger>PCEServer</logger>
-  <level>FINEST</level>
-  <class>es.tid.pce.computingEngine.RequestDispatcher</class>
-  <method>dispathRequests</method>
-  <thread>17</thread>
-  <message>There are 1 requests</message>
-</record>
-<record>
-  <date>2016-03-16T16:16:01</date>
-  <millis>1458141361558</millis>
-  <sequence>121</sequence>
-  <logger>PCEServer</logger>
-  <level>INFO</level>
-  <class>es.tid.pce.computingEngine.RequestDispatcher</class>
-  <method>dispathRequests</method>
-  <thread>17</thread>
-  <message>Dispatching Request!</message>
-</record>
-<record>
-  <date>2016-03-16T16:16:01</date>
-  <millis>1458141361559</millis>
-  <sequence>122</sequence>
-  <logger>PCEServer</logger>
-  <level>FINE</level>
-  <class>es.tid.pce.server.DomainPCESession</class>
-  <method>run</method>
-  <thread>17</thread>
-  <message>Reseting Dead Timer as PCEP Message has arrived</message>
-</record>
-<record>
-  <date>2016-03-16T16:16:01</date>
-  <millis>1458141361559</millis>
-  <sequence>123</sequence>
   <logger>PCEServer</logger>
   <level>INFO</level>
   <class>es.tid.pce.computingEngine.RequestProcessorThread</class>
   <method>run</method>
-  <thread>10</thread>
-  <message>Processing New Path Computing request, id: &lt;RP ReqID: 1 Prio: 1 Reopt: 0 Bid: 0 Loose: 0 SupOF: false retry false&gt;Source IP: /192.168.1.1 Destination IP: /192.168.1.3&lt;GENW= GenBW SSON m: 4&gt;</message>
+  <thread>11</thread>
+  <message>Request processeed, about to send response</message>
 </record>
 <record>
-  <date>2016-03-16T16:16:01</date>
-  <millis>1458141361560</millis>
-  <sequence>124</sequence>
+  <date>2016-03-16T17:42:47</date>
+  <millis>1458146567744</millis>
+  <sequence>120</sequence>
+  <logger>PCEServer</logger>
+  <level>INFO</level>
+  <class>es.tid.pce.computingEngine.RequestProcessorThread</class>
+  <method>run</method>
+  <thread>11</thread>
+  <message>Waiting for a new Computing Request to process</message>
+</record>
+<record>
+  <date>2016-03-16T17:42:47</date>
+  <millis>1458146567744</millis>
+  <sequence>121</sequence>
   <logger>PCEServer</logger>
   <level>FINE</level>
   <class>es.tid.pce.pcepsession.DeadTimerThread</class>
   <method>run</method>
-  <thread>19</thread>
+  <thread>22</thread>
   <message>Reseting Dead Timer</message>
 </record>
 <record>
-  <date>2016-03-16T16:16:01</date>
-  <millis>1458141361560</millis>
-  <sequence>125</sequence>
+  <date>2016-03-16T17:42:47</date>
+  <millis>1458146567745</millis>
+  <sequence>122</sequence>
   <logger>PCEServer</logger>
   <level>INFO</level>
-  <class>es.tid.pce.computingEngine.RequestProcessorThread</class>
+  <class>es.tid.pce.server.DomainPCESession</class>
   <method>run</method>
-  <thread>10</thread>
-  <message> XXXX try source: /192.168.1.1</message>
+  <thread>20</thread>
+  <message>PCREQ message received</message>
 </record>
 <record>
-  <date>2016-03-16T16:16:01</date>
-  <millis>1458141361561</millis>
+  <date>2016-03-16T17:42:47</date>
+  <millis>1458146567746</millis>
+  <sequence>123</sequence>
+  <logger>PCEServer</logger>
+  <level>FINEST</level>
+  <class>es.tid.pce.computingEngine.RequestDispatcher</class>
+  <method>dispathRequests</method>
+  <thread>20</thread>
+  <message>There are 1 requests</message>
+</record>
+<record>
+  <date>2016-03-16T17:42:47</date>
+  <millis>1458146567746</millis>
+  <sequence>124</sequence>
+  <logger>PCEServer</logger>
+  <level>INFO</level>
+  <class>es.tid.pce.computingEngine.RequestDispatcher</class>
+  <method>dispathRequests</method>
+  <thread>20</thread>
+  <message>Dispatching Request!</message>
+</record>
+<record>
+  <date>2016-03-16T17:42:47</date>
+  <millis>1458146567747</millis>
+  <sequence>125</sequence>
+  <logger>PCEServer</logger>
+  <level>FINE</level>
+  <class>es.tid.pce.server.DomainPCESession</class>
+  <method>run</method>
+  <thread>20</thread>
+  <message>Reseting Dead Timer as PCEP Message has arrived</message>
+</record>
+<record>
+  <date>2016-03-16T17:42:47</date>
+  <millis>1458146567747</millis>
   <sequence>126</sequence>
   <logger>PCEServer</logger>
   <level>INFO</level>
   <class>es.tid.pce.computingEngine.RequestProcessorThread</class>
   <method>run</method>
-  <thread>10</thread>
-  <message> XXXX try dest: /192.168.1.3</message>
+  <thread>11</thread>
+  <message>Processing New Path Computing request, id: &lt;RP ReqID: 48 Prio: 1 Reopt: 0 Bid: 0 Loose: 0 SupOF: false retry false&gt;&lt;GEP_P2P src = 192.168.1.1 dst = 192.168.1.3&gt;&lt;GENW= GenBW SSON m: 2&gt;&lt;OF code= 1002&gt;</message>
 </record>
 <record>
-  <date>2016-03-16T16:16:01</date>
-  <millis>1458141361562</millis>
+  <date>2016-03-16T17:42:47</date>
+  <millis>1458146567748</millis>
   <sequence>127</sequence>
   <logger>PCEServer</logger>
   <level>FINE</level>
-  <class>es.tid.pce.computingEngine.RequestProcessorThread</class>
+  <class>es.tid.pce.pcepsession.DeadTimerThread</class>
   <method>run</method>
-  <thread>10</thread>
-  <message>Non-svec request</message>
+  <thread>24</thread>
+  <message>Reseting Dead Timer</message>
 </record>
 <record>
-  <date>2016-03-16T16:16:01</date>
-  <millis>1458141361562</millis>
+  <date>2016-03-16T17:42:47</date>
+  <millis>1458146567748</millis>
   <sequence>128</sequence>
   <logger>PCEServer</logger>
   <level>INFO</level>
   <class>es.tid.pce.computingEngine.RequestProcessorThread</class>
   <method>run</method>
-  <thread>10</thread>
-  <message>Choosing default algotithm 2</message>
+  <thread>11</thread>
+  <message>RequestProcessorThread GeneralizedEndPoints -&gt; sourceDataPath:: 192.168.1.1 destDataPath :: 192.168.1.3</message>
 </record>
 <record>
-  <date>2016-03-16T16:16:01</date>
-  <millis>1458141361563</millis>
+  <date>2016-03-16T17:42:47</date>
+  <millis>1458146567749</millis>
   <sequence>129</sequence>
   <logger>PCEServer</logger>
-  <level>INFO</level>
-  <class>es.tid.pce.computingEngine.algorithms.DefaultSinglePathComputing</class>
-  <method>call</method>
-  <thread>10</thread>
-  <message>Processing Single Path Computing Request id: 1</message>
+  <level>FINE</level>
+  <class>es.tid.pce.computingEngine.RequestProcessorThread</class>
+  <method>run</method>
+  <thread>11</thread>
+  <message>Non-svec request</message>
 </record>
 <record>
-  <date>2016-03-16T16:16:01</date>
-  <millis>1458141361563</millis>
+  <date>2016-03-16T17:42:47</date>
+  <millis>1458146567749</millis>
   <sequence>130</sequence>
   <logger>PCEServer</logger>
-  <level>INFO</level>
-  <class>es.tid.pce.computingEngine.algorithms.DefaultSinglePathComputing</class>
-  <method>call</method>
-  <thread>10</thread>
-  <message>Algorithm-&gt;  Source:: /192.168.1.1 Destination:: /192.168.1.3</message>
+  <level>FINE</level>
+  <class>es.tid.pce.computingEngine.RequestProcessorThread</class>
+  <method>run</method>
+  <thread>11</thread>
+  <message>ObjectiveFunction code 1002</message>
 </record>
 <record>
-  <date>2016-03-16T16:16:01</date>
-  <millis>1458141361564</millis>
+  <date>2016-03-16T17:42:47</date>
+  <millis>1458146567749</millis>
   <sequence>131</sequence>
   <logger>PCEServer</logger>
   <level>INFO</level>
-  <class>es.tid.pce.computingEngine.algorithms.DefaultSinglePathComputing</class>
-  <method>call</method>
-  <thread>10</thread>
-  <message>Check if we have source and destination in our TED</message>
+  <class>es.tid.pce.computingEngine.RequestProcessorThread</class>
+  <method>run</method>
+  <thread>11</thread>
+  <message>Choosing algorithm of OF 1002</message>
 </record>
 <record>
-  <date>2016-03-16T16:16:01</date>
-  <millis>1458141361565</millis>
+  <date>2016-03-16T17:42:47</date>
+  <millis>1458146567750</millis>
   <sequence>132</sequence>
   <logger>PCEServer</logger>
   <level>FINEST</level>
-  <class>es.tid.pce.computingEngine.algorithms.DefaultSinglePathComputing</class>
+  <class>es.tid.pce.computingEngine.algorithms.sson.AURE_SSON_algorithm</class>
   <method>call</method>
-  <thread>10</thread>
-  <message>Computing path</message>
+  <thread>11</thread>
+  <message>Starting AURE Algorithm</message>
 </record>
 <record>
-  <date>2016-03-16T16:16:01</date>
-  <millis>1458141361565</millis>
+  <date>2016-03-16T17:42:47</date>
+  <millis>1458146567750</millis>
   <sequence>133</sequence>
   <logger>PCEServer</logger>
-  <level>FINEST</level>
-  <class>es.tid.pce.computingEngine.algorithms.DefaultSinglePathComputing</class>
+  <level>INFO</level>
+  <class>es.tid.pce.computingEngine.algorithms.sson.AURE_SSON_algorithm</class>
   <method>call</method>
-  <thread>10</thread>
-  <message>Creating response</message>
+  <thread>11</thread>
+  <message>Request id: 48, getting endpoints</message>
 </record>
 <record>
-  <date>2016-03-16T16:16:01</date>
-  <millis>1458141361565</millis>
+  <date>2016-03-16T17:42:47</date>
+  <millis>1458146567751</millis>
   <sequence>134</sequence>
   <logger>PCEServer</logger>
   <level>INFO</level>
-  <class>es.tid.pce.computingEngine.algorithms.DefaultSinglePathComputing</class>
+  <class>es.tid.pce.computingEngine.algorithms.sson.AURE_SSON_algorithm</class>
   <method>call</method>
-  <thread>10</thread>
-  <message>jm dspc destination_port: 0</message>
+  <thread>11</thread>
+  <message> XXXX req.getBandwidth(): &lt;GENW= GenBW SSON m: 2&gt;</message>
 </record>
 <record>
-  <date>2016-03-16T16:16:01</date>
-  <millis>1458141361565</millis>
+  <date>2016-03-16T17:42:47</date>
+  <millis>1458146567752</millis>
   <sequence>135</sequence>
   <logger>PCEServer</logger>
   <level>INFO</level>
-  <class>es.tid.pce.computingEngine.algorithms.DefaultSinglePathComputing</class>
+  <class>es.tid.pce.computingEngine.algorithms.sson.AURE_SSON_algorithm</class>
   <method>call</method>
-  <thread>10</thread>
-  <message>Algorithm.ero :: &lt;ERO: /192.168.1.1:1 /192.168.1.2:2 /192.168.1.3/32 &gt;</message>
+  <thread>11</thread>
+  <message>BW: GenBW SSON m: 2</message>
 </record>
 <record>
-  <date>2016-03-16T16:16:01</date>
-  <millis>1458141361566</millis>
+  <date>2016-03-16T17:42:47</date>
+  <millis>1458146567752</millis>
   <sequence>136</sequence>
   <logger>PCEServer</logger>
   <level>INFO</level>
-  <class>es.tid.pce.computingEngine.algorithms.DefaultSinglePathComputing</class>
+  <class>es.tid.pce.computingEngine.algorithms.sson.AURE_SSON_algorithm</class>
   <method>call</method>
-  <thread>10</thread>
-  <message>Algorithm.path:: PATH={ &lt;ERO: /192.168.1.1:1 /192.168.1.2:2 /192.168.1.3/32 &gt; }</message>
+  <thread>11</thread>
+  <message>bw.getGeneralizedBandwidth() is GeneralizedBandwidthSSON type</message>
 </record>
 <record>
-  <date>2016-03-16T16:16:01</date>
-  <millis>1458141361567</millis>
+  <date>2016-03-16T17:42:47</date>
+  <millis>1458146567753</millis>
   <sequence>137</sequence>
   <logger>PCEServer</logger>
   <level>INFO</level>
-  <class>es.tid.pce.computingEngine.algorithms.DefaultSinglePathComputing</class>
+  <class>es.tid.pce.computingEngine.algorithms.sson.AURE_SSON_algorithm</class>
   <method>call</method>
-  <thread>10</thread>
-  <message>Ha tardado 3666395 nanosegundos</message>
+  <thread>11</thread>
+  <message>XXXX num_slots:4</message>
 </record>
 <record>
-  <date>2016-03-16T16:16:01</date>
-  <millis>1458141361567</millis>
+  <date>2016-03-16T17:42:47</date>
+  <millis>1458146567753</millis>
   <sequence>138</sequence>
   <logger>PCEServer</logger>
   <level>INFO</level>
-  <class>es.tid.pce.computingEngine.RequestProcessorThread</class>
-  <method>run</method>
-  <thread>10</thread>
-  <message>ReppPP:::RESP: &lt;RP ReqID: 1 Prio: 0 Reopt: 0 Bid: 0 Loose: 0 SupOF: false retry false&gt;PATH={ &lt;ERO: /192.168.1.1:1 /192.168.1.2:2 /192.168.1.3/32 &gt; }</message>
+  <class>es.tid.pce.computingEngine.algorithms.sson.AURE_SSON_algorithm</class>
+  <method>call</method>
+  <thread>11</thread>
+  <message>Request num_slots: 4</message>
 </record>
 <record>
-  <date>2016-03-16T16:16:01</date>
-  <millis>1458141361568</millis>
+  <date>2016-03-16T17:42:47</date>
+  <millis>1458146567754</millis>
   <sequence>139</sequence>
   <logger>PCEServer</logger>
   <level>INFO</level>
-  <class>es.tid.pce.computingEngine.RequestProcessorThread</class>
-  <method>run</method>
-  <thread>10</thread>
-  <message>RESP: &lt;RP ReqID: 1 Prio: 0 Reopt: 0 Bid: 0 Loose: 0 SupOF: false retry false&gt;PATH={ &lt;ERO: /192.168.1.1:1 /192.168.1.2:2 /192.168.1.3/32 &gt; }</message>
+  <class>es.tid.pce.computingEngine.algorithms.sson.AURE_SSON_algorithm</class>
+  <method>call</method>
+  <thread>11</thread>
+  <message>EP.getOT()==ObjectParameters.PCEP_OBJECT_TYPE_GENERALIZED_ENDPOINTS</message>
 </record>
 <record>
-  <date>2016-03-16T16:16:01</date>
-  <millis>1458141361568</millis>
+  <date>2016-03-16T17:42:47</date>
+  <millis>1458146567754</millis>
   <sequence>140</sequence>
   <logger>PCEServer</logger>
   <level>INFO</level>
-  <class>es.tid.pce.computingEngine.RequestProcessorThread</class>
-  <method>run</method>
-  <thread>10</thread>
-  <message>Request processeed, about to send response</message>
+  <class>es.tid.pce.computingEngine.algorithms.sson.AURE_SSON_algorithm</class>
+  <method>call</method>
+  <thread>11</thread>
+  <message>Source: /192.168.1.1; Destination:/192.168.1.3</message>
 </record>
 <record>
-  <date>2016-03-16T16:16:01</date>
-  <millis>1458141361569</millis>
+  <date>2016-03-16T17:42:47</date>
+  <millis>1458146567755</millis>
   <sequence>141</sequence>
   <logger>PCEServer</logger>
   <level>INFO</level>
-  <class>es.tid.pce.computingEngine.RequestProcessorThread</class>
-  <method>run</method>
-  <thread>10</thread>
-  <message>Waiting for a new Computing Request to process</message>
+  <class>es.tid.pce.computingEngine.algorithms.sson.AURE_SSON_algorithm</class>
+  <method>call</method>
+  <thread>11</thread>
+  <message>Starting the computation</message>
 </record>
 <record>
-  <date>2016-03-16T16:16:01</date>
-  <millis>1458141361889</millis>
+  <date>2016-03-16T17:42:47</date>
+  <millis>1458146567764</millis>
   <sequence>142</sequence>
   <logger>PCEServer</logger>
   <level>INFO</level>
-  <class>es.tid.pce.pcepsession.GenericPCEPSession</class>
-  <method>readMsg</method>
-  <thread>17</thread>
-  <message>End of stream has been reached from /127.0.0.1</message>
+  <class>es.tid.pce.computingEngine.algorithms.sson.AURE_SSON_algorithm</class>
+  <method>call</method>
+  <thread>11</thread>
+  <message>LAMBDA 0 with metric 2.0</message>
 </record>
 <record>
-  <date>2016-03-16T16:16:01</date>
-  <millis>1458141361890</millis>
+  <date>2016-03-16T17:42:47</date>
+  <millis>1458146567765</millis>
   <sequence>143</sequence>
   <logger>PCEServer</logger>
-  <level>FINE</level>
-  <class>es.tid.pce.pcepsession.GenericPCEPSession</class>
-  <method>cancelDeadTimer</method>
-  <thread>17</thread>
-  <message>Cancelling DeadTimer from /127.0.0.1</message>
+  <level>INFO</level>
+  <class>es.tid.pce.computingEngine.algorithms.sson.AURE_SSON_algorithm</class>
+  <method>call</method>
+  <thread>11</thread>
+  <message>Central Frequency2</message>
 </record>
 <record>
-  <date>2016-03-16T16:16:01</date>
-  <millis>1458141361890</millis>
+  <date>2016-03-16T17:42:47</date>
+  <millis>1458146567765</millis>
   <sequence>144</sequence>
   <logger>PCEServer</logger>
-  <level>FINE</level>
-  <class>es.tid.pce.pcepsession.GenericPCEPSession</class>
-  <method>cancelKeepAlive</method>
-  <thread>17</thread>
-  <message>Cancelling KeepAliveTimer from /127.0.0.1</message>
+  <level>INFO</level>
+  <class>es.tid.pce.computingEngine.algorithms.sson.AURE_SSON_algorithm</class>
+  <method>call</method>
+  <thread>11</thread>
+  <message>Frequency width2</message>
 </record>
 <record>
-  <date>2016-03-16T16:16:01</date>
-  <millis>1458141361890</millis>
+  <date>2016-03-16T17:42:47</date>
+  <millis>1458146567766</millis>
   <sequence>145</sequence>
   <logger>PCEServer</logger>
-  <level>WARNING</level>
-  <class>es.tid.pce.pcepsession.DeadTimerThread</class>
-  <method>run</method>
-  <thread>19</thread>
-  <message>Ending DeadTimerThread</message>
+  <level>INFO</level>
+  <class>es.tid.pce.computingEngine.algorithms.sson.AURE_SSON_algorithm</class>
+  <method>call</method>
+  <thread>11</thread>
+  <message>Path[/192.168.1.1:1--&gt;/192.168.1.2:1 NumFibers = 0
+ TED: 
+, /192.168.1.2:2--&gt;/192.168.1.3:2 NumFibers = 0
+ TED: 
+]</message>
 </record>
 <record>
-  <date>2016-03-16T16:16:01</date>
-  <millis>1458141361891</millis>
-  <sequence>147</sequence>
-  <logger>PCEServer</logger>
-  <level>WARNING</level>
-  <class>es.tid.pce.server.DomainPCESession</class>
-  <method>run</method>
-  <thread>17</thread>
-  <message>Finishing PCEP Session abruptly!</message>
-</record>
-<record>
-  <date>2016-03-16T16:16:01</date>
-  <millis>1458141361891</millis>
+  <date>2016-03-16T17:42:47</date>
+  <millis>1458146567791</millis>
   <sequence>146</sequence>
   <logger>PCEServer</logger>
-  <level>WARNING</level>
-  <class>es.tid.pce.pcepsession.KeepAliveThread</class>
-  <method>run</method>
-  <thread>20</thread>
-  <message>Ending KeepAliveThread</message>
+  <level>INFO</level>
+  <class>es.tid.pce.computingEngine.algorithms.sson.AURE_SSON_algorithm</class>
+  <method>call</method>
+  <thread>11</thread>
+  <message>Lets remove: 220/192.168.1.1/192.168.1.2</message>
 </record>
 <record>
-  <date>2016-03-16T16:16:01</date>
-  <millis>1458141361894</millis>
+  <date>2016-03-16T17:42:47</date>
+  <millis>1458146567792</millis>
+  <sequence>147</sequence>
+  <logger>PCEServer</logger>
+  <level>INFO</level>
+  <class>es.tid.pce.computingEngine.algorithms.sson.AURE_SSON_algorithm</class>
+  <method>call</method>
+  <thread>11</thread>
+  <message>Borramos: 0</message>
+</record>
+<record>
+  <date>2016-03-16T17:42:47</date>
+  <millis>1458146567793</millis>
   <sequence>148</sequence>
   <logger>PCEServer</logger>
-  <level>SEVERE</level>
-  <class>es.tid.pce.server.DomainPCESession</class>
-  <method>run</method>
-  <thread>17</thread>
-  <message>SESSION 1 IS KILLED</message>
+  <level>INFO</level>
+  <class>es.tid.pce.computingEngine.algorithms.sson.AURE_SSON_algorithm</class>
+  <method>call</method>
+  <thread>11</thread>
+  <message>Borramos: 1</message>
 </record>
 <record>
-  <date>2016-03-16T16:16:01</date>
-  <millis>1458141361897</millis>
+  <date>2016-03-16T17:42:47</date>
+  <millis>1458146567794</millis>
   <sequence>149</sequence>
   <logger>PCEServer</logger>
-  <level>SEVERE</level>
-  <class>es.tid.pce.server.DomainPCESession</class>
-  <method>endSession</method>
-  <thread>17</thread>
-  <message>Cancelling all pending reservations of session 1</message>
+  <level>INFO</level>
+  <class>es.tid.pce.computingEngine.algorithms.sson.AURE_SSON_algorithm</class>
+  <method>call</method>
+  <thread>11</thread>
+  <message>Borramos: 2</message>
 </record>
+<record>
+  <date>2016-03-16T17:42:47</date>
+  <millis>1458146567795</millis>
+  <sequence>150</sequence>
+  <logger>PCEServer</logger>
+  <level>INFO</level>
+  <class>es.tid.pce.computingEngine.algorithms.sson.AURE_SSON_algorithm</class>
+  <method>call</method>
+  <thread>11</thread>
+  <message>Borramos: 3</message>
+</record>
+<record>
+  <date>2016-03-16T17:42:47</date>
+  <millis>1458146567795</millis>
+  <sequence>151</sequence>
+  <logger>PCEServer</logger>
+  <level>INFO</level>
+  <class>es.tid.pce.computingEngine.algorithms.sson.AURE_SSON_algorithm</class>
+  <method>call</method>
+  <thread>11</thread>
+  <message>ero:&lt;ERO: /192.168.1.1:1 /ELC: 6a0020200 &gt;</message>
+</record>
+<record>
+  <date>2016-03-16T17:42:47</date>
+  <millis>1458146567796</millis>
+  <sequence>152</sequence>
+  <logger>PCEServer</logger>
+  <level>INFO</level>
+  <class>es.tid.pce.computingEngine.algorithms.sson.AURE_SSON_algorithm</class>
+  <method>call</method>
+  <thread>11</thread>
+  <message>ero:&lt;ERO: /192.168.1.1:1 /ELC: 6a0020200 &gt;</message>
+</record>
+<record>
+  <date>2016-03-16T17:42:47</date>
+  <millis>1458146567797</millis>
+  <sequence>153</sequence>
+  <logger>PCEServer</logger>
+  <level>INFO</level>
+  <class>es.tid.pce.computingEngine.algorithms.sson.AURE_SSON_algorithm</class>
+  <method>call</method>
+  <thread>11</thread>
+  <message>Lets remove: 220/192.168.1.2/192.168.1.3</message>
+</record>
+<record>
+  <date>2016-03-16T17:42:47</date>
+  <millis>1458146567798</millis>
+  <sequence>154</sequence>
+  <logger>PCEServer</logger>
+  <level>INFO</level>
+  <class>es.tid.pce.computingEngine.algorithms.sson.AURE_SSON_algorithm</class>
+  <method>call</method>
+  <thread>11</thread>
+  <message>Borramos: 0</message>
+</record>
+<record>
+  <date>2016-03-16T17:42:47</date>
+  <millis>1458146567799</millis>
+  <sequence>155</sequence>
+  <logger>PCEServer</logger>
+  <level>INFO</level>
+  <class>es.tid.pce.computingEngine.algorithms.sson.AURE_SSON_algorithm</class>
+  <method>call</method>
+  <thread>11</thread>
+  <message>Borramos: 1</message>
+</record>
+<record>
+  <date>2016-03-16T17:42:47</date>
+  <millis>1458146567800</millis>
+  <sequence>156</sequence>
+  <logger>PCEServer</logger>
+  <level>INFO</level>
+  <class>es.tid.pce.computingEngine.algorithms.sson.AURE_SSON_algorithm</class>
+  <method>call</method>
+  <thread>11</thread>
+  <message>Borramos: 2</message>
+</record>
+<record>
+  <date>2016-03-16T17:42:47</date>
+  <millis>1458146567801</millis>
+  <sequence>157</sequence>
+  <logger>PCEServer</logger>
+  <level>INFO</level>
+  <class>es.tid.pce.computingEngine.algorithms.sson.AURE_SSON_algorithm</class>
+  <method>call</method>
+  <thread>11</thread>
+  <message>Borramos: 3</message>
+</record>
+<record>
+  <date>2016-03-16T17:42:47</date>
+  <millis>1458146567802</millis>
+  <sequence>158</sequence>
+  <logger>PCEServer</logger>
+  <level>INFO</level>
+  <class>es.tid.pce.computingEngine.algorithms.sson.AURE_SSON_algorithm</class>
+  <method>call</method>
+  <thread>11</thread>
+  <message>ero:&lt;ERO: /192.168.1.1:1 /ELC: 6a0020200 /192.168.1.2:2 /ELC: 6a0020200 &gt;</message>
+</record>
+<record>
+  <date>2016-03-16T17:42:47</date>
+  <millis>1458146567803</millis>
+  <sequence>159</sequence>
+  <logger>PCEServer</logger>
+  <level>INFO</level>
+  <class>es.tid.pce.computingEngine.algorithms.sson.AURE_SSON_algorithm</class>
+  <method>call</method>
+  <thread>11</thread>
+  <message>ero:&lt;ERO: /192.168.1.1:1 /ELC: 6a0020200 /192.168.1.2:2 /ELC: 6a0020200 &gt;</message>
+</record>
+<record>
+  <date>2016-03-16T17:42:47</date>
+  <millis>1458146567804</millis>
+  <sequence>160</sequence>
+  <logger>PCEServer</logger>
+  <level>INFO</level>
+  <class>es.tid.pce.computingEngine.algorithms.sson.AURE_SSON_algorithm</class>
+  <method>call</method>
+  <thread>11</thread>
+  <message>ero:&lt;ERO: /192.168.1.1:1 /ELC: 6a0020200 /192.168.1.2:2 /ELC: 6a0020200 &gt;</message>
+</record>
+<record>
+  <date>2016-03-16T17:42:47</date>
+  <millis>1458146567806</millis>
+  <sequence>161</sequence>
+  <logger>PCEServer</logger>
+  <level>INFO</level>
+  <class>es.tid.pce.computingEngine.algorithms.sson.AURE_SSON_algorithm</class>
+  <method>call</method>
+  <thread>11</thread>
+  <message>Ha tardado 55274382 nanosegundos</message>
+</record>
+<record>
+  <date>2016-03-16T17:42:47</date>
+  <millis>1458146567806</millis>
+  <sequence>162</sequence>
+  <logger>PCEServer</logger>
+  <level>INFO</level>
+  <class>es.tid.pce.computingEngine.RequestProcessorThread</class>
+  <method>run</method>
+  <thread>11</thread>
+  <message>ReppPP:::RESP: &lt;RP ReqID: 48 Prio: 0 Reopt: 0 Bid: 0 Loose: 0 SupOF: false retry false&gt;&lt;BW&gt;PATH={ &lt;ERO: /192.168.1.1:1 /ELC: 6a0020200 /192.168.1.2:2 /ELC: 6a0020200 /192.168.1.3/32 &gt;&lt;GENW= GenBW SSON m: 2&gt; }</message>
+</record>
+<record>
+  <date>2016-03-16T17:42:47</date>
+  <millis>1458146567807</millis>
+  <sequence>163</sequence>
+  <logger>PCEServer</logger>
+  <level>INFO</level>
+  <class>es.tid.pce.computingEngine.RequestProcessorThread</class>
+  <method>run</method>
+  <thread>11</thread>
+  <message>RESP: &lt;RP ReqID: 48 Prio: 0 Reopt: 0 Bid: 0 Loose: 0 SupOF: false retry false&gt;&lt;BW&gt;PATH={ &lt;ERO: /192.168.1.1:1 /ELC: 6a0020200 /192.168.1.2:2 /ELC: 6a0020200 /192.168.1.3/32 &gt;&lt;GENW= GenBW SSON m: 2&gt; }</message>
+</record>
+<record>
+  <date>2016-03-16T17:42:47</date>
+  <millis>1458146567808</millis>
+  <sequence>164</sequence>
+  <logger>PCEServer</logger>
+  <level>INFO</level>
+  <class>es.tid.pce.computingEngine.RequestProcessorThread</class>
+  <method>run</method>
+  <thread>11</thread>
+  <message>Request processeed, about to send response</message>
+</record>
+<record>
+  <date>2016-03-16T17:42:47</date>
+  <millis>1458146567808</millis>
+  <sequence>165</sequence>
+  <logger>PCEServer</logger>
+  <level>INFO</level>
+  <class>es.tid.pce.computingEngine.RequestProcessorThread</class>
+  <method>run</method>
+  <thread>11</thread>
+  <message>Waiting for a new Computing Request to process</message>
+</record>
+<record>
+  <date>2016-03-16T17:42:47</date>
+  <millis>1458146567809</millis>
+  <sequence>166</sequence>
+  <logger>PCEServer</logger>
+  <level>FINE</level>
+  <class>es.tid.pce.pcepsession.DeadTimerThread</class>
+  <method>run</method>
+  <thread>22</thread>
+  <message>Reseting Dead Timer</message>
+</record>
+</log>
