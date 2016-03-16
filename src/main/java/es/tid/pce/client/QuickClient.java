@@ -178,7 +178,7 @@ public class QuickClient {
 				src_ip=parts[0];
 				src_if=Long.valueOf(parts[1]).longValue();
 			}else {
-				src_ip=args[offset+1];
+				src_ip=args[offset]; 
 			}
 			if (dst.contains(":")){
 				String[] parts = dst.split(":");

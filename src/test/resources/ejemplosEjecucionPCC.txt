@@ -9,11 +9,11 @@ java -jar target/PCC-QuickClient-jar-with-dependencies.jar localhost 4189 -ini  
  
 SBVT CHANNEL cttc
  
-java -jar target/PCC-QuickClient-jar-with-dependencies.jar localhost 4189 192.168.1.1:70 172.16.102.162:101 -g -of 60001 -rbw 107.1
+java -jar target/PCC-QuickClient-jar-with-dependencies.jar localhost 4189 192.168.1.1:70 192.168.1.2:101 -g -of 60001 -rbw 107.1
  
-java -jar target/PCC-QuickClient-jar-with-dependencies.jar localhost 4189 192.168.1.1:70 172.16.102.162:101 -g -of 60001 -rbw 107.1  -ini  192.168.1.1:70 172.16.102.162:101 -g -srpid 7 -spn TEST2 -rbw 107.1 -ero 
+java -jar target/PCC-QuickClient-jar-with-dependencies.jar localhost 4189 192.168.1.1:70 192.168.1.2:101 -g -of 60001 -rbw 107.1  -ini  192.168.1.1:70 192.168.1.2:101 -g -srpid 7 -spn TEST2 -rbw 107.1 -ero 
  
-java -jar target/PCC-QuickClient-jar-with-dependencies.jar localhost 4189 -ini 192.168.1.1:70 172.16.102.162:101 -g -srpid 8 -srpd -lspid 2
+java -jar target/PCC-QuickClient-jar-with-dependencies.jar localhost 4189 -ini 192.168.1.1:70 192.168.1.2:101 -g -srpid 8 -srpd -lspid 2
  
 MEDIA CHANNEL CNIT
  
@@ -48,4 +48,4 @@ java -jar target/PCC-QuickClient-jar-with-dependencies.jar localhost 4189 192.16
 java -jar target/PCC-QuickClient-jar-with-dependencies.jar localhost 4189 192.168.1.1:70  172.16.101.13:101 -g -of 60001 -rbw 107.1 -ini  192.168.1.1:70  172.16.101.13:101 -g  -srpid 13 -spn TEST2 rbw 107.1 -ero
  
  
-java -jar target/PCC-QuickClient-jar-with-dependencies.jar localhost 4189 192.168.1.1:70 172.16.102.162:101 -g -of 60001 -rbw 107.1  -ini  192.168.1.1:70 172.16.102.162:101 -g -srpid 7 -spn TEST2 -rbw 107.1 -ero 
+java -jar target/PCC-QuickClient-jar-with-dependencies.jar localhost 4189 192.168.1.1:70 192.168.1.2:101 -g -of 60001 -rbw 107.1  -ini  192.168.1.1:70 192.168.1.2:101 -g -srpid 7 -spn TEST2 -rbw 107.1 -ero 

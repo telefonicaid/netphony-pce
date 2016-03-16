@@ -2,9 +2,9 @@
 <!DOCTYPE log SYSTEM "logger.dtd">
 <log>
 <record>
-  <date>2016-03-15T18:05:47</date>
-  <millis>1458061547210</millis>
-  <sequence>108</sequence>
+  <date>2016-03-16T16:16:01</date>
+  <millis>1458141361485</millis>
+  <sequence>94</sequence>
   <logger>PCEPParser</logger>
   <level>INFO</level>
   <class>es.tid.pce.server.lspdb.ReportDB_Handler</class>
@@ -12,15 +12,3 @@
   <thread>17</thread>
   <message>PCC database sync</message>
 </record>
-<record>
-  <date>2016-03-15T18:06:10</date>
-  <millis>1458061570971</millis>
-  <sequence>134</sequence>
-  <logger>PCEPParser</logger>
-  <level>INFO</level>
-  <class>es.tid.pce.server.lspdb.ReportDB_Handler</class>
-  <method>proccessOpen</method>
-  <thread>21</thread>
-  <message>PCC database sync</message>
-</record>
-</log>
