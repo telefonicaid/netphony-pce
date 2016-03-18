@@ -90,13 +90,8 @@ public class QuickClientMain {
 			}
 
 			
-
-
-			String ip;
-			int port;
-
-			ip = args[0];
-			port = Integer.valueOf(args[1]).intValue();
+			String ip = args[0];
+			int port = Integer.valueOf(args[1]).intValue();
 			
 			QuickClientObj qcObj = new QuickClientObj(Log, ip,  port);
 			if(line.hasOption("li")){
@@ -124,13 +119,7 @@ public class QuickClientMain {
 			formatter.printHelp( "PCC-QuickClient <host> <port> <src> <dst> [options]", options );
 			
 		}
-		
-		
-		
-		
-		
-		
-
+		System.exit(-1);
 	}
 	
 	

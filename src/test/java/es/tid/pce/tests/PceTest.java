@@ -31,7 +31,7 @@ public class PceTest implements Runnable {
 	 * After that this tests starts a PCC and send a path req.
 	 * It checks after 10 seconds if the resp is correct.
 	 */
-	@org.junit.Test
+	//@org.junit.Test
 	public void testPCE(){
 		//launch PCE server
 		Thread pceServer = (new Thread(new PceTest()));
@@ -76,7 +76,7 @@ public class PceTest implements Runnable {
 			System.out.println("Enviando mensaje");
 			PCEPResponse res = qcObj.sendReqMessage(p_r, messageList);
 			System.out.println("Respuesta Obtenida (NOPATH) "+res.toString());
-			assertTrue("Checkin NOPATH",res.getResponse(0).getNoPath()!=null);
+			assertTrue("Check NOPATH",res.getResponse(0).getNoPath()!=null);
 			
 			
 			System.out.println("Creando peticion");

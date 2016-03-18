@@ -61,6 +61,25 @@ public class QuickClientObj {
 		PCEPSessionsInformation pcepSessionManager=new PCEPSessionsInformation();
 		this.PCEsession = new PCCPCEPSession(ip, port,false,pcepSessionManager);
 	}
+	
+	public static CommandLine getLineOptions(String[] args) throws ParseException{
+		Option gOpt = new Option("g", "Generalized end points");
+		Option eroOpt = new Option("ero", "Explicit Route Object");
+		Option iniOpt= new Option("ini", "Send init message");
+		Option ofOpt= OptionBuilder.withArgName( "value" ).hasArg().withDescription(  "set of value" ).create( "of" );
+		Option rgbwOpt= OptionBuilder.withArgName( "value" ).hasArg().withDescription(  "set rgbw value" ).create( "rgbw" );
+		Option liOpt= OptionBuilder.withArgName( "value" ).hasArg().withDescription(  "local interface" ).create( "li" );
+		Options options = new Options();
+		options.addOption(liOpt);
+		options.addOption(gOpt);
+		options.addOption(eroOpt);
+		options.addOption(iniOpt);
+		options.addOption(ofOpt);
+		options.addOption(rgbwOpt);
+		CommandLineParser parser = new DefaultParser();
+		
+		return parser.parse( options, args );
+	}
 
 	public void setLocalAddress(String s){
 		this.PCEsession.localAddress=s;
