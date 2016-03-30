@@ -1,9 +1,8 @@
 package es.tid.pce.tests;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertTrue;
 
 import java.net.Inet4Address;
-import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.Arrays;
 import java.util.Collection;
@@ -14,13 +13,10 @@ import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.Option;
-import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.junit.After;
-import org.junit.AfterClass;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized.Parameters;
@@ -32,8 +28,8 @@ import es.tid.pce.pcep.messages.PCEPRequest;
 import es.tid.pce.pcep.messages.PCEPResponse;
 import es.tid.pce.pcep.objects.Bandwidth;
 import es.tid.pce.pcep.objects.ExplicitRouteObject;
-import es.tid.pce.pcep.objects.NoPath;
 import es.tid.pce.server.PCEServer;
+import es.tid.rsvp.objects.subobjects.EROSubobject;
 import es.tid.rsvp.objects.subobjects.IPv4prefixEROSubobject;
 import es.tid.rsvp.objects.subobjects.UnnumberIfIDEROSubobject;
 
@@ -61,7 +57,7 @@ public class ParameterizedTest {
 	    public static Collection configs() {
 	    	Object[][] objects={
 	    			{"src/test/resources/PCEServerConfiguration_SSON_Line.xml", "localhost 4189 192.168.1.2 192.168.1.5 -g -of 1002 -rgbw 2", "-nopath"},
-	    			{"src/test/resources/PCEServerConfiguration_SSON_Line.xml", "localhost 4189 192.168.1.1 192.168.1.2 -g -rgbw 2", "-ero 192.168.1.1:1,192.168.1.2/32"},
+	    			{"src/test/resources/PCEServerConfiguration_SSON_Line.xml", "localhost 4189 192.168.1.1 192.168.1.2 -g -of 1002 -rgbw 2", "-ero 192.168.1.1:1,192.168.1.2/32"},
 	    			{"src/test/resources/PCEServerConfiguration_SSON_Line.xml", "localhost 4189 192.168.1.1 192.168.1.3 -g -rgbw 2", "-ero 192.168.1.1:1,192.168.1.2:2,192.168.1.3/32"},
 	    			{"src/test/resources/PCEServerConfiguration_SSON_Line.xml", "localhost 4189 192.168.1.3 192.168.1.1 -rgbw 2", "-ero 192.168.1.3:2,192.168.1.2:1,192.168.1.1/32"},
 	    			{"src/test/resources/PCEServerConfiguration_SSON_Triangle.xml", "localhost 4189 192.168.1.1 192.168.1.3 -g -rgbw 2", "-ero 192.168.1.1:2,192.168.1.3/32"},
@@ -85,7 +81,7 @@ public class ParameterizedTest {
 		this.pceServer = (new Thread(new RunPCEServer(this.fileConf)));
 		pceServer.start();
 		try {
-			Thread.sleep(300);
+			Thread.sleep(1000);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
@@ -138,8 +134,8 @@ public class ParameterizedTest {
 		
 		
 		Option noPathOpt= new Option("nopath", "NoPath object present");
-		Option eroOpt= OptionBuilder.withArgName( "value" ).hasArg().withDescription(  "Explicit Route Object present" ).create( "ero" );
-		Option bwOpt= OptionBuilder.withArgName( "value" ).hasArg().withDescription(  "Bandwidth Object present" ).create( "bandwidth" );
+		Option eroOpt= Option.builder("ero").argName("EROstring").hasArg().desc(  "Explicit Route Object present" ).build( );
+		Option bwOpt= Option.builder( "bandwidth" ).argName("BWstring").hasArg().desc(  "Bandwidth Object present" ).build(  );
 		Options options = new Options();
 		options.addOption(eroOpt);
 		options.addOption(bwOpt);
@@ -153,7 +149,9 @@ public class ParameterizedTest {
 			}else{
 				assertTrue("NOPATH object present",res.getResponse(0).getNoPath()==null);
 			}
-			
+			if(line.hasOption("bandwidth")){
+				//TODO check bandwidth object 
+			}
 			if(line.hasOption("ero")){
 				ExplicitRouteObject ero = new ExplicitRouteObject();
 				ExplicitRouteObject eroRes = res.getResponseList().getFirst().getPath(0).geteRO();
@@ -174,6 +172,12 @@ public class ParameterizedTest {
 							ipIfSub.setInterfaceID(Long.parseLong(part[1]));
 							ipIfSub.encode();
 							ero.addEROSubobject(ipIfSub);
+							boolean flagEq=false;
+							for (EROSubobject eroSubObj : eroRes.getEROSubobjectList()){
+								if(flagEq==false && eroSubObj.equals(ipIfSub))
+									flagEq=true;
+							}
+							assertTrue("ERO subobject IP with IF ID wrong (expected: ["+ipIfSub.toString()+"])", flagEq);
 						}else if(s.contains("/")){ //IPv4prefixEROSubobject  
 							String[] part=s.split("/");
 							IPv4prefixEROSubobject ip4Sub = new IPv4prefixEROSubobject();
@@ -182,11 +186,17 @@ public class ParameterizedTest {
 							ip4Sub.setPrefix(Integer.parseInt(part[1]));
 							ip4Sub.encode();
 							ero.addEROSubobject(ip4Sub);
+							boolean flagEq=false;
+							for (EROSubobject eroSubObj : eroRes.getEROSubobjectList()){
+								if(flagEq==false && eroSubObj.equals(ip4Sub))
+									flagEq=true;
+							}
+							assertTrue("ERO subobject IPv4 wrong (expected: ["+ip4Sub.toString()+"])", flagEq);
 						}
 					}
-					ero.encode();
-					boolean check = eroRes.equals(ero);
-					assertTrue("ERO wrong ["+ero.toString()+"] VS ["+eroRes.toString()+"]", check);
+					//ero.encode();
+					//boolean check = eroRes.equals(ero);
+					//assertTrue("ERO wrong ["+ero.toString()+"] VS ["+eroRes.toString()+"]", check);
 				} catch (UnknownHostException e) {
 					e.printStackTrace();
 					assertTrue("Unknow error", false);
