@@ -1,4 +1,5 @@
 v1.3
+- Added Travis support
 - Added profiles pom, in order to generate automatic main class for Domain PCE Server and Parent PCE.
 - Added profile pom to include Path Computation Client (QuickClient)
 - Included QuickClient<->PCEServer Parameterized test
