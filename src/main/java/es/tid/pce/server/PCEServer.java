@@ -20,13 +20,13 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.logging.SimpleFormatter;
 
-import org.apache.commons.cli.CommandLine;
+/*import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.OptionBuilder;
-import org.apache.commons.cli.Options;
+import org.apache.commons.cli.Options;*/
 import org.apache.commons.cli.ParseException;
 
 import es.tid.pce.computingEngine.ReportDispatcher;
@@ -57,9 +57,9 @@ public class PCEServer {
 	public static final Logger log =Logger.getLogger("PCEServer");
 	public static Logger log5;
 	private static OperationsCounter OPcounter;
-
+	
 	private static ReportDB_Handler rptdb;
-
+	private static boolean listening;
 	/**
 	 * LSP database. It should only be necessary if PCE is stateful
 	 * 
@@ -71,7 +71,7 @@ public class PCEServer {
 	 * @throws ParseException 
 	 */
 	public static void main(String[] args){
-		Option hOpt = new Option("help", "help");
+		/*Option hOpt = new Option("help", "help");
 		Option nLoopOpt= OptionBuilder.withArgName( "value" ).hasArg().withDescription(  "number of messages [0 or not present equals to infty]" ).create( "nLoop" );
 		//Option logOpt= OptionBuilder.withArgName( "value" ).hasArg().withDescription(  "Path to principal log file [if not present log to stdout]" ).create( "logFile" );
 
@@ -92,7 +92,7 @@ public class PCEServer {
 			formatter.printHelp( "PCEServer <filConfig.xml> [options]", options );
 			System.exit(1);
 		}
-		
+		*/
 		//First of all, read the parameters
 		PCEServerParameters params;
 		if (args.length >=1 ){
@@ -329,7 +329,7 @@ public class PCEServer {
 			log.info("There are no collaborative PCEs");
 
 		ServerSocket serverSocket = null;
-		boolean listening = true;
+		listening = true;
 		try {
 			log.info("Listening on port: "+params.getPCEServerPort());
 
@@ -437,25 +437,13 @@ public class PCEServer {
 			
 
 			//while (listening) {
-			if(args.length > 1 && Integer.parseInt(args[1])!=0){
-				for(int i=0;i<Integer.parseInt(args[1]);i++){
-					//new PCESession(serverSocket.accept(),params, PCCRequestsQueue,ted,pcm.getChildPCERequestManager()).start();
-					//null,ted,pcm.getChildPCERequestManager()).start(
-					if (params.isCollaborativePCEs())
-						new DomainPCESession(serverSocket.accept(),params,PCCRequestDispatcher,ted,nd,reservationManager,collaborationPCESessionManager,pcepSessionsInformation,PCCReportDispatcher).start();
-					else {
-						new DomainPCESession(serverSocket.accept(),params,PCCRequestDispatcher,ted,nd,reservationManager,pcepSessionsInformation,PCCReportDispatcher,iniDispatcher).start();
-					}
-				}
-			}else{
-				while (listening) {
-					//new PCESession(serverSocket.accept(),params, PCCRequestsQueue,ted,pcm.getChildPCERequestManager()).start();
-					//null,ted,pcm.getChildPCERequestManager()).start(
-					if (params.isCollaborativePCEs())
-						new DomainPCESession(serverSocket.accept(),params,PCCRequestDispatcher,ted,nd,reservationManager,collaborationPCESessionManager,pcepSessionsInformation,PCCReportDispatcher).start();
-					else {
-						new DomainPCESession(serverSocket.accept(),params,PCCRequestDispatcher,ted,nd,reservationManager,pcepSessionsInformation,PCCReportDispatcher,iniDispatcher).start();
-					}
+			while (listening) {
+				//new PCESession(serverSocket.accept(),params, PCCRequestsQueue,ted,pcm.getChildPCERequestManager()).start();
+				//null,ted,pcm.getChildPCERequestManager()).start(
+				if (params.isCollaborativePCEs())
+					new DomainPCESession(serverSocket.accept(),params,PCCRequestDispatcher,ted,nd,reservationManager,collaborationPCESessionManager,pcepSessionsInformation,PCCReportDispatcher).start();
+				else {
+					new DomainPCESession(serverSocket.accept(),params,PCCRequestDispatcher,ted,nd,reservationManager,pcepSessionsInformation,PCCReportDispatcher,iniDispatcher).start();
 				}
 			}
 			serverSocket.close();
@@ -465,6 +453,12 @@ public class PCEServer {
 			e.printStackTrace();
 		}
 
+	}
+
+	
+	
+	public static void killme(){
+		listening=false;
 	}
 
 }

@@ -85,6 +85,7 @@ public class ParameterizedTest {
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
+		PCEServer.killme();
 	}
 	@Test
     public void test (){
