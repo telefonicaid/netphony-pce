@@ -40,8 +40,8 @@ public class BackupSessionManagerTask  extends TimerTask{
 	/**
 	 * Starts new session with backup PCE
 	 * 
-	 * @return true if the session was launched, false if the session was already established
 	 */
+	//* @return true if the session was launched, false if the session was already established
 	public void run(){
 		if(backupPCESession != null){
 			if (backupPCESession.isAlive()){

@@ -78,11 +78,7 @@ public class ChildPCESessionManager extends TimerTask{
 		this.childPCEParentPCESession = childPCEParentPCESession;
 	}
 
-	/**
-	 * Starts new session with the Parent PCE
-	 * 
-	 * @return true if the session was launched, false if the session was already established
-	 */
+	//* Starts new session with the Parent PCE  * @return true if the session was launched, false if the session was already established
 	public void run(){
 		
 		//pcepSessionInformation.setStateful(true);

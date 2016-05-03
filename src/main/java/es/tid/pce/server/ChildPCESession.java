@@ -74,11 +74,7 @@ public class ChildPCESession  extends GenericPCEPSession{
 
 			
 	
-	/**
-	 * Constructor of the PCE Session to implement a new RequestDispatcher for the incoming pceprequest from the ParentPCE.
-	 * @param s Socket of the PCC-PCE Communication
-	 * @param req RequestQueue to send path requests
-	 */
+	//* Constructor of the PCE Session to implement a new RequestDispatcher for the incoming pceprequest from the ParentPCE. * @param s Socket of the PCC-PCE Communication * @param req RequestQueue to send path requests
 	public ChildPCESession(RequestDispatcher PCCRequestDispatcherChild, PCEServerParameters params, RequestQueue parentPCERequestQueue, TEDB ted, Timer timer,LinkedBlockingQueue<PCEPMessage> parentPCESendingQueue,ParentPCERequestManager childPCERequestManager, Inet4Address domainId, PCEPSessionsInformation pcepSessionInformation, SingleDomainInitiateDispatcher iniDispatcher) {
 		super(pcepSessionInformation);
 		this.PCCRequestDispatcherChild=PCCRequestDispatcherChild;
@@ -108,11 +104,8 @@ public class ChildPCESession  extends GenericPCEPSession{
 
 	
 	
-	/**
-	 * Constructor of the PCE Session
-	 * @param s Socket of the PCC-PCE Communication
-	 * @param req RequestQueue to send path requests
-	 */
+	//* Constructor of the PCE Session * @param s Socket of the PCC-PCE Communication * @param req RequestQueue to send path requests
+	
 	public ChildPCESession(PCEServerParameters params, RequestQueue parentPCERequestQueue, TEDB ted, Timer timer,LinkedBlockingQueue<PCEPMessage> parentPCESendingQueue,ParentPCERequestManager childPCERequestManager, Inet4Address domainId, PCEPSessionsInformation pcepSessionInformation, SingleDomainInitiateDispatcher iniDispatcher) {
 		super(pcepSessionInformation);
 		this.state=PCEPValues.PCEP_STATE_IDLE;

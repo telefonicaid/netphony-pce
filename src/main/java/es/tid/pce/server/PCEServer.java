@@ -20,6 +20,15 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.logging.SimpleFormatter;
 
+/*import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.CommandLineParser;
+import org.apache.commons.cli.DefaultParser;
+import org.apache.commons.cli.HelpFormatter;
+import org.apache.commons.cli.Option;
+import org.apache.commons.cli.OptionBuilder;
+import org.apache.commons.cli.Options;*/
+import org.apache.commons.cli.ParseException;
+
 import es.tid.pce.computingEngine.ReportDispatcher;
 import es.tid.pce.computingEngine.RequestDispatcher;
 import es.tid.pce.computingEngine.algorithms.ComputingAlgorithmManager;
@@ -48,9 +57,9 @@ public class PCEServer {
 	public static final Logger log =Logger.getLogger("PCEServer");
 	public static Logger log5;
 	private static OperationsCounter OPcounter;
-
+	
 	private static ReportDB_Handler rptdb;
-
+	private static boolean listening;
 	/**
 	 * LSP database. It should only be necessary if PCE is stateful
 	 * 
@@ -59,9 +68,31 @@ public class PCEServer {
 	/**
 	 * Main class
 	 * @param args
+	 * @throws ParseException 
 	 */
-	public static void main(String[] args) {
+	public static void main(String[] args){
+		/*Option hOpt = new Option("help", "help");
+		Option nLoopOpt= OptionBuilder.withArgName( "value" ).hasArg().withDescription(  "number of messages [0 or not present equals to infty]" ).create( "nLoop" );
+		//Option logOpt= OptionBuilder.withArgName( "value" ).hasArg().withDescription(  "Path to principal log file [if not present log to stdout]" ).create( "logFile" );
 
+		Options options = new Options();
+		options.addOption(hOpt);
+		//options.addOption(logOpt);
+		options.addOption(nLoopOpt);
+		CommandLineParser parser = new DefaultParser();
+		CommandLine line=null;
+		try {
+			line = parser.parse( options, args );
+		} catch (ParseException e3) {
+			// TODO Auto-generated catch block
+			e3.printStackTrace();
+		}
+		if(line==null || line.hasOption("help")){
+			HelpFormatter formatter = new HelpFormatter();
+			formatter.printHelp( "PCEServer <filConfig.xml> [options]", options );
+			System.exit(1);
+		}
+		*/
 		//First of all, read the parameters
 		PCEServerParameters params;
 		if (args.length >=1 ){
@@ -79,6 +110,7 @@ public class PCEServer {
 		FileHandler fh5;
 		//FileHandler fh6;
 		try {
+			
 			fh=new FileHandler(params.getPCEServerLogFile());
 			fh2=new FileHandler(params.getPCEPParserLogFile());
 			fh3=new FileHandler(params.getOSPFParserLogFile());
@@ -86,7 +118,8 @@ public class PCEServer {
 			fh5=new FileHandler("OpMultiLayer.log", false);
 			fh5.setFormatter(new SimpleFormatter());
 			//fh.setFormatter(new SimpleFormatter());
-			//fh2.setFormatter(new SimpleFormatter());			
+			//fh2.setFormatter(new SimpleFormatter());	
+			
 			Logger log2=Logger.getLogger("PCEPParser");
 			Logger log3=Logger.getLogger("OSPFParser");
 			Logger log4=Logger.getLogger("TEDBParser");
@@ -166,6 +199,10 @@ public class PCEServer {
 		{
 			log.info("Stateful PCE with T="+params.isStatefulTFlag()+" D="+params.isStatefulDFlag()+" S="+params.isStatefulSFlag());
 			singleDomainLSPDB=new SingleDomainLSPDB();
+			if(params.getDbType().equals("_"))
+			{
+				singleDomainLSPDB.setExportDb(false);
+			}
 			iniManager= new IniPCCManager();
 			iniDispatcher = new SingleDomainInitiateDispatcher(singleDomainLSPDB,iniManager);
 		}
@@ -292,7 +329,7 @@ public class PCEServer {
 			log.info("There are no collaborative PCEs");
 
 		ServerSocket serverSocket = null;
-		boolean listening = true;
+		listening = true;
 		try {
 			log.info("Listening on port: "+params.getPCEServerPort());
 
@@ -399,6 +436,7 @@ public class PCEServer {
 			}
 			
 
+			//while (listening) {
 			while (listening) {
 				//new PCESession(serverSocket.accept(),params, PCCRequestsQueue,ted,pcm.getChildPCERequestManager()).start();
 				//null,ted,pcm.getChildPCERequestManager()).start(
@@ -409,10 +447,18 @@ public class PCEServer {
 				}
 			}
 			serverSocket.close();
+			
+			//System.exit(0);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 
+	}
+
+	
+	
+	public static void killme(){
+		listening=false;
 	}
 
 }

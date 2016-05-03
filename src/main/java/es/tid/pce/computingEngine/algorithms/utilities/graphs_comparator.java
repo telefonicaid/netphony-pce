@@ -13,10 +13,9 @@ import es.tid.tedb.IntraDomainEdge;
  * y comprueba si el tamaño de los caminos es igual, si se cumple, recorre interativamente el nodo destino de cada enlace
  * para comprobar si son iguales, hasta llegar al final del camino.
  * 
- * @autor: arturo mayoral
+ * @author arturo mayoral
  * 
- * **/
-
+ */
 public class graphs_comparator {
 	
 	boolean is_equal;
