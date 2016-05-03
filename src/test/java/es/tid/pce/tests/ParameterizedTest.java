@@ -81,7 +81,7 @@ public class ParameterizedTest {
 		this.pceServer = (new Thread(new RunPCEServer(this.fileConf)));
 		pceServer.start();
 		try {
-			Thread.sleep(1000);
+			Thread.sleep(500);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
@@ -122,7 +122,7 @@ public class ParameterizedTest {
 	public void finalize(){
 		this.pceServer.interrupt();
 		try {
-			Thread.sleep(1500);
+			Thread.sleep(2000);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
