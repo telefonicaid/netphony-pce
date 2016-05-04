@@ -3,5 +3,7 @@ jdk:
   - oraclejdk7
   - oraclejdk8
 script:
-  - mvn package -X -f ./pom.xml
   - mvn install -X -f ./pom.xml
+  - mvn clean package -P generate-autojar-PCE -X -f ./pom.xml
+  - mvn clean package -P generate-autojar-PCC -X -f ./pom.xml
+  - mvn clean package -P generate-autojar-ParentPCE -X -f ./pom.xml

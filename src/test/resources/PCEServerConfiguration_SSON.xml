@@ -50,7 +50,7 @@
 	<!--<networkDescriptionFile>networks\Network_8_nodes.xml</networkDescriptionFile>-->
 	<!--<networkDescriptionFile>networks\network_NSFNet.xml</networkDescriptionFile>-->
 	<!--<networkDescriptionFile>/usr/local/nodeConfig/topologia.xml</networkDescriptionFile>-->
-	<networkDescriptionFile>/home/victoruceda/workspace/ABNO-completo/cne-pce/src/test/resources/topologia.xml</networkDescriptionFile>
+	<networkDescriptionFile>src/test/resources/topologia.xml</networkDescriptionFile>
 	<initialSessionID>1000</initialSessionID>
 	<nodelay>true</nodelay>
 	<reservation>true</reservation>
