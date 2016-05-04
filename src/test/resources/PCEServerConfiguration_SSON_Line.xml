@@ -58,14 +58,14 @@
 	<analyzeRequestTime>true</analyzeRequestTime>
 	<multilayer>false</multilayer>
 	<setTraces>true</setTraces>
-		 <OSPF>
+		 <!--OSPF>
   		<OSPFSession>true</OSPFSession>
  		<OSPFListenerIP>10.95.87.93</OSPFListenerIP>
   		<OSPFMulticast>true</OSPFMulticast>
   		<OSPFUnicast>false</OSPFUnicast>
   		<OSPFTCPSession>false</OSPFTCPSession> 
   		<OSPFTCPPort>7762</OSPFTCPPort> 
- 		</OSPF>
+ 		</OSPF-->
 	<!--WSON NETWORK-->
 	<!--<layer type="gmpls" default="true" encodingType="1" switchingType="150">77</layer>-->
 	<layer type="mpls" default="true" ></layer>
