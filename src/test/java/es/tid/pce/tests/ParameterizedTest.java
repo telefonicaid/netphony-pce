@@ -120,9 +120,9 @@ public class ParameterizedTest {
 	
 	@After
 	public void finalize(){
-		this.pceServer.interrupt();
+		//this.pceServer.interrupt();
 		try {
-			Thread.sleep(2000);
+			Thread.sleep(2500);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
