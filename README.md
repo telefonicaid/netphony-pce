@@ -2,7 +2,8 @@ cne-pce v1.3.0
 ==============
 
 Repository branch build status:
-| Master  | Develop   |
+
+| **Master**  | **Develop**   |
 |:---:|:---:|
 | [![Build Status](https://travis-ci.org/telefonicaid/netphony-pce.svg?branch=master)](https://travis-ci.org/telefonicaid/netphony-pce) | [![Build Status](https://travis-ci.org/telefonicaid/netphony-pce.svg?branch=develop)](https://travis-ci.org/telefonicaid/netphony-pce) |
 
