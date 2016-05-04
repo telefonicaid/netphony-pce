@@ -37,7 +37,7 @@ import es.tid.tedb.TEDB;
  * with its associated. SVEC object. In case of individual requests, the ComputingRequest 
  * just contains a single Request.
  * If not all the requests referred in the SVEC 
- * @author Oscar Gonz�lez de Dios (ogondio@tid.es)
+ * @author Oscar Gonzalez de Dios (ogondio@tid.es)
  *
  */
 
@@ -103,15 +103,7 @@ public class RequestDispatcher {
 	        }
 	        
 	    }
-	 /*
-	  * Constructor
-	  * @param nThreads
-	  * @param ted
-	  * @param cpcerm
-	  * @param analyzeRequestTime
-	  * @param useMaxReqTime
-	  * @param reservationManager
-	  */
+
 	public RequestDispatcher(int nThreads,TEDB ted,ParentPCERequestManager cpcerm, boolean analyzeRequestTime, boolean useMaxReqTime, ReservationManager reservationManager)
     {
 		log=Logger.getLogger("PCEServer");
@@ -130,16 +122,7 @@ public class RequestDispatcher {
             
         }
     }
-	/*
-	 * SERGIO
-	  * Constructor
-	  * @param nThreads
-	  * @param ted
-	  * @param cpcerm
-	  * @param analyzeRequestTime
-	  * @param useMaxReqTime
-	  * @param reservationManager
-	  */
+
 	public RequestDispatcher(int nThreads,TEDB ted,ParentPCERequestManager cpcerm, boolean analyzeRequestTime, boolean useMaxReqTime, ReservationManager reservationManager, OperationsCounter OPcounter, boolean isMult)
     	{
 			log=Logger.getLogger("PCEServer");
@@ -156,14 +139,8 @@ public class RequestDispatcher {
 	            threads[i].start();
 	        }
     	}
-	 /**
-	  * Constructor para collaborative PCEs
-	  * @param nThreads
-	  * @param ted
-	  * @param cpcerm
-	  * @param analyzeRequestTime
-	  * @param collaborationPCESessionManager
-	  */
+
+
 	public RequestDispatcher(int nThreads,TEDB ted,ParentPCERequestManager cpcerm, boolean analyzeRequestTime,CollaborationPCESessionManager collaborationPCESessionManager)
 	    {
 			log=Logger.getLogger("PCEServer");
@@ -181,16 +158,7 @@ public class RequestDispatcher {
 	            
 	        }
 	    }
-	/*
-	 * Constructor para collaborative PCES
-	 * @param nThreads
-	 * @param ted
-	 * @param cpcerm
-	 * @param analyzeRequestTime
-	 * @param useMaxReqTime
-	 * @param reservationManager
-	 * @param collaborationPCESessionManager
-	 */
+
 	public RequestDispatcher(int nThreads,TEDB ted,ParentPCERequestManager cpcerm, boolean analyzeRequestTime, boolean useMaxReqTime, ReservationManager reservationManager,CollaborationPCESessionManager collaborationPCESessionManager)
     {
 		log=Logger.getLogger("PCEServer");

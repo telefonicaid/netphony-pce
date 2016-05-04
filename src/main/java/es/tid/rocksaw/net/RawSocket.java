@@ -203,6 +203,7 @@ public class RawSocket {
    * vserv-tcpip, but is currently included here as a convenience.  It
    * may be moved elsewhere in the 1.0 release API.</em></p>
    *
+   * @param name Name of the protocol
    * @return The protocol number corresponding to the given protocol name.
    *         If the protocol name cannot be found, returns a negative value.
    */
@@ -644,21 +645,21 @@ public class RawSocket {
     return result;
   }
 
-  /** Same as {@code read(data, 0, length, null);} */
+  // Same as {@code read(data, 0, length, null);} 
   public int read(byte[] data, int offset, int length)
     throws IllegalArgumentException, IOException, InterruptedIOException
   {
     return read(data, offset, length, null);
   }
 
-  /** Same as {@code read(data, 0, data.length, address);} */
+  // Same as {@code read(data, 0, data.length, address);} 
   public int read(byte[] data, byte[] address)
     throws IOException, InterruptedIOException
   {
     return read(data, 0, data.length, address);
   }
 
-  /** Same as {@code read(address, data, 0, data.length, null);} */
+  // Same as {@code read(address, data, 0, data.length, null);} 
   public int read(byte[] data)
     throws IOException, InterruptedIOException
   {
@@ -713,7 +714,7 @@ public class RawSocket {
   }
 
 
-  /** Same as {@code write(address, data, 0, data.length);} */
+  // Same as {@code write(address, data, 0, data.length);} 
   public int write(InetAddress address, byte[] data)
     throws IOException, InterruptedIOException
   {
@@ -722,7 +723,7 @@ public class RawSocket {
   
   private native static int __joinGroup(int socket,  byte[] mcastaddr, byte[] address);
  
-   /**Joins a multicast group */
+   //Joins a multicast group 
   	public void joinGroup(InetAddress mcastaddr, InetAddress interfaceAddr) throws SocketException{
 	 int result = __joinGroup(__socket, mcastaddr.getAddress(), interfaceAddr.getAddress());
 

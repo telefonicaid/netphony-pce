@@ -90,12 +90,6 @@ public class Multilayer_VNTMProv_Algorithm implements ComputingAlgorithm {
 	
 	private OperationsCounter OP_Counter;
 	
-	/**
-	 * Constructor
-	 * @param pathReq
-	 * @param ted
-	 * @param reservationManager
-	 */
 	public Multilayer_VNTMProv_Algorithm(ComputingRequest pathReq,TEDB ted, ReservationManager reservationManager, OperationsCounter OPcounter){
 		//this.num_lambdas=((DomainTEDB)ted).getNumLambdas();
 		this.pathReq=pathReq;
@@ -104,9 +98,6 @@ public class Multilayer_VNTMProv_Algorithm implements ComputingAlgorithm {
 		this.OP_Counter=OPcounter;
 	}
 
-	/**
-	 * Exectutes the path computation and returns the PCEP Response
-	 */
 	public ComputingResponse call(){ 
 		
 		log.info("Starting Multilayer Min Traffic Hops Algorithm, New Request!");

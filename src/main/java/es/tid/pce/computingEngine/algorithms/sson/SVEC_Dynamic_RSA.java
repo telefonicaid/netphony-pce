@@ -96,13 +96,7 @@ public class SVEC_Dynamic_RSA implements ComputingAlgorithm{
 	
 	int number_rejections=0;
 	private GenericLambdaReservation  reserv;
-	/**
-	 * Constructor
-	 * @param pathReq
-	 * @param ted
-	 * @param reservationManager
-	 * @param mf (modulation format)
-	 */
+
 	public SVEC_Dynamic_RSA(ComputingRequest pathReq,TEDB ted, ReservationManager reservationManager, int mf ){
 		//this.num_lambdas=((DomainTEDB)ted).getWSONinfo().getNumLambdas();
 		this.pathReq=pathReq;
@@ -110,9 +104,6 @@ public class SVEC_Dynamic_RSA implements ComputingAlgorithm{
 		this.ted=(DomainTEDB)ted;
 	}
 
-	/**
-	 * Exectutes the path computation and returns the PCEP Response
-	 */
 	public ComputingResponse call(){ 
 		//Timestamp of the start of the algorithm;
 		long tiempoini =System.nanoTime();

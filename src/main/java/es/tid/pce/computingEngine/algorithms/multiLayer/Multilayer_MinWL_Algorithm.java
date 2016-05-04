@@ -89,12 +89,6 @@ public class Multilayer_MinWL_Algorithm implements ComputingAlgorithm {
 	
 	private GenericLambdaReservation  reserv;
 	
-	/**
-	 * Constructor
-	 * @param pathReq
-	 * @param ted
-	 * @param reservationManager
-	 */
 	public Multilayer_MinWL_Algorithm(ComputingRequest pathReq,TEDB ted, ReservationManager reservationManager, OperationsCounter OPcounter ){
 		//this.num_lambdas=((DomainTEDB)ted).getNumLambdas();
 		this.pathReq=pathReq;
@@ -103,9 +97,6 @@ public class Multilayer_MinWL_Algorithm implements ComputingAlgorithm {
 		this.OP_Counter=OPcounter;
 	}
 
-	/**
-	 * Exectutes the path computation and returns the PCEP Response
-	 */
 	public ComputingResponse call(){ 
 		
 		log.finest("Starting Multilayer Min Traffic Hops Algorithm");
