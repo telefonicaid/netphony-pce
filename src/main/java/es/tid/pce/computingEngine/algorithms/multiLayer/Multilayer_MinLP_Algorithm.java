@@ -70,9 +70,8 @@ public class Multilayer_MinLP_Algorithm implements ComputingAlgorithm {
 	private int num_op2;
 	private int num_op3;
 	private int num_op4;*/
-	/**
-	 * Access to the Reservation Manager to make reservations of Wavelengths/labels.
-	 */
+	//
+	//Access to the Reservation Manager to make reservations of Wavelengths/labels.
 	private ReservationManager reservationManager;
 	
 	//	/********************************
@@ -94,12 +93,6 @@ public class Multilayer_MinLP_Algorithm implements ComputingAlgorithm {
 	
 	private ArrayList<SimpleDirectedWeightedGraph<Object, IntraDomainEdge>> networkGraphs_precomp;
 	
-	/**
-	 * Constructor
-	 * @param pathReq
-	 * @param ted
-	 * @param reservationManager
-	 */
 	public Multilayer_MinLP_Algorithm(ComputingRequest pathReq,TEDB ted, ReservationManager reservationManager, OperationsCounter OPcounter){
 		//this.num_lambdas=((DomainTEDB)ted).getNumLambdas();
 		this.pathReq=pathReq;
@@ -108,9 +101,6 @@ public class Multilayer_MinLP_Algorithm implements ComputingAlgorithm {
 		this.OP_Counter=OPcounter;
 	}
 
-	/**
-	 * Exectutes the path computation and returns the PCEP Response
-	 */
 	public ComputingResponse call(){ 
 		//Time stamp of the start of the algorithm;
 		log.finest("Starting Multilayer Min Ligth Paths Algorithm");

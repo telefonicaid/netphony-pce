@@ -120,10 +120,8 @@ public class OSPFSessionServer extends Thread {
 
 	}
 
-	/**
-	 * Read PCE message from TCP stream
-	 * @param socket InputStreamSocket
-	 */
+
+	 // Read PCE message from TCP stream
 	protected OSPFv2Packet  readOSPFv2Packet(RawSocket socket) throws IOException{
 		byte[] hdr = new byte[20];
 		byte[] temp = null;

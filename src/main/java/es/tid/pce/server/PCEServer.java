@@ -20,15 +20,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.logging.SimpleFormatter;
 
-/*import org.apache.commons.cli.CommandLine;
-import org.apache.commons.cli.CommandLineParser;
-import org.apache.commons.cli.DefaultParser;
-import org.apache.commons.cli.HelpFormatter;
-import org.apache.commons.cli.Option;
-import org.apache.commons.cli.OptionBuilder;
-import org.apache.commons.cli.Options;*/
-import org.apache.commons.cli.ParseException;
-
 import es.tid.pce.computingEngine.ReportDispatcher;
 import es.tid.pce.computingEngine.RequestDispatcher;
 import es.tid.pce.computingEngine.algorithms.ComputingAlgorithmManager;
@@ -60,16 +51,7 @@ public class PCEServer {
 	
 	private static ReportDB_Handler rptdb;
 	private static boolean listening;
-	/**
-	 * LSP database. It should only be necessary if PCE is stateful
-	 * 
-	 */
 
-	/**
-	 * Main class
-	 * @param args
-	 * @throws ParseException 
-	 */
 	public static void main(String[] args){
 		/*Option hOpt = new Option("help", "help");
 		Option nLoopOpt= OptionBuilder.withArgName( "value" ).hasArg().withDescription(  "number of messages [0 or not present equals to infty]" ).create( "nLoop" );

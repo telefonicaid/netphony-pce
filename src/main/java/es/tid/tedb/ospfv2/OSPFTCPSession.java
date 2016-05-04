@@ -82,6 +82,8 @@ public class OSPFTCPSession extends Thread {
 	/**
 	 * Read PCE message from TCP stream
 	 * @param in InputStream
+	 * @throws IOException Thrown when there is a problem reading
+	 * @return The OSPFv2Packet read
 	 */
 	protected OSPFv2Packet readOSPFv2Packet(DataInputStream in) throws IOException{
 		byte[] ret = null;

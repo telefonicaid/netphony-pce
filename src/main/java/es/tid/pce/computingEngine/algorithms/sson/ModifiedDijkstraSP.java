@@ -86,6 +86,8 @@ public class ModifiedDijkstraSP
      * @param graph the graph to be searched
      * @param startVertex the vertex at which the path should start
      * @param endVertex the vertex at which the path should end
+     * @param SetChannels SetChannels
+     * @param num_slots num_slots
      */
     public ModifiedDijkstraSP(SimpleDirectedWeightedGraph<Object,IntraDomainEdge> graph, Object startVertex, Object endVertex, ArrayList<BitmapLabelSet> SetChannels, int num_slots)
     {
@@ -104,6 +106,8 @@ public class ModifiedDijkstraSP
      * @param endVertex the vertex at which the path should end
      * @param radius limit on path length, or Double.POSITIVE_INFINITY for
      * unbounded search
+     * @param SetChannels SetChannels
+     * @param num_slots num_slots
      */
     
 	public ModifiedDijkstraSP(SimpleDirectedWeightedGraph<Object,IntraDomainEdge> graph,Object startVertex,Object endVertex, double radius, ArrayList<BitmapLabelSet> SetChannels, int num_slots)

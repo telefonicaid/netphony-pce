@@ -152,6 +152,8 @@ public class ClosestFirstIteratorModified<V, E>
      * @param startVertex the vertex iteration to be started.
      * @param radius limit on path length, or Double.POSITIVE_INFINITY for
      * unbounded search.
+     * @param SetChannels SetChannels
+     * @param num_slots num_slots
      */
     public ClosestFirstIteratorModified(Graph<V, E> g, V startVertex, double radius, ArrayList<BitmapLabelSet> SetChannels, int num_slots)
     {	

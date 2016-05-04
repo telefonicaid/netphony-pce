@@ -65,11 +65,6 @@ public class MultiDomainTopologyUpdaterThread extends Thread {
 	//List of the received LSAs
 	private LinkedList<InterASTEv2LSA> interASTEv2LSAList;
 
-	/**
-	 * Constructor for normal Multi-domain TEDB
-	 * @param multiDomainUpdateQueue
-	 * @param multiDomainTEDB
-	 */
 	public MultiDomainTopologyUpdaterThread(LinkedBlockingQueue<MultiDomainUpdate> multiDomainUpdateQueue,MDTEDB multiDomainTEDB){
 		log=Logger.getLogger("MultiDomainTologyUpdater");
 		this.multiDomainUpdateQueue=multiDomainUpdateQueue;		
@@ -77,11 +72,6 @@ public class MultiDomainTopologyUpdaterThread extends Thread {
 		interASTEv2LSAList=new LinkedList<InterASTEv2LSA>();
 	}
 
-	/**
-	 * Constructor for IT TEDB
-	 * @param multiDomainUpdateQueue
-	 * @param ITmultiDomainTEDB
-	 */
 	public MultiDomainTopologyUpdaterThread(LinkedBlockingQueue<MultiDomainUpdate> multiDomainUpdateQueue,ITMDTEDB ITmultiDomainTEDB){
 		log=Logger.getLogger("MultiDomainTologyUpdater");
 		this.multiDomainUpdateQueue=multiDomainUpdateQueue;		

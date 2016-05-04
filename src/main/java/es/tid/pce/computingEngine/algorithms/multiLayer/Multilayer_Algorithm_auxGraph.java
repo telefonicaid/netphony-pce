@@ -84,12 +84,6 @@ public class Multilayer_Algorithm_auxGraph implements ComputingAlgorithm{
 	
 	private OperationsCounter OP_Counter;
 	
-	/**
-	 * Constructor
-	 * @param pathReq
-	 * @param ted
-	 * @param reservationManager
-	 */
 	public Multilayer_Algorithm_auxGraph(ComputingRequest pathReq,TEDB ted, ReservationManager reservationManager, OperationsCounter OPcounter ){
 		//this.num_lambdas=((DomainTEDB)ted).getNumLambdas();
 		this.pathReq=pathReq;
@@ -98,9 +92,6 @@ public class Multilayer_Algorithm_auxGraph implements ComputingAlgorithm{
 		this.OP_Counter=OPcounter;
 	}
 
-	/**
-	 * Exectutes the path computation and returns the PCEP Response
-	 */
 	public ComputingResponse call(){ 
 		
 		graphLock = preComp.getGraphLock();
