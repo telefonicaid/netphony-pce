@@ -92,7 +92,7 @@ public class MPLS_MinTH_Algorithm implements ComputingAlgorithm {
 	
 	private ArrayList<SimpleDirectedWeightedGraph<Inet4Address, IntraDomainEdge>> networkGraphs_precomp;
 	
-	/**
+	/*
 	 * Constructor
 	 * @param pathReq
 	 * @param ted

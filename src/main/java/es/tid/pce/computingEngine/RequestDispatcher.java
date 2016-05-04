@@ -78,7 +78,7 @@ public class RequestDispatcher {
 
 
 	 
-	 /**
+	 /*
 	  * Constructor
 	  * @param nThreads
 	  * @param ted
@@ -103,7 +103,7 @@ public class RequestDispatcher {
 	        }
 	        
 	    }
-	 /**
+	 /*
 	  * Constructor
 	  * @param nThreads
 	  * @param ted
@@ -130,7 +130,7 @@ public class RequestDispatcher {
             
         }
     }
-	/**
+	/*
 	 * SERGIO
 	  * Constructor
 	  * @param nThreads
@@ -181,7 +181,7 @@ public class RequestDispatcher {
 	            
 	        }
 	    }
-	/**
+	/*
 	 * Constructor para collaborative PCES
 	 * @param nThreads
 	 * @param ted
@@ -388,14 +388,14 @@ public class RequestDispatcher {
 		return threads;
 	}
     
-    /**
+    /*
      * Insert a computing request in the retry Queue
      */
 	public void addComputingRequestToRetryQueue(ComputingRequest compreq){
 		pathComputingRequestRetryQueue.add(compreq);
 	}
     
-	/**
+	/*
 	 * Move all the elements in the retry queue to the 
 	 * computing request queue in the same order
 	 */

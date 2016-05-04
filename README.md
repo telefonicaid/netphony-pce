@@ -1,6 +1,16 @@
 cne-pce v1.3.0
 ==============
 
+Repository branch build status:
+
+| **Master**  | **Develop**   |
+|:---:|:---:|
+| [![Build Status](https://travis-ci.org/telefonicaid/netphony-pce.svg?branch=master)](https://travis-ci.org/telefonicaid/netphony-pce) | [![Build Status](https://travis-ci.org/telefonicaid/netphony-pce.svg?branch=develop)](https://travis-ci.org/telefonicaid/netphony-pce) |
+
+Latest Maven Central Release: 
+
+[![Maven Central](https://maven-badges.herokuapp.com/maven-central/es.tid.netphony/pce/badge.svg?style=flat-square)](https://maven-badges.herokuapp.com/maven-central/es.tid.netphony/pce/)
+
 This repository contains a Java based implementation of a Path Computation Element, with several flavours, and a Path Computation Client, following RFC 4655 architecture. According to RFC 4655 (citing literally): "A Path Computation Element (PCE) is an entity that is capable of computing a network path or route based on a network graph, and of applying computational constraints during the computation. The PCE entity is an application that can be located within a network node or component, on an out-of-network server, etc. For example, a PCE would be able to compute the path of a TE LSP by operating on the TED and considering bandwidth and other constraints applicable to the TE LSP service request."
 
 The PCE follows a modular architecture and allows to add customized algorithms 

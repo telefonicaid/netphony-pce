@@ -208,9 +208,10 @@ public abstract class GenericPCEPSession extends Thread implements PCEPSession {
 		log=Logger.getLogger("PCCClient");
 	}
 
-	/**
-	 * Read PCE message from TCP stream
-	 * @param in InputStream
+	/*
+	  Read PCE message from TCP stream
+	  @param in InputStream
+	  @return message
 	 */
 	protected byte[] readMsg(DataInputStream in) throws IOException{
 		byte[] ret = null;
@@ -266,10 +267,10 @@ public abstract class GenericPCEPSession extends Thread implements PCEPSession {
 		return ret;
 	}
 
-	/**
-	 * Read PCE message from TCP stream
-	 * @param in InputStream
-	 */
+	/*
+	  Read PCE message from TCP stream
+	  @param in InputStream
+	*/
 	protected byte[] readMsgOptimized(DataInputStream in) throws IOException{
 		byte[] ret = null;
 
@@ -470,8 +471,8 @@ public abstract class GenericPCEPSession extends Thread implements PCEPSession {
 	 */
 	protected abstract void endSession();
 
-	/**
-	 * 
+	/*
+	  
 	 * @param zeroDeadTimerAccepted
 	 * @param minimumKeepAliveTimerAccepted
 	 * @param maxDeadTimerAccepted
