@@ -120,7 +120,7 @@ public final class Dijkstra<V, E>
         }
     }
  
-    /**
+    /*
      * Convenience method to find the shortest path via a single static method
      * call. If you need a more advanced search (e.g. limited by radius, or
      * computation of the path length), use the constructor instead.

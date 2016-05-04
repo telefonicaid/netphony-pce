@@ -146,11 +146,11 @@ public class RequestProcessorThread extends Thread{
 
 	private ReservationManager reservationManager;
 
-	/*** STRONGEST: Collaborative PCEs ***/
+	/* STRONGEST: Collaborative PCEs */
 	CollaborationPCESessionManager collaborationPCESessionManager;
 
 
-	/**
+	/*
 	 * Constructor
 	 * @param queue
 	 * @param ted
@@ -189,7 +189,7 @@ public class RequestProcessorThread extends Thread{
 
 	}
 
-	/**
+	/*
 	 * Constructor 
 	 * @param queue
 	 * @param ted
@@ -231,7 +231,7 @@ public class RequestProcessorThread extends Thread{
 
 	}
 
-	/**
+	/*
 	 * SERGIO
 	 * Constructor 
 	 * @param queue
@@ -276,7 +276,7 @@ public class RequestProcessorThread extends Thread{
 
 	}
 
-	/**
+	/*
 	 * Constructor para collaborative PCEs
 	 * @param queue
 	 * @param ted
@@ -312,7 +312,7 @@ public class RequestProcessorThread extends Thread{
 		this.collaborationPCESessionManager=collaborationPCESessionManager;
 	}
 
-	/**
+	/*
 	 * Constructor para collaborative PCEs
 	 * @param queue
 	 * @param ted
@@ -357,8 +357,8 @@ public class RequestProcessorThread extends Thread{
 
 	/**
 	 * Method to register an algorithm
-	 * @param rule
-	 * @param algortithmManager
+	 * @param rule -
+	 * @param algortithmManager -
 	 */
 	public void registerAlgorithm(AlgorithmRule rule, ComputingAlgorithmManager algortithmManager ){
 		if (rule.svec==true){
@@ -372,8 +372,8 @@ public class RequestProcessorThread extends Thread{
 
 	/**
 	 * Method to register an algorithm
-	 * @param rule
-	 * @param algortithmManager
+	 * @param rule -
+	 * @param algortithmManager -
 	 */
 	public void registerAlgorithmSSON(AlgorithmRule rule, ComputingAlgorithmManagerSSON algortithmManager ){
 		if (rule.svec==true){
@@ -385,8 +385,8 @@ public class RequestProcessorThread extends Thread{
 	}
 	/**
 	 * Method to delete an algorithm
-	 * @param rule
-	 * @param algortithmManager
+	 * @param rule - 
+	 * @param algortithmManager -
 	 */
 	public void removeAlgorithm(AlgorithmRule rule, ComputingAlgorithmManager algortithmManager ){		
 
@@ -955,7 +955,7 @@ public class RequestProcessorThread extends Thread{
 		return maxProcTime;
 	}
 
-	/*** STRONGEST: Collaborative PCEs ***/
+	/* STRONGEST: Collaborative PCEs */
 
 	public PCEPNotification createNotificationMessage(ComputingResponse resp,long timer ){
 		log.info("Timer "+timer);

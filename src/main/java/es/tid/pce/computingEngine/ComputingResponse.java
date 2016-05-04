@@ -94,7 +94,7 @@ public class ComputingResponse
 		ResponseList = responseList;
 	}
 
-	/**
+	/*
 	 * Encodes the PCEP Response Message
 	 */
 	
