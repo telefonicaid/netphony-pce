@@ -14,6 +14,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+ /*
+ * The original rocksow library has been modified to support multicast.
+*/
 
 #include <errno.h>
 #include <string.h>
@@ -126,12 +129,12 @@ init_sockaddr_in6(JNIEnv *env, struct sockaddr_in6 *sin6, jbyteArray address) {
 }
 
 /*
- * Class:     com_savarese_rocksaw_net_RawSocket
+ * Class:     es_tid_rocksaw_net_RawSocket
  * Method:    __RockSawInit();
  * Signature: ()I
  */
 JNIEXPORT jint JNICALL
-Java_com_savarese_rocksaw_net_RawSocket__1_1RockSawStartup
+Java_es_tid_rocksaw_net_RawSocket__1_1RockSawStartup
 (JNIEnv *env, jclass cls)
 {
 #if defined(_WIN32)
@@ -144,12 +147,12 @@ Java_com_savarese_rocksaw_net_RawSocket__1_1RockSawStartup
 }
 
 /*
- * Class:     com_savarese_rocksaw_net_RawSocket
+ * Class:     es_tid_rocksaw_net_RawSocket
  * Method:    __RockSawShutdown();
  * Signature: ()V
  */
 JNIEXPORT void JNICALL
-Java_com_savarese_rocksaw_net_RawSocket__1_1RockSawShutdown
+Java_es_tid_rocksaw_net_RawSocket__1_1RockSawShutdown
 (JNIEnv *env, jclass cls)
 {
 #if defined(_WIN32)
@@ -158,12 +161,12 @@ Java_com_savarese_rocksaw_net_RawSocket__1_1RockSawShutdown
 }
 
 /*
- * Class:     com_savarese_rocksaw_net_RawSocket
+ * Class:     es_tid_rocksaw_net_RawSocket
  * Method:    __getErrorMessage
  * Signature: (Ljava/lang/StringBuffer;)V
  */
 JNIEXPORT void JNICALL
-Java_com_savarese_rocksaw_net_RawSocket__1_1getErrorMessage
+Java_es_tid_rocksaw_net_RawSocket__1_1getErrorMessage
 (JNIEnv *env, jclass cls, jobject buffer)
 {
   jclass sbc;
@@ -204,14 +207,14 @@ Java_com_savarese_rocksaw_net_RawSocket__1_1getErrorMessage
 
 
 /*
- * Class:     com_savarese_rocksaw_net_RawSocket
+ * Class:     es_tid_rocksaw_net_RawSocket
  * Method:    __select
  * Signature: (IZII)I
  *
  * Returns zero if the socket is ready for I/O.
  */
 JNIEXPORT jint JNICALL
-Java_com_savarese_rocksaw_net_RawSocket__1_1select
+Java_es_tid_rocksaw_net_RawSocket__1_1select
 (JNIEnv *env, jclass cls,
  jint socket, jboolean read, jint seconds, jint microseconds)
 {
@@ -253,48 +256,48 @@ Java_com_savarese_rocksaw_net_RawSocket__1_1select
 }
 
 /*
- * Class:     com_savarese_rocksaw_net_RawSocket
+ * Class:     es_tid_rocksaw_net_RawSocket
  * Method:    __PF_INET
  * Signature: ()I
  */
 JNIEXPORT jint JNICALL
-Java_com_savarese_rocksaw_net_RawSocket__1_1PF_1INET
+Java_es_tid_rocksaw_net_RawSocket__1_1PF_1INET
 (JNIEnv *env, jclass cls)
 {
   return PF_INET;
 }
 
 /*
- * Class:     com_savarese_rocksaw_net_RawSocket
+ * Class:     es_tid_rocksaw_net_RawSocket
  * Method:    __PF_INET6
  * Signature: ()I
  */
 JNIEXPORT jint JNICALL
-Java_com_savarese_rocksaw_net_RawSocket__1_1PF_1INET6
+Java_es_tid_rocksaw_net_RawSocket__1_1PF_1INET6
 (JNIEnv *env, jclass cls)
 {
   return PF_INET6;
 }
 
 /*
- * Class:     com_savarese_rocksaw_net_RawSocket
+ * Class:     es_tid_rocksaw_net_RawSocket
  * Method:    __socket
  * Signature: (II)I
  */
 JNIEXPORT jint JNICALL
-Java_com_savarese_rocksaw_net_RawSocket__1_1socket
+Java_es_tid_rocksaw_net_RawSocket__1_1socket
 (JNIEnv *env, jclass cls, jint family, jint protocol)
 {
   return socket(family, SOCK_RAW, protocol);
 }
 
 /*
- * Class:     com_savarese_rocksaw_net_RawSocket
+ * Class:     es_tid_rocksaw_net_RawSocket
  * Method:    __bind
  * Signature: (II[B)I
  */
 JNIEXPORT jint JNICALL
-Java_com_savarese_rocksaw_net_RawSocket__1_1bind
+Java_es_tid_rocksaw_net_RawSocket__1_1bind
 (JNIEnv *env, jclass cls, jint socket, jint family, jbyteArray address)
 {
   struct sockaddr *saddr;
@@ -317,12 +320,12 @@ Java_com_savarese_rocksaw_net_RawSocket__1_1bind
 }
 
 /*
- * Class:     com_savarese_rocksaw_net_RawSocket
+ * Class:     es_tid_rocksaw_net_RawSocket
  * Method:    __bindDevice
  * Signature: (ILjava/lang/String;)I
  */
 JNIEXPORT jint JNICALL
-Java_com_savarese_rocksaw_net_RawSocket__1_1bindDevice
+Java_es_tid_rocksaw_net_RawSocket__1_1bindDevice
 (JNIEnv *env, jclass cls, jint socket, jstring device)
 {
 #if defined(SO_BINDTODEVICE)
@@ -339,12 +342,12 @@ Java_com_savarese_rocksaw_net_RawSocket__1_1bindDevice
 }
 
 /*
- * Class:     com_savarese_rocksaw_net_RawSocket
+ * Class:     es_tid_rocksaw_net_RawSocket
  * Method:    getProtocolByName
  * Signature: (Ljava/lang/String;)I
  */
 JNIEXPORT jint JNICALL
-Java_com_savarese_rocksaw_net_RawSocket_getProtocolByName
+Java_es_tid_rocksaw_net_RawSocket_getProtocolByName
 (JNIEnv *env, jclass cls, jstring name)
 {
   const char *utf        = (*env)->GetStringUTFChars(env, name, NULL);
@@ -357,12 +360,12 @@ Java_com_savarese_rocksaw_net_RawSocket_getProtocolByName
 
 
 /*
- * Class:     com_savarese_rocksaw_net_RawSocket
+ * Class:     es_tid_rocksaw_net_RawSocket
  * Method:    __query_routing_interface
  * Signature: (II[B[B)I
  */
 JNIEXPORT jint JNICALL
-Java_com_savarese_rocksaw_net_RawSocket__1_1query_1routing_1interface
+Java_es_tid_rocksaw_net_RawSocket__1_1query_1routing_1interface
 (JNIEnv *env, jclass cls, jint socket, jint family,
  jbyteArray destination, jbyteArray source)
 {
@@ -409,24 +412,24 @@ Java_com_savarese_rocksaw_net_RawSocket__1_1query_1routing_1interface
 }
 
 /*
- * Class:     com_savarese_rocksaw_net_RawSocket
+ * Class:     es_tid_rocksaw_net_RawSocket
  * Method:    __close
  * Signature: (I)V
  */
 JNIEXPORT jint JNICALL
-Java_com_savarese_rocksaw_net_RawSocket__1_1close
+Java_es_tid_rocksaw_net_RawSocket__1_1close
 (JNIEnv *env, jclass cls, jint socket)
 {
   return close(socket);
 }
 
 /*
- * Class:     com_savarese_rocksaw_net_RawSocket
+ * Class:     es_tid_rocksaw_net_RawSocket
  * Method:    __recvfrom
  * Signature: (I[BIII)I
  */
 JNIEXPORT jint JNICALL
-Java_com_savarese_rocksaw_net_RawSocket__1_1recvfrom1
+Java_es_tid_rocksaw_net_RawSocket__1_1recvfrom1
 (JNIEnv *env, jclass cls, jint socket,
  jbyteArray data, jint offset, jint len, jint family)
 {
@@ -453,12 +456,12 @@ Java_com_savarese_rocksaw_net_RawSocket__1_1recvfrom1
 }
 
 /*
- * Class:     com_savarese_rocksaw_net_RawSocket
+ * Class:     es_tid_rocksaw_net_RawSocket
  * Method:    __recvfrom
  * Signature: (I[BIII[B)I
  */
 JNIEXPORT jint JNICALL
-Java_com_savarese_rocksaw_net_RawSocket__1_1recvfrom2
+Java_es_tid_rocksaw_net_RawSocket__1_1recvfrom2
 (JNIEnv *env, jclass cls, jint socket,
  jbyteArray data, jint offset, jint len, jint family, jbyteArray address)
 {
@@ -511,12 +514,12 @@ Java_com_savarese_rocksaw_net_RawSocket__1_1recvfrom2
 }
 
 /*
- * Class:     com_savarese_rocksaw_net_RawSocket
+ * Class:     es_tid_rocksaw_net_RawSocket
  * Method:    __sendto
  * Signature: (I[BIII[B)I
  */
 JNIEXPORT jint JNICALL
-Java_com_savarese_rocksaw_net_RawSocket__1_1sendto
+Java_es_tid_rocksaw_net_RawSocket__1_1sendto
 (JNIEnv *env, jclass cls, jint socket,
  jbyteArray data, jint offset, jint len, jint family, jbyteArray address)
 {
@@ -556,12 +559,12 @@ Java_com_savarese_rocksaw_net_RawSocket__1_1sendto
 
 
 /*
- * Class:     com_savarese_rocksaw_net_RawSocket
+ * Class:     es_tid_rocksaw_net_RawSocket
  * Method:    __isErrorEAGAIN
  * Signature: ()Z
  */
 JNIEXPORT jboolean JNICALL
-Java_com_savarese_rocksaw_net_RawSocket__1_1isErrorEAGAIN
+Java_es_tid_rocksaw_net_RawSocket__1_1isErrorEAGAIN
 (JNIEnv *env, jclass cls)
 {
 #if defined(_WIN32)
@@ -573,12 +576,12 @@ Java_com_savarese_rocksaw_net_RawSocket__1_1isErrorEAGAIN
 
 
 /*
- * Class:     com_savarese_rocksaw_net_RawSocket
+ * Class:     es_tid_rocksaw_net_RawSocket
  * Method:    __setIPHeaderInclude
  * Signature: (IZ)I
  */
 JNIEXPORT jint JNICALL
-Java_com_savarese_rocksaw_net_RawSocket__1_1setIPHeaderInclude
+Java_es_tid_rocksaw_net_RawSocket__1_1setIPHeaderInclude
 (JNIEnv *env, jclass cls, jint socket, jboolean on)
 {
   return setintsockopt(socket, IPPROTO_IP, IP_HDRINCL, on);
@@ -586,12 +589,12 @@ Java_com_savarese_rocksaw_net_RawSocket__1_1setIPHeaderInclude
 
 
 /*
- * Class:     com_savarese_rocksaw_net_RawSocket
+ * Class:     es_tid_rocksaw_net_RawSocket
  * Method:    __getIPHeaderInclude
  * Signature: (I)I
  */
 JNIEXPORT jint JNICALL
-Java_com_savarese_rocksaw_net_RawSocket__1_1getIPHeaderInclude
+Java_es_tid_rocksaw_net_RawSocket__1_1getIPHeaderInclude
 (JNIEnv *env, jclass cls, jint socket)
 {
   return getintsockopt(socket, IPPROTO_IP, IP_HDRINCL);
@@ -599,12 +602,12 @@ Java_com_savarese_rocksaw_net_RawSocket__1_1getIPHeaderInclude
 
 
 /*
- * Class:     com_savarese_rocksaw_net_RawSocket
+ * Class:     es_tid_rocksaw_net_RawSocket
  * Method:    __setSendBufferSize
  * Signature: (II)I
  */
 JNIEXPORT jint JNICALL
-Java_com_savarese_rocksaw_net_RawSocket__1_1setSendBufferSize
+Java_es_tid_rocksaw_net_RawSocket__1_1setSendBufferSize
 (JNIEnv *env, jclass cls, jint socket, jint size)
 {
   return setintsockopt(socket, SOL_SOCKET, SO_SNDBUF, size);
@@ -612,12 +615,12 @@ Java_com_savarese_rocksaw_net_RawSocket__1_1setSendBufferSize
 
 
 /*
- * Class:     com_savarese_rocksaw_net_RawSocket
+ * Class:     es_tid_rocksaw_net_RawSocket
  * Method:    __getSendBufferSize
  * Signature: (I)I
  */
 JNIEXPORT jint JNICALL
-Java_com_savarese_rocksaw_net_RawSocket__1_1getSendBufferSize
+Java_es_tid_rocksaw_net_RawSocket__1_1getSendBufferSize
 (JNIEnv *env, jclass cls, jint socket)
 {
   return getintsockopt(socket, SOL_SOCKET, SO_SNDBUF);
@@ -625,12 +628,12 @@ Java_com_savarese_rocksaw_net_RawSocket__1_1getSendBufferSize
 
 
 /*
- * Class:     com_savarese_rocksaw_net_RawSocket
+ * Class:     es_tid_rocksaw_net_RawSocket
  * Method:    __setReceiveBufferSize
  * Signature: (II)I
  */
 JNIEXPORT jint JNICALL
-Java_com_savarese_rocksaw_net_RawSocket__1_1setReceiveBufferSize
+Java_es_tid_rocksaw_net_RawSocket__1_1setReceiveBufferSize
 (JNIEnv *env, jclass cls, jint socket, jint size)
 {
   return setintsockopt(socket, SOL_SOCKET, SO_RCVBUF, size);
@@ -638,12 +641,12 @@ Java_com_savarese_rocksaw_net_RawSocket__1_1setReceiveBufferSize
 
 
 /*
- * Class:     com_savarese_rocksaw_net_RawSocket
+ * Class:     es_tid_rocksaw_net_RawSocket
  * Method:    __getReceiveBufferSize
  * Signature: (I)I
  */
 JNIEXPORT jint JNICALL
-Java_com_savarese_rocksaw_net_RawSocket__1_1getReceiveBufferSize
+Java_es_tid_rocksaw_net_RawSocket__1_1getReceiveBufferSize
 (JNIEnv *env, jclass cls, jint socket)
 {
   return getintsockopt(socket, SOL_SOCKET, SO_RCVBUF);
@@ -651,12 +654,12 @@ Java_com_savarese_rocksaw_net_RawSocket__1_1getReceiveBufferSize
 
 
 /*
- * Class:     com_savarese_rocksaw_net_RawSocket
+ * Class:     es_tid_rocksaw_net_RawSocket
  * Method:    __setSendTimeout
  * Signature: (II)I
  */
 JNIEXPORT jint JNICALL
-Java_com_savarese_rocksaw_net_RawSocket__1_1setSendTimeout
+Java_es_tid_rocksaw_net_RawSocket__1_1setSendTimeout
 (JNIEnv *env, jclass cls, jint socket, jint timeout)
 {
   return settimeout(socket, SO_SNDTIMEO, timeout);
@@ -664,12 +667,12 @@ Java_com_savarese_rocksaw_net_RawSocket__1_1setSendTimeout
 
 
 /*
- * Class:     com_savarese_rocksaw_net_RawSocket
+ * Class:     es_tid_rocksaw_net_RawSocket
  * Method:    __getSendTimeout
  * Signature: (I)I
  */
 JNIEXPORT jint JNICALL
-Java_com_savarese_rocksaw_net_RawSocket__1_1getSendTimeout
+Java_es_tid_rocksaw_net_RawSocket__1_1getSendTimeout
 (JNIEnv *env, jclass cls, jint socket)
 {
   return gettimeout(socket, SO_SNDTIMEO);
@@ -677,12 +680,12 @@ Java_com_savarese_rocksaw_net_RawSocket__1_1getSendTimeout
 
 
 /*
- * Class:     com_savarese_rocksaw_net_RawSocket
+ * Class:     es_tid_rocksaw_net_RawSocket
  * Method:    __setReceiveTimeout
  * Signature: (II)I
  */
 JNIEXPORT jint JNICALL
-Java_com_savarese_rocksaw_net_RawSocket__1_1setReceiveTimeout
+Java_es_tid_rocksaw_net_RawSocket__1_1setReceiveTimeout
 (JNIEnv *env, jclass cls, jint socket, jint timeout)
 {
   return settimeout(socket, SO_RCVTIMEO, timeout);
@@ -690,12 +693,12 @@ Java_com_savarese_rocksaw_net_RawSocket__1_1setReceiveTimeout
 
 
 /*
- * Class:     com_savarese_rocksaw_net_RawSocket
+ * Class:     es_tid_rocksaw_net_RawSocket
  * Method:    __getReceiveTimeout
  * Signature: (I)I
  */
 JNIEXPORT jint JNICALL
-Java_com_savarese_rocksaw_net_RawSocket__1_1getReceiveTimeout
+Java_es_tid_rocksaw_net_RawSocket__1_1getReceiveTimeout
 (JNIEnv *env, jclass cls, jint socket)
 {
   return gettimeout(socket, SO_RCVTIMEO);
@@ -713,12 +716,12 @@ static struct sockaddr* init_sockaddr_in_any(JNIEnv *env, struct sockaddr_in *si
 
 
 /*
- * Class:     com_savarese_rocksaw_net_RawSocket
+ * Class:     es_tid_rocksaw_net_RawSocket
  * Method:    __joinGroup
  * Signature: (IZ)I
  */
 JNIEXPORT jint JNICALL
-Java_com_savarese_rocksaw_net_RawSocket__1_1joinGroup
+Java_es_tid_rocksaw_net_RawSocket__1_1joinGroup
 (JNIEnv *env, jclass cls, jint socket, jbyteArray multiaddr,jbyteArray interface )
 {
 

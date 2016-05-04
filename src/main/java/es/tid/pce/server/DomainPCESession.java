@@ -83,8 +83,8 @@ public class DomainPCESession extends GenericPCEPSession{
 	/**
 	 * Constructor of the PCE Session
 	 * @param s Socket of the PCC-PCE Communication
-	 * @param req RequestQueue to send path requests
 	 */
+	//* @param req RequestQueue to send path requests
 	public DomainPCESession(Socket s, PCEServerParameters params, 
 			RequestDispatcher requestDispatcher, TEDB ted,NotificationDispatcher notificationDispatcher, 
 			ReservationManager rm, PCEPSessionsInformation pcepSessionInformation,
@@ -115,8 +115,8 @@ public class DomainPCESession extends GenericPCEPSession{
 	/**
 	 * Constructor of the PCE Session
 	 * @param s Socket of the PCC-PCE Communication
-	 * @param req RequestQueue to send path requests
 	 */
+	//* @param req RequestQueue to send path requests
 	public DomainPCESession(Socket s, PCEServerParameters params, RequestDispatcher requestDispatcher, 
 			TEDB ted,NotificationDispatcher notificationDispatcher, ReservationManager rm, 
 			CollaborationPCESessionManager collaborationPCESessionManager, 

@@ -1,6 +1,6 @@
 package es.tid.tedb.ospfv2;
 
-import static com.savarese.rocksaw.net.RawSocket.PF_INET;
+import static es.tid.rocksaw.net.RawSocket.PF_INET;
 
 import java.io.DataInputStream;
 import java.io.IOException;
@@ -9,7 +9,7 @@ import java.net.InetAddress;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.logging.Logger;
 
-import com.savarese.rocksaw.net.RawSocket;
+import es.tid.rocksaw.net.RawSocket;
 
 import es.tid.ospf.ospfv2.OSPFPacketTypes;
 import es.tid.ospf.ospfv2.OSPFv2LinkStateUpdatePacket;
@@ -122,7 +122,7 @@ public class OSPFSessionServer extends Thread {
 
 	/**
 	 * Read PCE message from TCP stream
-	 * @param in InputStream
+	 * @param socket InputStreamSocket
 	 */
 	protected OSPFv2Packet  readOSPFv2Packet(RawSocket socket) throws IOException{
 		byte[] hdr = new byte[20];

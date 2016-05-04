@@ -3,7 +3,7 @@ package es.tid.util;
 /**
  * Class for analysis of simulation results
  * Port of the analysis.cpp class of Ignacio de Miguel and David Rodriguez Alfayate
- *  @brief Provides the simulation analysis
+ 
 * This class is used to analyze the simulation results.
 * The method employed is that partially explained in the book:
 *
@@ -18,6 +18,7 @@ package es.tid.util;
  * @author ogondio
  *
  */
+//*  @brief Provides the simulation analysis
 public class Analysis {
 	
 	//static final values

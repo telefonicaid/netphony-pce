@@ -74,8 +74,8 @@ public class ParentPCESession extends GenericPCEPSession{
 	/**
 	 * Constructor of the PCE Session
 	 * @param s Socket of the PCC-PCE Communication
-	 * @param req RequestQueue to send path requests
 	 */
+	//* @param req RequestQueue to send path requests
 	public ParentPCESession(Socket s, ParentPCEServerParameters params, RequestDispatcher requestDispatcher, MultiDomainInitiateDispatcher mdiniDispatcher, TEDB ted, MultiDomainTopologyUpdater mdt, ChildPCERequestManager childPCERequestManager, ReachabilityManager rm, PCEPSessionsInformation pcepSessionManager){
 		super(pcepSessionManager);
 		//super("ParentPCESession");
@@ -316,7 +316,7 @@ public class ParentPCESession extends GenericPCEPSession{
 	
 	/**
 	 * USE THIS COUNTER TO GET NEW IDS IN THE REQUESTS
-	 * @return
+	 * @return id
 	 */
 	synchronized static public int getNewReqIDCounter(){
 		int newReqId;

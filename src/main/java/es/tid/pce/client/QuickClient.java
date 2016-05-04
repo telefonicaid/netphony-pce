@@ -178,7 +178,7 @@ public class QuickClient {
 				src_ip=parts[0];
 				src_if=Long.valueOf(parts[1]).longValue();
 			}else {
-				src_ip=args[offset+1];
+				src_ip=args[offset]; 
 			}
 			if (dst.contains(":")){
 				String[] parts = dst.split(":");
@@ -592,7 +592,9 @@ public class QuickClient {
 			}	
 			
 		}
-		System.out.println("bbbbbbbb"); 
+		System.out.println("bbbbbbbb");
+		System.out.println("offset vale "+offset+" y la length "+args.length + " Actual param="+args[offset]);
+		
 		if (args.length>offset) {
 			if (args[offset].equals("-ero")){
 				System.out.println("HAY ERROO");
