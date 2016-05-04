@@ -17,8 +17,18 @@ The PCE can act as a parent PCE, following the procedures described in RFC 6805.
 
 The main class to launch the Parent PCE is es.tid.pce.parentPCE.ParentPCEServer
 
+To generate the auto-executable ParentPCE-jar-with-dependencies.jar run bellow command:
+```
+mvn package -P generate-autojar-ParentPCE
+```
+
 ##Domain PCE
-The  
+The
+
+To generate the auto-executable PCE-jar-with-dependencies.jar run bellow command:
+```
+mvn package -P generate-autojar-PCE
+```  
 
 
 ##QuickClient
@@ -26,7 +36,7 @@ The
 This is a command line tool that acts as PCC and sends PCEP messages to a PCE. Current version is able to send Path Computation Requests and Initiate messages. The use is as follows:
 
 ```
-usage: PCC-QuickClient <host> <port> <src> <dst> [options]
+usage: java -jar PCC-jar-with-dependencies.jar <host> <port> <src> <dst> [options]
  -ero            Explicit Route Object
  -g              Generalized end points
  -ini            Send init message
@@ -34,6 +44,11 @@ usage: PCC-QuickClient <host> <port> <src> <dst> [options]
  -of <value>     set of value
  -rgbw <value>   set rgbw value
  ```
+
+To generate the auto-executable PCC-jar-with-dependencies.jar run bellow command:
+```
+mvn package -P generate-autojar-PCC
+```
  
 ##Acknowledgements 
 
