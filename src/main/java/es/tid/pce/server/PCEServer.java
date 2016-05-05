@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.net.Inet4Address;
 import java.net.InetAddress;
 import java.net.ServerSocket;
+import java.net.SocketException;
 import java.util.Timer;
 import java.util.logging.FileHandler;
 import java.util.logging.Level;
@@ -40,7 +41,7 @@ import es.tid.tedb.SimpleITTEDB;
 import es.tid.tedb.SimpleTEDB;
 
 
-public class PCEServer {
+public class PCEServer implements Runnable{
 
 	/**
 	 * Logger
@@ -52,38 +53,24 @@ public class PCEServer {
 	private static ReportDB_Handler rptdb;
 	private static boolean listening;
 
-	public static void main(String[] args){
-		/*Option hOpt = new Option("help", "help");
-		Option nLoopOpt= OptionBuilder.withArgName( "value" ).hasArg().withDescription(  "number of messages [0 or not present equals to infty]" ).create( "nLoop" );
-		//Option logOpt= OptionBuilder.withArgName( "value" ).hasArg().withDescription(  "Path to principal log file [if not present log to stdout]" ).create( "logFile" );
+	/**
+	 * Parameters of the PCE
+	 */
+	PCEServerParameters params;
 
-		Options options = new Options();
-		options.addOption(hOpt);
-		//options.addOption(logOpt);
-		options.addOption(nLoopOpt);
-		CommandLineParser parser = new DefaultParser();
-		CommandLine line=null;
-		try {
-			line = parser.parse( options, args );
-		} catch (ParseException e3) {
-			// TODO Auto-generated catch block
-			e3.printStackTrace();
-		}
-		if(line==null || line.hasOption("help")){
-			HelpFormatter formatter = new HelpFormatter();
-			formatter.printHelp( "PCEServer <filConfig.xml> [options]", options );
-			System.exit(1);
-		}
-		*/
-		//First of all, read the parameters
-		PCEServerParameters params;
-		if (args.length >=1 ){
-			params=new PCEServerParameters(args[0]);
-		}else{
+	/**
+	 * Socket where the PCE is listening;
+	 */
+	ServerSocket serverSocket;
+
+	
+	public void configure (String configFile){
+		if (configFile!=null){
+			params=new PCEServerParameters(configFile);
+		}else {
 			params=new PCEServerParameters();
 		}
-		params.initialize();
-
+		
 		//Initialize loggers
 		FileHandler fh;
 		FileHandler fh2;
@@ -137,8 +124,14 @@ public class PCEServer {
 			System.exit(1);
 		}
 
-		log.info("Configuration file: " + args[0]);
+		log.info("Configuration file: " + configFile);
 		log.info("Inizializing TID PCE Server!!");
+		
+	}
+
+	public void run(){
+	
+	
 		//Elements of the PCE Server
 
 		// Information about all the sessions of the PCE
@@ -310,7 +303,6 @@ public class PCEServer {
 		else
 			log.info("There are no collaborative PCEs");
 
-		ServerSocket serverSocket = null;
 		listening = true;
 		try {
 			log.info("Listening on port: "+params.getPCEServerPort());
@@ -430,8 +422,15 @@ public class PCEServer {
 			}
 			serverSocket.close();
 			
-			//System.exit(0);
-		} catch (Exception e) {
+		} catch (SocketException e) {
+			if (listening==false){
+				log.info("Socket closed due to controlled close");
+			}else {
+				log.severe("Problem with the socket, exiting");
+				e.printStackTrace();
+			}
+		} 
+		catch (Exception e) {
 			e.printStackTrace();
 		}
 
@@ -439,8 +438,17 @@ public class PCEServer {
 
 	
 	
-	public static void killme(){
+	public void killme(){
 		listening=false;
+		if (serverSocket!=null){
+			try {
+				serverSocket.close();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		
 	}
 
 }
