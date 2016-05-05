@@ -1,8 +1,10 @@
 package es.tid.pce.server.management;
 
+import java.io.IOException;
 import java.net.Inet4Address;
 import java.net.InetAddress;
 import java.net.ServerSocket;
+import java.net.SocketException;
 import java.util.logging.Logger;
 
 import es.tid.pce.computingEngine.RequestDispatcher;
@@ -24,8 +26,8 @@ public class PCEManagementSever extends Thread {
 	
 	private ReservationManager reservationManager;
 	private CollaborationPCESessionManager collaborationPCESessionManager;
-
-	
+	private ServerSocket serverSocket;
+	private boolean listening=true;
 	public PCEManagementSever(RequestDispatcher requestDispatcher, DomainTEDB tedb, PCEServerParameters params, ReservationManager reservationManager){
 		log =Logger.getLogger("PCEServer");
 		this.requestDispatcher=requestDispatcher;
@@ -45,8 +47,8 @@ public class PCEManagementSever extends Thread {
 	}
 	
 	public void run(){
-	    ServerSocket serverSocket = null;
-	    boolean listening=true;
+	    
+	    
 		try {
 	      	  log.info("Listening on port "+params.getPCEManagementPort());	
 	          serverSocket = new ServerSocket(params.getPCEManagementPort(), 0,(Inet4Address) InetAddress.getByName(params.getLocalPceAddress()));
@@ -62,8 +64,28 @@ public class PCEManagementSever extends Thread {
 	       		new PCEManagementSession(serverSocket.accept(),requestDispatcher, tedb,reservationManager,collaborationPCESessionManager, params).start();
 	       	}	    
 	       	serverSocket.close();
-		} catch (Exception e) {
+		}catch (SocketException e) {
+			if (listening==false){
+				log.info("Socket closed due to controlled close");
+			}else {
+				log.severe("Problem with the socket, exiting");
+				e.printStackTrace();
+			}
+		}  catch (Exception e) {
 	       	e.printStackTrace();
 		}				
+	}
+	
+	public void stopServer(){
+		listening=false;
+		if (serverSocket!=null){
+			try {
+				serverSocket.close();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+	
 	}
 }
