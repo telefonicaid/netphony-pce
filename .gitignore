@@ -11,6 +11,8 @@ target/
 *.war
 *.ear
 *.db
+*.so
+*.o
 
 ######################
 # Windows
