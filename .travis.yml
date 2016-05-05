@@ -5,6 +5,3 @@ jdk:
 script:
   - mvn install -X -f ./pom.xml
   - mvn org.apache.maven.plugins:maven-javadoc-plugin:2.9.1:jar
-  - mvn clean package -P generate-autojar-PCE -X -f ./pom.xml
-  - mvn clean package -P generate-autojar-PCC -X -f ./pom.xml
-  - mvn clean package -P generate-autojar-ParentPCE -X -f ./pom.xml
