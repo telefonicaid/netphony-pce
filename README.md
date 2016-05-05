@@ -13,7 +13,19 @@ Latest Maven Central Release:
 
 This repository contains a Java based implementation of a Path Computation Element, with several flavours, and a Path Computation Client, following RFC 4655 architecture. According to RFC 4655 (citing literally): "A Path Computation Element (PCE) is an entity that is capable of computing a network path or route based on a network graph, and of applying computational constraints during the computation. The PCE entity is an application that can be located within a network node or component, on an out-of-network server, etc. For example, a PCE would be able to compute the path of a TE LSP by operating on the TED and considering bandwidth and other constraints applicable to the TE LSP service request."
 
-The PCE follows a modular architecture and allows to add customized algorithms 
+The PCE follows a modular architecture and allows to add customized algorithms. The PCE has also stateful and remote inititation capabilities. In current version, three components can be built, a domain PCE (aka child PCE), a parent PCE (ready for the H-PCE architecture) and a PCC (path computation client).
+
+# Requirements 
+
+The requirements to build and run the components are: 
+
+Java 7 or greater.
+
+Set JAVA_HOME correctly. 
+
+Apache maven 3.0.3 or greater.
+
+In order to use the OSPF-TE functionality, raw multicast socket support is needed, which is built using JNI, so a c++ compiler is needed. If that functionality is not used, using just java is OK.  
 
 # License
 
@@ -33,13 +45,20 @@ mvn package -P generate-autojar-ParentPCE
 ```
 
 ##Domain PCE
-The
+
+The domain PCE uses a traffic engineering database built from either a BGP-LS Speaker (https://github.com/telefonicaid/netphony-topology), reading an XML file, or by peering in a OSPF-TE session. 
 
 To generate the auto-executable PCE-jar-with-dependencies.jar run bellow command:
 ```
 mvn package -P generate-autojar-PCE
 ```  
 
+To execute the PCE with OSPF-TE support it is needed to build the JNI part.  Remember, it is important to have JAVA_HOME variable correclty set.
+```
+cd netphony-pce/src/main/jni
+make
+``` 
+At this step, there will be a librocksaw.so which you will need to copy to a directory in your LD_LIBRARY_PATH
 
 ##QuickClient
 
