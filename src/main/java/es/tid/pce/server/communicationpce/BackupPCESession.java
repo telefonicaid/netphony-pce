@@ -51,11 +51,7 @@ public class BackupPCESession extends GenericPCEPSession{
 
 	NotificationProcessorThread npt;
 	CollaborationPCESessionManager collaborationPCESessionManager;
-	/**
-	 * Constructor of the PCE Session
-	 * @param ip IP Address of the peer PCE
-	 * @param port Port of the peer PCE
-	 */
+
 	public BackupPCESession(String ip, int port, boolean no_delay,TEDB ted,CollaborationPCESessionManager collaborationPCESessionManager, NotificationDispatcher notificationDispatcher,Timer timer, PCEPSessionsInformation pcepSessionInformation/*, String localIP, int localPort*/) {
 		super(pcepSessionInformation);
 		this.setFSMstate(PCEPValues.PCEP_STATE_IDLE);

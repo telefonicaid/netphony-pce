@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config>
+	<PCEServerPort>4189</PCEServerPort>
+	<PCEManagementPort>6666</PCEManagementPort>
+	<!--<LocalPCEAddress>192.168.1.200</LocalPCEAddress>-->
+	<LocalPCEAddress>127.0.0.1</LocalPCEAddress>
+
+	<ConnectTimer>
+	<!-- Connect:  the timer (in seconds) started after having initialized a
+      TCP connection using the PCEP-registered TCP port.  The value of
+      the Connect timer is 60 seconds. --> 
+	60
+	</ConnectTimer>
+	<ConnectMaxRetry>
+	<!-- ConnectMaxRetry:  the maximum number of times the system tries to
+      establish a TCP connection using the PCEP-registered TCP port
+      before going back to the Idle state.  The value of the
+      ConnectMaxRetry is 5.-->
+	  5
+	</ConnectMaxRetry>
+	<OpenWait>
+   <!-- OpenWait:  the timer that corresponds to the amount of time a PCEP
+      peer will wait to receive an Open message from the PCEP peer after
+      the expiration of which the system releases the PCEP resource and
+      goes back to the Idle state.  The OpenWait timer has a fixed value
+      of 60 seconds.-->
+	  60
+	</OpenWait>
+	<KeepWait>
+   <!-- KeepWait:  the timer that corresponds to the amount of time a PCEP
+      peer will wait to receive a Keepalive or a PCErr message from the
+      PCEP peer after the expiration of which the system releases the
+      PCEP resource and goes back to the Idle state.  The KeepWait timer
+      has a fixed value of 60 seconds.-->
+	</KeepWait>
+	<parentPCE>
+		<!-- <parentPCEAddress>10.95.30.29</parentPCEAddress> -->
+		<!-- <parentPCEAddress>2.2.2.2</parentPCEAddress>-->
+		<!--<parentPCEAddress>10.95.30.29</parentPCEAddress> 	-->
+		<!--<parentPCEAddress>10.95.15.126</parentPCEAddress>-->
+		<!-- <parentPCEPort>4172</parentPCEPort> -->
+	</parentPCE>
+	<!-- Ficheros log (servidor, protocolo PCEP y OSPF). Campos opcionales -->
+	<PCEServerLogFile>PCEServer.log</PCEServerLogFile>
+	<PCEPParserLogFile>PCEPParserServer.log</PCEPParserLogFile>
+	<OSPFParserLogFile>OSPFParser.log</OSPFParserLogFile>
+	<isStateful>true</isStateful>
+	<PCCRequestsProcessors>1</PCCRequestsProcessors>
+	<ParentPCERequestProcessors>1</ParentPCERequestProcessors>
+	<!--<networkDescriptionFile>networks\Network_8_nodes.xml</networkDescriptionFile>-->
+	<!--<networkDescriptionFile>networks\network_NSFNet.xml</networkDescriptionFile>-->
+	<!--<networkDescriptionFile>/usr/local/nodeConfig/topologia.xml</networkDescriptionFile>-->
+	<networkDescriptionFile>src/test/resources/topologiaTriangle.xml</networkDescriptionFile>
+	<initialSessionID>1000</initialSessionID>
+	<nodelay>true</nodelay>
+	<reservation>true</reservation>
+	<optimizedRead>false</optimizedRead>
+	<analyzeRequestTime>true</analyzeRequestTime>
+	<multilayer>false</multilayer>
+	<setTraces>true</setTraces>
+		 <!--OSPF>
+  		<OSPFSession>true</OSPFSession>
+ 		<OSPFListenerIP>192.168.1.200</OSPFListenerIP>
+  		<OSPFMulticast>true</OSPFMulticast>
+  		<OSPFUnicast>false</OSPFUnicast>
+  		<OSPFTCPSession>false</OSPFTCPSession> 
+  		<OSPFTCPPort>7762</OSPFTCPPort> 
+ 		</OSPF-->
+	<!--WSON NETWORK-->
+	<!--<layer type="gmpls" default="true" encodingType="1" switchingType="150">77</layer>-->
+	<layer type="mpls" default="true" ></layer>
+	<!--<algorithmRule of="1000" svec="false" name="wson.SP_FF_RWA_Algorithm" isParentPCEAlgorithm="false" isWSONAlgorithm="true"/>-->
+	<algorithmRule of="1002" svec="false" name="sson.AURE_SSON_algorithm" isParentPCEAlgorithm="false" isSSONAlgorithm="true"/>
+	
+	<!--<algorithmRule of="998" svec="true" name="wson.svec.SVEC_SP_FF_WSON_PathComputing" isParentPCEAlgorithm="false" isWSONAlgorithm="true"/>-->
+	
+	<!--<algorithmRule of="1100" svec="false" name="multiLayer.Multilayer_Algorithm" isParentPCEAlgorithm="false" isWSONAlgorithm="true"/>-->
+	
+	<!--<algorithmRule of="900" svec="false" name="wson.KSPprecomp_Algorithm" isParentPCEAlgorithm="false" isWSONAlgorithm="true"/>-->
+	<!--<algorithmRule of="1001" svec="false" name="wson.AURE_Algorithm" isParentPCEAlgorithm="false" isWSONAlgorithm="true"/>-->
+	<!--<algorithmRule of="901" svec="false" name="wson.AURE_PACK_Algorithm" isParentPCEAlgorithm="false" isWSONAlgorithm="true"/>-->
+	
+	<!--<algorithmRule of="903" svec="false" name="wson.AURE_RANDOM_Algorithm" isParentPCEAlgorithm="false" isWSONAlgorithm="true"/>-->
+	<!--<algorithmRule of="902" svec="false" name="wson.AURE_SPREAD_Algorithm" isParentPCEAlgorithm="false" isWSONAlgorithm="true"/>-->
+	
+	<!--<algorithmRule of="800" svec="false" name="wson.KSP_FF_Algorithm" isParentPCEAlgorithm="false" isWSONAlgorithm="true"/>-->
+	<!--<algorithmRule of="801" svec="false" name="wson.KSP_PACK_Algorithm" isParentPCEAlgorithm="false" isWSONAlgorithm="true"/>-->
+	<!--<algorithmRule of="803" svec="false" name="wson.KSP_RANDOM_Algorithm" isParentPCEAlgorithm="false" isWSONAlgorithm="true"/>-->
+	
+	<!--<algorithmRule of="802" svec="false" name="wson.KSP_SPREAD_Algorithm" isParentPCEAlgorithm="false" isWSONAlgorithm="true"/>-->
+	
+	<!--<algorithmRule of="900" svec="false" name="wson.AURE_FF_Algorithm" isParentPCEAlgorithm="false" isWSONAlgorithm="true"/>-->
+	
+	<!--<algorithmRule of="1001" svec="false" name="wson.AURE_Algorithm" isParentPCEAlgorithm="false" isWSONAlgorithm="false"/>-->
+	<!--<algorithmRule of="999" svec="true" name="CPLEXOptimizedPathComputing" isParentPCEAlgorithm="false" isWSONAlgorithm="false"/>-->
+	<!-- <layer type="mpls" default="true"/>-->
+	<!--<layer type="mpls" default="true"/>-->
+	
+</config>

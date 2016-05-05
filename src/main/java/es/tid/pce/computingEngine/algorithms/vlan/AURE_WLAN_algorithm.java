@@ -74,12 +74,7 @@ public class AURE_WLAN_algorithm implements ComputingAlgorithm {
 	private DomainTEDB ted;
 
 	private GenericWLANReservation  reserv;
-	/**
-	 * Constructor
-	 * @param pathReq
-	 * @param ted
-	 * @param reservationManager
-	 */
+
 	public AURE_WLAN_algorithm(ComputingRequest pathReq,TEDB ted, ReservationManager reservationManager ){
 		//this.num_lambdas=((DomainTEDB)ted).getNumLambdas();
 		this.pathReq=pathReq;
@@ -87,9 +82,7 @@ public class AURE_WLAN_algorithm implements ComputingAlgorithm {
 		this.ted=(DomainTEDB)ted;
 	}
 
-	/**
-	 * Exectutes the path computation and returns the PCEP Response
-	 */
+
 	public ComputingResponse call(){ 
 		//Timestamp of the start of the algorithm;
 		long tiempoini =System.nanoTime();

@@ -74,12 +74,6 @@ public class AURE_RANDOM_Algorithm implements ComputingAlgorithm {
 	
 	private GenericLambdaReservation  reserv;
 	
-	/**
-	 * Constructor
-	 * @param pathReq
-	 * @param ted
-	 * @param reservationManager
-	 */
 	public AURE_RANDOM_Algorithm(ComputingRequest pathReq,TEDB ted, ReservationManager reservationManager ){
 		//this.num_lambdas=((DomainTEDB)ted).getNumLambdas();
 		this.pathReq=pathReq;

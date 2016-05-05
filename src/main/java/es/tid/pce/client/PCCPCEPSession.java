@@ -83,6 +83,8 @@ public class PCCPCEPSession extends GenericPCEPSession{
 	 * Constructor of the PCE Session
 	 * @param ip IP Address of the peer PCE
 	 * @param port Port of the peer PCE
+	 * @param no_delay - 
+	 * @param pcepSessionManager -
 	 */
 	public PCCPCEPSession(String ip, int port, boolean no_delay, PCEPSessionsInformation pcepSessionManager) {
 		super(pcepSessionManager);

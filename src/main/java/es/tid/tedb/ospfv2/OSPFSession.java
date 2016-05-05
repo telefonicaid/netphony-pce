@@ -32,11 +32,7 @@ public class OSPFSession extends Thread {
  * OSPF logger
  */
 	private Logger log;
-	/**
-	 * 
-	 * @param ss
-	 * @param lsaQueue
-	 */
+
 	public OSPFSession(Socket ss, LinkedBlockingQueue<OSPFTEv2LSA> lsaQueue){
 		log=Logger.getLogger("OSPFParser");
 		this.lsaQueue = lsaQueue;
@@ -69,10 +65,8 @@ public class OSPFSession extends Thread {
 		}
 	}
 
-	/**
-	 * Read PCE message from TCP stream
-	 * @param in InputStream
-	 */
+
+	 // Read LSA message from TCP stream
 	protected byte[] readLSA(DataInputStream in) throws IOException{
 		byte[] ret = null;
 

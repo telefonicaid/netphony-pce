@@ -3,21 +3,22 @@ package es.tid.util;
 /**
  * Class for analysis of simulation results
  * Port of the analysis.cpp class of Ignacio de Miguel and David Rodriguez Alfayate
- *  @brief Provides the simulation analysis
+ 
 * This class is used to analyze the simulation results.
 * The method employed is that partially explained in the book:
 *
-* A.M. Law, W. Kelton, Simulation Modeling & Analysis, 
+* A.M. Law, W. Kelton, Simulation Modeling and Analysis, 
 * 2nd ed. McGraw-Hill, 1991.
 *
 * and fully described in:
 *
-* A.M. Law, J.S. Carson, �A sequential procedure for 
-* determining the length of a steady-state simulation�, 
+* A.M. Law, J.S. Carson, A sequential procedure for 
+* determining the length of a steady-state simulation, 
 * Operations Research, vol. 27, no. 5, pp. 1011-1025, 1979.
  * @author ogondio
  *
  */
+//*  @brief Provides the simulation analysis
 public class Analysis {
 	
 	//static final values

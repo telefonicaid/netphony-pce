@@ -208,9 +208,10 @@ public abstract class GenericPCEPSession extends Thread implements PCEPSession {
 		log=Logger.getLogger("PCCClient");
 	}
 
-	/**
-	 * Read PCE message from TCP stream
-	 * @param in InputStream
+	/*
+	  Read PCE message from TCP stream
+	  @param in InputStream
+	  @return message
 	 */
 	protected byte[] readMsg(DataInputStream in) throws IOException{
 		byte[] ret = null;
@@ -266,10 +267,10 @@ public abstract class GenericPCEPSession extends Thread implements PCEPSession {
 		return ret;
 	}
 
-	/**
-	 * Read PCE message from TCP stream
-	 * @param in InputStream
-	 */
+	/*
+	  Read PCE message from TCP stream
+	  @param in InputStream
+	*/
 	protected byte[] readMsgOptimized(DataInputStream in) throws IOException{
 		byte[] ret = null;
 
@@ -354,8 +355,8 @@ public abstract class GenericPCEPSession extends Thread implements PCEPSession {
           5          Reception of an unacceptable number of unrecognized
                      PCEP messages
 	 * @param reason Reason for closing the PCEP Session
-	 * @return PCEP Session closed OK
 	 */
+	//* @return PCEP Session closed OK
 	public void close(int reason){
 		log.info("Closing PCEP Session with "+this.remotePeerIP); 
 		PCEPClose p_close=new PCEPClose();
@@ -470,8 +471,8 @@ public abstract class GenericPCEPSession extends Thread implements PCEPSession {
 	 */
 	protected abstract void endSession();
 
-	/**
-	 * 
+	/*
+	  
 	 * @param zeroDeadTimerAccepted
 	 * @param minimumKeepAliveTimerAccepted
 	 * @param maxDeadTimerAccepted

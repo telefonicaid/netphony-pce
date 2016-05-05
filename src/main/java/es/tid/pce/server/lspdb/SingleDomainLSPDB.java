@@ -10,6 +10,18 @@ public class SingleDomainLSPDB {
 	
 	private Hashtable <Integer,SD_LSP> LSP_list;
 	
+	private boolean exportDb = true;
+	
+	
+	public boolean isExportDb() {
+		return exportDb;
+	}
+
+
+	public void setExportDb(boolean exportDb) {
+		this.exportDb = exportDb;
+	}
+
 	public SingleDomainLSPDB () {
 		LSP_list = new  Hashtable <Integer,SD_LSP>();
 	}

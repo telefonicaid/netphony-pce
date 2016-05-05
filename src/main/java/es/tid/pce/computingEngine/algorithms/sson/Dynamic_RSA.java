@@ -101,13 +101,7 @@ public class Dynamic_RSA implements ComputingAlgorithm {
 	private int num_slots = 0;
 	
 	private GenericLambdaReservation  reserv;
-	/**
-	 * Constructor
-	 * @param pathReq
-	 * @param ted
-	 * @param reservationManager
-	 * @param mf (modulation format)
-	 */
+
 	public Dynamic_RSA(ComputingRequest pathReq,TEDB ted, ReservationManager reservationManager, int mf ){
 		//this.num_lambdas=((DomainTEDB)ted).getWSONinfo().getNumLambdas();
 		this.pathReq=pathReq;
@@ -115,9 +109,7 @@ public class Dynamic_RSA implements ComputingAlgorithm {
 		this.ted=(DomainTEDB)ted;
 	}
 
-	/**
-	 * Exectutes the path computation and returns the PCEP Response
-	 */
+
 	public ComputingResponse call(){ 
 		//Timestamp of the start of the algorithm;
 		long tiempoini =System.nanoTime();

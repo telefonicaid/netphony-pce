@@ -33,11 +33,8 @@ public class ReservationManager {
 		permanentReservationList=new Hashtable<Long,DeleteReservationTask>();
 	}
 	
-	/**
-	 * 
-	 * @param time Time in ms of the reservation
-	 */
 	public long reserve(LinkedList<Object> sourceVertexList, LinkedList<Object> targetVertexList, int wavelength, long time, boolean bidirectional){
+		//time Time in ms of the reservation
 		log.info("Reserving lambda "+wavelength+" for "+time+" miliseconds");
 		//SimpleDirectedWeightedGraph<Object,FiberLinkEdge> networkGraph=ted.getNetworkGraph();
 		ted.notifyWavelengthReservation(sourceVertexList, targetVertexList, wavelength, bidirectional);

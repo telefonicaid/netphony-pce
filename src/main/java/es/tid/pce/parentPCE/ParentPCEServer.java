@@ -33,10 +33,6 @@ import es.tid.tedb.TEDB;
  */
 public class ParentPCEServer {
 
-	/**
-	 * Main class
-	 * @param args
-	 */
 	public static void main(String[] args) {
 		//First, get the parameters from the configuration file
 		ParentPCEServerParameters params;

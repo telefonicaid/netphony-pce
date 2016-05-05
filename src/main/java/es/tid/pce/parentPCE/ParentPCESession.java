@@ -39,8 +39,8 @@ import es.tid.tedb.TEDB;
  * <p> Requests will be forwarded to the RequestQueue, which puts them in a queue
  * and are processing by the set of Request Processor Threads </p>
  * 
- * @author Oscar Gonz�lez de Dios
- * @author Eduardo Aza��n Teruel
+ * @author Oscar Gonzalez de Dios
+ * @author Eduardo Azanon Teruel
 */
 public class ParentPCESession extends GenericPCEPSession{
 	
@@ -71,11 +71,7 @@ public class ParentPCESession extends GenericPCEPSession{
 		
 	private MultiDomainInitiateDispatcher mdiniDispatcher;
 	
-	/**
-	 * Constructor of the PCE Session
-	 * @param s Socket of the PCC-PCE Communication
-	 * @param req RequestQueue to send path requests
-	 */
+
 	public ParentPCESession(Socket s, ParentPCEServerParameters params, RequestDispatcher requestDispatcher, MultiDomainInitiateDispatcher mdiniDispatcher, TEDB ted, MultiDomainTopologyUpdater mdt, ChildPCERequestManager childPCERequestManager, ReachabilityManager rm, PCEPSessionsInformation pcepSessionManager){
 		super(pcepSessionManager);
 		//super("ParentPCESession");
@@ -316,7 +312,7 @@ public class ParentPCESession extends GenericPCEPSession{
 	
 	/**
 	 * USE THIS COUNTER TO GET NEW IDS IN THE REQUESTS
-	 * @return
+	 * @return id
 	 */
 	synchronized static public int getNewReqIDCounter(){
 		int newReqId;

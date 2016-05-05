@@ -5,6 +5,9 @@ import java.util.logging.Logger;
 
 import es.tid.ospf.ospfv2.lsa.tlv.subtlv.complexFields.BitmapLabelSet;
 
+/**
+ * @author Amll
+ */
 public class channel_generator{
 	
 	private Logger log;
@@ -16,28 +19,27 @@ public class channel_generator{
 		log=Logger.getLogger("PCEServer");
 		}
 	
-	/** This function is the responsible of generate the channelSet required for the
-	 * Dynamic_RSA algorithm, for flexigrid-based networks.
-	 * Basically it generates a set of bitmaps with all possible combination of "num_slots"
-	 * empty slots.
-	 * 
-	 * An example: If you want to generate the ChannelSet of two slots in a spectrum of a total
-	 * amount of 8 slots:
-	 * 
-	 * The set will be as follows:
-	 * 00111111
-	 * 10011111
-	 * 11001111
-	 * 11100111
-	 * 11110011
-	 * 11111001
-	 * 11111100
-	 * 
-	 * @author: Amll
-	 */
-	
+
 	public void getSetChannels(int num_labels, int num_slots, ArrayList<BitmapLabelSet> setChannels){
-		
+		/** This function is the responsible of generate the channelSet required for the
+		 * Dynamic_RSA algorithm, for flexigrid-based networks.
+		 * Basically it generates a set of bitmaps with all possible combination of "num_slots"
+		 * empty slots.
+		 * 
+		 * An example: If you want to generate the ChannelSet of two slots in a spectrum of a total
+		 * amount of 8 slots:
+		 * 
+		 * The set will be as follows:
+		 * 00111111
+		 * 10011111
+		 * 11001111
+		 * 11100111
+		 * 11110011
+		 * 11111001
+		 * 11111100
+		 * 
+		 * 
+		 */
 		int bitCounter=0;
 		int num_bytes_empty = (int) Math.floor(num_slots/8);
 		numberBytes = getNumberBytes(num_labels);

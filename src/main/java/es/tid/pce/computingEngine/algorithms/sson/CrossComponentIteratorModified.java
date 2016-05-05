@@ -167,6 +167,8 @@ public abstract class CrossComponentIteratorModified<V, E, D>
      *
      * @param g the graph to be iterated.
      * @param startVertex the vertex iteration to be started.
+     * @param SetChannels SetChannels
+     * @param num_slots num_slots
      *
      * @throws IllegalArgumentException if <code>g==null</code> or does not
      * contain <code>startVertex</code>
@@ -352,6 +354,7 @@ public abstract class CrossComponentIteratorModified<V, E, D>
      *
      * @param vertex the vertex re-encountered
      * @param edge the edge via which the vertex was re-encountered
+     * @return boolean if the vertex has been reencountered or not
      */
     protected abstract boolean encounterVertexAgain(V vertex, E edge);
 

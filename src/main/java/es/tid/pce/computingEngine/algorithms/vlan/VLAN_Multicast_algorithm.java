@@ -43,7 +43,6 @@ import es.tid.tedb.elements.RouterInfoPM;
 /**
  * 
  * @author jaume
- * Si lees esto, hazlo con valors, pero sobre todo , con humiltat.
  */
 
 public class VLAN_Multicast_algorithm implements ComputingAlgorithm 
@@ -89,12 +88,7 @@ public class VLAN_Multicast_algorithm implements ComputingAlgorithm
 	private DomainTEDB ted;
 	
 	private GenericWLANReservation  reserv;
-	/**
-	 * Constructor
-	 * @param pathReq
-	 * @param ted
-	 * @param reservationManager
-	 */
+
 	public VLAN_Multicast_algorithm(ComputingRequest pathReq,TEDB ted, ReservationManager reservationManager )
 	{
 		//this.num_lambdas=((DomainTEDB)ted).getNumLambdas();
@@ -103,9 +97,8 @@ public class VLAN_Multicast_algorithm implements ComputingAlgorithm
 		this.ted=(DomainTEDB)ted;
 	}
 
-	/**
-	 * Exectutes the path computation and returns the PCEP Response
-	 */
+
+	 // Exectutes the path computation and returns the PCEP Response
 	public ComputingResponse call()
 	{ 
 		

@@ -35,7 +35,7 @@ public class ParentPCERequestManager {
 	/**
 	 * Notify that a new Response from the parent PCE has arrived. 
 	 * It is called by the Child PCE-Parent PCE session when a response from the parent PCE arrives
-	 * @param pcres
+	 * @param pcres PCEP Response
 	 */
 	public void notifyResponse(PCEPResponse pcres){
 		long idRequest=pcres.getResponse(0).getRequestParameters().getRequestID();
@@ -50,8 +50,8 @@ public class ParentPCERequestManager {
 	/**
 	 * Send new request to the PCE and wait for its response.
 	 * It blocks until a response is received.
-	 * @param pcreq
-	 * @return
+	 * @param pcreq PCEP Request
+	 * @return The PCEP Response
 	 */
 	public PCEPResponse newRequest( PCEPRequest pcreq){
 		log.info("New Request");

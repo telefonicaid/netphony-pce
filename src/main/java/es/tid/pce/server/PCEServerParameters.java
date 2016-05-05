@@ -755,7 +755,7 @@ public class PCEServerParameters {
 		this.useMaxQueingTime = useMaxReqTime;
 	}
 
-	/** OSPF **/
+
 	public boolean isOSPFSession() {
 		return OSPFSession;
 	}
@@ -847,7 +847,6 @@ public class PCEServerParameters {
 		this.lambdaEnd = lambdaEnd;
 	}
 
-	/**** STRONGEST: Collaborative PCEs ****/
 	public boolean isCollaborativePCEs() {
 		return collaborativePCEs;
 	}
@@ -885,10 +884,6 @@ public class PCEServerParameters {
 	}
 
 
-
-	/**
-	 * ONE
-	 */
 	public boolean isTopologyModuleOption() {
 		return topologyModuleOption;
 	}
