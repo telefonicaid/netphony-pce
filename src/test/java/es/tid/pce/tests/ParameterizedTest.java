@@ -7,6 +7,8 @@ import java.net.UnknownHostException;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.LinkedList;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
+import java.util.concurrent.locks.ReentrantLock;
 import java.util.logging.Logger;
 
 import org.apache.commons.cli.CommandLine;
@@ -28,7 +30,7 @@ import es.tid.pce.pcep.messages.PCEPRequest;
 import es.tid.pce.pcep.messages.PCEPResponse;
 import es.tid.pce.pcep.objects.Bandwidth;
 import es.tid.pce.pcep.objects.ExplicitRouteObject;
-import es.tid.pce.server.PCEServer;
+import es.tid.pce.server.DomainPCEServer;
 import es.tid.rsvp.objects.subobjects.EROSubobject;
 import es.tid.rsvp.objects.subobjects.IPv4prefixEROSubobject;
 import es.tid.rsvp.objects.subobjects.UnnumberIfIDEROSubobject;
@@ -39,19 +41,11 @@ public class ParameterizedTest {
 	private String fileConf;
 	private String[] msgSend;
 	private String[] checkRes;
-	private Thread pceServer;
+
+	ScheduledThreadPoolExecutor executor = new ScheduledThreadPoolExecutor(5) ;
 	
-	private static class RunPCEServer implements Runnable{
-		private String file;
-		public void run() {
-	    	String[] args= new String[]{this.file, "1"};
-			PCEServer.main(args);
-	    }
-		public RunPCEServer(String file){
-			this.file=file;
-		}
-		
-	}
+	
+
 	//@Parameters
 		@Parameters()
 	    public static Collection configs() {
@@ -73,23 +67,19 @@ public class ParameterizedTest {
 		this.checkRes = checkRes.split(" ");
 	}
 		
-	@Before
-	public void initialize(){
-		System.out.println(">>>>>TEST ["+this.msgSend.toString()+"]");
-		System.out.println("Inicando PCE Server");
-		//Run PCE server
-		this.pceServer = (new Thread(new RunPCEServer(this.fileConf)));
-		pceServer.start();
+
+	
+	@Test
+    public void test (){
+	
+		DomainPCEServer pceserver = new DomainPCEServer();
+		pceserver.configure(this.fileConf);
+		executor.execute(pceserver);
 		try {
-			Thread.sleep(500);
+			Thread.sleep(1000);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
-		PCEServer.killme();
-	}
-	@Test
-    public void test (){
-		
 		
 		//Run PCC QuickClient
 		try{
@@ -114,19 +104,18 @@ public class ParameterizedTest {
 		
 		System.out.println("Finalizando PCE Server");
 		
+		pceserver.stopServer();
+		try {
+			Thread.sleep(1000);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+		System.out.println("Number of active threads: "+executor.getActiveCount());
 	
 		
 	}
 	
-	@After
-	public void finalize(){
-		//this.pceServer.interrupt();
-		try {
-			Thread.sleep(2500);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
-	}
+	
 	
 
 
