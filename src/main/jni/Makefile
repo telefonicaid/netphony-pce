@@ -28,8 +28,9 @@ LIBEXTENSION = so
 
 ifeq ($(DARWIN),Darwin)
   JAVA_INCDIR  = $(JAVA_HOME)/include
+  JAVA_INCDIR_PLAF = $(dir $(wildcard $(JAVA_INCDIR)/*/jni_md.h))
   LIBEXTENSION = jnilib
-  CPPFLAGS += -I$(JAVA_INCDIR)
+  CPPFLAGS += -I$(JAVA_INCDIR) -I$(JAVA_INCDIR_PLAF)
   LDFLAGS += -dynamiclib -noprebind -single_module -framework JavaVM
   SHARED =
 else
