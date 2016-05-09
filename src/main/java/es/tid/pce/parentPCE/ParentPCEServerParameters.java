@@ -473,25 +473,20 @@ public class ParentPCEServerParameters {
 						}
 		    		 */
 		    		  }
-		    		  //Andrea
-					  // not properly done
-					  //I had problem loading the parameters from the configuration file
-					  //I configured statically here (of)
 		    		  else if (qName.equalsIgnoreCase("algorithmRule")) {
 		    			  MapAlgoRule mar= new MapAlgoRule();
 		    			  AlgorithmRule ar=new AlgorithmRule();
 		    			  String aname=attributes.getValue("name");
-						  ar.svec=Boolean.parseBoolean(attributes.getValue("svec"));
-		    			  ar.of=3000;
-
+		    			  ar.of=Integer.parseInt(attributes.getValue("of"));
+		        		  ar.svec=Boolean.parseBoolean(attributes.getValue("svec"));		        		  
 		        		  mar.ar=ar;
 		        		  mar.algoName=aname;
-						  mar.isParentPCEAlgorithm=true;
-
-						  //mar.isParentPCEAlgorithm=Boolean.parseBoolean(attributes.getValue("isParentPCEAlgorithm"));
+		        		  mar.isParentPCEAlgorithm=Boolean.parseBoolean(attributes.getValue("isParentPCEAlgorithm"));
 		        		  algorithmRuleList.add(mar);
 		    		  }
-
+		    		  
+		    		  
+		    		
 		    	  }
 		    	  
 		    	   public void endElement(String uri, String localName,
