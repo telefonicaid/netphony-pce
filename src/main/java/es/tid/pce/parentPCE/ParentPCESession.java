@@ -71,11 +71,7 @@ public class ParentPCESession extends GenericPCEPSession{
 		
 	private MultiDomainInitiateDispatcher mdiniDispatcher;
 	
-	/**
-	 * Constructor of the PCE Session
-	 * @param s Socket of the PCC-PCE Communication
-	 * @param req RequestQueue to send path requests
-	 */
+
 	public ParentPCESession(Socket s, ParentPCEServerParameters params, RequestDispatcher requestDispatcher, MultiDomainInitiateDispatcher mdiniDispatcher, TEDB ted, MultiDomainTopologyUpdater mdt, ChildPCERequestManager childPCERequestManager, ReachabilityManager rm, PCEPSessionsInformation pcepSessionManager){
 		super(pcepSessionManager);
 		//super("ParentPCESession");
