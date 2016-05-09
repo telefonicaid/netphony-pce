@@ -9,6 +9,9 @@ import es.tid.pce.server.wson.ReservationManager;
 import es.tid.tedb.DomainTEDB;
 import es.tid.tedb.TEDB;
 
+import java.net.Inet4Address;
+import java.util.Hashtable;
+
 public class SP_FF_RWA_AlgorithmManager implements ComputingAlgorithmManager{
 	
 	private ReservationManager reservationManager;
@@ -45,6 +48,11 @@ public class SP_FF_RWA_AlgorithmManager implements ComputingAlgorithmManager{
 		// TODO Auto-generated method stub
 		return null;
 	}
-	
+	@Override
+	public ComputingAlgorithm getComputingAlgorithm(ComputingRequest pathReq,
+													TEDB ted, Hashtable<Inet4Address,DomainTEDB> intraTEDBs) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 	
 }
