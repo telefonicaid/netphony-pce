@@ -85,7 +85,7 @@ The software has been developed by Telefonica I+D Core & Transport Team, led by 
 
 The effort to release as open source of the code was funded by the E.U. CSA PACE. 
 
-The developers of the code are (some of them developed code before it was published in github, so they do not appear threre as members): Oscar Gonzalez de Dios, Carlos Fernando Muñoz del Nuevo, Marta Cuaresma, Arturo Mayoral, Sergio, Alejandro Aguado, Jaume Marhuenda, Maria Victoria, Ruben Rosales, Jose Manuel Gran Josa, Victor Uceda.
+The developers of the code are (some of them developed code before it was published in github, so they do not appear threre as members): Oscar Gonzalez de Dios, Carlos Fernando Muñoz del Nuevo, Marta Cuaresma, Arturo Mayoral, Sergio, Alejandro Aguado, Jaume Marhuenda, Maria Victoria, Ruben Rosales, Jose Manuel Gran Josa, Victor Uceda, Andrea Sgambelluri (KTH).
 
 The institutions contributing to the code are: Telefonica I+D.
 
