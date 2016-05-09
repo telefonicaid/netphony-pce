@@ -1,16 +1,5 @@
 package es.tid.pce.parentPCE;
 
-import java.io.DataOutputStream;
-import java.io.IOException;
-import java.net.Inet4Address;
-import java.util.Hashtable;
-import java.util.LinkedList;
-import java.util.concurrent.FutureTask;
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
-import java.util.logging.Logger;
 import es.tid.pce.computingEngine.ComputingResponse;
 import es.tid.pce.computingEngine.algorithms.ChildPCEInitiate;
 import es.tid.pce.computingEngine.algorithms.ChildPCERequest;
@@ -20,6 +9,14 @@ import es.tid.pce.pcep.messages.PCEPInitiate;
 import es.tid.pce.pcep.messages.PCEPMessage;
 import es.tid.pce.pcep.messages.PCEPRequest;
 import es.tid.pce.pcep.messages.PCEPResponse;
+
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.net.Inet4Address;
+import java.util.Hashtable;
+import java.util.LinkedList;
+import java.util.concurrent.*;
+import java.util.logging.Logger;
 
 /**
  * Manages the requests to the Child PCEs
@@ -258,7 +255,7 @@ public class ChildPCERequestManager {
 		Object object_lock=new Object();
 		
 		long idSRP=pcini.getPcepIntiatedLSPList().get(0).getRsp().getSRP_ID_number();
-		log.info("Sending PCEPInitiate to domain "+domain+"srp_id "+idSRP+" : "+pcini.toString());
+		log.info("Sending PCEPInitiate to domain "+domain+" srp_id "+idSRP+" : "+pcini.toString());
 		inilocks.put(new Long(idSRP), object_lock);
 		try {		
 			sendInitiate(pcini,domain);
@@ -321,7 +318,7 @@ public class ChildPCERequestManager {
 		}
 		try {
 			log.info("Sending Initiate message to domain "+domain);
-						out.write(ini.getBytes());
+			out.write(ini.getBytes());
 			out.flush();
 		} catch (IOException e) {
 			log.warning("Error sending REQ: " + e.getMessage());

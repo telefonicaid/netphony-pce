@@ -1,20 +1,19 @@
 package es.tid.pce.parentPCE;
-import java.util.LinkedList;
-//import java.util.concurrent.Callable;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.logging.Level;
-
-import javax.xml.parsers.SAXParser;
-import javax.xml.parsers.SAXParserFactory;
-
-import org.xml.sax.Attributes;
-import org.xml.sax.SAXException;
-import org.xml.sax.helpers.DefaultHandler;
-
 import es.tid.pce.computingEngine.AlgorithmRule;
 import es.tid.pce.computingEngine.MapAlgoRule;
 import es.tid.pce.management.PcepCapability;
 import es.tid.tedb.Layer;
+import org.xml.sax.Attributes;
+import org.xml.sax.SAXException;
+import org.xml.sax.helpers.DefaultHandler;
+
+import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
+import java.util.LinkedList;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.logging.Level;
+
+//import java.util.concurrent.Callable;
 
 
 public class ParentPCEServerParameters {
@@ -45,8 +44,10 @@ public class ParentPCEServerParameters {
 	/**
 	 * 
 	 */
-	private String networkDescriptionFile="network_102.xml";
-	
+	private String networkDescriptionFile="MDnetwork.xml";
+
+	private String reachFile="ReachFile.xml";
+	private String totalFile="total.xml";
 	/**
 	 * 
 	 */
@@ -91,7 +92,11 @@ public class ParentPCEServerParameters {
 	 * 
 	 */
 	private boolean zeroDeadTimerPCCAccepted=false;
-	
+
+
+	private boolean testflag=false;
+
+
 	/**
 	 * Dead Timer 
 	 */
@@ -201,7 +206,24 @@ public class ParentPCEServerParameters {
 	public void setNetworkDescriptionFile(String networkDescriptionFile) {
 		this.networkDescriptionFile = networkDescriptionFile;
 	}
-	
+
+	public String getReachFile() {
+		return reachFile;
+	}
+
+	public void setReachFile(String File) {
+		this.reachFile = File;
+	}
+
+	public String getTotalFile() {
+		return totalFile;
+	}
+
+	public void setTotalFile(String File) {
+		this.totalFile = File;
+	}
+
+
 	public String getITNetworkDescriptionFile() {
 		return ITnetworkDescriptionFile;
 	}
@@ -368,6 +390,10 @@ public class ParentPCEServerParameters {
 		return knowsWholeTopology;
 	}
 
+	public boolean isTest() {
+		return testflag;
+	}
+
 	public PcepCapability getLocalPcepCapability() {
 		return localPcepCapability;
 	}
@@ -376,7 +402,7 @@ public class ParentPCEServerParameters {
 	 * Default Constructor.
 	 */
 	public ParentPCEServerParameters(){
-			this.confFile="ParentPCEServerConfiguration.xml";
+			this.confFile="ParentPCEConf.xml";
 	}
 
 	
@@ -420,9 +446,9 @@ public class ParentPCEServerParameters {
     		        	  }
     		        	  
     		        	  boolean defaultL=Boolean.parseBoolean(attributes.getValue("default"));
-    		        	  if (defaultL==true){
-    		        		  defaultPCELayer=lay;
-    		        	  }
+    		        	  if (defaultL==true) {
+							  defaultPCELayer = lay;
+						  }
     		        	  PCElayers.add(lay);
     		        	  
     		          }	  
@@ -447,16 +473,22 @@ public class ParentPCEServerParameters {
 						}
 		    		 */
 		    		  }
-		    		  
+		    		  //Andrea
+					  // not properly done
+					  //I had problem loading the parameters from the configuration file
+					  //I configured statically here (of)
 		    		  else if (qName.equalsIgnoreCase("algorithmRule")) {
 		    			  MapAlgoRule mar= new MapAlgoRule();
 		    			  AlgorithmRule ar=new AlgorithmRule();
 		    			  String aname=attributes.getValue("name");
-		    			  ar.of=Integer.parseInt(attributes.getValue("of"));
-		        		  ar.svec=Boolean.parseBoolean(attributes.getValue("svec"));		        		  
+						  ar.svec=Boolean.parseBoolean(attributes.getValue("svec"));
+		    			  ar.of=3000;
+
 		        		  mar.ar=ar;
 		        		  mar.algoName=aname;
-		        		  mar.isParentPCEAlgorithm=Boolean.parseBoolean(attributes.getValue("isParentPCEAlgorithm"));
+						  mar.isParentPCEAlgorithm=true;
+
+						  //mar.isParentPCEAlgorithm=Boolean.parseBoolean(attributes.getValue("isParentPCEAlgorithm"));
 		        		  algorithmRuleList.add(mar);
 		    		  }
 
@@ -521,37 +553,41 @@ public class ParentPCEServerParameters {
 		    		          }
 		    		          else if (qName.equalsIgnoreCase("parentPCEManagementPort")){
 		  						parentPCEManagementPort = Integer.parseInt(tempVal.trim());
-		  					}
+		  					  }
 		    		          else if (qName.equalsIgnoreCase("readMDTEDFromFile")) {
 		    		        	  readMDTEDFromFile=Boolean.parseBoolean(tempVal.trim());
 		    		          }
-		    		  		else if (qName.equalsIgnoreCase("actingAsBGP4Peer")) {
+		    		  		  else if (qName.equalsIgnoreCase("actingAsBGP4Peer")) {
 								actingAsBGP4Peer=Boolean.parseBoolean(tempVal.trim());
-							}
-							else if (qName.equalsIgnoreCase("BGP4File")) {					
+						      }
+							  else if (qName.equalsIgnoreCase("BGP4File")) {
 								BGP4File=tempVal.trim();					
-								}
-							else if (qName.equalsIgnoreCase("multiDomain")) {
+							  }
+							  else if (qName.equalsIgnoreCase("multiDomain")) {
 								multiDomain=Boolean.parseBoolean(tempVal.trim());
-							}
-							else if (qName.equalsIgnoreCase("knowsWholeTopology")) {
+							  }
+							  else if (qName.equalsIgnoreCase("knowsWholeTopology")) {
 								knowsWholeTopology=Boolean.parseBoolean(tempVal.trim());
-							}
-							else if (qName.equalsIgnoreCase("gmpls")) {
+							  }
+							  else if (qName.equalsIgnoreCase("gmpls")) {
 								localPcepCapability.setGmpls(Boolean.parseBoolean(tempVal.trim()));
-							}
-							else if (qName.equalsIgnoreCase("stateful")) {
+							  }
+						 	  else if (qName.equalsIgnoreCase("stateful")) {
 								localPcepCapability.setStateful(Boolean.parseBoolean(tempVal.trim()));
-							}
-							else if (qName.equalsIgnoreCase("lspUpdate")) {
+							  }
+							  else if (qName.equalsIgnoreCase("testAlgo")) {
+								  testflag = Boolean.parseBoolean(tempVal.trim());
+							  }
+
+							  else if (qName.equalsIgnoreCase("lspUpdate")) {
 								localPcepCapability.setLspUpdate(Boolean.parseBoolean(tempVal.trim()));
-							}
-							else if (qName.equalsIgnoreCase("parentPCE")) {
+							  }
+							  else if (qName.equalsIgnoreCase("parentPCE")) {
 								localPcepCapability.setParentPCE(Boolean.parseBoolean(tempVal.trim()));
-							}
-							else if (qName.equalsIgnoreCase("childPCE")) {
+							  }
+							  else if (qName.equalsIgnoreCase("childPCE")) {
 								localPcepCapability.setChildPCE(Boolean.parseBoolean(tempVal.trim()));
-							}
+							  }
 		    		   		
 		    		   		
 		    	   }		   
