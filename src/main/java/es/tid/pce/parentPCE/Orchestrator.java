@@ -137,7 +137,7 @@ public class Orchestrator {
 				BGPPeer bgpPeer = new BGPPeer();
 				if (params.isMultiDomain()) {
 					if (params.isKnowsWholeTopology())
-						bgpPeer.configure1( params.getBGP4File(), (MultiDomainTEDB) ted, intraTEDBs );
+						bgpPeer.configure( params.getBGP4File(), (MultiDomainTEDB) ted, intraTEDBs );
 						// bgpPeer.setWriteMultiAndIntraTEDB((MultiDomainTEDB)ted, intraTEDBs);
 					else
 						bgpPeer.configure( params.getBGP4File() );
