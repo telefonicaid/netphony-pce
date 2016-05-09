@@ -105,11 +105,11 @@ public class RequestDispatcher {
 
 	/**
 	 * Constructor
-	 * @param nThreads
-	 * @param ted
-	 * @param cpcerm
-	 * @param analyzeRequestTime
-	 * @param intraTEDBs
+	 * @param nThreads #thread
+	 * @param ted database
+	 * @param cpcerm requestmanager
+	 * @param analyzeRequestTime boolean
+	 * @param intraTEDBs internal tedbs
 	 */
 
 	public RequestDispatcher(int nThreads,TEDB ted,ParentPCERequestManager cpcerm, boolean analyzeRequestTime,Hashtable<Inet4Address,DomainTEDB> intraTEDBs)
