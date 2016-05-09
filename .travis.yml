@@ -8,9 +8,9 @@ matrix:
   - env: TEST_TYPE="unit"
   - env: TEST_TYPE="integration"
 install:
-  - if [ $TEST_TYPE = 'integration' ]; docker build -t container_pce . ; fi
-  - if [ $TEST_TYPE = 'integration' ]; docker run -d -p 4189:4189 -t --name pce container_pce:latest java -jar target/PCE-jar-with-dependencies.jar src/test/resources/PCEServerConfiguration_SSON_Line.xml ; fi
+  - if [ $TEST_TYPE = 'integration' ]; then docker build -t container_pce . ; fi
+  - if [ $TEST_TYPE = 'integration' ]; then docker run -d -p 4189:4189 -t --name pce container_pce:latest java -jar target/PCE-jar-with-dependencies.jar src/test/resources/PCEServerConfiguration_SSON_Line.xml ; fi
 script:
   - mvn install -X -f ./pom.xml
   - mvn org.apache.maven.plugins:maven-javadoc-plugin:2.9.1:jar
-  - if [ $TEST_TYPE = 'integration' ]; mvn compile failsafe:integration-test ; fi
+  - if [ $TEST_TYPE = 'integration' ]; then mvn compile failsafe:integration-test ; fi
