@@ -258,12 +258,12 @@ public class RequestProcessorThread extends Thread{
 
 	/**
 	 * Constructor
-	 * @param queue
-	 * @param ted
-	 * @param cpcerm
-	 * @param pathComputingRequestRetryQueue
-	 * @param analyzeRequestTime
-	 * @param intraTEDBs
+	 * @param queue list of queue
+	 * @param ted TE database
+	 * @param cpcerm request manager
+	 * @param pathComputingRequestRetryQueue queue
+	 * @param analyzeRequestTime boolean
+	 * @param intraTEDBs internal TEBDs
 	 */
 	public RequestProcessorThread(LinkedBlockingQueue<ComputingRequest> queue,TEDB ted,ParentPCERequestManager cpcerm, LinkedBlockingQueue<ComputingRequest> pathComputingRequestRetryQueue, boolean analyzeRequestTime, Hashtable<Inet4Address,DomainTEDB> intraTEDBs){
 		useMaxReqTime=false;
