@@ -320,7 +320,7 @@ public class ParentPCESession extends GenericPCEPSession{
 	
 	/**
 	 * USE THIS COUNTER TO GET NEW IDS IN THE REQUESTS
-	 * @return
+	 * @return reqid int
 	 */
 	synchronized static public int getNewReqIDCounter(){
 		int newReqId;
