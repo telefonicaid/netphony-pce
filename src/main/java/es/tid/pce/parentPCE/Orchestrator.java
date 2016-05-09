@@ -22,14 +22,14 @@ import java.util.logging.Logger;
 
 /**
  * Parent PCE Server
- * @author ogondio
+ * @author ogondio and Andrea
  *
  */
 public class Orchestrator {
 
 	/**
 	 * Main class
-	 * @param args
+	 * @param args parameters
 	 */
 	public static void main(String[] args) {
 		//First, get the parameters from the configuration file
