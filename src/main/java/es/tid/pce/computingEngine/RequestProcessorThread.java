@@ -1,44 +1,14 @@
 package es.tid.pce.computingEngine;
 
-import java.io.IOException;
-import java.net.Inet4Address;
-import java.net.UnknownHostException;
-import java.util.Hashtable;
-import java.util.LinkedList;
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.TimeUnit;
-import java.util.logging.Logger;
-
-import es.tid.pce.computingEngine.algorithms.ComputingAlgorithm;
-import es.tid.pce.computingEngine.algorithms.ComputingAlgorithmManager;
-import es.tid.pce.computingEngine.algorithms.ComputingAlgorithmManagerSSON;
-import es.tid.pce.computingEngine.algorithms.DefaultSVECPathComputing;
-import es.tid.pce.computingEngine.algorithms.DefaultSinglePathComputing;
+import es.tid.pce.computingEngine.algorithms.*;
 import es.tid.pce.computingEngine.algorithms.multiLayer.OperationsCounter;
 import es.tid.pce.pcep.PCEPProtocolViolationException;
-import es.tid.pce.pcep.constructs.EndPoint;
-import es.tid.pce.pcep.constructs.ErrorConstruct;
-import es.tid.pce.pcep.constructs.MetricPCE;
-import es.tid.pce.pcep.constructs.Notify;
-import es.tid.pce.pcep.constructs.P2PEndpoints;
-import es.tid.pce.pcep.constructs.Request;
-import es.tid.pce.pcep.constructs.Response;
+import es.tid.pce.pcep.constructs.*;
 import es.tid.pce.pcep.messages.PCEPError;
 import es.tid.pce.pcep.messages.PCEPNotification;
 import es.tid.pce.pcep.messages.PCEPRequest;
 import es.tid.pce.pcep.messages.PCEPResponse;
-import es.tid.pce.pcep.objects.EndPointsIPv4;
-import es.tid.pce.pcep.objects.EndPointsUnnumberedIntf;
-import es.tid.pce.pcep.objects.GeneralizedEndPoints;
-import es.tid.pce.pcep.objects.NoPath;
-import es.tid.pce.pcep.objects.Notification;
-import es.tid.pce.pcep.objects.ObjectParameters;
-import es.tid.pce.pcep.objects.ObjectiveFunction;
-import es.tid.pce.pcep.objects.PCEPErrorObject;
-import es.tid.pce.pcep.objects.PceIdIPv4;
-import es.tid.pce.pcep.objects.ProcTime;
-import es.tid.pce.pcep.objects.RequestParameters;
-import es.tid.pce.pcep.objects.tlvs.EndPointDataPathTLV;
+import es.tid.pce.pcep.objects.*;
 import es.tid.pce.pcep.objects.tlvs.NoPathTLV;
 import es.tid.pce.pcep.objects.tlvs.PathReservationTLV;
 import es.tid.pce.server.ParentPCERequestManager;
@@ -49,10 +19,20 @@ import es.tid.rsvp.objects.subobjects.IPv4prefixEROSubobject;
 import es.tid.rsvp.objects.subobjects.UnnumberIfIDEROSubobject;
 import es.tid.tedb.DomainTEDB;
 import es.tid.tedb.TEDB;
-//import tid.pce.pcep.objects.tlvs.NotificationTLV;
-//import tid.pce.pcep.objects.tlvs.subtlvs.NotificationSubTLV;
 import es.tid.util.Analysis;
 import es.tid.util.UtilsFunctions;
+
+import java.io.IOException;
+import java.net.Inet4Address;
+import java.net.UnknownHostException;
+import java.util.Hashtable;
+import java.util.LinkedList;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.TimeUnit;
+import java.util.logging.Logger;
+
+//import tid.pce.pcep.objects.tlvs.NotificationTLV;
+//import tid.pce.pcep.objects.tlvs.subtlvs.NotificationSubTLV;
 
 /**
  * RequestProcessorThread is devoted to Path Computation
@@ -70,7 +50,7 @@ public class RequestProcessorThread extends Thread{
 	 */
 	private LinkedBlockingQueue<ComputingRequest> pathComputingRequestQueue;
 
-
+	private Hashtable<Inet4Address,DomainTEDB> intraTEDBs;
 
 	private LinkedBlockingQueue<ComputingRequest> pathComputingRequestRetryQueue;
 
@@ -275,6 +255,49 @@ public class RequestProcessorThread extends Thread{
 		}
 
 	}
+
+	/**
+	 * Constructor
+	 * @param queue
+	 * @param ted
+	 * @param cpcerm
+	 * @param pathComputingRequestRetryQueue
+	 * @param analyzeRequestTime
+	 * @param intraTEDBs
+	 */
+	public RequestProcessorThread(LinkedBlockingQueue<ComputingRequest> queue,TEDB ted,ParentPCERequestManager cpcerm, LinkedBlockingQueue<ComputingRequest> pathComputingRequestRetryQueue, boolean analyzeRequestTime, Hashtable<Inet4Address,DomainTEDB> intraTEDBs){
+		useMaxReqTime=false;
+		this.pathComputingRequestQueue=queue;
+		running=true;
+		this.ted=ted;
+		log=Logger.getLogger("PCEServer");
+		singleAlgorithmList=new Hashtable<Integer,ComputingAlgorithmManager>();
+		svecAlgorithmList=new Hashtable<Integer,ComputingAlgorithmManager>();
+		singleAlgorithmListsson=new Hashtable<Integer,ComputingAlgorithmManagerSSON>();
+		this.cpcerm=cpcerm;
+		if (cpcerm!=null){
+			this.isChildPCE=true;
+		}
+		this.intraTEDBs = intraTEDBs;
+		this.pathComputingRequestRetryQueue=pathComputingRequestRetryQueue;
+
+		if (analyzeRequestTime){
+			idleTime=new Analysis();
+			procTime=new Analysis();
+			this.analyzeRequestTime=analyzeRequestTime;
+		}else {
+			analyzeRequestTime=false;
+		}
+		//		try {
+		//			pw= new PrintWriter("Test");
+		//		} catch (FileNotFoundException e) {
+		//			// TODO Auto-generated catch block
+		//			e.printStackTrace();
+		//		}
+
+	}
+
+
 
 	/*
 	 * Constructor para collaborative PCEs

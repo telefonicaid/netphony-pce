@@ -1,21 +1,8 @@
 package es.tid.pce.computingEngine;
 
-import java.io.DataOutputStream;
-import java.net.Inet4Address;
-import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.Hashtable;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
-import java.util.logging.Logger;
-
 import es.tid.pce.computingEngine.algorithms.ComputingAlgorithmManager;
 import es.tid.pce.computingEngine.algorithms.ComputingAlgorithmManagerSSON;
 import es.tid.pce.computingEngine.algorithms.multiLayer.OperationsCounter;
-import es.tid.pce.pcep.constructs.PCEPIntiatedLSP;
 import es.tid.pce.pcep.constructs.Request;
 import es.tid.pce.pcep.constructs.SVECConstruct;
 import es.tid.pce.pcep.messages.PCEPInitiate;
@@ -24,11 +11,22 @@ import es.tid.pce.pcep.messages.PCEPRequest;
 import es.tid.pce.pcep.objects.ObjectiveFunction;
 import es.tid.pce.pcep.objects.RequestParameters;
 import es.tid.pce.pcep.objects.tlvs.MaxRequestTimeTLV;
-import es.tid.pce.pcep.objects.tlvs.SymbolicPathNameTLV;
 import es.tid.pce.server.ParentPCERequestManager;
 import es.tid.pce.server.communicationpce.CollaborationPCESessionManager;
 import es.tid.pce.server.wson.ReservationManager;
+import es.tid.tedb.DomainTEDB;
 import es.tid.tedb.TEDB;
+
+import java.io.DataOutputStream;
+import java.net.Inet4Address;
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.Hashtable;
+import java.util.LinkedList;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
+import java.util.logging.Logger;
 
 /**
  * The Request Dispatcher receives the PCEP Request messages and distribute the
@@ -103,6 +101,36 @@ public class RequestDispatcher {
 	        }
 	        
 	    }
+
+
+	/**
+	 * Constructor
+	 * @param nThreads
+	 * @param ted
+	 * @param cpcerm
+	 * @param analyzeRequestTime
+	 * @param intraTEDBs
+	 */
+
+	public RequestDispatcher(int nThreads,TEDB ted,ParentPCERequestManager cpcerm, boolean analyzeRequestTime,Hashtable<Inet4Address,DomainTEDB> intraTEDBs)
+	{
+		log=Logger.getLogger("PCEServer");
+		this.nThreads = nThreads;
+		pathComputingRequestQueue = new LinkedBlockingQueue<ComputingRequest>();
+		pathComputingRequestRetryQueue= new LinkedBlockingQueue<ComputingRequest>();
+		pendingRequestList=new Hashtable<Long,ComputingRequest>();
+		threads = new RequestProcessorThread[nThreads];
+		numOPsLock = new ReentrantLock();
+		for (int i=0; i<this.nThreads; i++) {
+			log.info("Starting Request Processor Thread");
+			threads[i] = new RequestProcessorThread(pathComputingRequestQueue,ted,cpcerm,pathComputingRequestRetryQueue,analyzeRequestTime, intraTEDBs);
+			threads[i].setPriority(Thread.MAX_PRIORITY);
+			threads[i].start();
+
+		}
+
+	}
+
 
 	public RequestDispatcher(int nThreads,TEDB ted,ParentPCERequestManager cpcerm, boolean analyzeRequestTime, boolean useMaxReqTime, ReservationManager reservationManager)
     {
