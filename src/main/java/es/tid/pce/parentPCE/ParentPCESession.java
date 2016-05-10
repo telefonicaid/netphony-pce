@@ -39,8 +39,8 @@ import es.tid.tedb.TEDB;
  * <p> Requests will be forwarded to the RequestQueue, which puts them in a queue
  * and are processing by the set of Request Processor Threads </p>
  * 
- * @author Oscar Gonzalez de Dios
- * @author Eduardo Azanon Teruel
+ * @author Oscar Gonz�lez de Dios
+ * @author Eduardo Aza��n Teruel
 */
 public class ParentPCESession extends GenericPCEPSession{
 	
@@ -154,14 +154,18 @@ public class ParentPCESession extends GenericPCEPSession{
 					if (this.localPcepCapability.isStateful()) {
 						log.info("Received report from "+this.remotePeerIP);
 						PCEPReport pcrpt;
+						//log.info("Message: "+()msg.toString());
+
 						try {
+							//log.info("Report before");
 							pcrpt=new PCEPReport(msg);
+							//log.info("Report after");
 							Iterator<StateReport> it= pcrpt.getStateReportList().iterator();
 							while (it.hasNext()){
 								StateReport sr=it.next();
 								SRP srp=sr.getSRP();
 								if (srp!=null) {
-									log.info("SRP Id: "+ sr.getSRP().getSRP_ID_number());
+									//log.info("SRP Id: "+ sr.getSRP().getSRP_ID_number());
 									Object lock=childPCERequestManager.inilocks.get(sr.getSRP().getSRP_ID_number());
 									if (lock!=null){
 										synchronized (lock) {
@@ -178,7 +182,7 @@ public class ParentPCESession extends GenericPCEPSession{
 							// TODO Auto-generated catch block
 							e.printStackTrace();
 							break;
-						}					
+						}
 					}else {
 						log.warning("PCE is NOT stateful, ignored report from "+this.remotePeerIP);		
 					}
@@ -312,7 +316,7 @@ public class ParentPCESession extends GenericPCEPSession{
 	
 	/**
 	 * USE THIS COUNTER TO GET NEW IDS IN THE REQUESTS
-	 * @return id
+	 * @return reqid int
 	 */
 	synchronized static public int getNewReqIDCounter(){
 		int newReqId;

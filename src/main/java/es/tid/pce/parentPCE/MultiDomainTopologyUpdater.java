@@ -1,14 +1,14 @@
 package es.tid.pce.parentPCE;
 
-import java.net.Inet4Address;
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.logging.Logger;
-
 import es.tid.bgp.bgp4.messages.BGP4Update;
 import es.tid.bgp.bgp4Peer.updateTEDB.UpdateProccesorThread;
 import es.tid.pce.pcep.objects.Notification;
 import es.tid.tedb.ITMDTEDB;
 import es.tid.tedb.MDTEDB;
+
+import java.net.Inet4Address;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.logging.Logger;
 
 public class MultiDomainTopologyUpdater {
 	
@@ -26,7 +26,7 @@ public class MultiDomainTopologyUpdater {
 	/**
 	 * BGP
 	 */
-	 private boolean bgpActivated=false;
+	private boolean bgpActivated=false;
 	private LinkedBlockingQueue<BGP4Update> updateList;
 	private UpdateProccesorThread updateProccesorThread;
 	

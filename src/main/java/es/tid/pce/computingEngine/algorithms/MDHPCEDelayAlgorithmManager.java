@@ -11,28 +11,42 @@ import es.tid.tedb.TEDB;
 import java.net.Inet4Address;
 import java.util.Hashtable;
 
-/*
-* @author baam
-*/
-public class LocalMDHPCEMinNumberDomainsKSPAlgorithmManager implements
+public class MDHPCEDelayAlgorithmManager implements
 ParentPCEComputingAlgorithmManager {
 
-	private LocalChildRequestManager localChildRequestManager;
 	private ChildPCERequestManager childPCERequestManager;
 	private ReachabilityManager reachabilityManager;
 	@Override
 	public ComputingAlgorithm getComputingAlgorithm(
 			ComputingRequest pathReq,
 			TEDB ted) {
-		LocalMDHPCEMinNumberDomainsKSPAlgorithm sdwg=new LocalMDHPCEMinNumberDomainsKSPAlgorithm(pathReq,ted, childPCERequestManager , localChildRequestManager, reachabilityManager);
+		MDHPCEDelayAlgorithm sdwg=new MDHPCEDelayAlgorithm(pathReq,ted,childPCERequestManager, reachabilityManager);
 		return sdwg;
 	}
+	@Override
+	public ComputingAlgorithm getComputingAlgorithm(
+			ComputingRequest pathReq,
+			TEDB ted, Hashtable<Inet4Address,DomainTEDB> intraTEDBs) {
+		MDHPCEDelayAlgorithm sdwg=new MDHPCEDelayAlgorithm(pathReq,ted,childPCERequestManager, reachabilityManager, intraTEDBs);
+		return sdwg;
+	}
+
+
+	public ChildPCERequestManager getChildPCERequestManager() {
+		return childPCERequestManager;
+	}
+	public void setChildPCERequestManager(
+			ChildPCERequestManager childPCERequestManager) {
+		this.childPCERequestManager = childPCERequestManager;
+	}
+
 	public ReachabilityManager getReachabilityManager() {
 		return reachabilityManager;
 	}
 	public void setReachabilityManager(ReachabilityManager reachabilityManager) {
 		this.reachabilityManager = reachabilityManager;
 	}
+
 	@Override
 	public void setReservationManager(ReservationManager reservationManager) {
 		// TODO Auto-generated method stub
@@ -49,28 +63,11 @@ ParentPCEComputingAlgorithmManager {
 		// TODO Auto-generated method stub
 		return null;
 	}
-
-	@Override
-	public ComputingAlgorithm getComputingAlgorithm(ComputingRequest pathReq,
-													TEDB ted, Hashtable<Inet4Address,DomainTEDB> intraTEDBs) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-
-	public LocalChildRequestManager getLocalChildRequestManager() {
-		return localChildRequestManager;
-	}
 	@Override
 	public void setLocalChildRequestManager(
 			LocalChildRequestManager localChildRequestManager) {
-		this.localChildRequestManager = localChildRequestManager;
+		// TODO Auto-generated method stub
+		
 	}
-	public ChildPCERequestManager getChildPCERequestManager() {
-		return childPCERequestManager;
-	}
-	public void setChildPCERequestManager(
-			ChildPCERequestManager childPCERequestManager) {
-		this.childPCERequestManager = childPCERequestManager;
-	}
+
 }
