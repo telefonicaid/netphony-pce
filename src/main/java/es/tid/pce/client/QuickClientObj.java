@@ -6,10 +6,14 @@ import java.net.UnknownHostException;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.concurrent.TimeUnit;
-import java.util.logging.FileHandler;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import java.util.logging.SimpleFormatter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import es.tid.pce.pcep.constructs.EndPoint;
 import es.tid.pce.pcep.constructs.GeneralizedBandwidthSSON;
@@ -39,7 +43,7 @@ import org.apache.commons.cli.*;
 
 public class QuickClientObj {
 
-	private Logger log=Logger.getLogger("PCCClient");
+	private Logger log=LoggerFactory.getLogger("PCCClient");
 	private String ip;
 	private int port;
 

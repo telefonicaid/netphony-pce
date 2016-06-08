@@ -2,7 +2,8 @@ package es.tid.pce.computingEngine.algorithms;
 
 import java.net.Inet4Address;
 import java.util.List;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import org.jgrapht.GraphPath;
 import org.jgrapht.alg.DijkstraShortestPath;
@@ -41,7 +42,7 @@ import es.tid.tedb.TEDB;
 public class DefaultSinglePathComputing implements ComputingAlgorithm {
 
 	private SimpleDirectedWeightedGraph<Object,IntraDomainEdge> networkGraph;
-	private Logger log=Logger.getLogger("PCEServer");
+	private Logger log=LoggerFactory.getLogger("PCEServer");
 	private ComputingRequest pathReq;
 	private TEDB ted;
 
@@ -183,16 +184,16 @@ public class DefaultSinglePathComputing implements ComputingAlgorithm {
 		}
 
 		if (!((networkGraph.containsVertex(source_router_id_addr))&&(networkGraph.containsVertex(dest_router_id_addr)))){
-			log.warning("DefaultSinglePathComputing:: Source or destination are NOT in the TED");	
+			log.warn("DefaultSinglePathComputing:: Source or destination are NOT in the TED");	
 			NoPath noPath= new NoPath();
 			noPath.setNatureOfIssue(ObjectParameters.NOPATH_NOPATH_SAT_CONSTRAINTS);
 			NoPathTLV noPathTLV=new NoPathTLV();
 			if (!((networkGraph.containsVertex(source_router_id_addr)))){
-				log.warning("Unknown source");	
+				log.warn("Unknown source");	
 				noPathTLV.setUnknownSource(true);	
 			}
 			if (!((networkGraph.containsVertex(dest_router_id_addr)))){
-				log.warning("Unknown destination");
+				log.warn("Unknown destination");
 				noPathTLV.setUnknownDestination(true);	
 			}
 
@@ -202,14 +203,14 @@ public class DefaultSinglePathComputing implements ComputingAlgorithm {
 			return m_resp;
 		}
 
-		log.finest("Computing path");
+		log.debug("Computing path");
 		//long tiempoini =System.nanoTime();
 		DijkstraShortestPath<Object,IntraDomainEdge>  dsp=new DijkstraShortestPath<Object,IntraDomainEdge> (networkGraph, source_router_id_addr, dest_router_id_addr);
 		GraphPath<Object,IntraDomainEdge> gp=dsp.getPath();
 
-		log.finest("Creating response");
+		log.debug("Creating response");
 		if (gp==null){
-			log.warning("DefaultSinglePathComputing:: No Path Found");	
+			log.warn("DefaultSinglePathComputing:: No Path Found");	
 			NoPath noPath= new NoPath();
 			noPath.setNatureOfIssue(ObjectParameters.NOPATH_NOPATH_SAT_CONSTRAINTS);				
 			response.setNoPath(noPath);
@@ -301,7 +302,7 @@ public class DefaultSinglePathComputing implements ComputingAlgorithm {
 		if (req.getMetricList().size()!=0){
 			Metric metric=new Metric();
 			metric.setMetricType(req.getMetricList().get(0).getMetricType() );
-			log.fine("Number of hops "+edge_list.size());
+			log.debug("Number of hops "+edge_list.size());
 			float metricValue=(float)edge_list.size();
 			metric.setMetricValue(metricValue);
 			path.getMetricList().add(metric);

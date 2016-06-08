@@ -4,7 +4,8 @@ import java.io.DataOutputStream;
 import java.net.Inet4Address;
 import java.util.Iterator;
 import java.util.concurrent.LinkedBlockingQueue;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import es.tid.pce.computingEngine.IniProcessorThread;
 import es.tid.pce.computingEngine.InitiationRequest;
@@ -30,7 +31,7 @@ public class MultiDomainInitiateDispatcher {
 	 
 
 	public MultiDomainInitiateDispatcher(ReachabilityManager reachabilityManager, ChildPCERequestManager childPCERequestManager, MultiDomainLSPDB multiDomainLSPDB) {
-		log=Logger.getLogger("PCEServer");
+		log=LoggerFactory.getLogger("PCEServer");
 	    lspIniRequestQueue = new LinkedBlockingQueue<InitiationRequest>();
 	    iniProcessorThread= new IniProcessorThread(lspIniRequestQueue, reachabilityManager, childPCERequestManager, multiDomainLSPDB);
         iniProcessorThread.start();

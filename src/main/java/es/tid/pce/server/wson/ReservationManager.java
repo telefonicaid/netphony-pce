@@ -6,7 +6,8 @@ import java.util.LinkedList;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import es.tid.tedb.DomainTEDB;
 
@@ -28,7 +29,7 @@ public class ReservationManager {
 	public ReservationManager(DomainTEDB ted){
 		executor =new ScheduledThreadPoolExecutor(1);
 		this.ted=ted;
-		log=Logger.getLogger("PCEServer");
+		log=LoggerFactory.getLogger("PCEServer");
 		reservationID=0;
 		permanentReservationList=new Hashtable<Long,DeleteReservationTask>();
 	}

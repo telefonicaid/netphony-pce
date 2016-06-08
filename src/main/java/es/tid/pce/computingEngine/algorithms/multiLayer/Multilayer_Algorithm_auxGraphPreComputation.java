@@ -9,7 +9,8 @@ import java.util.LinkedList;
 import java.util.Set;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import org.jgrapht.graph.DirectedMultigraph;
 import org.jgrapht.graph.SimpleDirectedWeightedGraph;
@@ -75,7 +76,7 @@ public class Multilayer_Algorithm_auxGraphPreComputation implements ComputingAlg
 	private double peso_LPE = 1;
 
 	public Multilayer_Algorithm_auxGraphPreComputation(){
-		log=Logger.getLogger("PCEServer");
+		log=LoggerFactory.getLogger("PCEServer");
 	}
 	
 	private int grooming_policie=2;   // 0 --> MinTH: Minimizing the Number of Traffic Hops

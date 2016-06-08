@@ -9,7 +9,8 @@ package es.tid.pce.server.lspdb;
  */
 
 import java.util.Hashtable;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import es.tid.pce.pcep.constructs.StateReport;
 
@@ -23,7 +24,7 @@ public class ReportDB_Simple implements ReportDB
 	{
 		this.moduleId = moduleId;
 		StateReportList = new Hashtable<Integer, StateReport>();
-		log = Logger.getLogger("Roadm");		
+		log = LoggerFactory.getLogger("Roadm");		
 	}
 	
 	public void add(StateReport rpt)

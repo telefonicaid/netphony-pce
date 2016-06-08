@@ -3,7 +3,8 @@ package es.tid.pce.computingEngine.algorithms.wson;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.concurrent.locks.Lock;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import org.jgrapht.graph.DirectedMultigraph;
 import org.jgrapht.graph.SimpleDirectedWeightedGraph;
@@ -41,7 +42,7 @@ public class KSP_PACK_AlgorithmPreComputation implements ComputingAlgorithmPreCo
 	}
 
 	public KSP_PACK_AlgorithmPreComputation(){
-		log=Logger.getLogger("PCEServer");
+		log=LoggerFactory.getLogger("PCEServer");
 	}
 	
 	// initialize pre-computation with K-ShortestPath (Dijkstra)

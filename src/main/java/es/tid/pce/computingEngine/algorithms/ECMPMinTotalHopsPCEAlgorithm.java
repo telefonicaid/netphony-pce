@@ -9,7 +9,8 @@ public class ECMPMinTotalHopsPCEAlgorithm{}
 //import java.util.Hashtable;
 //import java.util.LinkedList;
 //import java.util.List;
-//import java.util.logging.Logger;
+//import org.slf4j.Logger;
+//import org.slf4j.LoggerFactory;
 //
 //import org.jgrapht.GraphPath;
 //import org.jgrapht.graph.DirectedWeightedMultigraph;
@@ -45,7 +46,7 @@ public class ECMPMinTotalHopsPCEAlgorithm{}
 // */
 //public class ECMPMinTotalHopsPCEAlgorithm implements ComputingAlgorithm{
 //	private DirectedWeightedMultigraph<Object,InterDomainEdge> networkGraph;
-//	private Logger log=Logger.getLogger("PCEServer");
+//	private Logger log=LoggerFactory.getLogger("PCEServer");
 //	private ComputingRequest pathReq;
 //	private ChildPCERequestManager childPCERequestManager;
 //	private ReachabilityManager reachabilityManager;
@@ -98,7 +99,7 @@ public class ECMPMinTotalHopsPCEAlgorithm{}
 //			//CHECK IF DOMAIN_ID ARE NULL!!!!!!
 //			if ((dest_domain_id==null)||(source_domain_id==null)){
 //				//ONE OF THEM IS NOT REACHABLE, SEND NOPATH!!!
-//				log.warning("One of the domains is not reachable, sending NOPATH");
+//				log.warn("One of the domains is not reachable, sending NOPATH");
 //				NoPath noPath= new NoPath();
 //				noPath.setNatureOfIssue(ObjectParameters.NOPATH_NOPATH_SAT_CONSTRAINTS);
 //				response.setNoPath(noPath);
@@ -106,7 +107,7 @@ public class ECMPMinTotalHopsPCEAlgorithm{}
 //				return m_resp;
 //			}
 //			if (!((networkGraph.containsVertex(source_domain_id))&&(networkGraph.containsVertex(dest_domain_id)))){
-//				log.warning("Source or destination domains are NOT in the TED");
+//				log.warn("Source or destination domains are NOT in the TED");
 //				//FIXME: VER ESTE CASO
 //				NoPath noPath= new NoPath();
 //				noPath.setNatureOfIssue(ObjectParameters.NOPATH_NOPATH_SAT_CONSTRAINTS);
@@ -429,7 +430,7 @@ public class ECMPMinTotalHopsPCEAlgorithm{}
 //				Path path=new Path();
 //
 //				if (childrenFailed==true){
-//					log.warning("Some child has failed");
+//					log.warn("Some child has failed");
 //					NoPath noPath= new NoPath();
 //					response.setNoPath(noPath);
 //				}
@@ -446,7 +447,7 @@ public class ECMPMinTotalHopsPCEAlgorithm{}
 //				m_resp.addResponse(response);
 //				Path path=new Path();
 //				if (childrenFailed==true){
-//					log.warning("Some child has failed");
+//					log.warn("Some child has failed");
 //					NoPath noPath= new NoPath();
 //					response.setNoPath(noPath);
 //				}
@@ -467,7 +468,7 @@ public class ECMPMinTotalHopsPCEAlgorithm{}
 //			}
 //		}
 //		catch (Exception e){
-//			log.warning("PROBLEM COMPUTING PATH!!");
+//			log.warn("PROBLEM COMPUTING PATH!!");
 //			//FIXME: Send something different than nopath?
 //			NoPath noPath= new NoPath();
 //			noPath.setNatureOfIssue(ObjectParameters.NOPATH_NOPATH_SAT_CONSTRAINTS);

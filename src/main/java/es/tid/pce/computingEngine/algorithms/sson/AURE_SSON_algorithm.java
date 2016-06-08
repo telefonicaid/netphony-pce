@@ -3,7 +3,8 @@ package es.tid.pce.computingEngine.algorithms.sson;
 import java.net.Inet4Address;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import org.jgrapht.GraphPath;
 import org.jgrapht.alg.DijkstraShortestPath;
@@ -60,7 +61,7 @@ public class AURE_SSON_algorithm implements ComputingAlgorithm {
 	/**
 	 * The Logger.
 	 */
-	private Logger log=Logger.getLogger("PCEServer");
+	private Logger log=LoggerFactory.getLogger("PCEServer");
 	
 	/**
 	 * The Path Computing Request to calculate.
@@ -103,7 +104,7 @@ public class AURE_SSON_algorithm implements ComputingAlgorithm {
 	public ComputingResponse call(){
 		//Timestamp of the start of the algorithm;
 		long tiempoini =System.nanoTime();
-		log.finest("Starting AURE Algorithm");
+		log.debug("Starting AURE Algorithm");
 		//Create the response message
 		//It will contain either the path or noPath
 		ComputingResponse m_resp=new ComputingResponse();
@@ -211,11 +212,11 @@ public class AURE_SSON_algorithm implements ComputingAlgorithm {
 			noPath.setNatureOfIssue(ObjectParameters.NOPATH_NOPATH_SAT_CONSTRAINTS);
 			NoPathTLV noPathTLV=new NoPathTLV();
 			if (!((ted.containsVertex(source_router_id_addr)))){
-				log.finest("Unknown source");	
+				log.debug("Unknown source");	
 				noPathTLV.setUnknownSource(true);	
 			}
 			if (!((ted.containsVertex(dest_router_id_addr)))){
-				log.finest("Unknown destination");
+				log.debug("Unknown destination");
 				noPathTLV.setUnknownDestination(true);	
 			}
 
@@ -237,7 +238,7 @@ public class AURE_SSON_algorithm implements ComputingAlgorithm {
 			if (req.getMetricList().size()!=0){
 				Metric metric=new Metric();
 				metric.setMetricType(req.getMetricList().get(0).getMetricType() );
-				log.fine("Number of hops "+0);
+				log.debug("Number of hops "+0);
 				float metricValue=0;
 				metric.setMetricValue(metricValue);
 				path.getMetricList().add(metric);
@@ -286,7 +287,7 @@ public class AURE_SSON_algorithm implements ComputingAlgorithm {
 					counter=0;
 					if (lambda>=preComp.getSSONInfo().getNumLambdas()-1){
 						if (nopath==true){
-							log.fine("No path found");
+							log.debug("No path found");
 							NoPath noPath= new NoPath();
 							noPath.setNatureOfIssue(ObjectParameters.NOPATH_NOPATH_SAT_CONSTRAINTS);
 							NoPathTLV noPathTLV=new NoPathTLV();
@@ -307,7 +308,7 @@ public class AURE_SSON_algorithm implements ComputingAlgorithm {
 					if (counter==0){
 						if (lambda>=preComp.getSSONInfo().getNumLambdas()-1){
 							if (nopath==true){
-								log.fine("No path found");
+								log.debug("No path found");
 								NoPath noPath= new NoPath();
 								noPath.setNatureOfIssue(ObjectParameters.NOPATH_NOPATH_SAT_CONSTRAINTS);
 								NoPathTLV noPathTLV=new NoPathTLV();
@@ -361,7 +362,7 @@ public class AURE_SSON_algorithm implements ComputingAlgorithm {
 							else{
 								if (lambda>=preComp.getSSONInfo().getNumLambdas()-1){
 									if (nopath==true){
-										log.fine("No path found");
+										log.debug("No path found");
 										NoPath noPath= new NoPath();
 										noPath.setNatureOfIssue(ObjectParameters.NOPATH_NOPATH_SAT_CONSTRAINTS);
 										NoPathTLV noPathTLV=new NoPathTLV();
@@ -383,7 +384,7 @@ public class AURE_SSON_algorithm implements ComputingAlgorithm {
 							log.info("Camino Distinto en lambda "+lambda);
 							if (lambda>=preComp.getSSONInfo().getNumLambdas()-1){
 								if (nopath==true){
-									log.fine("No path found");
+									log.debug("No path found");
 									NoPath noPath= new NoPath();
 									noPath.setNatureOfIssue(ObjectParameters.NOPATH_NOPATH_SAT_CONSTRAINTS);
 									NoPathTLV noPathTLV=new NoPathTLV();

@@ -5,7 +5,8 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.locks.Lock;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import org.jgrapht.GraphPath;
 import org.jgrapht.graph.SimpleDirectedWeightedGraph;
@@ -50,7 +51,7 @@ public class Multilayer_VNTMProv_Algorithm implements ComputingAlgorithm {
 	/**
 	 * The Logger.
 	 */
-	private Logger log=Logger.getLogger("PCEServer");
+	private Logger log=LoggerFactory.getLogger("PCEServer");
 	
 	/**
 	 * The Path Computing Request to calculate.
@@ -184,18 +185,18 @@ public class Multilayer_VNTMProv_Algorithm implements ComputingAlgorithm {
 				//aqu� acaba lo que he a�adido
 	
 				//Now, check if the source and destination are in the TED.
-				log.severe("Source: "+source_router_id_addr+"; Destination:"+dest_router_id_addr);
+				log.error("Source: "+source_router_id_addr+"; Destination:"+dest_router_id_addr);
 				if (!((((ted).containsVertex(source_router_id_addr))&&((ted).containsVertex(dest_router_id_addr))))){
-					log.severe("Source or destination are NOT in the TED");	
+					log.error("Source or destination are NOT in the TED");	
 					NoPath noPath= new NoPath();
 					noPath.setNatureOfIssue(ObjectParameters.NOPATH_NOPATH_SAT_CONSTRAINTS);
 					NoPathTLV noPathTLV=new NoPathTLV();
 					if (!((ted.containsVertex(source_router_id_addr)))){
-						log.severe("Unknown source");	
+						log.error("Unknown source");	
 						noPathTLV.setUnknownSource(true);	
 					}
 					if (!((ted.containsVertex(dest_router_id_addr)))){
-						log.severe("Unknown destination");
+						log.error("Unknown destination");
 						noPathTLV.setUnknownDestination(true);	
 					}
 	
@@ -249,7 +250,7 @@ public class Multilayer_VNTMProv_Algorithm implements ComputingAlgorithm {
 				} else {
 					eroml=Operacion34_Initiate.get_op43(graph, source_router_id_addr, dest_router_id_addr, 0);
 					if (eroml==null){
-						log.fine("No path found"); // NO PATH FOUND
+						log.debug("No path found"); // NO PATH FOUND
 						NoPath noPath= new NoPath();
 						noPath.setNatureOfIssue(ObjectParameters.NOPATH_NOPATH_SAT_CONSTRAINTS);
 						NoPathTLV noPathTLV=new NoPathTLV();
@@ -265,7 +266,7 @@ public class Multilayer_VNTMProv_Algorithm implements ComputingAlgorithm {
 				
 											
 				if (nopath==true){ //FIXME: Llamar al VNTM Aquí
-					log.fine("No path found"); // NO PATH FOUND
+					log.debug("No path found"); // NO PATH FOUND
 					NoPath noPath= new NoPath();
 					noPath.setNatureOfIssue(ObjectParameters.NOPATH_NOPATH_SAT_CONSTRAINTS);
 					NoPathTLV noPathTLV=new NoPathTLV();
@@ -515,18 +516,18 @@ public class Multilayer_VNTMProv_Algorithm implements ComputingAlgorithm {
 				//aqu� acaba lo que he a�adido
 	
 				//Now, check if the source and destination are in the TED.
-				log.severe("Source: "+source_router_id_addr+"; Destination:"+dest_router_id_addr);
+				log.error("Source: "+source_router_id_addr+"; Destination:"+dest_router_id_addr);
 				if (!((((ted).containsVertex(source_router_id_addr))&&((ted).containsVertex(dest_router_id_addr))))){
-					log.severe("Source or destination are NOT in the TED");	
+					log.error("Source or destination are NOT in the TED");	
 					NoPath noPath= new NoPath();
 					noPath.setNatureOfIssue(ObjectParameters.NOPATH_NOPATH_SAT_CONSTRAINTS);
 					NoPathTLV noPathTLV=new NoPathTLV();
 					if (!((ted.containsVertex(source_router_id_addr)))){
-						log.severe("Unknown source");	
+						log.error("Unknown source");	
 						noPathTLV.setUnknownSource(true);	
 					}
 					if (!((ted.containsVertex(dest_router_id_addr)))){
-						log.severe("Unknown destination");
+						log.error("Unknown destination");
 						noPathTLV.setUnknownDestination(true);	
 					}
 	
@@ -580,7 +581,7 @@ public class Multilayer_VNTMProv_Algorithm implements ComputingAlgorithm {
 				} else {
 					eroml=Operacion34_Initiate.get_op43(graph, source_router_id_addr, dest_router_id_addr, 0);
 					if (eroml==null){
-						log.fine("No path found"); // NO PATH FOUND
+						log.debug("No path found"); // NO PATH FOUND
 						NoPath noPath= new NoPath();
 						noPath.setNatureOfIssue(ObjectParameters.NOPATH_NOPATH_SAT_CONSTRAINTS);
 						NoPathTLV noPathTLV=new NoPathTLV();
@@ -596,7 +597,7 @@ public class Multilayer_VNTMProv_Algorithm implements ComputingAlgorithm {
 				
 											
 				if (nopath==true){ //FIXME: Llamar al VNTM Aquí
-					log.fine("No path found"); // NO PATH FOUND
+					log.debug("No path found"); // NO PATH FOUND
 					NoPath noPath= new NoPath();
 					noPath.setNatureOfIssue(ObjectParameters.NOPATH_NOPATH_SAT_CONSTRAINTS);
 					NoPathTLV noPathTLV=new NoPathTLV();

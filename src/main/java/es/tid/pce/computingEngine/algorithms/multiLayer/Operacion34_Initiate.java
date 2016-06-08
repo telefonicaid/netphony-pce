@@ -3,7 +3,8 @@ package es.tid.pce.computingEngine.algorithms.multiLayer;
 import java.net.Socket;
 import java.util.Iterator;
 import java.util.LinkedList;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import org.jgrapht.graph.SimpleDirectedWeightedGraph;
 
@@ -28,7 +29,7 @@ public class Operacion34_Initiate  {
 		return number_hops;
 	}
 	
-	private static Logger log=Logger.getLogger("PCEServer");
+	private static Logger log=LoggerFactory.getLogger("PCEServer");
 	
 	public static ExplicitRouteObject get_op43 
 	(SimpleDirectedWeightedGraph<Object,IntraDomainEdge> graph, 

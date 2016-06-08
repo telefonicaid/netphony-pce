@@ -5,7 +5,8 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.locks.Lock;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import org.jgrapht.GraphPath;
 import org.jgrapht.graph.SimpleDirectedWeightedGraph;
@@ -50,7 +51,7 @@ public class Multilayer_MinWL_Algorithm implements ComputingAlgorithm {
 	/**
 	 * The Logger.
 	 */
-	private Logger log=Logger.getLogger("PCEServer");
+	private Logger log=LoggerFactory.getLogger("PCEServer");
 	
 	/**
 	 * The Path Computing Request to calculate.
@@ -99,7 +100,7 @@ public class Multilayer_MinWL_Algorithm implements ComputingAlgorithm {
 
 	public ComputingResponse call(){ 
 		
-		log.finest("Starting Multilayer Min Traffic Hops Algorithm");
+		log.debug("Starting Multilayer Min Traffic Hops Algorithm");
 		//Create the response message
 		//It will contain either the path or noPath
 		
@@ -184,18 +185,18 @@ public class Multilayer_MinWL_Algorithm implements ComputingAlgorithm {
 				//aqu� acaba lo que he a�adido
 	
 				//Now, check if the source and destination are in the TED.
-				log.severe("Source: "+source_router_id_addr+"; Destination:"+dest_router_id_addr);
+				log.error("Source: "+source_router_id_addr+"; Destination:"+dest_router_id_addr);
 				if (!((((ted).containsVertex(source_router_id_addr))&&((ted).containsVertex(dest_router_id_addr))))){
-					log.severe("Source or destination are NOT in the TED");	
+					log.error("Source or destination are NOT in the TED");	
 					NoPath noPath= new NoPath();
 					noPath.setNatureOfIssue(ObjectParameters.NOPATH_NOPATH_SAT_CONSTRAINTS);
 					NoPathTLV noPathTLV=new NoPathTLV();
 					if (!((ted.containsVertex(source_router_id_addr)))){
-						log.severe("Unknown source");	
+						log.error("Unknown source");	
 						noPathTLV.setUnknownSource(true);	
 					}
 					if (!((ted.containsVertex(dest_router_id_addr)))){
-						log.severe("Unknown destination");
+						log.error("Unknown destination");
 						noPathTLV.setUnknownDestination(true);	
 					}
 	
@@ -582,18 +583,18 @@ public class Multilayer_MinWL_Algorithm implements ComputingAlgorithm {
 			//aqu� acaba lo que he a�adido
 
 			//Now, check if the source and destination are in the TED.
-			log.severe("Source: "+source_router_id_addr+"; Destination:"+dest_router_id_addr);
+			log.error("Source: "+source_router_id_addr+"; Destination:"+dest_router_id_addr);
 			if (!((((ted).containsVertex(source_router_id_addr))&&((ted).containsVertex(dest_router_id_addr))))){
-				log.severe("Source or destination are NOT in the TED");	
+				log.error("Source or destination are NOT in the TED");	
 				NoPath noPath= new NoPath();
 				noPath.setNatureOfIssue(ObjectParameters.NOPATH_NOPATH_SAT_CONSTRAINTS);
 				NoPathTLV noPathTLV=new NoPathTLV();
 				if (!((ted.containsVertex(source_router_id_addr)))){
-					log.severe("Unknown source");	
+					log.error("Unknown source");	
 					noPathTLV.setUnknownSource(true);	
 				}
 				if (!((ted.containsVertex(dest_router_id_addr)))){
-					log.severe("Unknown destination");
+					log.error("Unknown destination");
 					noPathTLV.setUnknownDestination(true);	
 				}
 				noPath.setNoPathTLV(noPathTLV);				
@@ -689,7 +690,7 @@ public class Multilayer_MinWL_Algorithm implements ComputingAlgorithm {
 						source_router_id_addr, dest_router_id_addr, bwt_req, graphLock);
 								
 				if (gp2 != null){
-					log.warning("Multiple LigthPath found at Operation 2");	
+					log.warn("Multiple LigthPath found at Operation 2");	
 					nopath = false;
 					gp_chosen = gp2;
 					numberHops = gp2.getEdgeList().size();
@@ -756,7 +757,7 @@ public class Multilayer_MinWL_Algorithm implements ComputingAlgorithm {
 			}
 										
 			if (nopath==true){
-				log.fine("No path found"); // NO PATH FOUND
+				log.debug("No path found"); // NO PATH FOUND
 				NoPath noPath= new NoPath();
 				noPath.setNatureOfIssue(ObjectParameters.NOPATH_NOPATH_SAT_CONSTRAINTS);
 				NoPathTLV noPathTLV=new NoPathTLV();

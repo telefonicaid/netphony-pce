@@ -6,7 +6,8 @@ import java.net.InetAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.LinkedList;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import es.tid.of.DataPathID;
 import es.tid.pce.pcep.constructs.ErrorConstruct;
@@ -41,7 +42,7 @@ public class ComputingResponse
 	private int encodingType = PCEPMessageTypes.MESSAGE_PCREP;
 	
 	public LinkedList<Response> ResponseList;
-	private Logger log=Logger.getLogger("PCEP listener");
+	private Logger log=LoggerFactory.getLogger("PCEP listener");
 	public LinkedList<StateReport> ReportList;
 	
 	public LinkedList<StateReport> getReportList() {

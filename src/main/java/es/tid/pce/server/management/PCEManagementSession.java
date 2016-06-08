@@ -14,7 +14,8 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.LinkedList;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import es.tid.pce.computingEngine.RequestDispatcher;
 import es.tid.pce.computingEngine.RequestProcessorThread;
@@ -102,7 +103,7 @@ public class PCEManagementSession extends Thread {
 		this.socket=s;
 		this.requestDispatcher=requestDispatcher;
 		this.tedb=tedb;
-		log=Logger.getLogger("PCEServer");
+		log=LoggerFactory.getLogger("PCEServer");
 		this.reservationManager=reservationManager;
 		this.collaborationPCESessionManager=collaborationPCESessionManager;
 	}
@@ -111,7 +112,7 @@ public class PCEManagementSession extends Thread {
 		this.socket=s;
 		this.requestDispatcher=requestDispatcher;
 		this.tedb=tedb;
-		log=Logger.getLogger("PCEServer");
+		log=LoggerFactory.getLogger("PCEServer");
 		this.reservationManager=reservationManager;
 		this.collaborationPCESessionManager=collaborationPCESessionManager;
 		this.params = params;
@@ -124,7 +125,7 @@ public class PCEManagementSession extends Thread {
 		try {
 			out=new PrintStream(socket.getOutputStream());
 		} catch (IOException e) {
-			log.warning("Management session cancelled: "+e.getMessage());
+			log.warn("Management session cancelled: "+e.getMessage());
 			return;
 		}
 		try {
@@ -182,7 +183,7 @@ public class PCEManagementSession extends Thread {
 								try {
 									command = br.readLine();
 								} catch (IOException ioe) {
-									log.warning("IO error trying to read your command");
+									log.warn("IO error trying to read your command");
 									return;
 								}
 								if(command == null)
@@ -428,7 +429,7 @@ public class PCEManagementSession extends Thread {
 									catch (IOException e) 
 									{
 										log.info(UtilsFunctions.exceptionToString(e));
-										log.severe("Couldn't get I/O for connection to port" + 2222);
+										log.error("Couldn't get I/O for connection to port" + 2222);
 									}
 								*/
 									oneSession.get(0).sendPCEPMessage(pceInit);
@@ -644,17 +645,17 @@ public class PCEManagementSession extends Thread {
 				} 
 				else if (command.equals("set traces on")) {
 					log.setLevel(Level.ALL);		
-					Logger log2=Logger.getLogger("PCEPParser");
+					Logger log2=LoggerFactory.getLogger("PCEPParser");
 					log2.setLevel(Level.ALL);
-					Logger log3= Logger.getLogger("OSPFParser");
+					Logger log3= LoggerFactory.getLogger("OSPFParser");
 					log3.setLevel(Level.ALL);
 					out.print("traces on!\r\n");
 				} 
 				else if (command.equals("set traces off")) {
 					log.setLevel(Level.SEVERE);		
-					Logger log2=Logger.getLogger("PCEPParser");
+					Logger log2=LoggerFactory.getLogger("PCEPParser");
 					log2.setLevel(Level.SEVERE);
-					Logger log3= Logger.getLogger("OSPFParser");
+					Logger log3= LoggerFactory.getLogger("OSPFParser");
 					log3.setLevel(Level.SEVERE);
 					out.print("traces off!\r\n");
 				} 

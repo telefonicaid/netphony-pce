@@ -11,7 +11,8 @@ import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 import java.util.LinkedList;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.logging.Level;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 //import java.util.concurrent.Callable;
 
@@ -114,9 +115,9 @@ public class ParentPCEServerParameters {
 	
 	public LinkedList<MapAlgoRule> algorithmRuleList;
 	
-	private Level ParentPCELogLevel=Level.SEVERE;
-	
-	private Level PCEPParserLogLevel=Level.SEVERE;
+//	private Level ParentPCELogLevel=Level.SEVERE;
+//	
+//	private Level PCEPParserLogLevel=Level.SEVERE;
 	
 	private boolean readMDTEDFromFile=false;
 	
@@ -363,22 +364,22 @@ public class ParentPCEServerParameters {
 	}
 	
 
-	public Level getParentPCELogLevel() {
-		return ParentPCELogLevel;
-	}
-
-	public void setParentPCELogLevel(Level parentPCELogLevel) {
-		ParentPCELogLevel = parentPCELogLevel;
-	}
-
-	public Level getPCEPParserLogLevel() {
-		return PCEPParserLogLevel;
-	}
-
-	public void setPCEPParserLogLevel(Level pCEPParserLogLevel) {
-		PCEPParserLogLevel = pCEPParserLogLevel;
-	}
-	
+//	public Level getParentPCELogLevel() {
+//		return ParentPCELogLevel;
+//	}
+//
+//	public void setParentPCELogLevel(Level parentPCELogLevel) {
+//		ParentPCELogLevel = parentPCELogLevel;
+//	}
+//
+//	public Level getPCEPParserLogLevel() {
+//		return PCEPParserLogLevel;
+//	}
+//
+//	public void setPCEPParserLogLevel(Level pCEPParserLogLevel) {
+//		PCEPParserLogLevel = pCEPParserLogLevel;
+//	}
+//	
 	
 
 
@@ -529,12 +530,12 @@ public class ParentPCEServerParameters {
 		    		          else if (qName.equalsIgnoreCase("DeadTimer")) {
 		    		        	  DeadTimer=Integer.parseInt(tempVal.trim());
 		    		          }
-		    		          else if (qName.equalsIgnoreCase("ParentPCELogLevel")) {
-		    		        	  ParentPCELogLevel=Level.parse(tempVal.trim());
-		    		          }
-		    		          else if (qName.equalsIgnoreCase("PCEPParserLogLevel")) {
-		    		        	  PCEPParserLogLevel=Level.parse(tempVal.trim());
-		    		          }
+//		    		          else if (qName.equalsIgnoreCase("ParentPCELogLevel")) {
+//		    		        	  ParentPCELogLevel=Level.parse(tempVal.trim());
+//		    		          }
+//		    		          else if (qName.equalsIgnoreCase("PCEPParserLogLevel")) {
+//		    		        	  PCEPParserLogLevel=Level.parse(tempVal.trim());
+//		    		          }
 		    		          else if (qName.equalsIgnoreCase("OSPFParserLogLevel")) {
 		    		        	  //PCEPParserLogLevel=Level.parse(tempVal.trim());
 		    		          }else if (qName.equalsIgnoreCase("strongestLog")) {

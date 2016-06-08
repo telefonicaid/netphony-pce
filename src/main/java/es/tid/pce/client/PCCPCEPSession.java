@@ -6,8 +6,10 @@ import java.net.Socket;
 import java.util.Calendar;
 import java.util.Timer;
 import java.util.concurrent.Semaphore;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import es.tid.pce.client.ClientRequestManager;
 import es.tid.pce.pcep.PCEPProtocolViolationException;
@@ -89,8 +91,8 @@ public class PCCPCEPSession extends GenericPCEPSession{
 	public PCCPCEPSession(String ip, int port, boolean no_delay, PCEPSessionsInformation pcepSessionManager) {
 		super(pcepSessionManager);
 		this.setFSMstate(PCEPValues.PCEP_STATE_IDLE);
-		log=Logger.getLogger("PCCClient");
-		log.setLevel(Level.OFF);
+		log=LoggerFactory.getLogger("PCCClient");
+		//log.setLevel(Level.OFF);
 		this.peerPCE_IPaddress=ip;
 		this.peerPCE_port=port;
 		crm= new ClientRequestManager();
@@ -136,7 +138,7 @@ public class PCCPCEPSession extends GenericPCEPSession{
 			catch (IOException e) 
 			{
 				log.info(UtilsFunctions.exceptionToString(e));
-				log.severe("Couldn't get I/O for connection to " + peerPCE_IPaddress + " in port "+ peerPCE_port);
+				log.error("Couldn't get I/O for connection to " + peerPCE_IPaddress + " in port "+ peerPCE_port);
 				//FIXME: Salir de manera limpia
 				System.exit(1);
 			} 
@@ -172,7 +174,7 @@ public class PCCPCEPSession extends GenericPCEPSession{
 				} catch (IOException e1) {
 				}
 				manageEndSession();
-				log.warning("Finishing PCEP Session abruptly!");
+				log.warn("Finishing PCEP Session abruptly!");
 				return;
 			}
 			if (this.msg != null) {//If null, it is not a valid PCEP message								
@@ -184,7 +186,7 @@ public class PCCPCEPSession extends GenericPCEPSession{
 				case PCEPMessageTypes.MESSAGE_OPEN:
 					log.info("OPEN message received");
 					//After the session has been started, ignore subsequent OPEN messages
-					log.warning("OPEN message ignored");
+					log.warn("OPEN message ignored");
 					break;
 					
 				case PCEPMessageTypes.MESSAGE_KEEPALIVE:
@@ -222,7 +224,7 @@ public class PCCPCEPSession extends GenericPCEPSession{
 						semaphore.release();
 
 					} catch (PCEPProtocolViolationException e1) {
-						log.warning("Problem decoding report message, ignoring message"+e1.getMessage());
+						log.warn("Problem decoding report message, ignoring message"+e1.getMessage());
 						e1.printStackTrace();
 					}
 					
@@ -246,7 +248,7 @@ public class PCCPCEPSession extends GenericPCEPSession{
 					}
 					else
 					{
-						log.warning("Received Update message and sessions is not stateful");
+						log.warn("Received Update message and sessions is not stateful");
 						break;
 					}
 					
@@ -265,7 +267,7 @@ public class PCCPCEPSession extends GenericPCEPSession{
 							}							
 						}
 						else{
-							log.warning("Ha llegado la response con ID: "+pcres.getResponse(0).getRequestParameters().getRequestID()+" Y el lock era null.");
+							log.warn("Ha llegado la response con ID: "+pcres.getResponse(0).getRequestParameters().getRequestID()+" Y el lock era null.");
 						}
 						
 					} catch (PCEPProtocolViolationException e) {
@@ -324,7 +326,7 @@ public class PCCPCEPSession extends GenericPCEPSession{
 
 						
 					} catch (Exception e) {
-						log.severe("PROBLEMON");
+						log.error("PROBLEMON");
 						e.printStackTrace();
 						break;
 					}								

@@ -2,7 +2,8 @@ package es.tid.pce.computingEngine.algorithms.wson.svec;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import org.jgrapht.graph.DirectedMultigraph;
 import org.jgrapht.graph.SimpleDirectedWeightedGraph;
@@ -25,7 +26,7 @@ public class SVEC_SP_FF_WSON_PathComputingPreComputation  implements ComputingAl
 	private Logger log;
 	
 	public SVEC_SP_FF_WSON_PathComputingPreComputation(){
-		log=Logger.getLogger("PCEServer");
+		log=LoggerFactory.getLogger("PCEServer");
 	}
 
 	public void initialize(){

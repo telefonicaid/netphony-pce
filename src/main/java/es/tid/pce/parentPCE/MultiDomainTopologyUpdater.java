@@ -8,7 +8,8 @@ import es.tid.tedb.MDTEDB;
 
 import java.net.Inet4Address;
 import java.util.concurrent.LinkedBlockingQueue;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class MultiDomainTopologyUpdater {
 	
@@ -32,14 +33,14 @@ public class MultiDomainTopologyUpdater {
 	
 	
 	public MultiDomainTopologyUpdater(MDTEDB multiDomainTEDB, boolean bgpActivated){
-		log=Logger.getLogger("MultiDomainTologyUpdater");
+		log=LoggerFactory.getLogger("MultiDomainTologyUpdater");
 		multiDomainUpdateQueue= new LinkedBlockingQueue<MultiDomainUpdate>();
 		this.multiDomainTEDB=multiDomainTEDB;
 		this.bgpActivated=bgpActivated;
 	}
 	
 	public MultiDomainTopologyUpdater(ITMDTEDB ITmultiDomainTEDB){
-		log=Logger.getLogger("PCEServer");
+		log=LoggerFactory.getLogger("PCEServer");
 		multiDomainUpdateQueue= new LinkedBlockingQueue<MultiDomainUpdate>();
 		this.updateList=new LinkedBlockingQueue<BGP4Update>();
 		this.ITmultiDomainTEDB=ITmultiDomainTEDB;

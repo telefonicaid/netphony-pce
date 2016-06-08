@@ -3,7 +3,8 @@ package es.tid.pce.computingEngine.algorithms.wson;
 import java.net.Inet4Address;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import org.jgrapht.GraphPath;
 import org.jgrapht.alg.DijkstraShortestPath;
@@ -52,7 +53,7 @@ import es.tid.tedb.SimpleTEDB;
  */
 public class SP_FF_RWA_Algorithm implements ComputingAlgorithm{
 	private SimpleDirectedWeightedGraph<Object,IntraDomainEdge> networkGraph;
-	private Logger log=Logger.getLogger("PCEServer");
+	private Logger log=LoggerFactory.getLogger("PCEServer");
 	private ComputingRequest pathReq;
 	
 	private ReservationManager reservationManager;
@@ -127,16 +128,16 @@ public class SP_FF_RWA_Algorithm implements ComputingAlgorithm{
 		log.info("Destination: "+dest_router_id_addr);
 		//Check if we have source and destination in our TED
 		if (!((networkGraph.containsVertex(source_router_id_addr))&&(networkGraph.containsVertex(dest_router_id_addr)))){
-			log.warning("Source or destination are NOT in the TED");	
+			log.warn("Source or destination are NOT in the TED");	
 			NoPath noPath= new NoPath();
 			noPath.setNatureOfIssue(ObjectParameters.NOPATH_NOPATH_SAT_CONSTRAINTS);
 			NoPathTLV noPathTLV=new NoPathTLV();
 			if (!((networkGraph.containsVertex(source_router_id_addr)))){
-				log.finest("Unknown source");	
+				log.debug("Unknown source");	
 				noPathTLV.setUnknownSource(true);	
 			}
 			if (!((networkGraph.containsVertex(dest_router_id_addr)))){
-				log.finest("Unknown destination");
+				log.debug("Unknown destination");
 				noPathTLV.setUnknownDestination(true);	
 			}
 			noPath.setNoPathTLV(noPathTLV);				
@@ -180,7 +181,7 @@ public class SP_FF_RWA_Algorithm implements ComputingAlgorithm{
 //		}
 		
 		
-		log.finest("Creating response");
+		log.debug("Creating response");
 
 		m_resp.addResponse(response);
 		Path path=new Path();
@@ -233,7 +234,7 @@ public class SP_FF_RWA_Algorithm implements ComputingAlgorithm{
 		if (req.getMetricList().size()!=0){
 			Metric metric=new Metric();
 			metric.setMetricType(req.getMetricList().get(0).getMetricType() );
-			log.fine("Number of hops "+edge_list.size());
+			log.debug("Number of hops "+edge_list.size());
 			float metricValue=(float)edge_list.size();
 			metric.setMetricValue(metricValue);
 			path.getMetricList().add(metric);

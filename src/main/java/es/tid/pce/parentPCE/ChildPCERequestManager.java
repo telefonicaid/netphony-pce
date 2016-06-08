@@ -16,7 +16,8 @@ import java.net.Inet4Address;
 import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.concurrent.*;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Manages the requests to the Child PCEs
@@ -68,8 +69,8 @@ public class ChildPCERequestManager {
 		workQueue=new LinkedBlockingQueue<Runnable>();
 		executor= new ThreadPoolExecutor(corePoolSize, maximumPoolSize,keepAliveTime, TimeUnit.SECONDS,workQueue);
 		
-		log = Logger.getLogger("PCEServer");
-		logGUI=Logger.getLogger("GUILogger");
+		log = LoggerFactory.getLogger("PCEServer");
+		logGUI=LoggerFactory.getLogger("GUILogger");
 		
 	}
 	
@@ -85,14 +86,14 @@ public class ChildPCERequestManager {
 			 executor.execute(ft);
 		}
 		long time=120000;
-		log.fine("The time is "+time+" miliseconds");
+		log.debug("The time is "+time+" miliseconds");
 		long timeIni=System.currentTimeMillis();
 		long time2;
 		ComputingResponse resp;
 		for (int i=0;i<requestList.size();++i){
 			
 			try {
-				log.fine("Waiting "+time+" miliseconds for domain "+domainList.get(i));
+				log.debug("Waiting "+time+" miliseconds for domain "+domainList.get(i));
 				resp=ftList.get(i).get(time, TimeUnit.MILLISECONDS);
 				time2=System.currentTimeMillis();
 				long timePassed=time2-timeIni;
@@ -188,7 +189,7 @@ public class ChildPCERequestManager {
 	
 	public void notifyResponse(PCEPResponse pcres){
 		long idRequest=pcres.getResponse(0).getRequestParameters().getRequestID();
-		log.fine("Entrando en Notify Response de idRequest "+idRequest);
+		log.debug("Entrando en Notify Response de idRequest "+idRequest);
 		Object object_lock=locks.get(new Long(idRequest));
 		responses.put(new Long(idRequest), pcres);
 		if (object_lock!=null){
@@ -199,7 +200,7 @@ public class ChildPCERequestManager {
 	
 	public void notifyReport(StateReport sr){
 		long idRequest=sr.getSRP().getSRP_ID_number();
-		log.fine("Entrando en Notify Report de id "+idRequest);
+		log.debug("Entrando en Notify Report de id "+idRequest);
 		Object object_lock=inilocks.get(new Long(idRequest));
 		reports.put(new Long(idRequest), sr);
 		if (object_lock!=null){
@@ -217,7 +218,7 @@ public class ChildPCERequestManager {
 		//((RequestParameters)(((Request)pcreq.getRequest(0)).getReqObject(0))).getRequestID();
 		//long idRequest=((RequestParameters)(((Request)pcreq.getRequest(0)).getReqObject(0))).getRequestID();
 		long idRequest=pcreq.getRequest(0).getRequestParameters().getRequestID();
-		log.fine("Creo lock con idRequest "+idRequest);
+		log.debug("Creo lock con idRequest "+idRequest);
 		locks.put(new Long(idRequest), object_lock);
 		try {
 			if (pcreq.getPccReqId()!=null){
@@ -234,17 +235,17 @@ public class ChildPCERequestManager {
 		}
 		synchronized (object_lock) { 
 			try {
-				log.fine("Request sent, waiting for response");
+				log.debug("Request sent, waiting for response");
 				object_lock.wait(30000);
 			} catch (InterruptedException e){
 			//	FIXME: Ver que hacer
 			}
 		}
-		log.fine("Request or timeout");
+		log.debug("Request or timeout");
 		
 		PCEPResponse resp=(PCEPResponse)responses.get(new Long(idRequest));
 		if (resp==null){
-			log.warning("NO RESPONSE!!!!!");
+			log.warn("NO RESPONSE!!!!!");
 		}
 		return resp;
 		
@@ -260,13 +261,13 @@ public class ChildPCERequestManager {
 		try {		
 			sendInitiate(pcini,domain);
 		} catch (IOException e1) {
-			log.warning("Problem with response from domain "+domain+" to initiate with srp_id "+idSRP);
+			log.warn("Problem with response from domain "+domain+" to initiate with srp_id "+idSRP);
 			inilocks.remove(object_lock); 
 			return null;
 		}
 		synchronized (object_lock) { 
 			try {
-				log.fine("Request sent, waiting for response");
+				log.debug("Request sent, waiting for response");
 				object_lock.wait(30000);
 			} catch (InterruptedException e){
 			//	FIXME: Ver que hacer
@@ -274,7 +275,7 @@ public class ChildPCERequestManager {
 		}	
 		StateReport resp=reports.get(new Long(idSRP));
 		if (resp==null){
-			log.warning("No response from domain "+domain+" to initiate with srp_id "+idSRP);
+			log.warn("No response from domain "+domain+" to initiate with srp_id "+idSRP);
 		}else {
 			log.info("Domain "+domain+" replied to Initiate with srp_id "+idSRP+" : "+resp.toString());
 		}
@@ -291,7 +292,7 @@ public class ChildPCERequestManager {
 		}
 		DataOutputStream out= domainIdOutputStream.get(domain);
 		if (out==null){
-			log.warning("There is no PCE for domain "+domain);
+			log.warn("There is no PCE for domain "+domain);
 			throw new IOException();
 		}
 		try {
@@ -299,7 +300,7 @@ public class ChildPCERequestManager {
 						out.write(req.getBytes());
 			out.flush();
 		} catch (IOException e) {
-			log.warning("Error sending REQ: " + e.getMessage());
+			log.warn("Error sending REQ: " + e.getMessage());
 			throw e;
 		}
 	}
@@ -313,7 +314,7 @@ public class ChildPCERequestManager {
 		}
 		DataOutputStream out= domainIdOutputStream.get(domain);
 		if (out==null){
-			log.warning("There is no PCE for domain "+domain);
+			log.warn("There is no PCE for domain "+domain);
 			throw new IOException();
 		}
 		try {
@@ -321,7 +322,7 @@ public class ChildPCERequestManager {
 			out.write(ini.getBytes());
 			out.flush();
 		} catch (IOException e) {
-			log.warning("Error sending REQ: " + e.getMessage());
+			log.warn("Error sending REQ: " + e.getMessage());
 			throw e;
 		}
 	}
@@ -340,7 +341,7 @@ public class ChildPCERequestManager {
 			domainIdpceId.put(domain, pceId);			
 		}
 		else {
-			log.warning("domain is null, PCE not registered as child");
+			log.warn("domain is null, PCE not registered as child");
 		}
 	}
 	

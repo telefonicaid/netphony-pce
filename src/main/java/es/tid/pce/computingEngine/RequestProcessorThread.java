@@ -29,7 +29,8 @@ import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 //import tid.pce.pcep.objects.tlvs.NotificationTLV;
 //import tid.pce.pcep.objects.tlvs.subtlvs.NotificationSubTLV;
@@ -143,7 +144,7 @@ public class RequestProcessorThread extends Thread{
 		this.pathComputingRequestQueue=queue;
 		running=true;
 		this.ted=ted;
-		log=Logger.getLogger("PCEServer");
+		log=LoggerFactory.getLogger("PCEServer");
 		singleAlgorithmList=new Hashtable<Integer,ComputingAlgorithmManager>();
 		svecAlgorithmList=new Hashtable<Integer,ComputingAlgorithmManager>();
 		singleAlgorithmListsson=new Hashtable<Integer,ComputingAlgorithmManagerSSON>();
@@ -178,7 +179,7 @@ public class RequestProcessorThread extends Thread{
 		this.pathComputingRequestQueue=queue;
 		running=true;
 		this.ted=ted;
-		log=Logger.getLogger("PCEServer");	
+		log=LoggerFactory.getLogger("PCEServer");	
 		singleAlgorithmList=new Hashtable<Integer,ComputingAlgorithmManager>();
 		svecAlgorithmList=new Hashtable<Integer,ComputingAlgorithmManager>();
 		singleAlgorithmListsson=new Hashtable<Integer,ComputingAlgorithmManagerSSON>();
@@ -221,7 +222,7 @@ public class RequestProcessorThread extends Thread{
 		this.pathComputingRequestQueue=queue;
 		running=true;
 		this.ted=ted;
-		log=Logger.getLogger("PCEServer");	
+		log=LoggerFactory.getLogger("PCEServer");	
 		singleAlgorithmList=new Hashtable<Integer,ComputingAlgorithmManager>();
 		svecAlgorithmList=new Hashtable<Integer,ComputingAlgorithmManager>();
 		singleAlgorithmListsson=new Hashtable<Integer,ComputingAlgorithmManagerSSON>();
@@ -270,7 +271,7 @@ public class RequestProcessorThread extends Thread{
 		this.pathComputingRequestQueue=queue;
 		running=true;
 		this.ted=ted;
-		log=Logger.getLogger("PCEServer");
+		log=LoggerFactory.getLogger("PCEServer");
 		singleAlgorithmList=new Hashtable<Integer,ComputingAlgorithmManager>();
 		svecAlgorithmList=new Hashtable<Integer,ComputingAlgorithmManager>();
 		singleAlgorithmListsson=new Hashtable<Integer,ComputingAlgorithmManagerSSON>();
@@ -309,7 +310,7 @@ public class RequestProcessorThread extends Thread{
 		this.pathComputingRequestQueue=queue;
 		running=true;
 		this.ted=ted;
-		log=Logger.getLogger("PCEServer");	
+		log=LoggerFactory.getLogger("PCEServer");	
 		singleAlgorithmList=new Hashtable<Integer,ComputingAlgorithmManager>();
 		svecAlgorithmList=new Hashtable<Integer,ComputingAlgorithmManager>();
 		this.cpcerm=cpcerm;
@@ -344,7 +345,7 @@ public class RequestProcessorThread extends Thread{
 		this.pathComputingRequestQueue=queue;
 		running=true;
 		this.ted=ted;
-		log=Logger.getLogger("PCEServer");
+		log=LoggerFactory.getLogger("PCEServer");
 		singleAlgorithmList=new Hashtable<Integer,ComputingAlgorithmManager>();
 		svecAlgorithmList=new Hashtable<Integer,ComputingAlgorithmManager>();
 		singleAlgorithmListsson=new Hashtable<Integer,ComputingAlgorithmManagerSSON>();
@@ -438,7 +439,7 @@ public class RequestProcessorThread extends Thread{
 				}
 
 			} catch (InterruptedException e) {
-				log.warning("There is no path to compute");
+				log.warn("There is no path to compute");
 				e.printStackTrace();
 				break;
 			}
@@ -534,7 +535,7 @@ public class RequestProcessorThread extends Thread{
 
 
 				if (p_rep==null){
-					log.warning("Parent doesn't answer");
+					log.warn("Parent doesn't answer");
 					this.sendNoPath(pathCompReq);
 				}else {
 					log.info("RESP: "+p_rep.toString());
@@ -558,7 +559,7 @@ public class RequestProcessorThread extends Thread{
 					pathCompReq.getOut().write(p_rep.getBytes());
 					pathCompReq.getOut().flush();
 				} catch (IOException e) {
-					log.warning("Parent doesn't answer");
+					log.warn("Parent doesn't answer");
 					ComputingResponse m_resp=new ComputingResponse();
 					Response response=new Response();
 					RequestParameters rp = new RequestParameters();
@@ -602,7 +603,7 @@ public class RequestProcessorThread extends Thread{
 						algortithmManager =svecAlgorithmList.get(new Integer(of));
 						if (algortithmManager==null){
 							if (objectiveFunctionObject.isPbit()==true){
-								log.warning("OF not supported");
+								log.warn("OF not supported");
 								//Send error
 								PCEPError msg_error= new PCEPError();
 								ErrorConstruct error_c=new ErrorConstruct();
@@ -616,17 +617,17 @@ public class RequestProcessorThread extends Thread{
 									pathCompReq.getOut().write(msg_error.getBytes());
 									pathCompReq.getOut().flush();
 								} catch (IOException e) {
-									log.warning("IOException sending error to PCC: "+pathCompReq.getRequestList().get(0).toString());
+									log.warn("IOException sending error to PCC: "+pathCompReq.getRequestList().get(0).toString());
 									e.printStackTrace();
 									break;								
 								} catch (PCEPProtocolViolationException e) {
-									log.severe("Malformed ERROR MESSAGE, CHECK PCE CODE:"+pathCompReq.getRequestList().get(0).toString());
+									log.error("Malformed ERROR MESSAGE, CHECK PCE CODE:"+pathCompReq.getRequestList().get(0).toString());
 									e.printStackTrace();
 									break;	
 								}
 								break;
 							}else {
-								log.warning("USING Default SVEC ");
+								log.warn("USING Default SVEC ");
 								DefaultSVECPathComputing dspc=new DefaultSVECPathComputing(pathCompReq,ted);
 								ft=new ComputingTask(dspc);	
 							}
@@ -647,7 +648,7 @@ public class RequestProcessorThread extends Thread{
 				}//aqui se acaba el de svec!=null
 				else {
 					boolean nopath=false;
-					log.fine("Non-svec request");
+					log.debug("Non-svec request");
 					double totalTimeNs=System.nanoTime()-pathCompReq.getTimeStampNs();
 					double totalTimeMs=totalTimeNs/1000000L;
 					if (useMaxReqTime==true){
@@ -665,7 +666,7 @@ public class RequestProcessorThread extends Thread{
 						if (objectiveFunctionObject!=null){    				
 							of=objectiveFunctionObject.getOFcode();
 
-							log.fine("ObjectiveFunction code "+of);
+							log.debug("ObjectiveFunction code "+of);
 							algortithmManager =singleAlgorithmList.get(new Integer(of));
 							if (singleAlgorithmListsson != null){
 								algortithmManagerSSON = singleAlgorithmListsson.get(new Integer(of));
@@ -674,7 +675,7 @@ public class RequestProcessorThread extends Thread{
 							
 							if (algortithmManager==null && algortithmManagerSSON==null){
 								if (objectiveFunctionObject.isPbit()==true){
-									log.warning("OF not supported!!");
+									log.warn("OF not supported!!");
 									//Send error
 									PCEPError msg_error= new PCEPError();
 									ErrorConstruct error_c=new ErrorConstruct();
@@ -689,15 +690,15 @@ public class RequestProcessorThread extends Thread{
 										pathCompReq.getOut().write(msg_error.getBytes());
 										pathCompReq.getOut().flush();
 									} catch (IOException e) {
-										log.warning("IOException sending error to PCC: nons"+pathCompReq.getRequestList().get(0).toString());
+										log.warn("IOException sending error to PCC: nons"+pathCompReq.getRequestList().get(0).toString());
 										e.printStackTrace();																	
 									} catch (PCEPProtocolViolationException e) {
-										log.severe("Malformed ERROR MESSAGE, CHECK PCE CODE. nons"+pathCompReq.getRequestList().get(0).toString());
+										log.error("Malformed ERROR MESSAGE, CHECK PCE CODE. nons"+pathCompReq.getRequestList().get(0).toString());
 										e.printStackTrace();											
 									}
 									nopath=true;
 									ft=null;
-									log.warning("error message informing sent."+pathCompReq.getRequestList().get(0).toString());
+									log.warn("error message informing sent."+pathCompReq.getRequestList().get(0).toString());
 								}
 								else {
 									log.info("Choosing default algotithm 1");
@@ -748,7 +749,7 @@ public class RequestProcessorThread extends Thread{
 					
 				}
 				catch(Exception e){
-					log.warning("Computation failed: "+e.getMessage()+" || "+UtilsFunctions.exceptionToString(e)+"  || " +",MAXTIME: "+pathCompReq.getMaxTimeInPCE());
+					log.warn("Computation failed: "+e.getMessage()+" || "+UtilsFunctions.exceptionToString(e)+"  || " +",MAXTIME: "+pathCompReq.getMaxTimeInPCE());
 					rep=null;
 				}
 				log.info("ReppPP:::"+rep);
@@ -757,7 +758,7 @@ public class RequestProcessorThread extends Thread{
 					trappingResponse(rep, sourceIF, destIF);
 				try {
 					//FIXME: WE ARE USING THE MAX TIME IN PCE, REGARDLESS THE TIME IN THE PCE
-					//log.severe("Esperamos "+pathCompReq.getMaxTimeInPCE());
+					//log.error("Esperamos "+pathCompReq.getMaxTimeInPCE());
 					//FIXME: 				
 					if (rep!=null){
 						//log.info("rep.getPathList().get(0)"+rep.getResponse(0).getPathList().get(0));
@@ -816,7 +817,7 @@ public class RequestProcessorThread extends Thread{
 								rep.encode();
 							} catch (PCEPProtocolViolationException e) {
 								// TODO Auto-generated catch block
-								log.severe("PROBLEM ENCONDING RESPONSE, CHECK CODE!!"+e.getMessage());
+								log.error("PROBLEM ENCONDING RESPONSE, CHECK CODE!!"+e.getMessage());
 								break;
 							}
 							try {
@@ -825,10 +826,10 @@ public class RequestProcessorThread extends Thread{
 								pathCompReq.getOut().write(rep.getBytes());
 								pathCompReq.getOut().flush();
 							} catch (IOException e) {
-								log.warning("Could not send the response "+e.getMessage());
+								log.warn("Could not send the response "+e.getMessage());
 								if (rep.getResponse(0).getResConf()!=null){
 									//FIXME
-									log.warning("If your are using WLANs this is not going to work!!");
+									log.warn("If your are using WLANs this is not going to work!!");
 									this.reservationManager.cancelReservation(rep.getResponse(0).getResConf().getReservationID());
 								}
 							}
@@ -970,7 +971,7 @@ public class RequestProcessorThread extends Thread{
 			e3.printStackTrace();
 		}
 
-		log.severe("No path sent... should we send");
+		log.error("No path sent... should we send");
 
 	}
 

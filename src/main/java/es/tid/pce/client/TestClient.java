@@ -1,9 +1,12 @@
 package es.tid.pce.client;
 
 
-import java.util.logging.FileHandler;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import es.tid.pce.pcepsession.PCEPSessionsInformation;
 
@@ -11,20 +14,20 @@ public class TestClient {
 
 	private static UserInterface ui;
 	private static PCCPCEPSession PCEsession;
-	public static final Logger Log =Logger.getLogger("PCCClient");
+	public static final Logger Log =LoggerFactory.getLogger("PCCClient");
 	
 	public static void main(String[] args) {
-		FileHandler fh;
-		FileHandler fh2;
+		//FileHandler fh;
+		//FileHandler fh2;
 		try {
-			fh=new FileHandler("PCCClient.log");
-			fh2=new FileHandler("PCEPClientParser.log");
+			//fh=new FileHandler("PCCClient.log");
+			//fh2=new FileHandler("PCEPClientParser.log");
 			//fh.setFormatter(new SimpleFormatter());
-			Log.addHandler(fh);
-			Log.setLevel(Level.ALL);
-			Logger log2=Logger.getLogger("PCEPParser");
-			log2.addHandler(fh2);
-			log2.setLevel(Level.ALL);
+			//Log.addHandler(fh);
+			//Log.setLevel(Level.ALL);
+			Logger log2=LoggerFactory.getLogger("PCEPParser");
+			//log2.addHandler(fh2);
+			//log2.setLevel(Level.ALL);
 		} catch (Exception e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();

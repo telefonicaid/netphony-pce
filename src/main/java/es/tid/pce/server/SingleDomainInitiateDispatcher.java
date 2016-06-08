@@ -4,7 +4,8 @@ import java.io.DataOutputStream;
 import java.net.Inet4Address;
 import java.util.Iterator;
 import java.util.concurrent.LinkedBlockingQueue;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import es.tid.pce.computingEngine.IniProcessorThread;
 import es.tid.pce.computingEngine.InitiationRequest;
@@ -34,7 +35,7 @@ public class SingleDomainInitiateDispatcher {
 	 
 
 	public SingleDomainInitiateDispatcher(SingleDomainLSPDB singleDomainLSPDB,  IniPCCManager iniManager) {
-		log=Logger.getLogger("PCEServer");
+		log=LoggerFactory.getLogger("PCEServer");
 	    lspIniRequestQueue = new LinkedBlockingQueue<InitiationRequest>();
 	    singleDomainIniProcessorThread= new SingleDomainIniProcessorThread(lspIniRequestQueue,singleDomainLSPDB,iniManager);
 	    singleDomainIniProcessorThread.start();

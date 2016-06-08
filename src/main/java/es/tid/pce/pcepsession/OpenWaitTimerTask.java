@@ -1,7 +1,8 @@
 package es.tid.pce.pcepsession;
 
 import java.util.TimerTask;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import es.tid.pce.pcep.constructs.ErrorConstruct;
 import es.tid.pce.pcep.messages.PCEPError;
@@ -25,12 +26,12 @@ public class OpenWaitTimerTask extends TimerTask {
 	
 	public OpenWaitTimerTask(PCEPSession parentPCESession){
 		this.parentPCESession=parentPCESession;
-		log=Logger.getLogger("PCEServer");
+		log=LoggerFactory.getLogger("PCEServer");
 	}
 		
 	
 	public void run() {
-		log.warning("OPEN WAIT Timer OVER");
+		log.warn("OPEN WAIT Timer OVER");
 		PCEPError perror=new PCEPError();
 		PCEPErrorObject perrorObject=new PCEPErrorObject();
 		perrorObject.setErrorType(ObjectParameters.ERROR_ESTABLISHMENT);

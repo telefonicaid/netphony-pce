@@ -1,7 +1,8 @@
 package es.tid.pce.parentPCE.management;
 
 import java.net.ServerSocket;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import es.tid.pce.computingEngine.RequestDispatcher;
 import es.tid.pce.parentPCE.ChildPCERequestManager;
@@ -46,7 +47,7 @@ public class ParentPCEManagementSever extends Thread {
 	private int parentPCEManagementPort;
 	
 	public ParentPCEManagementSever(ChildPCERequestManager cprm, RequestDispatcher requestDispatcher, MDTEDB mdtedb,SimpleTEDB simpleTEDB, ReachabilityManager rm, PCEPSessionsInformation pcepSessionManager,MultiDomainTopologyUpdater mdtu,int parentPCEManagementPort, MultiDomainLSPDB multiDomainLSPDB){
-		log =Logger.getLogger("PCEServer");
+		log =LoggerFactory.getLogger("PCEServer");
 		this.cprm=cprm;
 		this.requestDispatcher=requestDispatcher;
 		this.mdtedb=mdtedb;
@@ -61,7 +62,7 @@ public class ParentPCEManagementSever extends Thread {
 	
 	
 	public ParentPCEManagementSever(ChildPCERequestManager cprm, RequestDispatcher requestDispatcher, ITMDTEDB ITmdtedb, ReachabilityManager rm,PCEPSessionsInformation pcepSessionManager,MultiDomainTopologyUpdater mdtu,int parentPCEManagementPort){
-		log =Logger.getLogger("PCEServer");
+		log =LoggerFactory.getLogger("PCEServer");
 		this.cprm=cprm;
 		this.requestDispatcher=requestDispatcher;
 		this.ITmdtedb=ITmdtedb;
@@ -81,7 +82,7 @@ public class ParentPCEManagementSever extends Thread {
 	          serverSocket = new ServerSocket(parentPCEManagementPort);
 		  }
 		catch (Exception e){
-			 log.severe("Could not listen management on port"+ parentPCEManagementPort);
+			 log.error("Could not listen management on port"+ parentPCEManagementPort);
 			e.printStackTrace();
 			return;
 		}

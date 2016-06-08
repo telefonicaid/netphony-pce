@@ -8,7 +8,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import org.jgrapht.GraphPath;
 import org.jgrapht.graph.DirectedMultigraph;
@@ -47,7 +48,7 @@ public class AURE_PACK_AlgorithmPreComputation implements ComputingAlgorithmPreC
 	public Hashtable<Object,Hashtable<Object,List<GraphPath<Object,IntraDomainEdge>>>> routeTable;
 	
 	public AURE_PACK_AlgorithmPreComputation(){
-		log=Logger.getLogger("PCEServer");
+		log=LoggerFactory.getLogger("PCEServer");
 	}
 	
 	// initialize pre-computation with K-ShortestPath (Dijkstra)
@@ -81,7 +82,7 @@ public void initialize(){
 				}
 			}	
 		}else {
-			log.severe("REGISTERING AURE-PACK ALGORITHM WITHOUT KNOWN NUMBER OF LAMBDAS");
+			log.error("REGISTERING AURE-PACK ALGORITHM WITHOUT KNOWN NUMBER OF LAMBDAS");
 			System.exit(-1);
 		}
 	}

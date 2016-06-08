@@ -1,7 +1,8 @@
 package es.tid.pce.computingEngine.algorithms.utilities;
 
 import java.util.ArrayList;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import es.tid.ospf.ospfv2.lsa.tlv.subtlv.complexFields.BitmapLabelSet;
 
@@ -16,7 +17,7 @@ public class channel_generator{
 	private static byte[] bytesBitmapInit2;
 	private static int numberBytes;
 	public channel_generator(){
-		log=Logger.getLogger("PCEServer");
+		log=LoggerFactory.getLogger("PCEServer");
 		}
 	
 

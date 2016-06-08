@@ -6,7 +6,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.locks.Lock;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import org.jgrapht.GraphPath;
 import org.jgrapht.alg.DijkstraShortestPath;
@@ -51,8 +52,8 @@ public class Multilayer_Algorithm_auxGraph implements ComputingAlgorithm{
 	/**
 	 * The Logger.
 	 */
-	private Logger log=Logger.getLogger("PCEServer");
-	private Logger log_OP=Logger.getLogger("OpMultiLayer");
+	private Logger log=LoggerFactory.getLogger("PCEServer");
+	private Logger log_OP=LoggerFactory.getLogger("OpMultiLayer");
 	/**
 	 * The Path Computing Request to calculate.
 	 */
@@ -196,9 +197,9 @@ public class Multilayer_Algorithm_auxGraph implements ComputingAlgorithm{
 		//aqui acaba lo que he añadido
 
 		//Now, check if the source and destination are in the TED.
-		log.fine("Source: "+source_aux_graph+"; Destination:"+dest_aux_graph);
+		log.debug("Source: "+source_aux_graph+"; Destination:"+dest_aux_graph);
 		if (!(((ted.containsVertex(source_aux_graph))&&(ted.containsVertex(dest_aux_graph))))){
-			log.warning("Source or destination are NOT in the TED");	
+			log.warn("Source or destination are NOT in the TED");	
 			NoPath noPath= new NoPath();
 			noPath.setNatureOfIssue(ObjectParameters.NOPATH_NOPATH_SAT_CONSTRAINTS);
 			NoPathTLV noPathTLV=new NoPathTLV();

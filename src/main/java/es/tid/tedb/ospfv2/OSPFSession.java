@@ -4,7 +4,8 @@ import java.io.DataInputStream;
 import java.io.IOException;
 import java.net.Socket;
 import java.util.concurrent.LinkedBlockingQueue;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import es.tid.ospf.ospfv2.lsa.LSA;
 import es.tid.ospf.ospfv2.lsa.OSPFTEv2LSA;
@@ -34,7 +35,7 @@ public class OSPFSession extends Thread {
 	private Logger log;
 
 	public OSPFSession(Socket ss, LinkedBlockingQueue<OSPFTEv2LSA> lsaQueue){
-		log=Logger.getLogger("OSPFParser");
+		log=LoggerFactory.getLogger("OSPFParser");
 		this.lsaQueue = lsaQueue;
 		this.ss=ss;
 
@@ -59,7 +60,7 @@ public class OSPFSession extends Thread {
 			} catch (Exception e1) {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
-				log.warning("OSPF Socket ends");
+				log.warn("OSPF Socket ends");
 				return;
 			}//Read a new message
 		}
@@ -94,7 +95,7 @@ public class OSPFSession extends Thread {
 				}
 			}catch (IOException e){
 
-				//log.warning("Error reading data: "+ e.getMessage());
+				//log.warn("Error reading data: "+ e.getMessage());
 				throw e;
 
 			}catch (Exception e) {		
@@ -126,7 +127,7 @@ public class OSPFSession extends Thread {
 			}
 			else if (r==-1){
 
-				//log.warning("End of stream has been reached");
+				//log.warn("End of stream has been reached");
 				throw new IOException();
 
 			}

@@ -3,7 +3,8 @@ package es.tid.pce.computingEngine.algorithms.multiLayer;
 import java.util.Iterator;
 import java.util.Set;
 import java.util.concurrent.locks.Lock;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import org.jgrapht.GraphPath;
 import org.jgrapht.alg.DijkstraShortestPath;
@@ -22,7 +23,7 @@ public class Operacion2 {
 		return number_hops;
 	}
 
-	private static Logger log=Logger.getLogger("PCEServer");
+	private static Logger log=LoggerFactory.getLogger("PCEServer");
 	
 	public static GraphPath<Object,IntraDomainEdge> get_op2 
 	(SimpleDirectedWeightedGraph<Object, IntraDomainEdge> Graph, 

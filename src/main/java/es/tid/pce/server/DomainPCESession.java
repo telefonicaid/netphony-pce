@@ -8,7 +8,8 @@ import java.net.SocketException;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Timer;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import es.tid.pce.computingEngine.ReportDispatcher;
 import es.tid.pce.computingEngine.RequestDispatcher;
@@ -88,7 +89,7 @@ public class DomainPCESession extends GenericPCEPSession{
 			ReportDispatcher reportDispatcher, SingleDomainInitiateDispatcher iniDispatcher){
 		super(pcepSessionInformation);
 		this.setFSMstate(PCEPValues.PCEP_STATE_IDLE);
-		log=Logger.getLogger("PCEServer");
+		log=LoggerFactory.getLogger("PCEServer");
 		log.info("New Domain PCESession: "+s);
 		this.socket = s;
 		try {
@@ -116,7 +117,7 @@ public class DomainPCESession extends GenericPCEPSession{
 			PCEPSessionsInformation pcepSessionInformation, ReportDispatcher reportDispatcher){
 		super(pcepSessionInformation);
 		this.setFSMstate(PCEPValues.PCEP_STATE_IDLE);
-		log=Logger.getLogger("PCEServer");
+		log=LoggerFactory.getLogger("PCEServer");
 		log.info("New Domain PCESession: "+s);
 		this.socket = s;
 
@@ -195,9 +196,9 @@ public class DomainPCESession extends GenericPCEPSession{
 						in.close();
 						out.close();
 					} catch (Exception e1) {
-						log.warning("AYAYAYYA Domain PCE Session");
+						log.warn("AYAYAYYA Domain PCE Session");
 					}
-					log.warning("Finishing PCEP Session abruptly!");
+					log.warn("Finishing PCEP Session abruptly!");
 					return;
 				}
 				if (this.msg != null) {//If null, it is not a valid PCEP message								
@@ -206,32 +207,32 @@ public class DomainPCESession extends GenericPCEPSession{
 					switch(PCEPMessage.getMessageType(this.msg)) {
 
 					case PCEPMessageTypes.MESSAGE_OPEN:
-						log.fine("OPEN message received");
+						log.debug("OPEN message received");
 						//After the session has been started, ignore subsequent OPEN messages
-						log.warning("OPEN message ignored");
+						log.warn("OPEN message ignored");
 						break;
 
 					case PCEPMessageTypes.MESSAGE_KEEPALIVE:
-						log.fine("KEEPALIVE message received");
+						log.debug("KEEPALIVE message received");
 						//The Keepalive message allows to reset the deadtimer
 						break;
 
 					case PCEPMessageTypes.MESSAGE_CLOSE:
-						log.fine("CLOSE message received");
+						log.debug("CLOSE message received");
 
 						try {
 							PCEPClose m_close=new PCEPClose(this.msg);		
-							log.warning("Closing due to reason "+m_close.getReason());
+							log.warn("Closing due to reason "+m_close.getReason());
 							this.killSession();
 						} catch (PCEPProtocolViolationException e1) {
-							log.warning("Problem decoding message, closing session"+e1.getMessage());
+							log.warn("Problem decoding message, closing session"+e1.getMessage());
 							this.killSession();
 							return;
 						}					
 						return;
 
 					case PCEPMessageTypes.MESSAGE_ERROR:
-						log.fine("ERROR message received");
+						log.debug("ERROR message received");
 						//Up to now... we do not do anything in the server side
 						break;
 
@@ -242,7 +243,7 @@ public class DomainPCESession extends GenericPCEPSession{
 							m_not=new PCEPNotification(this.msg);		
 							notificationDispatcher.dispatchNotification(m_not);
 						} catch (PCEPProtocolViolationException e1) {
-							log.warning("Problem decoding notify message, ignoring message"+e1.getMessage());
+							log.warn("Problem decoding notify message, ignoring message"+e1.getMessage());
 							e1.printStackTrace();
 						}						
 						break;
@@ -288,12 +289,12 @@ public class DomainPCESession extends GenericPCEPSession{
 									break;
 								}					
 							}else {
-								log.warning("PCE is NOT stateful, ignored report from "+this.remotePeerIP);		
+								log.warn("PCE is NOT stateful, ignored report from "+this.remotePeerIP);		
 							}
 								
 						
 						} catch (PCEPProtocolViolationException e1) {
-							log.warning("Problem decoding report message, ignoring message"+e1.getMessage());
+							log.warn("Problem decoding report message, ignoring message"+e1.getMessage());
 							e1.printStackTrace();
 						}
 						log.info("Report message decoded!");
@@ -310,7 +311,7 @@ public class DomainPCESession extends GenericPCEPSession{
 								out_master.write(m_report.getBytes());
 								out_master.flush();
 							} catch (Exception e) {
-								log.severe(UtilsFunctions.exceptionToString(e));
+								log.error(UtilsFunctions.exceptionToString(e));
 								killSession();
 							}
 						}
@@ -366,18 +367,18 @@ public class DomainPCESession extends GenericPCEPSession{
 						log.info("PCMonREP message received");
 						break;	
 					default:
-						log.warning("ERROR: unexpected message received");
+						log.warn("ERROR: unexpected message received");
 						pceMsg = false;
 					}
 
 					if (pceMsg) {
-						log.fine("Reseting Dead Timer as PCEP Message has arrived");
+						log.debug("Reseting Dead Timer as PCEP Message has arrived");
 						resetDeadTimer();
 					}
 				} 
 			}
 		}finally{
-			log.severe("SESSION "+ internalSessionID+" IS KILLED");
+			log.error("SESSION "+ internalSessionID+" IS KILLED");
 			this.FSMstate=PCEPValues.PCEP_STATE_IDLE;
 			endSession();
 		}
@@ -390,7 +391,7 @@ public class DomainPCESession extends GenericPCEPSession{
 
 	public void endSession(){
 		if (rm!=null){
-			log.severe("Cancelling all pending reservations of session "+ internalSessionID);
+			log.error("Cancelling all pending reservations of session "+ internalSessionID);
 			rm.cancelAllReservations();	
 		}
 

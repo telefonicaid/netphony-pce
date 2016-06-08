@@ -1,7 +1,8 @@
 package es.tid.pce.server;
 
 import java.util.concurrent.LinkedBlockingQueue;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import es.tid.pce.pcep.constructs.Notify;
 import es.tid.pce.pcep.messages.PCEPNotification;
@@ -23,7 +24,7 @@ public class NotificationDispatcher {
 		this.npt=new NotificationProcessorThread(notificationList, reservationManager);
 		
 		npt.start();
-		log=Logger.getLogger("PCEServer");
+		log=LoggerFactory.getLogger("PCEServer");
 	}
 	
 	public void dispatchNotification(PCEPNotification m_not){

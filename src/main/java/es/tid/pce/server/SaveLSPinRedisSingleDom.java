@@ -5,7 +5,8 @@ import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Set;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.gson.Gson;
 
@@ -49,7 +50,7 @@ public class SaveLSPinRedisSingleDom implements Runnable {
 	
 	public SaveLSPinRedisSingleDom () {
 		
-		log = Logger.getLogger("BGP4Parser");
+		log = LoggerFactory.getLogger("BGP4Parser");
 	
 	}
 

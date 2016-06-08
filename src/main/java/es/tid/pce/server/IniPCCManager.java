@@ -10,7 +10,8 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import es.tid.pce.computingEngine.ComputingResponse;
 import es.tid.pce.computingEngine.algorithms.ChildPCEInitiate;
@@ -44,7 +45,7 @@ public class IniPCCManager {
 	
 		reports = new Hashtable<Long,StateReport>();
 	
-		log = Logger.getLogger("PCEServer");
+		log = LoggerFactory.getLogger("PCEServer");
 		
 	}
 	
@@ -57,13 +58,13 @@ public class IniPCCManager {
 		try {		
 			sendInitiate(pcini,node);
 		} catch (IOException e1) {
-			log.warning("Problem with response from node "+node+" to initiate with srp_id "+idSRP);
+			log.warn("Problem with response from node "+node+" to initiate with srp_id "+idSRP);
 			inilocks.remove(object_lock); 
 			return null;
 		}
 		synchronized (object_lock) { 
 			try {
-				log.fine("Request sent, waiting for response");
+				log.debug("Request sent, waiting for response");
 				object_lock.wait(30000);
 			} catch (InterruptedException e){
 			//	FIXME: Ver que hacer
@@ -71,7 +72,7 @@ public class IniPCCManager {
 		}	
 		StateReport resp=reports.get(new Long(idSRP));
 		if (resp==null){
-			log.warning("No response from node "+node+" to initiate with srp_id "+idSRP);
+			log.warn("No response from node "+node+" to initiate with srp_id "+idSRP);
 		}else {
 			log.info("Node "+node+" replied to Initiate with srp_id "+idSRP+" : "+resp.toString());
 		}
@@ -88,7 +89,7 @@ public class IniPCCManager {
 		}
 		DataOutputStream out= this.pccOutputStream.get(node);
 		if (out==null){
-			log.warning("There is no PCE for node "+node);
+			log.warn("There is no PCE for node "+node);
 			throw new IOException();
 		}
 		try {
@@ -96,7 +97,7 @@ public class IniPCCManager {
 						out.write(ini.getBytes());
 			out.flush();
 		} catch (IOException e) {
-			log.warning("Error sending Init: " + e.getMessage());
+			log.warn("Error sending Init: " + e.getMessage());
 			throw e;
 		}
 	}
