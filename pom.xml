@@ -2,11 +2,11 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>es.tid.netphony</groupId>
   <artifactId>pce</artifactId>
-  <version>1.3.2-SNAPSHOT</version>
+  <version>1.3.2</version>
   <packaging>jar</packaging>
   <name>PCE</name>
   <description>Path Computation Element</description>
-  <url>http://www.tid.es/long-term-innovation/network-innovation/transport-network-evolution</url>
+  <url>https://github.com/telefonicaid/netphony-pce</url>
   <licenses>
    <license>
      <name>Apache License 2.0</name>
