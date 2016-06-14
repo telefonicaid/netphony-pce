@@ -1,7 +1,8 @@
 package es.tid.pce.computingEngine;
 
 import java.util.concurrent.FutureTask;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import es.tid.pce.computingEngine.algorithms.AlgorithmReservation;
 import es.tid.pce.computingEngine.algorithms.ComputingAlgorithm;
@@ -12,7 +13,7 @@ public class ComputingTask extends FutureTask<ComputingResponse> {
 	
 	public ComputingTask(ComputingAlgorithm algorithm) {
 		super(algorithm);
-		this.log=Logger.getLogger("PCEServer.log");
+		this.log=LoggerFactory.getLogger("PCEServer.log");
 		this.algorithm=algorithm;
 	}
 	

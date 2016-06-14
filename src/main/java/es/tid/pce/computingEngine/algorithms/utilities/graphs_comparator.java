@@ -1,7 +1,8 @@
 package es.tid.pce.computingEngine.algorithms.utilities;
 
 import java.util.List;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import org.jgrapht.GraphPath;
 
@@ -20,7 +21,7 @@ public class graphs_comparator {
 	
 	boolean is_equal;
 	
-	private Logger log=Logger.getLogger("PCEServer");
+	private Logger log=LoggerFactory.getLogger("PCEServer");
 	
 	public graphs_comparator (){
 		this.is_equal = false;

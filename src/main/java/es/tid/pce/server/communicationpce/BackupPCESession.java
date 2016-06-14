@@ -3,7 +3,8 @@ package es.tid.pce.server.communicationpce;
 import java.io.IOException;
 import java.net.Socket;
 import java.util.Timer;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import es.tid.pce.pcep.PCEPProtocolViolationException;
 import es.tid.pce.pcep.messages.PCEPClose;
@@ -55,7 +56,7 @@ public class BackupPCESession extends GenericPCEPSession{
 	public BackupPCESession(String ip, int port, boolean no_delay,TEDB ted,CollaborationPCESessionManager collaborationPCESessionManager, NotificationDispatcher notificationDispatcher,Timer timer, PCEPSessionsInformation pcepSessionInformation/*, String localIP, int localPort*/) {
 		super(pcepSessionInformation);
 		this.setFSMstate(PCEPValues.PCEP_STATE_IDLE);
-		log=Logger.getLogger("PCEServer");
+		log=LoggerFactory.getLogger("PCEServer");
 		this.primaryPCE_IPaddress=ip;
 		this.primaryPCE_port=port;
 		//crm= new ClientRequestManager();
@@ -83,7 +84,7 @@ public void run (){
 		}
 		log.info("Socket opened");
 	} catch (IOException e) {
-		log.severe("Couldn't get I/O for connection to " + primaryPCE_IPaddress + " in port "+ primaryPCE_port);
+		log.error("Couldn't get I/O for connection to " + primaryPCE_IPaddress + " in port "+ primaryPCE_port);
 		killSession();
 		return;			
 	} 
@@ -110,7 +111,7 @@ public void run (){
 					out.close();
 				} catch (IOException e1) {
 				}
-					log.severe("Finishing PCEP Session abruptly");
+					log.error("Finishing PCEP Session abruptly");
 				return;
 			}
 			if (this.msg != null) {//If null, it is not a valid PCEP message								
@@ -119,24 +120,24 @@ public void run (){
 				switch(PCEPMessage.getMessageType(this.msg)) {
 				
 				case PCEPMessageTypes.MESSAGE_OPEN:
-					log.fine("OPEN message received");
+					log.debug("OPEN message received");
 					//After the session has been started, ignore subsequent OPEN messages
-					log.warning("OPEN message ignored");
+					log.warn("OPEN message ignored");
 					break;
 					
 				case PCEPMessageTypes.MESSAGE_KEEPALIVE:
-					log.fine("KEEPALIVE message received");
+					log.debug("KEEPALIVE message received");
 					//The Keepalive message allows to reset the deadtimer
 					break;
 					
 				case PCEPMessageTypes.MESSAGE_CLOSE:
-					log.fine("CLOSE message received");
+					log.debug("CLOSE message received");
 					try {
 						PCEPClose m_close=new PCEPClose(this.msg);		
-						log.warning("Closing due to reason "+m_close.getReason());
+						log.warn("Closing due to reason "+m_close.getReason());
 						this.killSession();
 					} catch (PCEPProtocolViolationException e1) {
-						log.warning("Problem decoding message, closing session"+e1.getMessage());
+						log.warn("Problem decoding message, closing session"+e1.getMessage());
 						this.killSession();
 						return;
 					}					
@@ -144,27 +145,27 @@ public void run (){
 					
 					
 				case PCEPMessageTypes.MESSAGE_ERROR:
-					log.fine("ERROR message received");
+					log.debug("ERROR message received");
 					break;
 					
 				case PCEPMessageTypes.MESSAGE_NOTIFY:				
-					log.fine("Received NOTIFY message");
+					log.debug("Received NOTIFY message");
 					PCEPNotification m_not;
 					try {
 						m_not=new PCEPNotification(this.msg);		
 						notificationDispatcher.dispatchNotification(m_not);
 					} catch (PCEPProtocolViolationException e1) {
-						log.warning("Problem decoding notify message, ignoring message"+e1.getMessage());
+						log.warn("Problem decoding notify message, ignoring message"+e1.getMessage());
 						e1.printStackTrace();
 					}			
 					break;		
 					
 				default:
-					log.warning("ERROR: unexpected message");
+					log.warn("ERROR: unexpected message");
 					pceMsg = false;
 				}
 				if (pceMsg) {
-					log.fine("Reseting Dead Timer as PCEP Message has arrived");
+					log.debug("Reseting Dead Timer as PCEP Message has arrived");
 					resetDeadTimer();
 				}
 				

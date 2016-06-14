@@ -3,7 +3,8 @@ package es.tid.pce.computingEngine.algorithms.wson;
 import java.net.Inet4Address;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import org.jgrapht.GraphPath;
 import org.jgrapht.alg.KShortestPaths;
@@ -44,7 +45,7 @@ import es.tid.tedb.WSONInformation;
 public class KSP_RANDOM_Algorithm implements ComputingAlgorithm {
 	private WSONInformation WSONInfo;
 
-	private Logger log=Logger.getLogger("PCEServer");
+	private Logger log=LoggerFactory.getLogger("PCEServer");
 	
 	private DomainTEDB ted;
 	
@@ -68,7 +69,7 @@ public class KSP_RANDOM_Algorithm implements ComputingAlgorithm {
 		//Time stamp of the start of the algorithm;
 		long tiempoini =System.nanoTime();
 		
-		log.finest("Starting KSPprecomp Algorithm");
+		log.debug("Starting KSPprecomp Algorithm");
 		
 		//Create the response message
 		//It will contain either the path or noPath
@@ -123,18 +124,18 @@ public class KSP_RANDOM_Algorithm implements ComputingAlgorithm {
 		}
 				
 		//Now, check if the source and destination are in the TED.
-		log.fine("Source: "+source_router_id_addr+"; Destination:"+dest_router_id_addr);
+		log.debug("Source: "+source_router_id_addr+"; Destination:"+dest_router_id_addr);
 		if (!(((ted.containsVertex(source_router_id_addr))&&(ted.containsVertex(dest_router_id_addr))))){
-			log.warning("Source or destination are NOT in the TED");	
+			log.warn("Source or destination are NOT in the TED");	
 			NoPath noPath= new NoPath();
 			noPath.setNatureOfIssue(ObjectParameters.NOPATH_NOPATH_SAT_CONSTRAINTS);
 			NoPathTLV noPathTLV=new NoPathTLV();
 			if (!((ted.containsVertex(source_router_id_addr)))){
-				log.finest("Unknown source");	
+				log.debug("Unknown source");	
 				noPathTLV.setUnknownSource(true);	
 			}
 			if (!((ted.containsVertex(dest_router_id_addr)))){
-				log.finest("Unknown destination");
+				log.debug("Unknown destination");
 				noPathTLV.setUnknownDestination(true);	
 			}
 
@@ -151,7 +152,7 @@ public class KSP_RANDOM_Algorithm implements ComputingAlgorithm {
 		int k = 1;
 		
 		
-		log.fine("Starting the selection of the path");
+		log.debug("Starting the selection of the path");
 		KShortestPaths<Object,IntraDomainEdge> ksp = new KShortestPaths<Object,IntraDomainEdge> (preComp.getNetworkGraph(), source_router_id_addr, k);
 		List<GraphPath<Object,IntraDomainEdge>> routeList = ksp.getPaths(dest_router_id_addr); //list of the path edges
 	
@@ -290,7 +291,7 @@ public class KSP_RANDOM_Algorithm implements ComputingAlgorithm {
 		log.info("Ha tardado "+tiempotot+" nanosegundos");
 		
 		if (noLambda == true){
-			log.fine("No path found");
+			log.debug("No path found");
 			NoPath noPath= new NoPath();
 			noPath.setNatureOfIssue(ObjectParameters.NOPATH_NOPATH_SAT_CONSTRAINTS);
 			NoPathTLV noPathTLV=new NoPathTLV();

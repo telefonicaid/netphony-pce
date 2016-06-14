@@ -2,7 +2,8 @@ package es.tid.pce.computingEngine.algorithms.vlan;
 
 import java.util.LinkedList;
 import java.util.List;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import org.jgrapht.GraphPath;
 import org.jgrapht.alg.DijkstraShortestPath;
@@ -55,7 +56,7 @@ public class Correct_BETTER_WLAN_algorithm implements ComputingAlgorithm {
 	/**
 	* The Logger.
 	*/
-	private Logger log=Logger.getLogger("PCEServer");
+	private Logger log=LoggerFactory.getLogger("PCEServer");
 	
 	/**
 	 * The Path Computing Request to calculate.
@@ -139,7 +140,7 @@ public class Correct_BETTER_WLAN_algorithm implements ComputingAlgorithm {
 		}
 		else
 		{
-			log.warning("Error: Unsupported Endpoint for this Algorithm");
+			log.warn("Error: Unsupported Endpoint for this Algorithm");
 		}
 		
 		//aqu� acaba lo que he a�adido
@@ -150,18 +151,18 @@ public class Correct_BETTER_WLAN_algorithm implements ComputingAlgorithm {
 		
 		if (!(((ted.containsVertex(source_router_addr))&&(ted.containsVertex(dest_router_addr)))))
 		{
-			log.warning("Source or destination are NOT in the TED");	
+			log.warn("Source or destination are NOT in the TED");	
 			NoPath noPath= new NoPath();
 			noPath.setNatureOfIssue(ObjectParameters.NOPATH_NOPATH_SAT_CONSTRAINTS);
 			NoPathTLV noPathTLV=new NoPathTLV();
 			if (!((ted.containsVertex(source_router_addr))))
 			{
-				log.finest("Unknown source");	
+				log.debug("Unknown source");	
 				noPathTLV.setUnknownSource(true);	
 			}
 			if (!((ted.containsVertex(dest_router_addr))))
 			{
-				log.finest("Unknown destination");
+				log.debug("Unknown destination");
 				noPathTLV.setUnknownDestination(true);	
 			}
 
@@ -172,7 +173,7 @@ public class Correct_BETTER_WLAN_algorithm implements ComputingAlgorithm {
 
 		boolean nopath=true;//Initially, we still have no path
 
-		log.fine("Starting the computation");
+		log.debug("Starting the computation");
 		GraphPath<Object,IntraDomainEdge> gp_chosen=null;
 		preComp.getGraphLock().lock();
 		try

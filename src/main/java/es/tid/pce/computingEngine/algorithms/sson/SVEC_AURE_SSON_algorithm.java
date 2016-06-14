@@ -6,7 +6,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import org.jgrapht.GraphPath;
 import org.jgrapht.alg.DijkstraShortestPath;
@@ -63,7 +64,7 @@ public class SVEC_AURE_SSON_algorithm implements ComputingAlgorithm {
 	/**
 	 * The Logger.
 	 */
-	private Logger log=Logger.getLogger("PCEServer");
+	private Logger log=LoggerFactory.getLogger("PCEServer");
 	
 	/**
 	 * The Path Computing Request to calculate.
@@ -206,16 +207,16 @@ public class SVEC_AURE_SSON_algorithm implements ComputingAlgorithm {
 				//Now, check if the source and destination are in the TED.
 				log.info("Source: "+source_router_id_addr+"; Destination:"+dest_router_id_addr);
 				if (!(((ted.containsVertex(source_router_id_addr))&&(ted.containsVertex(dest_router_id_addr))))){
-					log.warning("Source or destination are NOT in the TED");	
+					log.warn("Source or destination are NOT in the TED");	
 					NoPath noPath= new NoPath();
 					noPath.setNatureOfIssue(ObjectParameters.NOPATH_NOPATH_SAT_CONSTRAINTS);
 					NoPathTLV noPathTLV=new NoPathTLV();
 					if (!((ted.containsVertex(source_router_id_addr)))){
-						log.finest("Unknown source");	
+						log.debug("Unknown source");	
 						noPathTLV.setUnknownSource(true);	
 					}
 					if (!((ted.containsVertex(dest_router_id_addr)))){
-						log.finest("Unknown destination");
+						log.debug("Unknown destination");
 						noPathTLV.setUnknownDestination(true);	
 					}
 		
@@ -240,7 +241,7 @@ public class SVEC_AURE_SSON_algorithm implements ComputingAlgorithm {
 					if (req.getMetricList().size()!=0){
 						Metric metric=new Metric();
 						metric.setMetricType(req.getMetricList().get(0).getMetricType() );
-						log.fine("Number of hops "+0);
+						log.debug("Number of hops "+0);
 						float metricValue=0;
 						metric.setMetricValue(metricValue);
 						path.getMetricList().add(metric);
@@ -264,7 +265,7 @@ public class SVEC_AURE_SSON_algorithm implements ComputingAlgorithm {
 		
 						
 				double max_metric=Integer.MAX_VALUE;
-				log.fine("Starting the computation");
+				log.debug("Starting the computation");
 				GraphPath<Object,IntraDomainEdge> gp_chosen=null;
 				GraphPath<Object,IntraDomainEdge> gp_trully_chosen=null;
 				

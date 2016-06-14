@@ -45,7 +45,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Hashtable;
 import java.util.List;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import org.jgrapht.GraphPath;
 import org.jgrapht.Graphs;
@@ -68,7 +69,7 @@ public class ModifiedDijkstraSP
 {
     //~ Instance fields --------------------------------------------------------
 
-	private Logger log=Logger.getLogger("PCEServer");
+	private Logger log=LoggerFactory.getLogger("PCEServer");
 	
     private GraphPath<Object,IntraDomainEdge> path;
     

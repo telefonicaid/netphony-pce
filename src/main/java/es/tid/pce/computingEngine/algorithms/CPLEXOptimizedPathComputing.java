@@ -8,7 +8,8 @@ public class CPLEXOptimizedPathComputing{}
 //import java.net.Inet4Address;
 //import java.util.Hashtable;
 //import java.util.Iterator;
-//import java.util.logging.Logger;
+//import org.slf4j.Logger;
+//import org.slf4j.LoggerFactory;
 //
 //import org.jgrapht.graph.SimpleDirectedWeightedGraph;
 //
@@ -28,7 +29,7 @@ public class CPLEXOptimizedPathComputing{}
 //public class CPLEXOptimizedPathComputing implements  ComputingAlgorithm{
 //
 //	private SimpleDirectedWeightedGraph<O,IntraDomainEdge> networkGraph;
-//	private Logger log=Logger.getLogger("PCEServer");
+//	private Logger log=LoggerFactory.getLogger("PCEServer");
 //	private ComputingRequest pathReq;
 //	
 //	public CPLEXOptimizedPathComputing(ComputingRequest pathReq,TEDB ted ){
@@ -175,7 +176,7 @@ public class CPLEXOptimizedPathComputing{}
 ////				Inet4Address dest_router_id_addr=ep.getDestIP();
 ////				log.info("Destination: "+dest_router_id_addr);
 ////				if (!((networkGraph.containsVertex(source_router_id_addr))&&(networkGraph.containsVertex(dest_router_id_addr)))){
-////					log.warning("Source or destination are NOT in the TED");	
+////					log.warn("Source or destination are NOT in the TED");	
 ////					NoPath noPath= new NoPath();
 ////					noPath.setNatureOfIssue(ObjectParameters.NOPATH_NOPATH_SAT_CONSTRAINTS);
 ////					NoPathTLV noPathTLV=new NoPathTLV();
@@ -269,7 +270,7 @@ public class CPLEXOptimizedPathComputing{}
 ////				Inet4Address dest_router_id_addr=ep.getDestIP();
 ////				log.info("Destination: "+dest_router_id_addr);
 ////				if (!((networkGraph.containsVertex(source_router_id_addr))&&(networkGraph.containsVertex(dest_router_id_addr)))){
-////					log.warning("Source or destination are NOT in the TED");	
+////					log.warn("Source or destination are NOT in the TED");	
 ////					NoPath noPath= new NoPath();
 ////					noPath.setNatureOfIssue(ObjectParameters.NOPATH_NOPATH_SAT_CONSTRAINTS);
 ////					NoPathTLV noPathTLV=new NoPathTLV();

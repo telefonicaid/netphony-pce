@@ -6,7 +6,8 @@ import java.io.InputStreamReader;
 import java.net.Inet4Address;
 import java.net.UnknownHostException;
 import java.util.LinkedList;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import es.tid.pce.pcep.constructs.EndPoint;
 import es.tid.pce.pcep.constructs.GeneralizedBandwidthSSON;
@@ -46,7 +47,7 @@ public class UserInterface extends Thread {
 	
 	public UserInterface (PCCPCEPSession ps){
 		this.ps=ps;
-		log=Logger.getLogger("PCCClient");
+		log=LoggerFactory.getLogger("PCCClient");
 		crm=ps.crm;
 		
 	}
@@ -173,7 +174,7 @@ public class UserInterface extends Thread {
 			
 			if (command.equals("1")) {
 				PCEPKeepalive p_ka= new PCEPKeepalive();
-				log.fine("Sending Keepalive message");
+				log.debug("Sending Keepalive message");
 				ps.sendPCEPMessage(p_ka);			
 			}
 			

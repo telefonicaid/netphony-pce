@@ -8,8 +8,10 @@ import java.net.Inet4Address;
 import java.net.Socket;
 import java.util.Enumeration;
 import java.util.Hashtable;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import es.tid.pce.computingEngine.RequestDispatcher;
 import es.tid.pce.computingEngine.RequestProcessorThread;
@@ -59,7 +61,7 @@ public class ParentPCEManagementSession extends Thread {
 		this.requestDispatcher=requestDispatcher;
 		this.mdtedb=mdtedb;
 		this.rm=rm;
-		log=Logger.getLogger("PCEServer");
+		log=LoggerFactory.getLogger("PCEServer");
 		isITcapable=false;
 		this.pcepSessionManager=pcepSessionManager;
 		this.mdtu=mdtu;
@@ -74,7 +76,7 @@ public class ParentPCEManagementSession extends Thread {
 		this.requestDispatcher=requestDispatcher;
 		this.ITmdtedb=ITmdtedb;
 		this.rm=rm;
-		log=Logger.getLogger("PCEServer");
+		log=LoggerFactory.getLogger("PCEServer");
 		isITcapable=true;
 		this.pcepSessionManager=pcepSessionManager;
 		this.mdtu=mdtu;
@@ -168,7 +170,7 @@ public class ParentPCEManagementSession extends Thread {
 					}
 				} catch (IOException ioe) {
 					out.print("IO error trying to read your command");
-					log.warning("IO error trying to read your command");
+					log.warn("IO error trying to read your command");
 					return;
 				}
 				if (command.equals("quit") || command.equals("")) {
@@ -271,23 +273,23 @@ public class ParentPCEManagementSession extends Thread {
 //					
 //				}
 				else if ((command.equals("set traces on"))||(command.equals("11"))) {
-					log.setLevel(Level.ALL);		
-					Logger log2=Logger.getLogger("PCEPParser");
-					log2.setLevel(Level.ALL);
-					Logger log3= Logger.getLogger("OSPFParser");
-					log3.setLevel(Level.ALL);
+//					log.setLevel(Level.ALL);		
+//					Logger log2=LoggerFactory.getLogger("PCEPParser");
+//					log2.setLevel(Level.ALL);
+//					Logger log3= LoggerFactory.getLogger("OSPFParser");
+//					log3.setLevel(Level.ALL);
 					out.print("traces on!\r\n");
 				} 
 				else if ((command.equals("set traces off"))||(command.equals("12"))) {
-					log.setLevel(Level.SEVERE);		
-					Logger log2=Logger.getLogger("PCEPParser");
-					log2.setLevel(Level.SEVERE);
-					Logger log3= Logger.getLogger("OSPFParser");
-					log3.setLevel(Level.SEVERE);
+//					log.setLevel(Level.SEVERE);		
+//					Logger log2=LoggerFactory.getLogger("PCEPParser");
+//					log2.setLevel(Level.SEVERE);
+//					Logger log3= LoggerFactory.getLogger("OSPFParser");
+//					log3.setLevel(Level.SEVERE);
 					out.print("traces off!\r\n");
 				} 
 //					else if ((command.equals("set ospf traces off"))||(command.equals("16"))) {
-//					Logger log3= Logger.getLogger("OSPFParser");
+//					Logger log3= LoggerFactory.getLogger("OSPFParser");
 //					log3.setLevel(Level.SEVERE);
 //					out.print("ospf traces off!\r\n");
 //				} 

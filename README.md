@@ -1,4 +1,4 @@
-cne-pce v1.3.0
+netphony PCE v1.3.2
 ==============
 
 Repository branch build status:
@@ -15,6 +15,13 @@ This repository contains a Java based implementation of a Path Computation Eleme
 
 The PCE follows a modular architecture and allows to add customized algorithms. The PCE has also stateful and remote inititation capabilities. In current version, three components can be built, a domain PCE (aka child PCE), a parent PCE (ready for the H-PCE architecture) and a PCC (path computation client).
 
+# Latest news!
+- Moved to slf4j logging framework
+- Apache 2.0 license for all the code
+- Sample Configurationfiles in src/main/sample-config-files/
+- Integration test support with docker
+- Dockerfile available for Domain PCE
+
 # Requirements 
 
 The requirements to build and run the components are: 
@@ -29,9 +36,9 @@ In order to use the OSPF-TE functionality, raw multicast socket support is neede
 
 # License
 
-The sofware includes a modification of the rocksaw 1.0.1 library to include OSPF multicast support. Rockswaw library is licensed under Apache License Version 2.0, which is included in the file LICENSE_rocksaw
+The sofware includes a modification of the rocksaw 1.0.1 library to include OSPF multicast support. Rockswaw library is licensed under Apache License Version 2.0.
 
-The rest of the software is licenced under GNU AFFERO GENERAL PUBLIC LICENSE.
+The rest of the software is also licenced under Apache License Version 2.0 since v1.3.2.
 
 ##Parent PCE
 
@@ -87,7 +94,7 @@ The effort to release as open source of the code was funded by the E.U. CSA PACE
 
 The developers of the code are (some of them developed code before it was published in github, so they do not appear threre as members): Oscar Gonzalez de Dios, Carlos Fernando Muñoz del Nuevo, Marta Cuaresma, Arturo Mayoral, Sergio, Alejandro Aguado, Jaume Marhuenda, Maria Victoria, Ruben Rosales, Jose Manuel Gran Josa, Victor Uceda, Andrea Sgambelluri (KTH).
 
-The institutions contributing to the code are: Telefonica I+D.
+The institutions contributing to the code are: Telefonica I+D, KTH.
 
 As the software is now open source, all contributors, indviduals and insititution will be listed in the Acknowledgement section.
 

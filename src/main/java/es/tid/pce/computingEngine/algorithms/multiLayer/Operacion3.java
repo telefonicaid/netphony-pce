@@ -2,7 +2,8 @@ package es.tid.pce.computingEngine.algorithms.multiLayer;
 
 import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import org.jgrapht.GraphPath;
 import org.jgrapht.alg.DijkstraShortestPath;

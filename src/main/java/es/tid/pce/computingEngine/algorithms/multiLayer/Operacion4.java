@@ -2,7 +2,8 @@ package es.tid.pce.computingEngine.algorithms.multiLayer;
 
 import java.net.Inet4Address;
 import java.util.ArrayList;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import org.jgrapht.GraphPath;
 import org.jgrapht.graph.SimpleDirectedWeightedGraph;
@@ -23,7 +24,7 @@ public class Operacion4 {
 		return number_hops;
 	}
 	
-	private static Logger log=Logger.getLogger("PCEServer");
+	private static Logger log=LoggerFactory.getLogger("PCEServer");
 	
 	GraphPath<Inet4Address,IntraDomainEdge> get_op4 
 	(SimpleDirectedWeightedGraph<Inet4Address,IntraDomainEdge> IPGraph, 

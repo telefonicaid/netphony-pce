@@ -8,7 +8,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import org.jgrapht.GraphPath;
 import org.jgrapht.graph.DirectedMultigraph;
@@ -88,7 +89,7 @@ public class MPLS_MinTH_AlgorithmPreComputation implements ComputingAlgorithmPre
 	public Hashtable<Object,Hashtable<Object,List<GraphPath<Object,IntraDomainEdge>>>> routeTable;
 
 	public MPLS_MinTH_AlgorithmPreComputation(){
-		log=Logger.getLogger("PCEServer");
+		log=LoggerFactory.getLogger("PCEServer");
 	}
 	
 	public void initialize(){
@@ -125,7 +126,7 @@ public class MPLS_MinTH_AlgorithmPreComputation implements ComputingAlgorithmPre
 				}
 			}	
 		}else {
-			/*log.severe("REGISTERING MULTILAYER ALGORITHM WITHOUT KNOWN NUMBER OF LAMBDAS");
+			/*log.error("REGISTERING MULTILAYER ALGORITHM WITHOUT KNOWN NUMBER OF LAMBDAS");
 			System.exit(-1);*/
 			log.info("REGISTERING MULTILAYER ALGORITHM WITHOUT KNOWN NUMBER OF LAMBDAS");
 		}

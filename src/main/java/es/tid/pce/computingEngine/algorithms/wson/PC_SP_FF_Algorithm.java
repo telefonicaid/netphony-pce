@@ -1,6 +1,7 @@
 package es.tid.pce.computingEngine.algorithms.wson;
 
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import es.tid.pce.computingEngine.ComputingRequest;
 import es.tid.pce.computingEngine.ComputingResponse;
@@ -11,7 +12,7 @@ import es.tid.tedb.DomainTEDB;
 
 public class PC_SP_FF_Algorithm implements ComputingAlgorithm{
 	
-	private Logger log=Logger.getLogger("PCEServer");
+	private Logger log=LoggerFactory.getLogger("PCEServer");
 	private ComputingRequest pathReq;
 	private ReservationManager reservationManager;
 

@@ -4,7 +4,8 @@ import java.net.Inet4Address;
 import java.net.Inet6Address;
 import java.util.LinkedList;
 import java.util.concurrent.LinkedBlockingQueue;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import es.tid.ospf.ospfv2.lsa.InterASTEv2LSA;
 import es.tid.ospf.ospfv2.lsa.tlv.LinkTLV;
@@ -66,14 +67,14 @@ public class MultiDomainTopologyUpdaterThread extends Thread {
 	private LinkedList<InterASTEv2LSA> interASTEv2LSAList;
 
 	public MultiDomainTopologyUpdaterThread(LinkedBlockingQueue<MultiDomainUpdate> multiDomainUpdateQueue,MDTEDB multiDomainTEDB){
-		log=Logger.getLogger("MultiDomainTologyUpdater");
+		log=LoggerFactory.getLogger("MultiDomainTologyUpdater");
 		this.multiDomainUpdateQueue=multiDomainUpdateQueue;		
 		this.multiDomainTEDB=multiDomainTEDB;
 		interASTEv2LSAList=new LinkedList<InterASTEv2LSA>();
 	}
 
 	public MultiDomainTopologyUpdaterThread(LinkedBlockingQueue<MultiDomainUpdate> multiDomainUpdateQueue,ITMDTEDB ITmultiDomainTEDB){
-		log=Logger.getLogger("MultiDomainTologyUpdater");
+		log=LoggerFactory.getLogger("MultiDomainTologyUpdater");
 		this.multiDomainUpdateQueue=multiDomainUpdateQueue;		
 		this.ITmultiDomainTEDB=ITmultiDomainTEDB;
 	}
@@ -86,7 +87,7 @@ public class MultiDomainTopologyUpdaterThread extends Thread {
 			try {
 				multiDomainUpdate=multiDomainUpdateQueue.take();
 				notif=multiDomainUpdate.getNotif();
-				log.finest("Processing Notification to update topology");
+				log.debug("Processing Notification to update topology");
 
 				ITAdvertisementTLV ITadv = notif.getITadvtlv();
 				if (ITadv!=null){
@@ -415,31 +416,31 @@ public class MultiDomainTopologyUpdaterThread extends Thread {
 					//THIS IS THE PART OF MULTI-DOMAIN TOPOLOGY
 					LinkedList<OSPFTE_LSA_TLV>LSATLVList= notif.getLSATLVList();
 					if (LSATLVList!=null){
-						log.finest("Received OPSF_TE_LSA_TLV "+LSATLVList.size()+" LSAs");
+						log.debug("Received OPSF_TE_LSA_TLV "+LSATLVList.size()+" LSAs");
 						for (int i=0; i<LSATLVList.size();++i){
 							OSPFTE_LSA_TLV tlv= LSATLVList.get(i);
 							//log.finest("Type of TLV: "+LSATLVList.size());
 							InterASTEv2LSA interASTEv2LSA=tlv.getInterASTEv2LSA();
 							if (interASTEv2LSA!=null){
-								log.finest("InterASTEv2LSA received: "+interASTEv2LSA.printHeader());
+								log.debug("InterASTEv2LSA received: "+interASTEv2LSA.printHeader());
 								if (interASTEv2LSAList.contains(interASTEv2LSA)){
-									log.finest("LSA already present");
+									log.debug("LSA already present");
 								}else {
-									log.finest("NEW LSA, adding to the list and processing");
+									log.debug("NEW LSA, adding to the list and processing");
 									interASTEv2LSAList.add(interASTEv2LSA);		
 									LinkTLV linkTLV =interASTEv2LSA.getLinkTLV();
 									if (linkTLV!=null){
 
-										log.finest("Processing LinkTLV");
+										log.debug("Processing LinkTLV");
 										try {
 											Inet4Address remoteAS=tlv.getInterASTEv2LSA().getLinkTLV().getRemoteASNumber().getRemoteASNumber();
-											log.finest("Remote AS: "+remoteAS);
+											log.debug("Remote AS: "+remoteAS);
 											Inet4Address remoteASBR=tlv.getInterASTEv2LSA().getLinkTLV().getiPv4RemoteASBRID().getIPv4RemoteASBRID();
-											log.finest("Remote ASBR: "+remoteASBR);
+											log.debug("Remote ASBR: "+remoteASBR);
 											Inet4Address localAS=multiDomainUpdate.getDomainID();
-											log.finest("Local AS: "+localAS);
+											log.debug("Local AS: "+localAS);
 											Inet4Address localASBR=tlv.getInterASTEv2LSA().getAdvertisingRouter();
-											log.finest("Local ASBR: "+localASBR);
+											log.debug("Local ASBR: "+localASBR);
 											long localRouterASBRIf=tlv.getInterASTEv2LSA().getLinkTLV().getLinkLocalRemoteIdentifiers().getLinkLocalIdentifier();
 											long remoteRouterASBRIf=tlv.getInterASTEv2LSA().getLinkTLV().getLinkLocalRemoteIdentifiers().getLinkRemoteIdentifier();
 
@@ -450,7 +451,7 @@ public class MultiDomainTopologyUpdaterThread extends Thread {
 											}
 
 										}catch (Exception e){
-											log.severe("Problem with Link TLV "+e.getStackTrace());
+											log.error("Problem with Link TLV "+e.getStackTrace());
 										}
 									}
 
@@ -461,7 +462,7 @@ public class MultiDomainTopologyUpdaterThread extends Thread {
 							}
 						}
 					}else {
-						log.warning("LSATLVList esta a null");
+						log.warn("LSATLVList esta a null");
 					}
 
 				}

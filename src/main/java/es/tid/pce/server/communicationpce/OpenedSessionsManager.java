@@ -4,7 +4,8 @@ import java.io.DataOutputStream;
 import java.net.Inet4Address;
 import java.util.Hashtable;
 import java.util.LinkedList;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import es.tid.pce.pcepsession.GenericPCEPSession;
 
@@ -22,7 +23,7 @@ public class OpenedSessionsManager {
 	public OpenedSessionsManager(){
 		addressPCESessionInfo=new Hashtable<Inet4Address,PCESessionInformation>();
 		sessionInfoList=new LinkedList<PCESessionInformation>();
-		log=Logger.getLogger("PCEServer");
+		log=LoggerFactory.getLogger("PCEServer");
 	}
 
 	
@@ -50,7 +51,7 @@ public class OpenedSessionsManager {
 		}
 		else {
 			
-			log.warning("Address is null, impossible to register a new session");
+			log.warn("Address is null, impossible to register a new session");
 		}
 	}
 	

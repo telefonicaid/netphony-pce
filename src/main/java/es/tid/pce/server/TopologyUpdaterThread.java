@@ -5,7 +5,8 @@ import java.net.Inet4Address;
 import java.net.UnknownHostException;
 import java.util.LinkedList;
 import java.util.concurrent.LinkedBlockingQueue;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import es.tid.ospf.ospfv2.OSPFv2LinkStateUpdatePacket;
 import es.tid.ospf.ospfv2.lsa.LSA;
@@ -44,7 +45,7 @@ public class TopologyUpdaterThread extends Thread{
 	private int layer=LayerTypes.SIMPLE_NETWORK;
 
 	public  TopologyUpdaterThread(LinkedBlockingQueue<OSPFv2LinkStateUpdatePacket> ospfv2PacketQueue, DomainTEDB TEDB, int lambdaIni, int lambdaEnd) {
-		log=Logger.getLogger("PCEServer");
+		log=LoggerFactory.getLogger("PCEServer");
 		this.ospfv2PacketQueue=ospfv2PacketQueue;		
 		this.TEDB=TEDB;
 		this.lambdaIni=lambdaIni;
@@ -53,7 +54,7 @@ public class TopologyUpdaterThread extends Thread{
 
 	public  TopologyUpdaterThread(LinkedBlockingQueue<OSPFv2LinkStateUpdatePacket> ospfv2PacketQueue,DomainTEDB TEDB, int lambdaIni, int lambdaEnd,
 			boolean isCompletedAuxGraph, boolean multilayer) {
-		log=Logger.getLogger("PCEServer");
+		log=LoggerFactory.getLogger("PCEServer");
 		this.ospfv2PacketQueue=ospfv2PacketQueue;		
 		this.TEDB=TEDB;
 		this.lambdaIni=lambdaIni;
@@ -102,11 +103,11 @@ public class TopologyUpdaterThread extends Thread{
 									if (localInterfaceIPAddress == null){
 										localInterfaceIPAddress = linkTLV.getLocalInterfaceIPAddress().getLocalInterfaceIPAddress(0);
 									}
-									log.finest("Local InterfaceIPAddress: "+localInterfaceIPAddress);
+									log.debug("Local InterfaceIPAddress: "+localInterfaceIPAddress);
 
 									Inet4Address remoteInterfaceIPAddress = linkTLV.getLinkID().getLinkID();
 									//Inet4Address remoteInterfaceIPAddress =linkTLV.getRemoteInterfaceIPAddress().getRemoteInterfaceIPAddress(0);
-									log.finest("Remote InterfaceIPAddress: "+remoteInterfaceIPAddress);
+									log.debug("Remote InterfaceIPAddress: "+remoteInterfaceIPAddress);
 									AvailableLabels newAvailableLabels = linkTLV.getAvailableLabels();
 
 									IntraDomainEdge edge = null;
@@ -340,9 +341,9 @@ public class TopologyUpdaterThread extends Thread{
 									}
 								}
 								else {
-									log.finest("Link TLV de OSPFTEv2LSA esta a null");
+									log.debug("Link TLV de OSPFTEv2LSA esta a null");
 								}
-								log.finest("Processing LSA to update topology");
+								log.debug("Processing LSA to update topology");
 							}
 						}
 					}

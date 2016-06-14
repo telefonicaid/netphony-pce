@@ -6,7 +6,8 @@ import java.util.LinkedList;
 import java.util.Set;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import org.jgrapht.graph.DirectedMultigraph;
 import org.jgrapht.graph.SimpleDirectedWeightedGraph;
@@ -45,7 +46,7 @@ public class BETTER_WLAN_algorithmPreComputation  implements ComputingAlgorithmP
 	private boolean existsPath = true;
 
 	public BETTER_WLAN_algorithmPreComputation(){
-		log=Logger.getLogger("PCEServer");
+		log=LoggerFactory.getLogger("PCEServer");
 	}
 
 	public void initialize(){
@@ -107,7 +108,7 @@ public class BETTER_WLAN_algorithmPreComputation  implements ComputingAlgorithmP
 		}
 		if (!(existsPath))
 		{
-			log.warning("Some links are down!!");
+			log.warn("Some links are down!!");
 		}
 	}
 
@@ -161,7 +162,7 @@ public class BETTER_WLAN_algorithmPreComputation  implements ComputingAlgorithmP
 			Object destination, BitmapLabelSet previousBitmapLabelSet,
 			BitmapLabelSet newBitmapLabelSet) {
 
-		log.warning("ERROR, Unimplemented at the moment");
+		log.warn("ERROR, Unimplemented at the moment");
 	}
 
 	/**

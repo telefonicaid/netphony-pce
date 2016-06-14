@@ -6,7 +6,8 @@ import java.util.LinkedList;
 import java.util.Set;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import org.jgrapht.graph.DirectedMultigraph;
 import org.jgrapht.graph.SimpleDirectedWeightedGraph;
@@ -38,7 +39,7 @@ public class AURE_AlgorithmPreComputation  implements ComputingAlgorithmPreCompu
 	private WSONInformation WSONInfo;
 
 	public AURE_AlgorithmPreComputation(){
-		log=Logger.getLogger("PCEServer");
+		log=LoggerFactory.getLogger("PCEServer");
 	}
 
 	public void initialize(){
@@ -73,7 +74,7 @@ public class AURE_AlgorithmPreComputation  implements ComputingAlgorithmPreCompu
 				}
 			}	
 		}else {
-			log.severe("REGISTERING AURE ALGORITHM WITHOUT KNOWN NUMBER OF LAMBDAS");
+			log.error("REGISTERING AURE ALGORITHM WITHOUT KNOWN NUMBER OF LAMBDAS");
 			System.exit(-1);
 		}
 	}

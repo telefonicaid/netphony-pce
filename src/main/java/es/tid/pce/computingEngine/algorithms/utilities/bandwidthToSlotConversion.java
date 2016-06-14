@@ -1,10 +1,11 @@
 package es.tid.pce.computingEngine.algorithms.utilities;
 
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class bandwidthToSlotConversion {
 	
-	private Logger log=Logger.getLogger("PCEServer");
+	private Logger log=LoggerFactory.getLogger("PCEServer");
 	private int numSlots; 
 	private int mf; // 1 - NRZ-OOK
 					// 2 - DP-QPSK

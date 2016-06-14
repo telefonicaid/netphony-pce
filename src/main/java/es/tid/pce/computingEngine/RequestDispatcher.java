@@ -26,7 +26,8 @@ import java.util.LinkedList;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * The Request Dispatcher receives the PCEP Request messages and distribute the
@@ -85,7 +86,7 @@ public class RequestDispatcher {
 	  */
 	 public RequestDispatcher(int nThreads,TEDB ted,ParentPCERequestManager cpcerm, boolean analyzeRequestTime)
 	    {
-		log=Logger.getLogger("PCEServer");
+		log=LoggerFactory.getLogger("PCEServer");
 	    this.nThreads = nThreads;
 	    pathComputingRequestQueue = new LinkedBlockingQueue<ComputingRequest>();
 	    pathComputingRequestRetryQueue= new LinkedBlockingQueue<ComputingRequest>();
@@ -114,7 +115,7 @@ public class RequestDispatcher {
 
 	public RequestDispatcher(int nThreads,TEDB ted,ParentPCERequestManager cpcerm, boolean analyzeRequestTime,Hashtable<Inet4Address,DomainTEDB> intraTEDBs)
 	{
-		log=Logger.getLogger("PCEServer");
+		log=LoggerFactory.getLogger("PCEServer");
 		this.nThreads = nThreads;
 		pathComputingRequestQueue = new LinkedBlockingQueue<ComputingRequest>();
 		pathComputingRequestRetryQueue= new LinkedBlockingQueue<ComputingRequest>();
@@ -134,7 +135,7 @@ public class RequestDispatcher {
 
 	public RequestDispatcher(int nThreads,TEDB ted,ParentPCERequestManager cpcerm, boolean analyzeRequestTime, boolean useMaxReqTime, ReservationManager reservationManager)
     {
-		log=Logger.getLogger("PCEServer");
+		log=LoggerFactory.getLogger("PCEServer");
 	    this.nThreads = nThreads;
 	    pathComputingRequestQueue = new LinkedBlockingQueue<ComputingRequest>();
 	    pathComputingRequestRetryQueue= new LinkedBlockingQueue<ComputingRequest>();
@@ -153,7 +154,7 @@ public class RequestDispatcher {
 
 	public RequestDispatcher(int nThreads,TEDB ted,ParentPCERequestManager cpcerm, boolean analyzeRequestTime, boolean useMaxReqTime, ReservationManager reservationManager, OperationsCounter OPcounter, boolean isMult)
     	{
-			log=Logger.getLogger("PCEServer");
+			log=LoggerFactory.getLogger("PCEServer");
 		    this.nThreads = nThreads;
 		    pathComputingRequestQueue = new LinkedBlockingQueue<ComputingRequest>();
 		    pathComputingRequestRetryQueue= new LinkedBlockingQueue<ComputingRequest>();
@@ -171,7 +172,7 @@ public class RequestDispatcher {
 
 	public RequestDispatcher(int nThreads,TEDB ted,ParentPCERequestManager cpcerm, boolean analyzeRequestTime,CollaborationPCESessionManager collaborationPCESessionManager)
 	    {
-			log=Logger.getLogger("PCEServer");
+			log=LoggerFactory.getLogger("PCEServer");
 		    this.nThreads = nThreads;
 		    pathComputingRequestQueue = new LinkedBlockingQueue<ComputingRequest>();
 		    pathComputingRequestRetryQueue= new LinkedBlockingQueue<ComputingRequest>();
@@ -189,7 +190,7 @@ public class RequestDispatcher {
 
 	public RequestDispatcher(int nThreads,TEDB ted,ParentPCERequestManager cpcerm, boolean analyzeRequestTime, boolean useMaxReqTime, ReservationManager reservationManager,CollaborationPCESessionManager collaborationPCESessionManager)
     {
-		log=Logger.getLogger("PCEServer");
+		log=LoggerFactory.getLogger("PCEServer");
 	    this.nThreads = nThreads;
 	    pathComputingRequestQueue = new LinkedBlockingQueue<ComputingRequest>();
 	    pathComputingRequestRetryQueue= new LinkedBlockingQueue<ComputingRequest>();
@@ -285,24 +286,23 @@ public class RequestDispatcher {
 	
     public void dispathRequests(PCEPRequest reqMessage, DataOutputStream out, Inet4Address remotePCEId){	    
     	if (out==null){
-    		log.severe("OUT ESTA A NULL!!!!");
+    		log.error("OUT ESTA A NULL!!!!");
     	}
     	//Obtain the request list
     	LinkedList<Request> reqList=reqMessage.getRequestList();
-    	log.finest("There are "+reqMessage.getRequestList().size()+" requests");
+    	log.debug("There are "+reqMessage.getRequestList().size()+" requests");
     	//If there are request to sincronize...
     	if (reqMessage.getSvecList().size()!=0){
-    		log.finest("SVEC is present!");
+    		log.debug("SVEC is present!");
     		int numRequests=0;
     		Hashtable<Long,Request> hashReqList=new Hashtable<Long,Request>();
     		for (int i=0;i<reqList.size();++i){
     			hashReqList.put(new Long(reqList.get(i).getRequestParameters().getRequestID()), reqList.get(i));
     		}
-    		log.finest("TAM DE  hashReqList ES "+hashReqList.size());
+    		log.debug("TAM DE  hashReqList ES "+hashReqList.size());
     		for (int i=0;i<reqMessage.getSvecList().size();++i){
-    			log.finest("SVEC begins");
+    			log.debug("SVEC begins");
     			SVECConstruct svecc=reqMessage.getSvecList().get(i);
-    			log.finest("SVEC TIENE "+svecc.getSvec().getRequestIDlist().size());
     			if (svecc.getSvec().getRequestIDlist().size()!=0){
     				
     				ComputingRequest cr=new ComputingRequest();

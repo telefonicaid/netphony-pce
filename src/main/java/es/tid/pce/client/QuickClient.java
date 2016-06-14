@@ -5,10 +5,14 @@ import java.net.Inet4Address;
 import java.net.UnknownHostException;
 import java.util.LinkedList;
 import java.util.concurrent.TimeUnit;
-import java.util.logging.FileHandler;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import java.util.logging.SimpleFormatter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import es.tid.pce.pcep.constructs.EndPoint;
 import es.tid.pce.pcep.constructs.GeneralizedBandwidthSSON;
@@ -40,22 +44,22 @@ public class QuickClient {
 	private static UserInterface ui;
 	
 	
-	public static final Logger Log =Logger.getLogger("PCCClient");
+	public static final Logger Log =LoggerFactory.getLogger("PCCClient");
 
 	public static void main(String[] args) {
-		FileHandler fh;
-		FileHandler fh2;
+		//FileHandler fh;
+		//FileHandler fh2;
 		PCCPCEPSession PCEsession;
 		try {
-			fh=new FileHandler("PCCClient2.log");
-			fh2=new FileHandler("PCEPClientParser2.log");
-			fh.setFormatter(new SimpleFormatter());
-			fh2.setFormatter(new SimpleFormatter());
-			Log.addHandler(fh);
-			Log.setLevel(Level.ALL);
-			Logger log2=Logger.getLogger("PCEPParser");
-			log2.addHandler(fh2);
-			log2.setLevel(Level.ALL);
+			//fh=new FileHandler("PCCClient2.log");
+			//fh2=new FileHandler("PCEPClientParser2.log");
+			//fh.setFormatter(new SimpleFormatter());
+			//fh2.setFormatter(new SimpleFormatter());
+			//Log.addHandler(fh);
+			//Log.setLevel(Level.ALL);
+			Logger log2=LoggerFactory.getLogger("PCEPParser");
+			//log2.addHandler(fh2);
+			//log2.setLevel(Level.ALL);
 		} catch (Exception e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();

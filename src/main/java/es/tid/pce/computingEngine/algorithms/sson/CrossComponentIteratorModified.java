@@ -7,7 +7,8 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Set;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import org.jgrapht.DirectedGraph;
 import org.jgrapht.Graph;
@@ -91,7 +92,7 @@ public abstract class CrossComponentIteratorModified<V, E, D>
     private Iterator<V> vertexIterator = null;
     
     protected Hashtable<Object,BitmapChannelState> vertexSpectrumState;
-	private Logger log=Logger.getLogger("PCEServer");
+	private Logger log=LoggerFactory.getLogger("PCEServer");
 
 	private int numChannels;
 	private int num_slots;

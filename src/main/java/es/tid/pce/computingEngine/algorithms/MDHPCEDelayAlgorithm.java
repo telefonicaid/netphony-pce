@@ -27,7 +27,8 @@ import java.io.FileWriter;
 import java.net.Inet4Address;
 import java.net.InetAddress;
 import java.util.*;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *
@@ -41,7 +42,7 @@ import java.util.logging.Logger;
 public class MDHPCEDelayAlgorithm implements ComputingAlgorithm{
 	private DirectedWeightedMultigraph<Object,InterDomainEdge> Graph;
 	Hashtable<Inet4Address,DomainTEDB> intraTEDBs = null;
-	private Logger log=Logger.getLogger("PCEServer");
+	private Logger log=LoggerFactory.getLogger("PCEServer");
 	private ComputingRequest pathReq;
 	private ChildPCERequestManager childPCERequestManager;
 	private ReachabilityManager reachabilityManager;
@@ -135,7 +136,7 @@ public class MDHPCEDelayAlgorithm implements ComputingAlgorithm{
 		log.info("Check if SRC and Dest domains are OK");
 		if ((dest_domain_id==null)||(source_domain_id==null)){
 			//ONE OF THEM IS NOT REACHABLE, SEND NOPATH!!!
-			log.warning("One of the domains is not reachable, sending NOPATH");
+			log.warn("One of the domains is not reachable, sending NOPATH");
 			log.info( "Source domain = "+source_domain_id );
 			log.info( "Dest domain = "+dest_domain_id );
 			NoPath noPath= new NoPath();
@@ -151,7 +152,7 @@ public class MDHPCEDelayAlgorithm implements ComputingAlgorithm{
 
 		if (source_domain_id.equals( dest_domain_id )) {
 			if (!acceptIntraReq){
-				log.warning( "Not MD path: the two end points are in the same domain ("+source_domain_id+")" );
+				log.warn( "Not MD path: the two end points are in the same domain ("+source_domain_id+")" );
 				NoPath noPath2 = new NoPath();
 				noPath2.setNatureOfIssue( ObjectParameters.NOPATH_NOPATH_SAT_CONSTRAINTS );
 				NoPathTLV noPathTLV = new NoPathTLV();
@@ -183,7 +184,7 @@ public class MDHPCEDelayAlgorithm implements ComputingAlgorithm{
 				GraphPath<Object, IntraDomainEdge> sgp1 = sdsp.getPath();
 
 				if (sgp1 == null) {
-					log.warning( "No path between src and dst" );
+					log.warn( "No path between src and dst" );
 					NoPath noPath2 = new NoPath();
 					noPath2.setNatureOfIssue( ObjectParameters.NOPATH_NOPATH_SAT_CONSTRAINTS );
 					NoPathTLV noPathTLV = new NoPathTLV();
@@ -242,7 +243,7 @@ public class MDHPCEDelayAlgorithm implements ComputingAlgorithm{
 				if (req.getMetricList().size()!=0){
 					Metric metric=new Metric();
 					metric.setMetricType(req.getMetricList().get(0).getMetricType() );
-					log.fine("Number of hops "+slinks.size());
+					log.debug("Number of hops "+slinks.size());
 					float metricValue=(float)slinks.size();
 					metric.setMetricValue(metricValue);
 					spath1.getMetricList().add(metric);
@@ -292,7 +293,7 @@ public class MDHPCEDelayAlgorithm implements ComputingAlgorithm{
 						}
 
 					} catch (Exception e) {
-						log.severe( "PROBLEM SENDING THE INIT" );
+						log.error( "PROBLEM SENDING THE INIT" );
 						NoPath noPathx = new NoPath();
 						noPathx.setNatureOfIssue( ObjectParameters.NOPATH_NOPATH_SAT_CONSTRAINTS );
 						NoPathTLV snoPathTLV = new NoPathTLV();
@@ -303,7 +304,7 @@ public class MDHPCEDelayAlgorithm implements ComputingAlgorithm{
 					}
 
 					if (inireply == null) {
-						log.warning("Child for init "+(skk+1)+" has failed");
+						log.warn("Child for init "+(skk+1)+" has failed");
 						NoPath snoPath= new NoPath();
 						response.setNoPath(snoPath);
 						m_resp.addResponse(response);
@@ -347,17 +348,17 @@ public class MDHPCEDelayAlgorithm implements ComputingAlgorithm{
 		if (!((networkGraph.containsVertex(source_domain_id))&&(networkGraph.containsVertex(dest_domain_id)))){
 			Iterator<Object> it = networkGraph.vertexSet().iterator();
 
-			log.warning("Source or destination domains are NOT in the TED");
+			log.warn("Source or destination domains are NOT in the TED");
 			//FIXME: VER ESTE CASO
 			NoPath noPath= new NoPath();
 			noPath.setNatureOfIssue(ObjectParameters.NOPATH_NOPATH_SAT_CONSTRAINTS);
 			NoPathTLV noPathTLV=new NoPathTLV();
 			if (!((networkGraph.containsVertex(source_router_id_addr)))){
-				log.finest("Unknown source domain");
+				log.debug("Unknown source domain");
 				noPathTLV.setUnknownSource(true);
 			}
 			if (!((networkGraph.containsVertex(dest_router_id_addr)))){
-				log.finest("Unknown destination domain");
+				log.debug("Unknown destination domain");
 				noPathTLV.setUnknownDestination(true);
 			}
 
@@ -381,7 +382,7 @@ public class MDHPCEDelayAlgorithm implements ComputingAlgorithm{
 
 		List<GraphPath<Inet4Address,InterDomainEdge>> gps=dsp.getPaths(dest_domain_id);
 		if (gps==null){
-			log.severe("Problem getting the domain sequence");
+			log.error("Problem getting the domain sequence");
 			NoPath noPath2= new NoPath();
 			noPath2.setNatureOfIssue(ObjectParameters.NOPATH_NOPATH_SAT_CONSTRAINTS);
 			NoPathTLV noPathTLV=new NoPathTLV();
@@ -503,7 +504,7 @@ public class MDHPCEDelayAlgorithm implements ComputingAlgorithm{
 			GraphPath<Object, IntraDomainEdge> gp1 = dsp1.getPath();
 
 			if (gp1 == null) {
-				log.warning( "No path between src and end-point" );
+				log.warn( "No path between src and end-point" );
 				continue;
 			}
 
@@ -560,7 +561,7 @@ public class MDHPCEDelayAlgorithm implements ComputingAlgorithm{
 			if (req.getMetricList().size()!=0){
 				Metric metric=new Metric();
 				metric.setMetricType(req.getMetricList().get(0).getMetricType() );
-				log.fine("Number of hops "+links.size());
+				log.debug("Number of hops "+links.size());
 				float metricValue=(float)links.size();
 				metric.setMetricValue(metricValue);
 				path1.getMetricList().add(metric);
@@ -614,7 +615,7 @@ public class MDHPCEDelayAlgorithm implements ComputingAlgorithm{
 			GraphPath<Object,IntraDomainEdge> gp2=dsp2.getPath();
 
 			if (gp2==null){
-				log.warning("No path between end-point and dest");
+				log.warn("No path between end-point and dest");
 				continue;
 			}
 			pathfound = true;
@@ -676,7 +677,7 @@ public class MDHPCEDelayAlgorithm implements ComputingAlgorithm{
 			if (req.getMetricList().size()!=0){
 				Metric metric=new Metric();
 				metric.setMetricType(req.getMetricList().get(0).getMetricType() );
-				log.fine("Number of hops "+links2.size());
+				log.debug("Number of hops "+links2.size());
 				float metricValue=(float)links2.size();
 				metric.setMetricValue(metricValue);
 				path.getMetricList().add(metric);
@@ -700,7 +701,7 @@ public class MDHPCEDelayAlgorithm implements ComputingAlgorithm{
 		log.info("Final delay "+ best_delay);
 
 		if (pathfound==false){
-			log.warning("No paths between src and dest");
+			log.warn("No paths between src and dest");
 			NoPath noPath= new NoPath();
 			response.setNoPath(noPath);
 			m_resp.addResponse(response);
@@ -769,7 +770,7 @@ public class MDHPCEDelayAlgorithm implements ComputingAlgorithm{
 						inireply2 = new StateReport();
 					}
 				} catch (Exception e) {
-					log.severe( "PROBLEM SENDING THE INIT" );
+					log.error( "PROBLEM SENDING THE INIT" );
 					NoPath noPathx = new NoPath();
 					noPathx.setNatureOfIssue( ObjectParameters.NOPATH_NOPATH_SAT_CONSTRAINTS );
 					NoPathTLV snoPathTLV = new NoPathTLV();
@@ -782,7 +783,7 @@ public class MDHPCEDelayAlgorithm implements ComputingAlgorithm{
 
 				if (inireply2 == null) {
 					childrenFailed = true;
-					log.warning("Child for init "+(lkk+1)+" has failed");
+					log.warn("Child for init "+(lkk+1)+" has failed");
 				}
 				else {
 					log.info("Domain "+ domainList.get(lkk)+" replied to Initiate: "+inireply2.toString());
@@ -793,7 +794,7 @@ public class MDHPCEDelayAlgorithm implements ComputingAlgorithm{
 			}
 
 			if (childrenFailed==true){
-				log.warning("Some child has failed");
+				log.warn("Some child has failed");
 				NoPath noPath= new NoPath();
 				response.setNoPath(noPath);
 				m_resp.addResponse(response);

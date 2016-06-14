@@ -5,7 +5,8 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import org.jgrapht.GraphPath;
 import org.jgrapht.alg.KShortestPaths;
@@ -56,7 +57,7 @@ public class LocalMDHPCEMinNumberDomainsKSPAlgorithm implements ComputingAlgorit
 	private SimpleDirectedWeightedGraph<Object, IntraDomainEdge> networkGraphIntra;
 	
 	private TEDB ted;
-	private Logger log=Logger.getLogger("PCEServer");
+	private Logger log=LoggerFactory.getLogger("PCEServer");
 	private ComputingRequest pathReq;
 	private ChildPCERequestManager childPCERequestManager;
 	private LocalChildRequestManager localChildRequestManager;
@@ -181,7 +182,7 @@ public class LocalMDHPCEMinNumberDomainsKSPAlgorithm implements ComputingAlgorit
 		log.info("Check if SRC and Dest domains are OK");
 		if ((dest_domain_id==null)||(source_domain_id==null)){
 			//ONE OF THEM IS NOT REACHABLE, SEND NOPATH!!!
-			log.warning("One of the domains is not reachable, sending NOPATH");
+			log.warn("One of the domains is not reachable, sending NOPATH");
 			NoPath noPath= new NoPath();
 			noPath.setNatureOfIssue(ObjectParameters.NOPATH_NOPATH_SAT_CONSTRAINTS);
 			response.setNoPath(noPath);
@@ -193,17 +194,17 @@ public class LocalMDHPCEMinNumberDomainsKSPAlgorithm implements ComputingAlgorit
 			while (it.hasNext()){
 				log.info(it.next().toString());
 			}
-			log.warning("Source or destination domains are NOT in the TED");
+			log.warn("Source or destination domains are NOT in the TED");
 			//FIXME: VER ESTE CASO
 			NoPath noPath= new NoPath();
 			noPath.setNatureOfIssue(ObjectParameters.NOPATH_NOPATH_SAT_CONSTRAINTS);
 			NoPathTLV noPathTLV=new NoPathTLV();
 			if (!((networkGraph.containsVertex(source_router_id_addr)))){
-				log.finest("Unknown source domain");	
+				log.debug("Unknown source domain");	
 				noPathTLV.setUnknownSource(true);	
 			}
 			if (!((networkGraph.containsVertex(dest_router_id_addr)))){
-				log.finest("Unknown destination domain");
+				log.debug("Unknown destination domain");
 				noPathTLV.setUnknownDestination(true);	
 			}
 			
@@ -230,7 +231,7 @@ public class LocalMDHPCEMinNumberDomainsKSPAlgorithm implements ComputingAlgorit
 		}
 		/*
 		if ((gps==null)&&(!(source_domain_id.equals(dest_domain_id)))){
-			log.severe("Problem getting the domain sequence");
+			log.error("Problem getting the domain sequence");
 			NoPath noPath2= new NoPath();
 			noPath2.setNatureOfIssue(ObjectParameters.NOPATH_NOPATH_SAT_CONSTRAINTS);
 			NoPathTLV noPathTLV=new NoPathTLV();
@@ -334,7 +335,7 @@ public class LocalMDHPCEMinNumberDomainsKSPAlgorithm implements ComputingAlgorit
 			respList= localChildRequestManager.executeRequests(reqList, domainList,cam_sson, ted);
 			log.info("Before sending requests");	
 		}catch (Exception e){
-			log.severe("PROBLEM SENDING THE REQUESTS");
+			log.error("PROBLEM SENDING THE REQUESTS");
 			NoPath noPath2= new NoPath();
 			noPath2.setNatureOfIssue(ObjectParameters.NOPATH_NOPATH_SAT_CONSTRAINTS);
 			NoPathTLV noPathTLV=new NoPathTLV();
@@ -349,7 +350,7 @@ public class LocalMDHPCEMinNumberDomainsKSPAlgorithm implements ComputingAlgorit
 //			log.info("Respuesta a las peticiones intraDominios Simultaneamente");
 //			
 //		}catch (Exception e){
-//			log.severe("PROBLEM SENDING THE REQUESTS");
+//			log.error("PROBLEM SENDING THE REQUESTS");
 //			NoPath noPath2= new NoPath();
 //			noPath2.setNatureOfIssue(ObjectParameters.NOPATH_NOPATH_SAT_CONSTRAINTS);
 //			NoPathTLV noPathTLV=new NoPathTLV();
@@ -405,7 +406,7 @@ public class LocalMDHPCEMinNumberDomainsKSPAlgorithm implements ComputingAlgorit
 			}
 		}
 		if ((childrenFailed==true)||(respList==null)){
-			log.warning("Some child has failed");
+			log.warn("Some child has failed");
 			pathfound=false;
 		}
 		else {
@@ -422,7 +423,7 @@ public class LocalMDHPCEMinNumberDomainsKSPAlgorithm implements ComputingAlgorit
 				gp=gps.get(k);
 			k++;
 			if (gp==null){
-				log.severe("Problem getting the domain sequence");
+				log.error("Problem getting the domain sequence");
 				NoPath noPath2= new NoPath();
 				noPath2.setNatureOfIssue(ObjectParameters.NOPATH_NOPATH_SAT_CONSTRAINTS);
 				NoPathTLV noPathTLV=new NoPathTLV();
@@ -697,7 +698,7 @@ public class LocalMDHPCEMinNumberDomainsKSPAlgorithm implements ComputingAlgorit
 				respList= localChildRequestManager.executeRequests(reqList, domainList,cam_sson, ted);	
 				log.info("Before sending requests");
 			}catch (Exception e){
-				log.severe("PROBLEM SENDING THE REQUESTS");
+				log.error("PROBLEM SENDING THE REQUESTS");
 				NoPath noPath2= new NoPath();
 				noPath2.setNatureOfIssue(ObjectParameters.NOPATH_NOPATH_SAT_CONSTRAINTS);
 				NoPathTLV noPathTLV=new NoPathTLV();
@@ -712,7 +713,7 @@ public class LocalMDHPCEMinNumberDomainsKSPAlgorithm implements ComputingAlgorit
 	//			log.info("Respuesta a las peticiones intraDominios Simultaneamente");
 	//			
 	//		}catch (Exception e){
-	//			log.severe("PROBLEM SENDING THE REQUESTS");
+	//			log.error("PROBLEM SENDING THE REQUESTS");
 	//			NoPath noPath2= new NoPath();
 	//			noPath2.setNatureOfIssue(ObjectParameters.NOPATH_NOPATH_SAT_CONSTRAINTS);
 	//			NoPathTLV noPathTLV=new NoPathTLV();
@@ -768,7 +769,7 @@ public class LocalMDHPCEMinNumberDomainsKSPAlgorithm implements ComputingAlgorit
 				}
 			}
 			if ((childrenFailed==true)||(respList==null)){
-				log.warning("Some child has failed");
+				log.warn("Some child has failed");
 				pathfound=false;
 			}
 			else {
@@ -776,7 +777,7 @@ public class LocalMDHPCEMinNumberDomainsKSPAlgorithm implements ComputingAlgorit
 			} 
 	}}
 	if (pathfound==false){
-		log.warning("Some child has failed");
+		log.warn("Some child has failed");
 		NoPath noPath= new NoPath();
 		response.setNoPath(noPath);
 		m_resp.addResponse(response);

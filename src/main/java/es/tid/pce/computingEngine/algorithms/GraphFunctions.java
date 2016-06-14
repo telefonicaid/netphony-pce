@@ -4,7 +4,8 @@ import java.net.Inet4Address;
 import java.net.UnknownHostException;
 import java.util.Iterator;
 import java.util.Set;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import org.jgrapht.graph.DirectedWeightedMultigraph;
 import org.jgrapht.graph.SimpleDirectedWeightedGraph;
@@ -21,7 +22,7 @@ public class GraphFunctions {
 	
 	 	
 	public static void processXRO(ExcludeRouteObject xro, SimpleDirectedWeightedGraph<Object, IntraDomainEdge> graphLambda){
-		Logger log=Logger.getLogger("PCEServer");
+		Logger log=LoggerFactory.getLogger("PCEServer");
 		try{
 		if (xro!=null){
 			log.info("XRO: Thre are "+xro.getXROSubobjectList().size()+" exclusions");

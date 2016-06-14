@@ -1,7 +1,8 @@
 package es.tid.pce.server.wson;
 
 import java.util.LinkedList;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import es.tid.tedb.DomainTEDB;
 
@@ -31,7 +32,7 @@ public class DeleteReservationTask implements Runnable {
 
 	@Override
 	public void run() {
-		log=Logger.getLogger("PCEServer");
+		log=LoggerFactory.getLogger("PCEServer");
 		if (isWLAN)
 		{
 			

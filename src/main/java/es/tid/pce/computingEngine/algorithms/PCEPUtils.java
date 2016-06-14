@@ -3,7 +3,8 @@ package es.tid.pce.computingEngine.algorithms;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import org.jgrapht.graph.SimpleDirectedWeightedGraph;
 
@@ -25,7 +26,7 @@ import es.tid.tedb.TE_Information;
  */
 public class PCEPUtils {
 	
-	private Logger log=Logger.getLogger("PCEServer");
+	private Logger log=LoggerFactory.getLogger("PCEServer");
 	
 	public static void completeMetric(Path path, Request req,List<IntraDomainEdge> edge_list){
 		for (int i=0;i<req.getMetricList().size();++i){

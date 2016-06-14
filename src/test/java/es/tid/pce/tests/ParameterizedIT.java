@@ -9,7 +9,8 @@ import java.util.Collection;
 import java.util.LinkedList;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.locks.ReentrantLock;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
@@ -88,7 +89,7 @@ public class ParameterizedIT {
 				assertTrue("Invalid test arguments number (>4)", false);
 			}
     		CommandLine optReq = QuickClientObj.getLineOptions(this.msgSend);
-    		Logger log =Logger.getLogger("PCCClient");
+    		Logger log =LoggerFactory.getLogger("PCCClient");
 			QuickClientObj qcObj = new QuickClientObj(log, msgSend[0], Integer.valueOf(msgSend[1]).intValue());
 			qcObj.start();	
 			Request req = qcObj.createReqMessage(msgSend[2],msgSend[3], optReq);

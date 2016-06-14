@@ -2,7 +2,8 @@ package es.tid.pce.server;
 
 import java.util.Hashtable;
 import java.util.concurrent.LinkedBlockingQueue;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import es.tid.pce.pcep.messages.PCEPMessage;
 import es.tid.pce.pcep.messages.PCEPRequest;
@@ -27,7 +28,7 @@ public class ParentPCERequestManager {
 	public ParentPCERequestManager(LinkedBlockingQueue<PCEPMessage> sendingQueue){
 		locks = new Hashtable<Long, Object>();	
 		responses=new Hashtable<Long, PCEPResponse>();
-		log=Logger.getLogger("PCEServer");
+		log=LoggerFactory.getLogger("PCEServer");
 		this.sendingQueue=sendingQueue;
 	}
 
@@ -39,7 +40,7 @@ public class ParentPCERequestManager {
 	 */
 	public void notifyResponse(PCEPResponse pcres){
 		long idRequest=pcres.getResponse(0).getRequestParameters().getRequestID();
-		log.finer("Notifying Response with idRequest "+idRequest);
+		log.debug("Notifying Response with idRequest "+idRequest);
 		Object object_lock=locks.get(new Long(idRequest));
 		responses.put(new Long(idRequest), pcres);
 		if (object_lock!=null){
@@ -62,17 +63,17 @@ public class ParentPCERequestManager {
 		sendingQueue.add(pcreq);
 		synchronized (object_lock) { 
 			try {
-				log.fine("Request sent, waiting for response");
+				log.debug("Request sent, waiting for response");
 				object_lock.wait(30000);
 			} catch (InterruptedException e){
 				//	FIXME: Ver que hacer
 			}
 		}
-		log.fine("Request or timeout");
+		log.debug("Request or timeout");
 		
 		PCEPResponse resp=responses.get(new Long(idRequest));
 		if (resp==null){
-			log.warning("NO RESPONSE!!!!!");
+			log.warn("NO RESPONSE!!!!!");
 		}
 		return resp;		
 	}

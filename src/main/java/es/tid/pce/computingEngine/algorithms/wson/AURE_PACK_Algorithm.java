@@ -7,7 +7,8 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import org.jgrapht.GraphPath;
 import org.jgrapht.alg.DijkstraShortestPath;
@@ -48,7 +49,7 @@ public class AURE_PACK_Algorithm implements ComputingAlgorithm {
 	/**
 	 * The Logger.
 	 */
-	private Logger log=Logger.getLogger("PCEServer");
+	private Logger log=LoggerFactory.getLogger("PCEServer");
 	
 	/**
 	 * The Path Computing Request to calculate.
@@ -90,7 +91,7 @@ public class AURE_PACK_Algorithm implements ComputingAlgorithm {
 	public ComputingResponse call(){ 
 		//Time stamp of the start of the algorithm;
 		long tiempoini =System.nanoTime();
-		log.finest("Starting AURE-PACK Algorithm");
+		log.debug("Starting AURE-PACK Algorithm");
 		//Create the response message
 		//It will contain either the path or noPath
 		ComputingResponse m_resp=new ComputingResponse();
@@ -149,18 +150,18 @@ public class AURE_PACK_Algorithm implements ComputingAlgorithm {
 		//aqu� acaba lo que he a�adido
 
 		//Now, check if the source and destination are in the TED.
-		log.fine("Source: "+source_router_id_addr+"; Destination:"+dest_router_id_addr);
+		log.debug("Source: "+source_router_id_addr+"; Destination:"+dest_router_id_addr);
 		if (!(((ted.containsVertex(source_router_id_addr))&&(ted.containsVertex(dest_router_id_addr))))){
-			log.warning("Source or destination are NOT in the TED");	
+			log.warn("Source or destination are NOT in the TED");	
 			NoPath noPath= new NoPath();
 			noPath.setNatureOfIssue(ObjectParameters.NOPATH_NOPATH_SAT_CONSTRAINTS);
 			NoPathTLV noPathTLV=new NoPathTLV();
 			if (!((ted.containsVertex(source_router_id_addr)))){
-				log.finest("Unknown source");	
+				log.debug("Unknown source");	
 				noPathTLV.setUnknownSource(true);	
 			}
 			if (!((ted.containsVertex(dest_router_id_addr)))){
-				log.finest("Unknown destination");
+				log.debug("Unknown destination");
 				noPathTLV.setUnknownDestination(true);	
 			}
 
@@ -180,7 +181,7 @@ public class AURE_PACK_Algorithm implements ComputingAlgorithm {
 		
 		int num_lambdas = ted.getWSONinfo().getNumLambdas();
 				
-		log.fine("Starting the computation");
+		log.debug("Starting the computation");
 		
 		
 		
@@ -202,7 +203,7 @@ public class AURE_PACK_Algorithm implements ComputingAlgorithm {
 		}*/
 		
 		int k=0;
-		//log.severe("Peticion nueva");
+		//log.error("Peticion nueva");
 		GraphPath<Object,IntraDomainEdge> gp_chosen=null;
 		preComp.getGraphLock().lock();
 		try{
@@ -211,12 +212,12 @@ public class AURE_PACK_Algorithm implements ComputingAlgorithm {
 				SimpleDirectedWeightedGraph<Object,IntraDomainEdge> graphLambda=preComp.getNetworkGraphs().get(lambda); 
 				DijkstraShortestPath<Object,IntraDomainEdge>  dsp=new DijkstraShortestPath<Object,IntraDomainEdge> (graphLambda, source_router_id_addr, dest_router_id_addr);
 				GraphPath<Object,IntraDomainEdge> gp=dsp.getPath();
-				//log.severe("Entro");
+				//log.error("Entro");
 				if (gp==null){				
 					//There is no path here
 					if (lambda>=preComp.getWSONInfo().getNumLambdas()-1){
 						if (nopath==true){
-							log.fine("No path found");
+							log.debug("No path found");
 							
 							NoPath noPath= new NoPath();
 							noPath.setNatureOfIssue(ObjectParameters.NOPATH_NOPATH_SAT_CONSTRAINTS);
@@ -235,10 +236,10 @@ public class AURE_PACK_Algorithm implements ComputingAlgorithm {
 				}
 				else {
 					/*if (lambda == 0){
-						log.severe("Hay camino para lambda : 0");
+						log.error("Hay camino para lambda : 0");
 					}
 					if (lambda == 1){
-						log.severe("Hay camino para lambda : 1");
+						log.error("Hay camino para lambda : 1");
 					}*/
 					k++;
 					nopath=false;

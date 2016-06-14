@@ -2,7 +2,8 @@ package es.tid.tedb.ospfv2;
 
 import java.net.ServerSocket;
 import java.util.concurrent.LinkedBlockingQueue;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import es.tid.ospf.ospfv2.OSPFv2LinkStateUpdatePacket;
 
@@ -17,7 +18,7 @@ public class OSPFTCPSessionServer extends Thread {
 		private Logger log;
 	
 	public OSPFTCPSessionServer(LinkedBlockingQueue<OSPFv2LinkStateUpdatePacket> ospfv2PacketQueue, LinkedBlockingQueue<OSPFv2LinkStateUpdatePacket> redisOspfv2PacketQueue){
-		log=Logger.getLogger("OSPFParser");
+		log=LoggerFactory.getLogger("OSPFParser");
 		log.info("In OSPFTCPSessionServer");
 		this.ospfv2PacketQueue = ospfv2PacketQueue;
 		this.redisOspfv2PacketQueue = redisOspfv2PacketQueue;
@@ -37,7 +38,7 @@ public class OSPFTCPSessionServer extends Thread {
 		}
 		catch (Exception e){
 			
-			log.severe("Could not listen management on port 8889");
+			log.error("Could not listen management on port 8889");
 			e.printStackTrace();
 			return;
 						

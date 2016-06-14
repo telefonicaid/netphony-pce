@@ -9,7 +9,8 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import es.tid.pce.computingEngine.algorithms.ComputingAlgorithm;
 import es.tid.pce.computingEngine.algorithms.ComputingAlgorithmManager;
@@ -120,7 +121,7 @@ public class IniProcessorThread extends Thread{
 	private Logger log;
 
 	public IniProcessorThread( LinkedBlockingQueue<InitiationRequest> lspInitiationRequestQueue, ReachabilityManager reachabilityManager,ChildPCERequestManager childPCERequestManager,MultiDomainLSPDB multiDomainLSPDB ){
-		log=Logger.getLogger("PCEServer");
+		log=LoggerFactory.getLogger("PCEServer");
 		this.lspInitiationRequestQueue=lspInitiationRequestQueue;
 		this.reachabilityManager=reachabilityManager;
 		this.childPCERequestManager=childPCERequestManager;
@@ -168,7 +169,7 @@ public class IniProcessorThread extends Thread{
 					
 
 					LinkedList<PCEPInitiate> iniList= new LinkedList<PCEPInitiate>();
-					log.fine("Creating the bandwidth");
+					log.debug("Creating the bandwidth");
 					Bandwidth bw=null;
 
 					//Get the Bandwidth
@@ -249,7 +250,7 @@ public class IniProcessorThread extends Thread{
 					try {
 						
 						if (childPCERequestManager==null){
-							log.severe("o ooooooooo");
+							log.error("o ooooooooo");
 						}
 						LinkedList<ComputingResponse> reps=childPCERequestManager.executeInitiates(iniList, domainList);
 	     				log.info("Hay "+reps.size()+" reps");
@@ -288,20 +289,20 @@ public class IniProcessorThread extends Thread{
 						
 					}catch (Exception e){
 						e.printStackTrace();
-						log.severe("PROBLEM SENDING THE INITIATES");
+						log.error("PROBLEM SENDING THE INITIATES");
 					}
 				}
 				
 				try{
 					this.savelsp.run();
 				}catch (Exception e){
-					log.warning("Save LSP in Redis fail");
+					log.warn("Save LSP in Redis fail");
 					e.printStackTrace();
 					break;
 				}
 
 			} catch (InterruptedException e) {
-				log.warning("There is no ini to make");
+				log.warn("There is no ini to make");
 				e.printStackTrace();
 				break;
 			}
@@ -365,7 +366,7 @@ public class IniProcessorThread extends Thread{
 		log.info("GOING TO DELTE "+lspID);
 		MD_LSP mdlsp= this.multiDomainLSPDB.getMultiDomain_LSP_list().get(lspID);
 		if (mdlsp==null) {
-			log.severe("LSP is NULL!!");
+			log.error("LSP is NULL!!");
 		}
 		LinkedList<PCEPInitiate> iniList= new LinkedList<PCEPInitiate>();
 		LinkedList<Object> domainList=new  LinkedList<Object>();
@@ -388,7 +389,7 @@ public class IniProcessorThread extends Thread{
 					symbolicPathNameTLV_tlv.setSymbolicPathNameID(SR.getLSP().getSymbolicPathNameTLV_tlv().getSymbolicPathNameID() );
 					lsp.setSymbolicPathNameTLV_tlv(symbolicPathNameTLV_tlv);
 				}else {
-					log.warning("NO SYMBOLIC PATH NAME TLV!!!" );
+					log.warn("NO SYMBOLIC PATH NAME TLV!!!" );
 				}
 				//FIXME: CREATE ENDPOINTS
 				lsp.setLspId(mdlsp.getDomainLSPIDMap().get(domain));
@@ -404,7 +405,7 @@ public class IniProcessorThread extends Thread{
 				 
 				 
 			}catch (Exception e){
-				log.severe("PROBLEM SENDING THE DELETES");
+				log.error("PROBLEM SENDING THE DELETES");
 			}
 			
 		}
