@@ -6,7 +6,8 @@ import java.util.Calendar;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Timer;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import es.tid.pce.computingEngine.RequestDispatcher;
 import es.tid.pce.pcep.PCEPProtocolViolationException;
@@ -39,8 +40,8 @@ import es.tid.tedb.TEDB;
  * <p> Requests will be forwarded to the RequestQueue, which puts them in a queue
  * and are processing by the set of Request Processor Threads </p>
  * 
- * @author Oscar Gonzalez de Dios
- * @author Eduardo Azanon Teruel
+ * @author Oscar Gonz�lez de Dios
+ * @author Eduardo Aza��n Teruel
 */
 public class ParentPCESession extends GenericPCEPSession{
 	
@@ -76,7 +77,7 @@ public class ParentPCESession extends GenericPCEPSession{
 		super(pcepSessionManager);
 		//super("ParentPCESession");
 		this.setFSMstate(PCEPValues.PCEP_STATE_IDLE);
-		log=Logger.getLogger("PCEServer");
+		log=LoggerFactory.getLogger("PCEServer");
 		log.info("New Parent PCESession: "+s);
 		this.socket = s;
 		this.requestDispatcher=requestDispatcher;
@@ -117,7 +118,7 @@ public class ParentPCESession extends GenericPCEPSession{
 //					out.close();
 //				} catch (IOException e1) {
 //				}
-				log.warning("Finishing PCEP Session abruptly");
+				log.warn("Finishing PCEP Session abruptly");
 				this.killSession();
 				return;
 			}
@@ -127,24 +128,24 @@ public class ParentPCESession extends GenericPCEPSession{
 				switch(PCEPMessage.getMessageType(this.msg)) {
 				
 				case PCEPMessageTypes.MESSAGE_OPEN:
-					log.fine("OPEN message received");
+					log.debug("OPEN message received");
 					//After the session has been started, ignore subsequent OPEN messages
-					log.warning("OPEN message ignored");
+					log.warn("OPEN message ignored");
 					break;
 					
 				case PCEPMessageTypes.MESSAGE_KEEPALIVE:
-					log.fine("PCEP KEEPALIVE message received from "+this.remotePeerIP);
+					log.debug("PCEP KEEPALIVE message received from "+this.remotePeerIP);
 					//The Keepalive message allows to reset the deadtimer
 					break;
 					
 				case PCEPMessageTypes.MESSAGE_CLOSE:
-					log.fine("CLOSE message received from "+this.remotePeerIP);
+					log.debug("CLOSE message received from "+this.remotePeerIP);
 					try {
 						PCEPClose m_close=new PCEPClose(this.msg);
-						log.warning("Closing due to reason "+m_close.getReason());
+						log.warn("Closing due to reason "+m_close.getReason());
 						this.killSession();
 					} catch (PCEPProtocolViolationException e1) {
-						log.warning("Problem decoding message, closing session"+e1.getMessage());
+						log.warn("Problem decoding message, closing session"+e1.getMessage());
 						this.killSession();
 						return;
 					}
@@ -154,14 +155,18 @@ public class ParentPCESession extends GenericPCEPSession{
 					if (this.localPcepCapability.isStateful()) {
 						log.info("Received report from "+this.remotePeerIP);
 						PCEPReport pcrpt;
+						//log.info("Message: "+()msg.toString());
+
 						try {
+							//log.info("Report before");
 							pcrpt=new PCEPReport(msg);
+							//log.info("Report after");
 							Iterator<StateReport> it= pcrpt.getStateReportList().iterator();
 							while (it.hasNext()){
 								StateReport sr=it.next();
 								SRP srp=sr.getSRP();
 								if (srp!=null) {
-									log.info("SRP Id: "+ sr.getSRP().getSRP_ID_number());
+									//log.info("SRP Id: "+ sr.getSRP().getSRP_ID_number());
 									Object lock=childPCERequestManager.inilocks.get(sr.getSRP().getSRP_ID_number());
 									if (lock!=null){
 										synchronized (lock) {
@@ -178,15 +183,15 @@ public class ParentPCESession extends GenericPCEPSession{
 							// TODO Auto-generated catch block
 							e.printStackTrace();
 							break;
-						}					
+						}
 					}else {
-						log.warning("PCE is NOT stateful, ignored report from "+this.remotePeerIP);		
+						log.warn("PCE is NOT stateful, ignored report from "+this.remotePeerIP);		
 					}
 						
 					break;
 					
 				case PCEPMessageTypes.MESSAGE_ERROR:
-					log.fine("ERROR message received");
+					log.debug("ERROR message received");
 					//Up to now... we do not do anything in the server side
 					break;
 					
@@ -204,11 +209,11 @@ public class ParentPCESession extends GenericPCEPSession{
 								LinkedList<ReachabilityTLV>  reachabilityTLVList=m_not.getNotifyList().get(i).getNotificationList().get(0).getReachabilityTLVList();
 								//DomainIDTLV domainIDTLV ==m_not.getNotifyList().get(i).getNotificationList().get(0).g
 								if (reachabilityTLVList!=null){
-									log.fine("Reachability TLV List not null and size "+reachabilityTLVList.size());
+									log.debug("Reachability TLV List not null and size "+reachabilityTLVList.size());
 
 									for (int ii=0;ii<reachabilityTLVList.size();++ii){
 										LinkedList<EROSubobject> EROSubobjectList= reachabilityTLVList.get(ii).getEROSubobjectList();
-										log.fine("EROSubobjectList size "+EROSubobjectList.size());
+										log.debug("EROSubobjectList size "+EROSubobjectList.size());
 										for (int jj=0;jj< EROSubobjectList.size();++jj){
 										
 											//rm.addEROSubobject(remoteDomainId, reachabilityTLVList.get(ii).EROSubobjectList.get(jj));											
@@ -221,7 +226,7 @@ public class ParentPCESession extends GenericPCEPSession{
 								
 							}
 							else if (notifType==ObjectParameters.PCEP_NOTIFICATION_TYPE_TOPOLOGY){
-								log.finest("Topology Notification received");
+								log.debug("Topology Notification received");
 								//mdt.processNotification(m_not.getNotifyList().get(i).getNotificationList().get(0),this.remotePCEId,this.remoteDomainId);
 							}
 							else if (notifType==ObjectParameters.PCEP_NOTIFICATION_TYPE_IT_RESOURCE_INFORMATION){
@@ -230,7 +235,7 @@ public class ParentPCESession extends GenericPCEPSession{
 							
 						}
 					} catch (PCEPProtocolViolationException e1) {
-						log.warning("Problem decoding notify message, ignoring message"+e1.getMessage());
+						log.warn("Problem decoding notify message, ignoring message"+e1.getMessage());
 						e1.printStackTrace();
 					}
 					//FIXME: COMPLETARRRRR
@@ -280,12 +285,12 @@ public class ParentPCESession extends GenericPCEPSession{
                      this.mdiniDispatcher.dispathInitiate(p_ini,out,this.remotePeerIP );
 					break;
 				default:
-					log.warning("ERROR: unexpected message from "+this.remotePeerIP);
+					log.warn("ERROR: unexpected message from "+this.remotePeerIP);
 					pceMsg = false;
 				}
 				
 				if (pceMsg) {
-					log.fine("Reseting Dead Timer as PCEP Message has arrived in "+this.remotePeerIP);
+					log.debug("Reseting Dead Timer as PCEP Message has arrived in "+this.remotePeerIP);
 					resetDeadTimer();
 				}
 			} 
@@ -294,25 +299,25 @@ public class ParentPCESession extends GenericPCEPSession{
 	}
 	
 //	public void killSession(){
-//		log.warning("Killing Session");
+//		log.warn("Killing Session");
 //		childPCERequestManager.removeDomain(this.remoteDomainId);
 //		timer.cancel();
 //		this.endConnections();
 //		this.cancelDeadTimer();
 //		this.cancelKeepAlive();
 //		this.endSession();
-//		log.warning("Interrupting thread!!!!");
+//		log.warn("Interrupting thread!!!!");
 //		this.interrupt();				
 //	}
 //	
 	public void endSession(){
-		log.severe("Removing domain "+this.remoteDomainId+" due to endSession from "+this.remotePeerIP);
+		log.error("Removing domain "+this.remoteDomainId+" due to endSession from "+this.remotePeerIP);
 		childPCERequestManager.removeDomain(this.remoteDomainId);
 	}
 	
 	/**
 	 * USE THIS COUNTER TO GET NEW IDS IN THE REQUESTS
-	 * @return id
+	 * @return reqid int
 	 */
 	synchronized static public int getNewReqIDCounter(){
 		int newReqId;

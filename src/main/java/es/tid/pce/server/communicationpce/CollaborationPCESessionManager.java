@@ -1,7 +1,8 @@
 package es.tid.pce.server.communicationpce;
 
 import java.io.IOException;
-import java.util.logging.FileHandler;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import es.tid.pce.pcep.PCEPProtocolViolationException;
 import es.tid.pce.pcep.messages.PCEPMessage;
@@ -18,9 +19,9 @@ public class CollaborationPCESessionManager {
 	public CollaborationPCESessionManager(){
 		openedSessionsManager= new OpenedSessionsManager();
 		/*Creamos el logger donde vamos a escribir los attemps*/
-		FileHandler fh1;
+		//FileHandler fh1;
 	
-//		log = Logger.getLogger("CollaborationPCESessionManager");
+//		log = LoggerFactory.getLogger("CollaborationPCESessionManager");
 //		try {
 //			fh1=new FileHandler("CollaborationPCESessionManager.log");
 //			fh1.setFormatter(new SimpleFormatter());
@@ -52,7 +53,7 @@ public class CollaborationPCESessionManager {
 				}
 			}
 		} catch (IOException e) {
-			//log.warning("Error sending msg: " + e.getMessage());
+			//log.warn("Error sending msg: " + e.getMessage());
 		
 		}
 	}

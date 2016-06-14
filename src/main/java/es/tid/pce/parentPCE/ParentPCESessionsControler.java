@@ -1,7 +1,8 @@
 package es.tid.pce.parentPCE;
 
 import java.util.HashSet;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ParentPCESessionsControler extends SecurityManager  {
 	
@@ -21,7 +22,7 @@ public class ParentPCESessionsControler extends SecurityManager  {
 	
 	public ParentPCESessionsControler(){
 		super();
-		log = Logger.getLogger("PCEServer");
+		log = LoggerFactory.getLogger("PCEServer");
 		acceptList=new HashSet<String>();
 		blackList=new HashSet<String>();
 		activeSessionList=new HashSet<String>();		

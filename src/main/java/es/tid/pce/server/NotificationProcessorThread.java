@@ -2,7 +2,8 @@ package es.tid.pce.server;
 
 import java.util.LinkedList;
 import java.util.concurrent.LinkedBlockingQueue;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import es.tid.pce.pcep.constructs.Notify;
 import es.tid.pce.pcep.objects.Notification;
@@ -32,7 +33,7 @@ public class NotificationProcessorThread extends Thread {
 		this.notificationList=notificationList;
 		this.reservationManager=reservationManager;
 
-		log=Logger.getLogger("PCEServer");
+		log=LoggerFactory.getLogger("PCEServer");
 		
 	}
 	public void run(){	

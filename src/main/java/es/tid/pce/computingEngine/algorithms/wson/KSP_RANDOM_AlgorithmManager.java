@@ -6,7 +6,11 @@ import es.tid.pce.computingEngine.algorithms.ComputingAlgorithmManager;
 import es.tid.pce.computingEngine.algorithms.ComputingAlgorithmPreComputation;
 import es.tid.pce.computingEngine.algorithms.multiLayer.OperationsCounter;
 import es.tid.pce.server.wson.ReservationManager;
+import es.tid.tedb.DomainTEDB;
 import es.tid.tedb.TEDB;
+
+import java.net.Inet4Address;
+import java.util.Hashtable;
 
 public class KSP_RANDOM_AlgorithmManager implements ComputingAlgorithmManager{
 	
@@ -35,6 +39,12 @@ public class KSP_RANDOM_AlgorithmManager implements ComputingAlgorithmManager{
 	@Override
 	public ComputingAlgorithm getComputingAlgorithm(ComputingRequest pathReq,
 			TEDB ted, OperationsCounter OPcounter) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	@Override
+	public ComputingAlgorithm getComputingAlgorithm(ComputingRequest pathReq,
+													TEDB ted, Hashtable<Inet4Address,DomainTEDB> intraTEDBs) {
 		// TODO Auto-generated method stub
 		return null;
 	}

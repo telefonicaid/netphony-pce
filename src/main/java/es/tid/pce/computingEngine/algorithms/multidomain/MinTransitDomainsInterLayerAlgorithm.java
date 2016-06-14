@@ -3,7 +3,8 @@ package es.tid.pce.computingEngine.algorithms.multidomain;
 import java.net.Inet4Address;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import org.jgrapht.GraphPath;
 import org.jgrapht.alg.DijkstraShortestPath;
@@ -54,7 +55,7 @@ import es.tid.tedb.TEDB;
 
 public class MinTransitDomainsInterLayerAlgorithm implements ComputingAlgorithm{
 	private DirectedWeightedMultigraph<Object,InterDomainEdge> networkGraph;
-	private Logger log=Logger.getLogger("PCEServer");
+	private Logger log=LoggerFactory.getLogger("PCEServer");
 	private ComputingRequest pathReq;
 	private ChildPCERequestManager childPCERequestManager;
 	private ReachabilityManager reachabilityManager;
@@ -143,7 +144,7 @@ public class MinTransitDomainsInterLayerAlgorithm implements ComputingAlgorithm{
 		log.info("Check if SRC and Dest domains are OK");
 		if ((dest_domain_id==null)||(source_domain_id==null)){
 			//ONE OF THEM IS NOT REACHABLE, SEND NOPATH!!!
-			log.warning("One of the domains is not reachable, sending NOPATH");
+			log.warn("One of the domains is not reachable, sending NOPATH");
 			NoPath noPath= new NoPath();
 			noPath.setNatureOfIssue(ObjectParameters.NOPATH_NOPATH_SAT_CONSTRAINTS);
 			response.setNoPath(noPath);
@@ -151,17 +152,17 @@ public class MinTransitDomainsInterLayerAlgorithm implements ComputingAlgorithm{
 			return m_resp;
 		}
 		if (!((networkGraph.containsVertex(source_domain_id))&&(networkGraph.containsVertex(dest_domain_id)))){
-			log.warning("Source or destination domains are NOT in the TED");
+			log.warn("Source or destination domains are NOT in the TED");
 			//FIXME: VER ESTE CASO
 			NoPath noPath= new NoPath();
 			noPath.setNatureOfIssue(ObjectParameters.NOPATH_NOPATH_SAT_CONSTRAINTS);
 			NoPathTLV noPathTLV=new NoPathTLV();
 			if (!((networkGraph.containsVertex(source_router_id_addr)))){
-				log.finest("Unknown source domain");	
+				log.debug("Unknown source domain");	
 				noPathTLV.setUnknownSource(true);	
 			}
 			if (!((networkGraph.containsVertex(dest_router_id_addr)))){
-				log.finest("Unknown destination domain");
+				log.debug("Unknown destination domain");
 				noPathTLV.setUnknownDestination(true);	
 			}
 			
@@ -171,7 +172,7 @@ public class MinTransitDomainsInterLayerAlgorithm implements ComputingAlgorithm{
 			return m_resp;
 		}
 		if (source_domain_id.equals(dest_domain_id)){
-			log.warning("Source and destination domain is the same, case not allowed");
+			log.warn("Source and destination domain is the same, case not allowed");
 			NoPath noPath2= new NoPath();
 			noPath2.setNatureOfIssue(ObjectParameters.NOPATH_NOPATH_SAT_CONSTRAINTS);
 			NoPathTLV noPathTLV=new NoPathTLV();
@@ -192,7 +193,7 @@ public class MinTransitDomainsInterLayerAlgorithm implements ComputingAlgorithm{
 		
 		GraphPath<Object,InterDomainEdge> gp=dsp.getPath();
 		if (gp==null){
-			log.severe("Problem getting the domain sequence");
+			log.error("Problem getting the domain sequence");
 			NoPath noPath2= new NoPath();
 			noPath2.setNatureOfIssue(ObjectParameters.NOPATH_NOPATH_SAT_CONSTRAINTS);
 			NoPathTLV noPathTLV=new NoPathTLV();
@@ -498,7 +499,7 @@ public class MinTransitDomainsInterLayerAlgorithm implements ComputingAlgorithm{
 		try {
 			respList=childPCERequestManager.executeRequests(reqList, domainList);	
 		}catch (Exception e){
-			log.severe("PROBLEM SENDING THE REQUESTS");
+			log.error("PROBLEM SENDING THE REQUESTS");
 			NoPath noPath2= new NoPath();
 			noPath2.setNatureOfIssue(ObjectParameters.NOPATH_NOPATH_SAT_CONSTRAINTS);
 			NoPathTLV noPathTLV=new NoPathTLV();
@@ -555,7 +556,7 @@ public class MinTransitDomainsInterLayerAlgorithm implements ComputingAlgorithm{
 			}
 		}
 		if (childrenFailed==true){
-			log.warning("Some child has failed");
+			log.warn("Some child has failed");
 			NoPath noPath= new NoPath();
 			response.setNoPath(noPath);
 		}

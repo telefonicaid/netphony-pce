@@ -2,7 +2,8 @@ package es.tid.pce.server;
 import java.net.Inet4Address;
 import java.util.LinkedList;
 import java.util.TimerTask;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import es.tid.ospf.ospfv2.lsa.InterASTEv2LSA;
 import es.tid.ospf.ospfv2.lsa.tlv.LinkTLV;
@@ -33,7 +34,7 @@ public class SendTopologyTask extends TimerTask {
 		 */
 	   SendTopologyTask(DomainTEDB tedb,ChildPCESessionManager pcm) {
            this.tedb = tedb;
-           this.log =Logger.getLogger("PCEServer");
+           this.log =LoggerFactory.getLogger("PCEServer");
            this.pcm = pcm;         
        }
 
@@ -48,7 +49,7 @@ public class SendTopologyTask extends TimerTask {
     	LinkedList<InterDomainEdge> interDomainLinks= tedb.getInterDomainLinks();
     	int size = interDomainLinks.size();
     	if (size == 0){
-    		log.warning("Size 0. There is not interdomain links");
+    		log.warn("Size 0. There is not interdomain links");
     	}
     	for (int i=0;i<size;i++){
     		log.info("Source: "+interDomainLinks.get(i).getSrc_router_id()+"\tInterface id: "+interDomainLinks.get(i).getSrc_if_id()

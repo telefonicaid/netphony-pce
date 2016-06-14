@@ -9,7 +9,8 @@ package es.tid.pce.computingEngine;
 
 import java.net.Inet4Address;
 import java.util.concurrent.LinkedBlockingQueue;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import es.tid.pce.pcep.messages.PCEPReport;
 import es.tid.pce.server.PCEServerParameters;
@@ -29,7 +30,7 @@ public class ReportProcessorThread extends Thread
 		
 	public ReportProcessorThread( LinkedBlockingQueue<PCEPReport> reportMessageQueue, ReportDB_Handler lspDB) 
 	{
-		log=Logger.getLogger("PCEServer");
+		log=LoggerFactory.getLogger("PCEServer");
 		running = true;
 		this.lspDB = lspDB;
 		this.reportMessageQueue = reportMessageQueue;
@@ -47,7 +48,7 @@ public class ReportProcessorThread extends Thread
 			}
 			catch(InterruptedException e)
 			{
-				log.warning("Interrupted Exception Captured in ReportProcessorThread");
+				log.warn("Interrupted Exception Captured in ReportProcessorThread");
 				e.printStackTrace();
 				break;
 			}

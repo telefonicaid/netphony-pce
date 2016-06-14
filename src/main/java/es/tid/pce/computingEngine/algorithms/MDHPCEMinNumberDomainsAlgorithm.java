@@ -5,7 +5,8 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import org.jgrapht.GraphPath;
 import org.jgrapht.alg.DijkstraShortestPath;
@@ -78,7 +79,7 @@ import es.tid.tedb.TEDB;
  */
 public class MDHPCEMinNumberDomainsAlgorithm implements ComputingAlgorithm{
 	private DirectedWeightedMultigraph<Object,InterDomainEdge> networkGraph;
-	private Logger log=Logger.getLogger("PCEServer");
+	private Logger log=LoggerFactory.getLogger("PCEServer");
 	private ComputingRequest pathReq;
 	private ChildPCERequestManager childPCERequestManager;
 	private ReachabilityManager reachabilityManager;
@@ -143,10 +144,10 @@ public class MDHPCEMinNumberDomainsAlgorithm implements ComputingAlgorithm{
 		log.info("MD Request from "+source_router_id_addr+" (domain "+source_domain_id+") to "+ dest_router_id_addr+" (domain "+dest_domain_id+")");
 
 		//CHECK IF DOMAIN_ID ARE NULL!!!!!!
-		log.fine("Check if SRC and Dest domains are OK");
+		log.debug("Check if SRC and Dest domains are OK");
 		if ((dest_domain_id==null)||(source_domain_id==null)){
 			//ONE OF THEM IS NOT REACHABLE, SEND NOPATH!!!
-			log.warning("One of the domains is not reachable, sending NOPATH");
+			log.warn("One of the domains is not reachable, sending NOPATH");
 			NoPath noPath= new NoPath();
 			noPath.setNatureOfIssue(ObjectParameters.NOPATH_NOPATH_SAT_CONSTRAINTS);
 			response.setNoPath(noPath);
@@ -158,17 +159,17 @@ public class MDHPCEMinNumberDomainsAlgorithm implements ComputingAlgorithm{
 			while (it.hasNext()){
 				log.info(it.next().toString());
 			}
-			log.warning("Source or destination domains are NOT in the TED");
+			log.warn("Source or destination domains are NOT in the TED");
 			//FIXME: VER ESTE CASO
 			NoPath noPath= new NoPath();
 			noPath.setNatureOfIssue(ObjectParameters.NOPATH_NOPATH_SAT_CONSTRAINTS);
 			NoPathTLV noPathTLV=new NoPathTLV();
 			if (!((networkGraph.containsVertex(source_router_id_addr)))){
-				log.finest("Unknown source domain");	
+				log.debug("Unknown source domain");	
 				noPathTLV.setUnknownSource(true);	
 			}
 			if (!((networkGraph.containsVertex(dest_router_id_addr)))){
-				log.finest("Unknown destination domain");
+				log.debug("Unknown destination domain");
 				noPathTLV.setUnknownDestination(true);	
 			}
 
@@ -214,7 +215,7 @@ public class MDHPCEMinNumberDomainsAlgorithm implements ComputingAlgorithm{
 
 		GraphPath<Object,InterDomainEdge> gp=dsp.getPath();
 		if (gp==null){
-			log.severe("Problem getting the domain sequence");
+			log.error("Problem getting the domain sequence");
 			NoPath noPath2= new NoPath();
 			noPath2.setNatureOfIssue(ObjectParameters.NOPATH_NOPATH_SAT_CONSTRAINTS);
 			NoPathTLV noPathTLV=new NoPathTLV();
@@ -575,7 +576,7 @@ public class MDHPCEMinNumberDomainsAlgorithm implements ComputingAlgorithm{
 		try {
 			respList=childPCERequestManager.executeRequests(reqList, domainList);	
 		}catch (Exception e){
-			log.severe("PROBLEM SENDING THE REQUESTS");
+			log.error("PROBLEM SENDING THE REQUESTS");
 			NoPath noPath2= new NoPath();
 			noPath2.setNatureOfIssue(ObjectParameters.NOPATH_NOPATH_SAT_CONSTRAINTS);
 			NoPathTLV noPathTLV=new NoPathTLV();
@@ -699,7 +700,7 @@ public class MDHPCEMinNumberDomainsAlgorithm implements ComputingAlgorithm{
 								if (j<edge_list.size()){						
 									unnumberIfDEROSubobj.setInterfaceID(edge_list.get(j).getSrc_if_id());
 									unnumberIfDEROSubobj.setRouterID((Inet4Address)edge_list.get(j).getSrc_router_id());
-									log.fine(" eroExternal "+unnumberIfDEROSubobj.toString());
+									log.debug(" eroExternal "+unnumberIfDEROSubobj.toString());
 									//ero.addEROSubobject(unnumberIfDEROSubobj);
 									addEROifnotexists(ero,unnumberIfDEROSubobj);
 									addEROifnotexists(ero2,unnumberIfDEROSubobj);
@@ -719,22 +720,17 @@ public class MDHPCEMinNumberDomainsAlgorithm implements ComputingAlgorithm{
 		
 		
 		if (childrenFailed==true){
-			log.warning("Some child has failed");
+			log.warn("Some child has failed");
 			NoPath noPath= new NoPath();
 			response.setNoPath(noPath);
 		}
 		else {
-			log.fine("AAAA");
 			if (label_continuity) {
-				log.fine("bbbb");
 				if (use_elc){
-					log.fine("cccc");
-					if (label!=null) {
-						
+					if (label!=null) {			
 						explicit_label =true;
-						log.fine("ddd");
 						if (no_lambda==true){
-							log.warning("NO LABEL!!!");
+							log.warn("NO LABEL!!!");
 							NoPath noPath= new NoPath();
 							response.setNoPath(noPath);
 								
@@ -753,14 +749,14 @@ public class MDHPCEMinNumberDomainsAlgorithm implements ComputingAlgorithm{
 								path.setEro(ero);
 								response.addPath(path);	
 							}else {
-								log.warning("NO LABEL!!!");
+								log.warn("NO LABEL!!!");
 								NoPath noPath= new NoPath();
 								response.setNoPath(noPath);
 							}
 						}
 							
 					}else {
-						log.warning("NO LABEL!!!");
+						log.warn("NO LABEL!!!");
 						NoPath noPath= new NoPath();
 						response.setNoPath(noPath);
 					}

@@ -1,14 +1,15 @@
 package es.tid.pce.parentPCE;
 
-import java.net.Inet4Address;
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.logging.Logger;
-
 import es.tid.bgp.bgp4.messages.BGP4Update;
 import es.tid.bgp.bgp4Peer.updateTEDB.UpdateProccesorThread;
 import es.tid.pce.pcep.objects.Notification;
 import es.tid.tedb.ITMDTEDB;
 import es.tid.tedb.MDTEDB;
+
+import java.net.Inet4Address;
+import java.util.concurrent.LinkedBlockingQueue;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class MultiDomainTopologyUpdater {
 	
@@ -26,20 +27,20 @@ public class MultiDomainTopologyUpdater {
 	/**
 	 * BGP
 	 */
-	 private boolean bgpActivated=false;
+	private boolean bgpActivated=false;
 	private LinkedBlockingQueue<BGP4Update> updateList;
 	private UpdateProccesorThread updateProccesorThread;
 	
 	
 	public MultiDomainTopologyUpdater(MDTEDB multiDomainTEDB, boolean bgpActivated){
-		log=Logger.getLogger("MultiDomainTologyUpdater");
+		log=LoggerFactory.getLogger("MultiDomainTologyUpdater");
 		multiDomainUpdateQueue= new LinkedBlockingQueue<MultiDomainUpdate>();
 		this.multiDomainTEDB=multiDomainTEDB;
 		this.bgpActivated=bgpActivated;
 	}
 	
 	public MultiDomainTopologyUpdater(ITMDTEDB ITmultiDomainTEDB){
-		log=Logger.getLogger("PCEServer");
+		log=LoggerFactory.getLogger("PCEServer");
 		multiDomainUpdateQueue= new LinkedBlockingQueue<MultiDomainUpdate>();
 		this.updateList=new LinkedBlockingQueue<BGP4Update>();
 		this.ITmultiDomainTEDB=ITmultiDomainTEDB;

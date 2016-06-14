@@ -9,7 +9,8 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import es.tid.pce.computingEngine.ComputingRequest;
 import es.tid.pce.computingEngine.ComputingResponse;
@@ -61,8 +62,8 @@ public class LocalChildRequestManager {
 		workQueue=new LinkedBlockingQueue<Runnable>();
 		executor= new ThreadPoolExecutor(corePoolSize, maximumPoolSize,keepAliveTime, TimeUnit.SECONDS,workQueue);
 		
-		log = Logger.getLogger("PCEServer");
-		logGUI=Logger.getLogger("GUILogger");
+		log = LoggerFactory.getLogger("PCEServer");
+		logGUI=LoggerFactory.getLogger("GUILogger");
 		
 	}
 	

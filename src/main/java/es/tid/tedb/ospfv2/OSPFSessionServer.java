@@ -7,7 +7,8 @@ import java.io.IOException;
 import java.net.Inet4Address;
 import java.net.InetAddress;
 import java.util.concurrent.LinkedBlockingQueue;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import es.tid.rocksaw.net.RawSocket;
 
@@ -36,14 +37,14 @@ public class OSPFSessionServer extends Thread {
 		
 	OSPFSession OSPFsession;
 	public OSPFSessionServer(LinkedBlockingQueue<OSPFv2LinkStateUpdatePacket> ospfv2PacketQueue,Inet4Address NodeLocalAddress){
-		log=Logger.getLogger("OSPFParser");
+		log=LoggerFactory.getLogger("OSPFParser");
 		this.ospfv2PacketQueue = ospfv2PacketQueue;
 		log.info("PCD Address: "+NodeLocalAddress.toString());
 		nodeLocalAddress=NodeLocalAddress;
 	}
 
 	public OSPFSessionServer(LinkedBlockingQueue<OSPFv2LinkStateUpdatePacket> ospfv2PacketQueue, LinkedBlockingQueue<OSPFv2LinkStateUpdatePacket> redisOspfv2PacketQueue,Inet4Address NodeLocalAddress){
-		log=Logger.getLogger("OSPFParser");
+		log=LoggerFactory.getLogger("OSPFParser");
 		this.ospfv2PacketQueue = ospfv2PacketQueue;
 		this.redisOspfv2PacketQueue = redisOspfv2PacketQueue;
 		log.info("PCD Address: "+NodeLocalAddress.toString());
@@ -81,7 +82,7 @@ public class OSPFSessionServer extends Thread {
 				log.info("OSPF Unicast RAW Socket opened");
 			}
 		}catch(IOException e){
-			log.severe("Exception produced::"+e.toString());
+			log.error("Exception produced::"+e.toString());
 		}
 		
 
@@ -107,7 +108,7 @@ public class OSPFSessionServer extends Thread {
 				
 			} catch (Exception e1) {
 				e1.printStackTrace();
-				log.warning("OSPF Socket ends::"+e1.toString());
+				log.warn("OSPF Socket ends::"+e1.toString());
 				return;
 			}
 
@@ -138,7 +139,7 @@ public class OSPFSessionServer extends Thread {
 			r = socket.read (temp, 0, length);
 	
 		}catch (IOException e){
-			log.warning("Salgo por excepcion");
+			log.warn("Salgo por excepcion");
 			throw e;
 
 		}catch (Exception e) {		
@@ -163,11 +164,11 @@ public class OSPFSessionServer extends Thread {
 			try {
 				r = socket.read(msg, offset, 1000);
 			}catch (IOException e){
-				log.severe("Salgo por excepcion. Error reading data: "+ e.getMessage());
+				log.error("Salgo por excepcion. Error reading data: "+ e.getMessage());
 				throw e;
 
 			}catch (Exception e) {	
-				log.warning("Otra excepción");
+				log.warn("Otra excepción");
 
 				throw new IOException();
 			}

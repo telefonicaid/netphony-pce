@@ -6,7 +6,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import org.jgrapht.GraphPath;
 import org.jgrapht.graph.SimpleDirectedWeightedGraph;
@@ -56,7 +57,7 @@ public class SVEC_Dynamic_RSA implements ComputingAlgorithm{
 	/**
 	 * The Logger.
 	 */
-	private Logger log=Logger.getLogger("PCEServer");
+	private Logger log=LoggerFactory.getLogger("PCEServer");
 	
 	/**
 	 * The Path Computing Request to calculate.
@@ -111,7 +112,7 @@ public class SVEC_Dynamic_RSA implements ComputingAlgorithm{
 		long tiempoReservaTotal = 0;
 		int num_responses=0;
 		graphLock=new ReentrantLock();
-		log.finest("Starting Dynamic_RSA Algorithm");
+		log.debug("Starting Dynamic_RSA Algorithm");
 		//Create the response message
 		//It will contain either the path or noPath
 		ComputingResponse m_resp=new ComputingResponse();
@@ -200,18 +201,18 @@ public class SVEC_Dynamic_RSA implements ComputingAlgorithm{
 			}
 	
 			//Now, check if the source and destination are in the TED.
-			log.fine("Source: "+source_router_id_addr+"; Destination:"+dest_router_id_addr);
+			log.debug("Source: "+source_router_id_addr+"; Destination:"+dest_router_id_addr);
 			if (!(((ted.containsVertex(source_router_id_addr))&&(ted.containsVertex(dest_router_id_addr))))){
-				log.warning("Source or destination are NOT in the TED");	
+				log.warn("Source or destination are NOT in the TED");	
 				NoPath noPath= new NoPath();
 				noPath.setNatureOfIssue(ObjectParameters.NOPATH_NOPATH_SAT_CONSTRAINTS);
 				NoPathTLV noPathTLV=new NoPathTLV();
 				if (!((ted.containsVertex(source_router_id_addr)))){
-					log.finest("Unknown source");	
+					log.debug("Unknown source");	
 					noPathTLV.setUnknownSource(true);	
 				}
 				if (!((ted.containsVertex(dest_router_id_addr)))){
-					log.finest("Unknown destination");
+					log.debug("Unknown destination");
 					noPathTLV.setUnknownDestination(true);	
 				}
 	
@@ -242,7 +243,7 @@ public class SVEC_Dynamic_RSA implements ComputingAlgorithm{
 				if (req.getMetricList().size()!=0){
 					Metric metric=new Metric();
 					metric.setMetricType(req.getMetricList().get(0).getMetricType() );
-					log.fine("Number of hops "+0);
+					log.debug("Number of hops "+0);
 					float metricValue=0;
 					metric.setMetricValue(metricValue);
 					path.getMetricList().add(metric);

@@ -2,7 +2,8 @@ package es.tid.pce.server.communicationpce;
 
 
 import java.util.Timer;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import es.tid.pce.pcepsession.PCEPSessionsInformation;
 import es.tid.pce.server.NotificationDispatcher;
@@ -21,7 +22,7 @@ public class BackupSessionManager{
 		this.params=params;
 		this.ted=ted;
 		this.collaborationPCESessionManager=collaborationPCESessionManager;
-		log=Logger.getLogger("PCCClient");
+		log=LoggerFactory.getLogger("PCCClient");
 		this.notificationDispatcher= notificationDispatcher;
 	}
 	public void manageBackupPCESession(){	

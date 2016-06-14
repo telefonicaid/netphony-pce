@@ -3,7 +3,8 @@ package es.tid.pce.computingEngine.algorithms.wson;
 import java.net.Inet4Address;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import org.jgrapht.GraphPath;
 import org.jgrapht.alg.DijkstraShortestPath;
@@ -54,7 +55,7 @@ public class AURE_Algorithm implements ComputingAlgorithm {
 	/**
 	* The Logger.
 	*/
-	private Logger log=Logger.getLogger("PCEServer");
+	private Logger log=LoggerFactory.getLogger("PCEServer");
 	
 	/**
 	 * The Path Computing Request to calculate.
@@ -155,16 +156,16 @@ public class AURE_Algorithm implements ComputingAlgorithm {
 
 		//Now, check if the source and destination are in the TED.
 		if (!(((ted.containsVertex(source_router_id_addr))&&(ted.containsVertex(dest_router_id_addr))))){
-			log.warning("Source or destination are NOT in the TED");	
+			log.warn("Source or destination are NOT in the TED");	
 			NoPath noPath= new NoPath();
 			noPath.setNatureOfIssue(ObjectParameters.NOPATH_NOPATH_SAT_CONSTRAINTS);
 			NoPathTLV noPathTLV=new NoPathTLV();
 			if (!((ted.containsVertex(source_router_id_addr)))){
-				log.finest("Unknown source");	
+				log.debug("Unknown source");	
 				noPathTLV.setUnknownSource(true);	
 			}
 			if (!((ted.containsVertex(dest_router_id_addr)))){
-				log.finest("Unknown destination");
+				log.debug("Unknown destination");
 				noPathTLV.setUnknownDestination(true);	
 			}
 
@@ -179,7 +180,7 @@ public class AURE_Algorithm implements ComputingAlgorithm {
 		int lambda_chosen=0;//We begin with lambda index 0
 
 		double max_metric=Integer.MAX_VALUE;
-		log.fine("Starting the computation");
+		log.debug("Starting the computation");
 		GraphPath<Object,IntraDomainEdge> gp_chosen=null;
 		preComp.getGraphLock().lock();
 		try{

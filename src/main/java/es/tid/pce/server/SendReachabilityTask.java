@@ -2,7 +2,8 @@ package es.tid.pce.server;
 
 import java.util.LinkedList;
 import java.util.TimerTask;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import es.tid.pce.pcep.constructs.Notify;
 import es.tid.pce.pcep.messages.PCEPNotification;
@@ -24,7 +25,7 @@ public class SendReachabilityTask extends TimerTask{
 		 */
 	   SendReachabilityTask(DomainTEDB tedb,ChildPCESessionManager pcm) {
            this.tedb = tedb;
-           this.log =Logger.getLogger("PCEServer");
+           this.log =LoggerFactory.getLogger("PCEServer");
            this.pcm = pcm;         
        }
 	@Override

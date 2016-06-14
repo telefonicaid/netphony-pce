@@ -4,7 +4,8 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Inet4Address;
 import java.util.List;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import org.jgrapht.GraphPath;
 import org.jgrapht.alg.DijkstraShortestPath;
@@ -39,7 +40,7 @@ public class RequestProcessor implements Runnable {
 	
 	private PCEPRequest req;
 	private DataOutputStream out;
-	private Logger log=Logger.getLogger("PCEServer");;
+	private Logger log=LoggerFactory.getLogger("PCEServer");;
 	
 	private TEDB ted;
 	private SimpleDirectedWeightedGraph<Object,IntraDomainEdge> networkGraph;
@@ -124,7 +125,7 @@ public class RequestProcessor implements Runnable {
 						resp.encode();
 					} catch (PCEPProtocolViolationException e1) {
 						// TODO Auto-generated catch block
-						log.severe("Response from Parent PCE not valid!!!!!");
+						log.error("Response from Parent PCE not valid!!!!!");
 						return;
 					}
 					log.info("Request from Parent PCE processeed, about to send response");
@@ -137,7 +138,7 @@ public class RequestProcessor implements Runnable {
 				return;				
 			}
 			else{
-				log.warning("Source or destination are NOT in the TED");
+				log.warn("Source or destination are NOT in the TED");
 				ComputingResponse m_resp=new ComputingResponse();
 				Response response=new Response();
 				RequestParameters rp = new RequestParameters();
@@ -147,11 +148,11 @@ public class RequestProcessor implements Runnable {
 				noPath.setNatureOfIssue(ObjectParameters.NOPATH_NOPATH_SAT_CONSTRAINTS);
 				NoPathTLV noPathTLV=new NoPathTLV();
 				if (!((networkGraph.containsVertex(source_router_id_addr)))){
-					log.finest("Unknown source");	
+					log.debug("Unknown source");	
 					noPathTLV.setUnknownSource(true);	
 				}
 				if (!((networkGraph.containsVertex(dest_router_id_addr)))){
-					log.finest("Unknown destination");
+					log.debug("Unknown destination");
 					noPathTLV.setUnknownDestination(true);	
 				}
 				
@@ -162,7 +163,7 @@ public class RequestProcessor implements Runnable {
 					m_resp.encode();
 				} catch (PCEPProtocolViolationException e1) {
 					// TODO Auto-generated catch block
-					log.severe("Response not valid!!!!!");
+					log.error("Response not valid!!!!!");
 					return;
 				}
 				log.info("RequestProcessor: request processed");
@@ -278,7 +279,7 @@ public class RequestProcessor implements Runnable {
 			
 		} catch (PCEPProtocolViolationException e1) {
 			// TODO Auto-generated catch block
-			log.severe("Response not valid!!!!!");
+			log.error("Response not valid!!!!!");
 			return;
 		}
 		log.info("RequestProcessor: request processed");

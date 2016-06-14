@@ -8,7 +8,8 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import es.tid.tedb.IntraDomainEdge;
 
@@ -53,7 +54,7 @@ public class FirstFitBBDD {
 	    	this.user = user;
 	    	this.passwd = passwd;
 	    	this.db = db;
-	    	log = Logger.getLogger("PCEServer");
+	    	log = LoggerFactory.getLogger("PCEServer");
 	    }
 	    
 //		public static void main(String args[]){

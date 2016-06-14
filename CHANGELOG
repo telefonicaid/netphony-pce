@@ -1,3 +1,9 @@
+v1.3.2
+- Moved to slf4j logging framework
+- Apache 2.0 license
+- Sample Configurationfiles in src/main/sample-config-files/
+- Integration test support with docker
+- Dockerfile available for Domain PCE
 v1.3.0
 - Multicast Raw Socket Support for OSPF-TE
 - Added Travis support

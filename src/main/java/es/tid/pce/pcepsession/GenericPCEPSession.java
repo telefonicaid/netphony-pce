@@ -7,7 +7,8 @@ import java.net.Inet4Address;
 import java.net.Socket;
 import java.util.LinkedList;
 import java.util.Timer;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import es.tid.pce.management.PcepCapability;
 import es.tid.pce.pcep.PCEPProtocolViolationException;
@@ -205,7 +206,7 @@ public abstract class GenericPCEPSession extends Thread implements PCEPSession {
 		this.newSessionId();
 		this.localPcepCapability=pcepSessionManager.getLocalPcepCapability();
 		this.pcepSessionManager.addSession(this.sessionId, this);
-		log=Logger.getLogger("PCCClient");
+		log=LoggerFactory.getLogger("PCCClient");
 	}
 
 	/*
@@ -298,7 +299,7 @@ public abstract class GenericPCEPSession extends Thread implements PCEPSession {
 
 					}
 					else if (r<0){
-						log.severe("End of stream has been reached reading data");
+						log.error("End of stream has been reached reading data");
 						throw new IOException();
 					}
 				}
@@ -306,7 +307,7 @@ public abstract class GenericPCEPSession extends Thread implements PCEPSession {
 					//log.info("Vamos a leer la cabecera ");
 					r = in.read(hdr, offset, 4-offset);
 					if (r < 0) {
-						log.severe("End of stream has been reached reading header");
+						log.error("End of stream has been reached reading header");
 						throw new IOException();
 					}else if (r >0){
 						if ((offset+r)>=4){
@@ -326,11 +327,11 @@ public abstract class GenericPCEPSession extends Thread implements PCEPSession {
 
 				}
 			} catch (IOException e){
-				log.severe("Error reading data: "+ e.getMessage());
+				log.error("Error reading data: "+ e.getMessage());
 				throw e;
 			}catch (Exception e) {
-				log.severe("readMsg Oops: " + e.getMessage());
-				log.severe("FALLO POR : "+e.getStackTrace());
+				log.error("readMsg Oops: " + e.getMessage());
+				log.error("FALLO POR : "+e.getStackTrace());
 				throw new IOException();
 			}
 
@@ -396,7 +397,7 @@ public abstract class GenericPCEPSession extends Thread implements PCEPSession {
 	 * Ends the DeadTimer Thread
 	 */
 	protected void cancelDeadTimer() {
-		log.fine("Cancelling DeadTimer from "+this.remotePeerIP);
+		log.debug("Cancelling DeadTimer from "+this.remotePeerIP);
 		if (this.deadTimerT != null) {
 			this.deadTimerT.stopRunning();
 			this.deadTimerT.interrupt();
@@ -415,7 +416,7 @@ public abstract class GenericPCEPSession extends Thread implements PCEPSession {
 	 * Ends the KeepAlive Thread
 	 */
 	public void cancelKeepAlive() {
-		log.fine("Cancelling KeepAliveTimer from "+this.remotePeerIP);
+		log.debug("Cancelling KeepAliveTimer from "+this.remotePeerIP);
 		if (this.keepAliveT != null) {
 			this.keepAliveT.stopRunning();
 			this.keepAliveT.interrupt();
@@ -602,7 +603,7 @@ public abstract class GenericPCEPSession extends Thread implements PCEPSession {
 						PCEPOpen p_open;
 						try {
 							p_open=new PCEPOpen(msg);
-							log.finest(p_open.toString());
+							log.debug(p_open.toString());
 							owtt.cancel();
 							//Check parameters
 							if (openRetry==1){
@@ -721,9 +722,9 @@ public abstract class GenericPCEPSession extends Thread implements PCEPSession {
 										this.remoteOfCodes=p_open.getOpen().getOf_list_tlv().getOfCodes();
 									}
 
-									log.fine("Sending KA to confirm");
+									log.debug("Sending KA to confirm");
 									PCEPKeepalive p_ka= new PCEPKeepalive();
-									log.fine("Sending Keepalive message");
+									log.debug("Sending Keepalive message");
 									sendPCEPMessage(p_ka);										//Creates the Keep Wait Timer to wait for a KA to acknowledge the OPEN sent
 									//FIXME: START KA TIMER!
 									this.deadTimerPeer=p_open.getDeadTimer();
@@ -735,7 +736,7 @@ public abstract class GenericPCEPSession extends Thread implements PCEPSession {
 									}
 									else {
 										log.info("Entering STATE_KEEP_WAIT");
-										log.fine("Scheduling KeepwaitTimer");
+										log.debug("Scheduling KeepwaitTimer");
 										timer.schedule(kwtt, 60000);
 										this.setFSMstate(PCEPValues.PCEP_STATE_KEEP_WAIT);
 									}
@@ -901,9 +902,9 @@ public abstract class GenericPCEPSession extends Thread implements PCEPSession {
 									if (p_open.getOpen().getOf_list_tlv()!=null){
 										this.remoteOfCodes=p_open.getOpen().getOf_list_tlv().getOfCodes();
 									}
-									log.fine("Sending KA to confirm");
+									log.debug("Sending KA to confirm");
 									PCEPKeepalive p_ka= new PCEPKeepalive();
-									log.fine("Sending Keepalive message");
+									log.debug("Sending Keepalive message");
 									sendPCEPMessage(p_ka);										//Creates the Keep Wait Timer to wait for a KA to acknowledge the OPEN sent
 									//FIXME: START KA TIMER!
 									this.deadTimerPeer=p_open.getDeadTimer();
@@ -915,7 +916,7 @@ public abstract class GenericPCEPSession extends Thread implements PCEPSession {
 									}
 									else {
 										log.info("Entering STATE_KEEP_WAIT");
-										log.fine("Scheduling KeepwaitTimer");
+										log.debug("Scheduling KeepwaitTimer");
 										timer.schedule(kwtt, 60000);
 										this.setFSMstate(PCEPValues.PCEP_STATE_KEEP_WAIT);
 									}
@@ -1127,8 +1128,8 @@ public abstract class GenericPCEPSession extends Thread implements PCEPSession {
 		try {
 			message.encode();
 		} catch (PCEPProtocolViolationException e11) {
-			log.severe("ERROR ENCODING ERROR OBJECT, BUG DETECTED, INFORM!!! "+e11.getMessage());
-			log.severe("Ending Session");
+			log.error("ERROR ENCODING ERROR OBJECT, BUG DETECTED, INFORM!!! "+e11.getMessage());
+			log.error("Ending Session");
 			e11.printStackTrace();
 			killSession();
 		}
@@ -1136,7 +1137,7 @@ public abstract class GenericPCEPSession extends Thread implements PCEPSession {
 			out.write(message.getBytes());
 			out.flush();
 		} catch (IOException e) {
-			log.severe("Problem writing message, finishing session "+e.getMessage());
+			log.error("Problem writing message, finishing session "+e.getMessage());
 			killSession();
 		}
 	}
@@ -1203,9 +1204,9 @@ public abstract class GenericPCEPSession extends Thread implements PCEPSession {
 		}
 		else
 		{
-			log.fine("Sending KA to confirm");
+			log.debug("Sending KA to confirm");
 			PCEPKeepalive p_ka= new PCEPKeepalive();
-			log.fine("Sending Keepalive message");
+			log.debug("Sending Keepalive message");
 			sendPCEPMessage(p_ka);										//Creates the Keep Wait Timer to wait for a KA to acknowledge the OPEN sent
 			//FIXME: START KA TIMER!
 			this.deadTimerPeer=p_open.getDeadTimer();
@@ -1217,7 +1218,7 @@ public abstract class GenericPCEPSession extends Thread implements PCEPSession {
 			}
 			else {
 				log.info("Entering STATE_KEEP_WAIT");
-				log.fine("Scheduling KeepwaitTimer");
+				log.debug("Scheduling KeepwaitTimer");
 				timer.schedule(kwtt, 60000);
 				this.setFSMstate(PCEPValues.PCEP_STATE_KEEP_WAIT);
 			}

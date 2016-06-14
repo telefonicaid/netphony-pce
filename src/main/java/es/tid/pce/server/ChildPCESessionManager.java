@@ -4,7 +4,8 @@ import java.net.Inet4Address;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.LinkedBlockingQueue;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import es.tid.pce.computingEngine.RequestDispatcher;
 import es.tid.pce.pcep.messages.PCEPMessage;
@@ -55,7 +56,7 @@ public class ChildPCESessionManager extends TimerTask{
 		childPCERequestManager=new ParentPCERequestManager(sendingQueue);
 		this.domainId=domainId;
 		this.iniDispatcher=iniDispatcher;
-		log=Logger.getLogger("PCEServer");
+		log=LoggerFactory.getLogger("PCEServer");
 	}
 	
 	
@@ -68,7 +69,7 @@ public class ChildPCESessionManager extends TimerTask{
 		childPCERequestManager=new ParentPCERequestManager(sendingQueue);
 		this.domainId=domainId;
 		this.iniDispatcher=iniDispatcher;
-		log=Logger.getLogger("PCEServer");
+		log=LoggerFactory.getLogger("PCEServer");
 	}
 	public ChildPCESession getChildPCEParentPCESession() {
 		return childPCEParentPCESession;
@@ -84,22 +85,22 @@ public class ChildPCESessionManager extends TimerTask{
 		//pcepSessionInformation.setStateful(true);
 		
 		if(childPCEParentPCESession != null){
-			log.warning("There is a session with Parent PCE!");
+			log.warn("There is a session with Parent PCE!");
 			if (childPCEParentPCESession.isAlive()){
 				if (childPCEParentPCESession.isInterrupted()){
-					log.severe("THREAD VIVO... SESION MUERTA");
+					log.error("THREAD VIVO... SESION MUERTA");
 				}
 				return;	
 			}
 			else{
-				log.warning("Session with parent PCE dead, trying to establish new session");
+				log.warn("Session with parent PCE dead, trying to establish new session");
 				Timer timer=new Timer();
 				childPCEParentPCESession= new ChildPCESession(PCCRequestDispatcherChild, params, parentPCERequestQueue,ted,timer,sendingQueue,childPCERequestManager,domainId,pcepSessionInformation, iniDispatcher);
 				childPCEParentPCESession.start();
 				return;
 			}
 		}else{
-			log.warning("No Session with parent PCE, trying to establish new session");
+			log.warn("No Session with parent PCE, trying to establish new session");
 			sendingQueue.clear();//Borramos lo que haya????
 			Timer timer=new Timer();
 			childPCEParentPCESession= new ChildPCESession(PCCRequestDispatcherChild, params, parentPCERequestQueue,ted,timer,sendingQueue,childPCERequestManager,domainId,pcepSessionInformation,iniDispatcher);
@@ -141,11 +142,6 @@ public class ChildPCESessionManager extends TimerTask{
 
 	public ParentPCERequestManager getChildPCERequestManager() {
 		return childPCERequestManager;
-	}
-	
-	
-	public Logger getLogger(){
-		return log;
 	}
 	
 }

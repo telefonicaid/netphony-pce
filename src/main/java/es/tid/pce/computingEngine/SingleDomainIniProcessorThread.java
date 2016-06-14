@@ -11,7 +11,8 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import es.tid.pce.computingEngine.algorithms.ComputingAlgorithm;
 import es.tid.pce.computingEngine.algorithms.ComputingAlgorithmManager;
@@ -125,7 +126,7 @@ public class SingleDomainIniProcessorThread extends Thread{
 	private Logger log;
 
 	public SingleDomainIniProcessorThread( LinkedBlockingQueue<InitiationRequest> lspInitiationRequestQueue, SingleDomainLSPDB singleDomainLSPDB, IniPCCManager iniManager){
-		log=Logger.getLogger("PCEServer");
+		log=LoggerFactory.getLogger("PCEServer");
 		this.lspInitiationRequestQueue=lspInitiationRequestQueue;
 		this.singleDomainLSPDB=singleDomainLSPDB;
 		this.iniManager=iniManager;	
@@ -246,7 +247,7 @@ public class SingleDomainIniProcessorThread extends Thread{
 								symbolicPathNameTLV_tlv.setSymbolicPathNameID(sr.getLSP().getSymbolicPathNameTLV_tlv().getSymbolicPathNameID() );
 								lspp.setSymbolicPathNameTLV_tlv(symbolicPathNameTLV_tlv);
 							}else {
-								log.warning("NO SYMBOLIC PATH NAME TLV!!!" );
+								log.warn("NO SYMBOLIC PATH NAME TLV!!!" );
 							}
 																			
 							PCEPReport rep = new PCEPReport();
@@ -275,7 +276,7 @@ public class SingleDomainIniProcessorThread extends Thread{
 						
 			}catch (Exception e){
 				e.printStackTrace();
-				log.severe("PROBLEM SENDING THE INITIATES");
+				log.error("PROBLEM SENDING THE INITIATES");
 			}
 		}
 		
@@ -403,7 +404,7 @@ public class SingleDomainIniProcessorThread extends Thread{
 		log.info("GOING TO DELTE "+lspID);
 		SD_LSP sdlsp= this.singleDomainLSPDB.getSingleDomain_LSP_list().get(lspID);
 		if (sdlsp==null) {
-			log.severe("LSP is NULL!!");
+			log.error("LSP is NULL!!");
 		}
 		LinkedList<PCEPInitiate> iniList= new LinkedList<PCEPInitiate>();
 		//LinkedList<Object> domainList=new  LinkedList<Object>();
@@ -467,7 +468,7 @@ public class SingleDomainIniProcessorThread extends Thread{
 					symbolicPathNameTLV_tlv.setSymbolicPathNameID(sr.getLSP().getSymbolicPathNameTLV_tlv().getSymbolicPathNameID() );
 					lspp.setSymbolicPathNameTLV_tlv(symbolicPathNameTLV_tlv);
 				}else {
-					log.warning("NO SYMBOLIC PATH NAME TLV!!!" );
+					log.warn("NO SYMBOLIC PATH NAME TLV!!!" );
 				}
 																
 				PCEPReport rep = new PCEPReport();
@@ -480,7 +481,7 @@ public class SingleDomainIniProcessorThread extends Thread{
 				iniReq.getOut().flush();
 				 
 			}catch (Exception e){
-				log.severe("PROBLEM SENDING THE DELETES");
+				log.error("PROBLEM SENDING THE DELETES");
 			}
 			
 		}

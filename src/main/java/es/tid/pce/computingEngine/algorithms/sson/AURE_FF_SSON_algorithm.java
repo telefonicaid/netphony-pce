@@ -3,7 +3,8 @@ package es.tid.pce.computingEngine.algorithms.sson;
 import java.net.Inet4Address;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import org.jgrapht.GraphPath;
 import org.jgrapht.alg.DijkstraShortestPath;
@@ -58,7 +59,7 @@ public class AURE_FF_SSON_algorithm implements ComputingAlgorithm {
 	/**
 	 * The Logger.
 	 */
-	private Logger log=Logger.getLogger("PCEServer");
+	private Logger log=LoggerFactory.getLogger("PCEServer");
 	
 	/**
 	 * The Path Computing Request to calculate.
@@ -107,7 +108,7 @@ public class AURE_FF_SSON_algorithm implements ComputingAlgorithm {
 	public ComputingResponse call(){ 
 		//Timestamp of the start of the algorithm;
 		long tiempoini =System.nanoTime();
-		log.finest("Starting AURE Algorithm");
+		log.debug("Starting AURE Algorithm");
 		//Create the response message
 		//It will contain either the path or noPath
 		ComputingResponse m_resp=new ComputingResponse();
@@ -181,18 +182,18 @@ public class AURE_FF_SSON_algorithm implements ComputingAlgorithm {
 		//aqu� acaba lo que he a�adido
 
 		//Now, check if the source and destination are in the TED.
-		log.fine("Source: "+source_router_id_addr+"; Destination:"+dest_router_id_addr);
+		log.debug("Source: "+source_router_id_addr+"; Destination:"+dest_router_id_addr);
 		if (!(((ted.containsVertex(source_router_id_addr))&&(ted.containsVertex(dest_router_id_addr))))){
-			log.warning("Source or destination are NOT in the TED");	
+			log.warn("Source or destination are NOT in the TED");	
 			NoPath noPath= new NoPath();
 			noPath.setNatureOfIssue(ObjectParameters.NOPATH_NOPATH_SAT_CONSTRAINTS);
 			NoPathTLV noPathTLV=new NoPathTLV();
 			if (!((ted.containsVertex(source_router_id_addr)))){
-				log.finest("Unknown source");	
+				log.debug("Unknown source");	
 				noPathTLV.setUnknownSource(true);	
 			}
 			if (!((ted.containsVertex(dest_router_id_addr)))){
-				log.finest("Unknown destination");
+				log.debug("Unknown destination");
 				noPathTLV.setUnknownDestination(true);	
 			}
 
@@ -210,7 +211,7 @@ public class AURE_FF_SSON_algorithm implements ComputingAlgorithm {
 		int counter=0;
 		boolean is_equal = false;
 		
-		log.fine("Starting the computation");
+		log.debug("Starting the computation");
 		GraphPath<Object,IntraDomainEdge> gp_chosen=null;
 		GraphPath<Object,IntraDomainEdge> gp_trully_chosen=null;
 		
@@ -227,7 +228,7 @@ public class AURE_FF_SSON_algorithm implements ComputingAlgorithm {
 					counter=0;
 					if (lambda>=preComp.getSSONInfo().getNumLambdas()-1){
 						if (nopath==true){
-							log.fine("No path found");
+							log.debug("No path found");
 							NoPath noPath= new NoPath();
 							noPath.setNatureOfIssue(ObjectParameters.NOPATH_NOPATH_SAT_CONSTRAINTS);
 							NoPathTLV noPathTLV=new NoPathTLV();
@@ -247,7 +248,7 @@ public class AURE_FF_SSON_algorithm implements ComputingAlgorithm {
 					if (counter==0){
 						if (lambda>=preComp.getSSONInfo().getNumLambdas()-1){
 							if (nopath==true){
-								log.fine("No path found");
+								log.debug("No path found");
 								NoPath noPath= new NoPath();
 								noPath.setNatureOfIssue(ObjectParameters.NOPATH_NOPATH_SAT_CONSTRAINTS);
 								NoPathTLV noPathTLV=new NoPathTLV();
@@ -294,7 +295,7 @@ public class AURE_FF_SSON_algorithm implements ComputingAlgorithm {
 							else{
 								if (lambda>=preComp.getSSONInfo().getNumLambdas()-1){
 									if (nopath==true){
-										log.fine("No path found");
+										log.debug("No path found");
 										NoPath noPath= new NoPath();
 										noPath.setNatureOfIssue(ObjectParameters.NOPATH_NOPATH_SAT_CONSTRAINTS);
 										NoPathTLV noPathTLV=new NoPathTLV();
@@ -316,7 +317,7 @@ public class AURE_FF_SSON_algorithm implements ComputingAlgorithm {
 							log.info("Camino Distinto en lambda "+lambda);
 							if (lambda>=preComp.getSSONInfo().getNumLambdas()-1){
 								if (nopath==true){
-									log.fine("No path found");
+									log.debug("No path found");
 									NoPath noPath= new NoPath();
 									noPath.setNatureOfIssue(ObjectParameters.NOPATH_NOPATH_SAT_CONSTRAINTS);
 									NoPathTLV noPathTLV=new NoPathTLV();

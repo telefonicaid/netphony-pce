@@ -1,7 +1,8 @@
 package es.tid.pce.server;
 
 import java.util.LinkedList;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import es.tid.pce.pcep.messages.PCEPRequest;
 
@@ -14,7 +15,7 @@ public class RequestQueue {
 
 	public RequestQueue(int nThreads)
 	    {
-		log=Logger.getLogger("PCEServer");
+		log=LoggerFactory.getLogger("PCEServer");
 	    this.nThreads = nThreads;
 	    queue = new LinkedList();
 	    threads = new RequestProcessorThread[nThreads];

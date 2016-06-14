@@ -2,9 +2,12 @@ package es.tid.pce.parentPCE;
 
 import java.io.IOException;
 import java.net.ServerSocket;
-import java.util.logging.FileHandler;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import es.tid.bgp.bgp4Peer.peer.BGPPeer;
 import es.tid.pce.computingEngine.ReportDispatcher;
@@ -44,31 +47,31 @@ public class ParentPCEServer {
 		
 		params.initialize();
 		//Initiate the Loggers (general, PCEP Parsing, OSPF Parsing, GUI)		
-		FileHandler fh;
-		FileHandler fh2,fh3;
+//		FileHandler fh;
+//		FileHandler fh2,fh3;
 		Logger log;
 		Logger log2,log3;
-		log=Logger.getLogger("PCEServer");
-		log2=Logger.getLogger("PCEPParser");
-		log3=Logger.getLogger("OSPFParser");
+		log=LoggerFactory.getLogger("PCEServer");
+		log2=LoggerFactory.getLogger("PCEPParser");
+		log3=LoggerFactory.getLogger("OSPFParser");
 		
 		PCEPSessionsInformation pcepSessionManager=new PCEPSessionsInformation();
 		pcepSessionManager.setLocalPcepCapability(params.getLocalPcepCapability());
 		
 		try {
-			fh=new FileHandler(params.getParentPCEServerLogFile());
-			fh2=new FileHandler(params.getParentPCEPParserLogFile());
-			fh3=new FileHandler("OSPFParser.log");
-			log.addHandler(fh);
-			log.setLevel(Level.ALL);			
-			log2.addHandler(fh2);
-			log2.setLevel(Level.ALL);
-			log3.addHandler(fh3);
-			log3.setLevel(Level.ALL);
+//			fh=new FileHandler(params.getParentPCEServerLogFile());
+//			fh2=new FileHandler(params.getParentPCEPParserLogFile());
+//			fh3=new FileHandler("OSPFParser.log");
+//			log.addHandler(fh);
+//			log.setLevel(Level.ALL);			
+//			log2.addHandler(fh2);
+//			log2.setLevel(Level.ALL);
+//			log3.addHandler(fh3);
+//			log3.setLevel(Level.ALL);
 
 
-			Logger logGUI=Logger.getLogger("GUILogger");
-			logGUI.setLevel(Level.SEVERE);
+			Logger logGUI=LoggerFactory.getLogger("GUILogger");
+//			logGUI.setLevel(Level.SEVERE);
 			
 		} catch (Exception e1) {
 			e1.printStackTrace();

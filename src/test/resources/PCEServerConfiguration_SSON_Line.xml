@@ -3,7 +3,7 @@
 	<PCEServerPort>4189</PCEServerPort>
 	<PCEManagementPort>6666</PCEManagementPort>
 	<!--<LocalPCEAddress>192.168.1.200</LocalPCEAddress>-->
-	<LocalPCEAddress>127.0.0.1</LocalPCEAddress>
+	<LocalPCEAddress>0.0.0.0</LocalPCEAddress>
 
 	<ConnectTimer>
 	<!-- Connect:  the timer (in seconds) started after having initialized a

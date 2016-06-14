@@ -9,7 +9,8 @@ import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.Timer;
 import java.util.concurrent.LinkedBlockingQueue;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import es.tid.pce.computingEngine.RequestDispatcher;
 import es.tid.pce.pcep.PCEPProtocolViolationException;
@@ -80,7 +81,7 @@ public class ChildPCESession  extends GenericPCEPSession{
 		this.PCCRequestDispatcherChild=PCCRequestDispatcherChild;
 		this.state=PCEPValues.PCEP_STATE_IDLE;
 		this.parentPCERequestQueue=parentPCERequestQueue;
-		log=Logger.getLogger(params.getPCEServerLogFile());
+		log=LoggerFactory.getLogger(params.getPCEServerLogFile());
 		this.requestDispatcher=requestDispatcher;
 		this.ted=ted;
 		this.params = params;
@@ -110,7 +111,7 @@ public class ChildPCESession  extends GenericPCEPSession{
 		super(pcepSessionInformation);
 		this.state=PCEPValues.PCEP_STATE_IDLE;
 		this.parentPCERequestQueue=parentPCERequestQueue;
-		log=Logger.getLogger(params.getPCEServerLogFile());
+		log=LoggerFactory.getLogger(params.getPCEServerLogFile());
 		this.ted=ted;
 		this.params = params;
 		this.timer = timer;
@@ -146,7 +147,7 @@ public class ChildPCESession  extends GenericPCEPSession{
 			this.socket = new Socket(params.getParentPCEAddress(), params.getParentPCEPort(), addr, 0);
 			log.info("Socket opened");
 		} catch (IOException e) {
-			log.severe("Couldn't get I/O for connection to Parent PCE" + params.getParentPCEAddress() );
+			log.error("Couldn't get I/O for connection to Parent PCE" + params.getParentPCEAddress() );
 			killSession();
 			return;			
 		} 
@@ -171,7 +172,7 @@ public class ChildPCESession  extends GenericPCEPSession{
 					out.close();
 				} catch (IOException e1) {
 				}
-				log.warning("Finishing PCEP Session abruptly");
+				log.warn("Finishing PCEP Session abruptly");
 				return;
 			}
 			if (this.msg != null) {//If null, it is not a valid PCEP message								
@@ -180,32 +181,32 @@ public class ChildPCESession  extends GenericPCEPSession{
 				switch(PCEPMessage.getMessageType(this.msg)) {
 				
 				case PCEPMessageTypes.MESSAGE_OPEN:
-					log.fine("OPEN message received");
+					log.debug("OPEN message received");
 					//After the session has been started, ignore subsequent OPEN messages
-					log.warning("OPEN message ignored");
+					log.warn("OPEN message ignored");
 					break;
 					
 				case PCEPMessageTypes.MESSAGE_KEEPALIVE:
-					log.fine("KEEPALIVE message received");
+					log.debug("KEEPALIVE message received");
 					//The Keepalive message allows to reset the deadtimer
 					break;
 					
 				case PCEPMessageTypes.MESSAGE_CLOSE:
-					log.fine("CLOSE message received");
-					log.warning("Finishing PCEParentSession due to CLOSE");
+					log.debug("CLOSE message received");
+					log.warn("Finishing PCEParentSession due to CLOSE");
 					killSession();
 					return;
 					
 				case PCEPMessageTypes.MESSAGE_ERROR:
-					log.fine("ERROR message received");
+					log.debug("ERROR message received");
 					break;
 					
 				case PCEPMessageTypes.MESSAGE_NOTIFY:
-					log.fine("Received NOTIFY message");
+					log.debug("Received NOTIFY message");
 					break;
 				
 				case PCEPMessageTypes.MESSAGE_PCREP:
-					log.fine("Received PC RESPONSE message");
+					log.debug("Received PC RESPONSE message");
 					PCEPResponse pcres;
 					try {
 						pcres=new PCEPResponse(msg);
@@ -261,7 +262,7 @@ public class ChildPCESession  extends GenericPCEPSession{
 					break;
 
 				default:
-					log.warning("ERROR: unexpected message, Unknown message received!");
+					log.warn("ERROR: unexpected message, Unknown message received!");
 					pceMsg = false;
 				}
 				

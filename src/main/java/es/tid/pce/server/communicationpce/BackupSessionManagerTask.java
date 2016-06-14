@@ -3,7 +3,8 @@ package es.tid.pce.server.communicationpce;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.LinkedBlockingQueue;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import es.tid.pce.pcep.messages.PCEPMessage;
 import es.tid.pce.pcepsession.PCEPSessionsInformation;
@@ -28,7 +29,7 @@ public class BackupSessionManagerTask  extends TimerTask{
 	public BackupSessionManagerTask(PCEServerParameters params, TEDB ted,CollaborationPCESessionManager collaborationPCESessionManager, NotificationDispatcher notificationDispatcher,PCEPSessionsInformation pcepSessionInformation){		
 		this.params=params;  
 		this.ted=ted;
-		log=Logger.getLogger("PCEServer");
+		log=LoggerFactory.getLogger("PCEServer");
 		this.pcepSessionInformation=pcepSessionInformation;
 		//this.backupPCENotificationQueue=new RequestQueue(params.getParentPCERequestProcessors());
 		this.collaborationPCESessionManager= collaborationPCESessionManager;
@@ -46,13 +47,13 @@ public class BackupSessionManagerTask  extends TimerTask{
 		if(backupPCESession != null){
 			if (backupPCESession.isAlive()){
 				if (backupPCESession.isInterrupted()){
-					log.severe("THREAD VIVO... SESION DE BACKUP MUERTA");
+					log.error("THREAD VIVO... SESION DE BACKUP MUERTA");
 				
 				}
 				return;	
 			}
 			else{
-				log.severe("Session with backup PCE dead, trying to establish new session");
+				log.error("Session with backup PCE dead, trying to establish new session");
 				Timer timer=new Timer();
 				backupPCESession= new BackupPCESession(params.getIpPrimaryPCE(),params.getPortPrimaryPCE(),params.isNodelay(),ted,collaborationPCESessionManager,notificationDispatcher,timer, pcepSessionInformation/*, params.getLocalPceAddress(), params.getPCEServerPort()*/);
 				backupPCESession.start();
@@ -60,11 +61,11 @@ public class BackupSessionManagerTask  extends TimerTask{
 				return;
 			}
 		}else{
-			log.severe("No Session with backup PCE, trying to establish new session");
+			log.error("No Session with backup PCE, trying to establish new session");
 			Timer timer=new Timer();
 			backupPCESession= new BackupPCESession(params.getIpPrimaryPCE(),params.getPortPrimaryPCE(),params.isNodelay(),ted,collaborationPCESessionManager,notificationDispatcher,timer,pcepSessionInformation/*, params.getLocalPceAddress(), params.getPCEServerPort()*/);
 			backupPCESession.start();
-			log.severe("Adding a new session in sessionManagerList");
+			log.error("Adding a new session in sessionManagerList");
 			
 			return;
 		}

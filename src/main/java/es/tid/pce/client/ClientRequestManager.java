@@ -6,7 +6,8 @@ import java.util.Hashtable;
 import java.util.Random;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import es.tid.pce.pcep.PCEPProtocolViolationException;
 import es.tid.pce.pcep.messages.PCEPInitiate;
@@ -35,7 +36,7 @@ public class ClientRequestManager {
 	public Hashtable<Long,Semaphore> semaphores;
 	
 	public ClientRequestManager(){
-		log=Logger.getLogger("PCCClient");
+		log=LoggerFactory.getLogger("PCCClient");
 		//this.out=out;
 		locks = new Hashtable<Long, Object>();
 		responses=new Hashtable<Long, PCEPResponse>();
@@ -46,7 +47,7 @@ public class ClientRequestManager {
 	public void notifyResponse(PCEPResponse pcres, long timeIni){
 		lastTime=timeIni;
 		long idRequest=pcres.getResponse(0).getRequestParameters().getRequestID();
-		log.finer("Entrando en Notify Response");
+		log.debug("Entrando en Notify Response");
 		Object object_lock=locks.remove(new Long(idRequest));
 		if (object_lock!=null){
 			responses.put(new Long(idRequest), pcres);
@@ -112,12 +113,12 @@ public class ClientRequestManager {
 		
 		long timeIni2=System.nanoTime();
 		double reqTime_ms=(timeIni2-timeIni)/1000000;
-		log.fine("Request or timeout");
+		log.debug("Request or timeout");
 		
 		PCEPMessage resp = responses.remove(new Long(idRequest));
 		if (resp==null)
 		{
-			log.warning("NO RESPONSE!!!!! me deshago del lock... con idReqLong "+idRequest);
+			log.warn("NO RESPONSE!!!!! me deshago del lock... con idReqLong "+idRequest);
 			locks.remove(idReqLong);
 		}
 		return resp;
@@ -150,11 +151,11 @@ public class ClientRequestManager {
 		long timeIni2=System.nanoTime();
 		//log.info("Response "+pr.toString());
 		double reqTime_ms=(timeIni2-timeIni)/1000000;
-		log.fine("Request or timeout");
+		log.debug("Request or timeout");
 		
 		PCEPResponse resp=responses.remove(new Long(idRequest));
 		if (resp==null){
-			log.warning("NO RESPONSE!!!!! me deshago del lock... con idReqLong "+idRequest);
+			log.warn("NO RESPONSE!!!!! me deshago del lock... con idReqLong "+idRequest);
 			locks.remove(idReqLong);
 		}
 		return resp;
@@ -162,7 +163,7 @@ public class ClientRequestManager {
 	
 	public void sendRequest(PCEPRequest req)
 	{
-		log.fine("Sending Request: :" + req);
+		log.debug("Sending Request: :" + req);
 		log.info("Sending PCEP Request");
 		sendPCEPMessage(req);
 	}
@@ -181,13 +182,13 @@ public class ClientRequestManager {
 			log.info("Sending message finish");
 		} catch (IOException e) {
 			log.info(UtilsFunctions.exceptionToString(e));
-			log.warning("Error sending msg: " + e.getMessage());
+			log.warn("Error sending msg: " + e.getMessage());
 
 		}
 	}
 	
 	public PCEPResponse newRequest(PCEPMonReq pcreq){
-		log.fine("New Request");
+		log.debug("New Request");
 		Object object_lock=new Object();
 		//RequestLock rl=new RequestLock();
 		//((RequestParameters)(((Request)pcreq.getRequest(0)).getReqObject(0))).getRequestID();
@@ -198,17 +199,17 @@ public class ClientRequestManager {
 		sendRequest(pcreq);
 		synchronized (object_lock) { 
 			try {
-				log.fine("Request sent, waiting for response");
+				log.debug("Request sent, waiting for response");
 				object_lock.wait(60000);
 			} catch (InterruptedException e){
 			//	FIXME: Ver que hacer
 			}
 		}
-		log.fine("Request or timeout");
+		log.debug("Request or timeout");
 		
 		PCEPResponse resp=responses.get(new Long(idMonitoring));
 		if (resp==null){
-			log.warning("NO RESPONSE!!!!!");
+			log.warn("NO RESPONSE!!!!!");
 		}
 		return resp;
 	}
@@ -221,11 +222,11 @@ public class ClientRequestManager {
 			e1.printStackTrace();
 		}
 		try {
-			log.fine("Sending Request message");
+			log.debug("Sending Request message");
 			out.write(req.getBytes());
 			out.flush();
 		} catch (IOException e) {
-			log.warning("Error sending REQ: " + e.getMessage());
+			log.warn("Error sending REQ: " + e.getMessage());
 		}
 	}
 	
@@ -261,11 +262,11 @@ public class ClientRequestManager {
 		long timeIni2=System.nanoTime();
 		//log.info("Response "+pr.toString());
 		double reqTime_ms=(timeIni2-timeIni)/1000000;
-		log.fine("Time: "+reqTime_ms );
+		log.debug("Time: "+reqTime_ms );
 		
 		PCEPMessage resp=responsesInit.remove(new Long(idIni));
 		if (resp==null){
-			log.warning("NO RESPONSE!!!!! me deshago del lock... con idIni "+idIni);
+			log.warn("NO RESPONSE!!!!! me deshago del lock... con idIni "+idIni);
 			locks.remove(idReqLong);
 		}
 		return resp;

@@ -3,7 +3,8 @@ package es.tid.pce.computingEngine.algorithms.multidomain;
 import java.net.Inet4Address;
 import java.util.Iterator;
 import java.util.Set;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import org.jgrapht.graph.DirectedWeightedMultigraph;
 
@@ -18,7 +19,7 @@ public class MDFunctions {
 	
 		 	
 	public static void processXRO(ExcludeRouteObject xro,ReachabilityManager reachabilityManager, DirectedWeightedMultigraph<Object,InterDomainEdge> networkGraph){
-		Logger log=Logger.getLogger("PCEServer");
+		Logger log=LoggerFactory.getLogger("PCEServer");
 		try{
 		if (xro!=null){
 			log.info("XRO: Thre are "+xro.getXROSubobjectList().size()+" exclusions");

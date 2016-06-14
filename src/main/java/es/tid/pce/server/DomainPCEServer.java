@@ -16,10 +16,14 @@ import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.SocketException;
 import java.util.Timer;
-import java.util.logging.FileHandler;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import java.util.logging.SimpleFormatter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import es.tid.pce.computingEngine.ReportDispatcher;
 import es.tid.pce.computingEngine.RequestDispatcher;
@@ -46,7 +50,7 @@ public class DomainPCEServer implements Runnable{
 	/**
 	 * Logger
 	 */
-	public static final Logger log =Logger.getLogger("PCEServer");
+	public static final Logger log =LoggerFactory.getLogger("PCEServer");
 	public static Logger log5;
 	private static OperationsCounter OPcounter;
 	
@@ -78,52 +82,52 @@ public class DomainPCEServer implements Runnable{
 		params.initialize();
 		
 		//Initialize loggers
-		FileHandler fh;
-		FileHandler fh2;
-		FileHandler fh3;
-		FileHandler fh4;
-		FileHandler fh5;
+//		FileHandler fh;
+//		FileHandler fh2;
+//		FileHandler fh3;
+//		FileHandler fh4;
+//		FileHandler fh5;
 		//FileHandler fh6;
 		try {
 			
-			fh=new FileHandler(params.getPCEServerLogFile());
-			fh2=new FileHandler(params.getPCEPParserLogFile());
-			fh3=new FileHandler(params.getOSPFParserLogFile());
-			fh4=new FileHandler(params.getTEDBParserLogFile());
-			fh5=new FileHandler("OpMultiLayer.log", false);
-			fh5.setFormatter(new SimpleFormatter());
+//			fh=new FileHandler(params.getPCEServerLogFile());
+//			fh2=new FileHandler(params.getPCEPParserLogFile());
+//			fh3=new FileHandler(params.getOSPFParserLogFile());
+//			fh4=new FileHandler(params.getTEDBParserLogFile());
+//			fh5=new FileHandler("OpMultiLayer.log", false);
+//			fh5.setFormatter(new SimpleFormatter());
 			//fh.setFormatter(new SimpleFormatter());
 			//fh2.setFormatter(new SimpleFormatter());	
 			
-			Logger log2=Logger.getLogger("PCEPParser");
-			Logger log3=Logger.getLogger("OSPFParser");
-			Logger log4=Logger.getLogger("TEDBParser");
-			//Logger log6=Logger.getLogger("BGPParser");
-			log5=Logger.getLogger("OpMultiLayer");
-			log.addHandler(fh);
-			log2.addHandler(fh2);
-			log3.addHandler(fh3);
-			log4.addHandler(fh4);
+			Logger log2=LoggerFactory.getLogger("PCEPParser");
+			Logger log3=LoggerFactory.getLogger("OSPFParser");
+			Logger log4=LoggerFactory.getLogger("TEDBParser");
+			//Logger log6=LoggerFactory.getLogger("BGPParser");
+			log5=LoggerFactory.getLogger("OpMultiLayer");
+//			log.addHandler(fh);
+//			log2.addHandler(fh2);
+//			log3.addHandler(fh3);
+//			log4.addHandler(fh4);
 			//logTimePCE.addHandler(fh5);
-			fh4.setFormatter(new SimpleFormatter());
-			log5.addHandler(fh5);
-			log5.setLevel(Level.ALL);
-			if (params.isSetTraces() == false){		    	
-				log.setLevel(Level.SEVERE);
-				log2.setLevel(Level.SEVERE);	
-				log3.setLevel(Level.SEVERE);
-				log4.setLevel(Level.SEVERE);
-				//log6.setLevel(Level.SEVERE);
-				//log5.setLevel(Level.SEVERE);
-			}
-
-			else{
-				log.setLevel(Level.ALL);
-				log2.setLevel(Level.ALL);
-				log3.setLevel(Level.ALL);
-				log4.setLevel(Level.ALL);
-				//log6.setLevel(Level.ALL);
-			}
+//			fh4.setFormatter(new SimpleFormatter());
+//			log5.addHandler(fh5);
+//			log5.setLevel(Level.ALL);
+//			if (params.isSetTraces() == false){		    	
+//				log.setLevel(Level.SEVERE);
+//				log2.setLevel(Level.SEVERE);	
+//				log3.setLevel(Level.SEVERE);
+//				log4.setLevel(Level.SEVERE);
+//				//log6.setLevel(Level.SEVERE);
+//				//log5.setLevel(Level.SEVERE);
+//			}
+//
+//			else{
+//				log.setLevel(Level.ALL);
+//				log2.setLevel(Level.ALL);
+//				log3.setLevel(Level.ALL);
+//				log4.setLevel(Level.ALL);
+//				//log6.setLevel(Level.ALL);
+//			}
 
 		} catch (Exception e1) {
 			e1.printStackTrace();
@@ -252,7 +256,7 @@ public class DomainPCEServer implements Runnable{
 
 		if(params.algorithmRuleList.size()==0){
 
-			log.warning("No hay algoritmos registrados!");
+			log.warn("No hay algoritmos registrados!");
 			//System.exit(1);
 
 		}
@@ -348,7 +352,7 @@ public class DomainPCEServer implements Runnable{
 							}
 							catch (Exception e2){
 								e2.printStackTrace();
-								log.warning("No precomputation in "+"es.tid.pce.computingEngine.algorithms."+params.algorithmRuleList.get(i).algoName+"PreComputation");						
+								log.warn("No precomputation in "+"es.tid.pce.computingEngine.algorithms."+params.algorithmRuleList.get(i).algoName+"PreComputation");						
 							}
 						}
 						else{
@@ -369,7 +373,7 @@ public class DomainPCEServer implements Runnable{
 							}
 							catch (Exception e2){
 								e2.printStackTrace();
-								log.warning("No precomputation in "+"es.tid.pce.computingEngine.algorithms."+params.algorithmRuleList.get(i).algoName+"PreComputation");						
+								log.warn("No precomputation in "+"es.tid.pce.computingEngine.algorithms."+params.algorithmRuleList.get(i).algoName+"PreComputation");						
 							}
 						}
 					}
@@ -432,7 +436,7 @@ public class DomainPCEServer implements Runnable{
 			if (listening==false){
 				log.info("Socket closed due to controlled close");
 			}else {
-				log.severe("Problem with the socket, exiting");
+				log.error("Problem with the socket, exiting");
 				e.printStackTrace();
 			}
 		} 

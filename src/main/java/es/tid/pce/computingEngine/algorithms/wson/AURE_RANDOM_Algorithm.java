@@ -5,7 +5,8 @@ import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import org.jgrapht.GraphPath;
 import org.jgrapht.alg.DijkstraShortestPath;
@@ -45,7 +46,7 @@ public class AURE_RANDOM_Algorithm implements ComputingAlgorithm {
 	/**
 	 * The Logger.
 	 */
-	private Logger log=Logger.getLogger("PCEServer");
+	private Logger log=LoggerFactory.getLogger("PCEServer");
 	
 	/**
 	 * The Path Computing Request to calculate.
@@ -87,7 +88,7 @@ public class AURE_RANDOM_Algorithm implements ComputingAlgorithm {
 	public ComputingResponse call(){ 
 		//Time stamp of the start of the algorithm;
 		long tiempoini =System.nanoTime();
-		log.finest("Starting AURE-RANDOM Algorithm");
+		log.debug("Starting AURE-RANDOM Algorithm");
 		//Create the response message
 		//It will contain either the path or noPath
 		ComputingResponse m_resp=new ComputingResponse();
@@ -144,18 +145,18 @@ public class AURE_RANDOM_Algorithm implements ComputingAlgorithm {
 		//aqu� acaba lo que he a�adido
 
 		//Now, check if the source and destination are in the TED.
-		log.fine("Source: "+source_router_id_addr+"; Destination:"+dest_router_id_addr);
+		log.debug("Source: "+source_router_id_addr+"; Destination:"+dest_router_id_addr);
 		if (!(((ted.containsVertex(source_router_id_addr))&&(ted.containsVertex(dest_router_id_addr))))){
-			log.warning("Source or destination are NOT in the TED");	
+			log.warn("Source or destination are NOT in the TED");	
 			NoPath noPath= new NoPath();
 			noPath.setNatureOfIssue(ObjectParameters.NOPATH_NOPATH_SAT_CONSTRAINTS);
 			NoPathTLV noPathTLV=new NoPathTLV();
 			if (!((ted.containsVertex(source_router_id_addr)))){
-				log.finest("Unknown source");	
+				log.debug("Unknown source");	
 				noPathTLV.setUnknownSource(true);	
 			}
 			if (!((ted.containsVertex(dest_router_id_addr)))){
-				log.finest("Unknown destination");
+				log.debug("Unknown destination");
 				noPathTLV.setUnknownDestination(true);	
 			}
 
@@ -172,7 +173,7 @@ public class AURE_RANDOM_Algorithm implements ComputingAlgorithm {
 		Hashtable<Integer,GraphPath<Object,IntraDomainEdge>> LambdaRouteTable = new Hashtable<Integer,GraphPath<Object,IntraDomainEdge>>();
 		ArrayList<Integer> Lambda_list = new ArrayList<Integer>();
 				
-		log.fine("Starting the computation");
+		log.debug("Starting the computation");
 		
 		/*GraphPath<Object,IntraDomainEdge> gp_chosen=null;
 		
@@ -203,7 +204,7 @@ public class AURE_RANDOM_Algorithm implements ComputingAlgorithm {
 					//There is no path here
 					if (lambda>=preComp.getWSONInfo().getNumLambdas()-1){
 						if (nopath==true){
-							log.fine("No path found");
+							log.debug("No path found");
 							NoPath noPath= new NoPath();
 							noPath.setNatureOfIssue(ObjectParameters.NOPATH_NOPATH_SAT_CONSTRAINTS);
 							NoPathTLV noPathTLV=new NoPathTLV();

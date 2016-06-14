@@ -5,7 +5,8 @@ import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Set;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import es.tid.pce.pcep.constructs.StateReport;
 import es.tid.pce.pcep.messages.PCEPReport;
@@ -31,7 +32,7 @@ public class ReportDB_Handler {
 	public ReportDB_Handler ()
 	{   
 
-		log = Logger.getLogger("PCEPParser");
+		log = LoggerFactory.getLogger("PCEPParser");
 		moduleList = new Hashtable<String, ReportDB>();
 	}
 

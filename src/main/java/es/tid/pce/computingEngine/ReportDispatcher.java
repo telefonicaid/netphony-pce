@@ -1,7 +1,8 @@
 package es.tid.pce.computingEngine;
 
 import java.util.concurrent.LinkedBlockingQueue;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import es.tid.pce.pcep.messages.PCEPReport;
 import es.tid.pce.server.PCEServerParameters;
@@ -43,7 +44,7 @@ public class ReportDispatcher
 			
 	public ReportDispatcher(ReportDB_Handler lspDB, int nThreads)
 	{
-		log=Logger.getLogger("PCEServer");
+		log=LoggerFactory.getLogger("PCEServer");
 		
 		
 		this.nThreads = nThreads;

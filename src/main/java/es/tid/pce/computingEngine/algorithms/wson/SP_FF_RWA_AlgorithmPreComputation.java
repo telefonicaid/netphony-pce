@@ -2,7 +2,8 @@ package es.tid.pce.computingEngine.algorithms.wson;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import org.jgrapht.graph.DirectedMultigraph;
 import org.jgrapht.graph.SimpleDirectedWeightedGraph;
@@ -36,7 +37,7 @@ public class SP_FF_RWA_AlgorithmPreComputation implements ComputingAlgorithmPreC
 	
 	@Override
 	public void initialize() {
-		log=Logger.getLogger("PCEServer");
+		log=LoggerFactory.getLogger("PCEServer");
 		log.info("INICIALIZANDO SP_FF_RWA_AlgorithmPreComputation ");
 		firstFitBBDD=new FirstFitBBDD(host,port,user,passwd,db);
 		

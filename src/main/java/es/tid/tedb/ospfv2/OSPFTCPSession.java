@@ -4,8 +4,10 @@ import java.io.DataInputStream;
 import java.io.IOException;
 import java.net.Socket;
 import java.util.concurrent.LinkedBlockingQueue;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import es.tid.ospf.ospfv2.OSPFPacketTypes;
 import es.tid.ospf.ospfv2.OSPFv2LinkStateUpdatePacket;
@@ -29,13 +31,13 @@ public class OSPFTCPSession extends Thread {
 	 * The socket where the LSAs are received
 	 */
 	private Socket ss;
-	Logger log=Logger.getLogger("OSPFParser");
+	Logger log=LoggerFactory.getLogger("OSPFParser");
 	
 	public OSPFTCPSession(Socket ss, LinkedBlockingQueue<OSPFv2LinkStateUpdatePacket> ospfv2PacketQueue){
 
 		this.ospfv2PacketQueue = ospfv2PacketQueue;
 		this.ss=ss;
-		log.setLevel(Level.SEVERE);
+		//log.setLevel(Level.SEVERE);
 
 
 	}
@@ -57,12 +59,12 @@ public class OSPFTCPSession extends Thread {
 						ospfv2PacketQueue.add((OSPFv2LinkStateUpdatePacket)ospfv2Packet);	
 						log.info("OSPF packet send via TCP.");
 					}
-					else log.warning("No es un OSPFv2_LINK_STATE_UPDATE");
+					else log.warn("No es un OSPFv2_LINK_STATE_UPDATE");
 				}
 			} catch (IOException e) {
 			// TODO Auto-generated catch block
 				e.printStackTrace();
-				log.warning("TCPOSPF Socket ends");
+				log.warn("TCPOSPF Socket ends");
 				return;
 			}
 		}
@@ -117,7 +119,7 @@ public class OSPFTCPSession extends Thread {
 					}
 				}
 			}catch (IOException e){
-				log.warning("Error reading data: "+ e.getMessage());
+				log.warn("Error reading data: "+ e.getMessage());
 				throw e;
 
 			}catch (Exception e) {		
@@ -148,7 +150,7 @@ public class OSPFTCPSession extends Thread {
 			}
 			else if (r==-1){
 
-				//log.warning("End of stream has been reached");
+				//log.warn("End of stream has been reached");
 				throw new IOException();
 
 			}

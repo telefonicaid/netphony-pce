@@ -3,7 +3,8 @@ package es.tid.util;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.LinkedList;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import org.w3c.dom.CharacterData;
 import org.w3c.dom.Element;

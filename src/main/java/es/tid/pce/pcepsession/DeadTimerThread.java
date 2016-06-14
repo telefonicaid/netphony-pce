@@ -1,6 +1,7 @@
 package es.tid.pce.pcepsession;
 
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import es.tid.pce.pcep.objects.ObjectParameters;
 
@@ -20,7 +21,7 @@ public class DeadTimerThread extends Thread {
 	public DeadTimerThread(PCEPSession p, int d) {
 		this.deadTimer = d;
 		this.pceSession = p;
-		log=Logger.getLogger("PCEServer");
+		log=LoggerFactory.getLogger("PCEServer");
 	}
 	
 	public void run() {
@@ -31,21 +32,21 @@ public class DeadTimerThread extends Thread {
 				/*
 				 * Time's over, close PCEP Session
 				 */
-				log.warning("DeadTimer OVER");
+				log.warn("DeadTimer OVER");
 				this.pceSession.close(ObjectParameters.REASON_DEADTIMER);
 				return;
 			} catch (InterruptedException e) {
 				//return;
 				if (running==false){
-					log.warning("Ending DeadTimerThread");
+					log.warn("Ending DeadTimerThread");
 					return;
 				}
 				else {
-					log.fine("Reseting Dead Timer");
+					log.debug("Reseting Dead Timer");
 				}
 			} catch (Exception e) {
 				//FIXME: Ver que hacer aqui, por ahora, solo saco un log
-			    log.warning("Unhandled exception: " + e.getMessage());
+			    log.warn("Unhandled exception: " + e.getMessage());
 			}
 
 		}

@@ -6,7 +6,8 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import org.jgrapht.GraphPath;
 import org.jgrapht.alg.DijkstraShortestPath;
@@ -53,7 +54,7 @@ public class VLAN_Multicast_algorithm implements ComputingAlgorithm
 	/**
 	* The Logger.
 	*/
-	private Logger log=Logger.getLogger("PCEServer");
+	private Logger log=LoggerFactory.getLogger("PCEServer");
 	
 	/**
 	 * The Path Computing Request to calculate.
@@ -386,7 +387,7 @@ public class VLAN_Multicast_algorithm implements ComputingAlgorithm
 	
 	private ComputingResponse sendNoPath(Response response, ComputingResponse m_resp)
 	{
-		log.warning("Big Warning: Source or destination are NOT in the TED, sending NO PATH");
+		log.warn("Big Warning: Source or destination are NOT in the TED, sending NO PATH");
 		NoPath noPath= new NoPath();
 		noPath.setNatureOfIssue(ObjectParameters.NOPATH_NOPATH_SAT_CONSTRAINTS);
 		NoPathTLV noPathTLV=new NoPathTLV();

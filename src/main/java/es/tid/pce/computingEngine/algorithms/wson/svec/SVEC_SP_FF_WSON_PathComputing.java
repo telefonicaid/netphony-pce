@@ -2,7 +2,8 @@ package es.tid.pce.computingEngine.algorithms.wson.svec;
 
 import java.net.Inet4Address;
 import java.util.List;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import org.jgrapht.GraphPath;
 import org.jgrapht.alg.DijkstraShortestPath;
@@ -36,7 +37,7 @@ import es.tid.tedb.TEDB;
 public class SVEC_SP_FF_WSON_PathComputing implements ComputingAlgorithm {
 	
 	private SimpleDirectedWeightedGraph<Object,IntraDomainEdge> networkGraphOrig;
-	private Logger log=Logger.getLogger("PCEServer");
+	private Logger log=LoggerFactory.getLogger("PCEServer");
 	private ComputingRequest pathReq;
 	
 	/**
@@ -70,16 +71,16 @@ public class SVEC_SP_FF_WSON_PathComputing implements ComputingAlgorithm {
 				Object dest_router_id_addr=ep.getDestIP();
 				log.info("Destination: "+dest_router_id_addr);
 				if (!((networkGraph.containsVertex(source_router_id_addr))&&(networkGraph.containsVertex(dest_router_id_addr)))){
-					log.warning("Source or destination are NOT in the TED");	
+					log.warn("Source or destination are NOT in the TED");	
 					NoPath noPath= new NoPath();
 					noPath.setNatureOfIssue(ObjectParameters.NOPATH_NOPATH_SAT_CONSTRAINTS);
 					NoPathTLV noPathTLV=new NoPathTLV();
 					if (!((networkGraph.containsVertex(source_router_id_addr)))){
-						log.finest("Unknown source");	
+						log.debug("Unknown source");	
 						noPathTLV.setUnknownSource(true);	
 					}
 					if (!((networkGraph.containsVertex(dest_router_id_addr)))){
-						log.finest("Unknown destination");
+						log.debug("Unknown destination");
 						noPathTLV.setUnknownDestination(true);	
 					}
 					
@@ -159,16 +160,16 @@ public class SVEC_SP_FF_WSON_PathComputing implements ComputingAlgorithm {
 				Object dest_router_id_addr=ep.getDestIP();
 				log.info("Destination: "+dest_router_id_addr);
 				if (!((networkGraph.containsVertex(source_router_id_addr))&&(networkGraph.containsVertex(dest_router_id_addr)))){
-					log.warning("Source or destination are NOT in the TED");	
+					log.warn("Source or destination are NOT in the TED");	
 					NoPath noPath= new NoPath();
 					noPath.setNatureOfIssue(ObjectParameters.NOPATH_NOPATH_SAT_CONSTRAINTS);
 					NoPathTLV noPathTLV=new NoPathTLV();
 					if (!((networkGraph.containsVertex(source_router_id_addr)))){
-						log.finest("Unknown source");	
+						log.debug("Unknown source");	
 						noPathTLV.setUnknownSource(true);	
 					}
 					if (!((networkGraph.containsVertex(dest_router_id_addr)))){
-						log.finest("Unknown destination");
+						log.debug("Unknown destination");
 						noPathTLV.setUnknownDestination(true);	
 					}
 					

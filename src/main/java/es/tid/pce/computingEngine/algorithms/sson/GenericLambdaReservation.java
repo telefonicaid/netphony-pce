@@ -1,7 +1,8 @@
 package es.tid.pce.computingEngine.algorithms.sson;
 
 import java.util.LinkedList;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import es.tid.pce.computingEngine.ComputingResponse;
 import es.tid.pce.computingEngine.algorithms.AlgorithmReservation;
@@ -32,7 +33,7 @@ public class GenericLambdaReservation implements AlgorithmReservation{
 	}
 
 	public GenericLambdaReservation(){
-		log=Logger.getLogger("PCEServer");
+		log=LoggerFactory.getLogger("PCEServer");
 	}
 	
 	public ComputingResponse call() throws Exception {

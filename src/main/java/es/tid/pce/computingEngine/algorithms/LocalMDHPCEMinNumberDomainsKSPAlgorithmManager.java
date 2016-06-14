@@ -4,8 +4,12 @@ import es.tid.pce.computingEngine.ComputingRequest;
 import es.tid.pce.computingEngine.algorithms.multiLayer.OperationsCounter;
 import es.tid.pce.parentPCE.ChildPCERequestManager;
 import es.tid.pce.server.wson.ReservationManager;
+import es.tid.tedb.DomainTEDB;
 import es.tid.tedb.ReachabilityManager;
 import es.tid.tedb.TEDB;
+
+import java.net.Inet4Address;
+import java.util.Hashtable;
 
 /*
 * @author baam
@@ -45,6 +49,15 @@ ParentPCEComputingAlgorithmManager {
 		// TODO Auto-generated method stub
 		return null;
 	}
+
+	@Override
+	public ComputingAlgorithm getComputingAlgorithm(ComputingRequest pathReq,
+													TEDB ted, Hashtable<Inet4Address,DomainTEDB> intraTEDBs) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
 	public LocalChildRequestManager getLocalChildRequestManager() {
 		return localChildRequestManager;
 	}
@@ -60,5 +73,4 @@ ParentPCEComputingAlgorithmManager {
 			ChildPCERequestManager childPCERequestManager) {
 		this.childPCERequestManager = childPCERequestManager;
 	}
-
 }
