@@ -52,7 +52,7 @@ mvn package -P generate-autojar-ParentPCE
 ```
 To execute, in the main folder:
 ```
-java -jar target/ParentPCE-jar-with-dependencies.jar
+java -jar -Dlog4j.configurationFile=path_tp_log4j2.xml  target/ParentPCE-jar-with-dependencies.jar path_to_PCEServerConfiguration_BGPLS.xml
 ```
 
 ##Domain PCE
