@@ -50,6 +50,10 @@ To generate the auto-executable ParentPCE-jar-with-dependencies.jar run bellow c
 ```
 mvn package -P generate-autojar-ParentPCE
 ```
+To execute, in the main folder:
+```
+java -jar target/ParentPCE-jar-with-dependencies.jar
+```
 
 ##Domain PCE
 
