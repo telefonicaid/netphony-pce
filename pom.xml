@@ -302,7 +302,7 @@
               <finalName>ParentPCE</finalName>
               <archive>
                 <manifest>
-                  <mainClass>es.tid.pce.parentPCE.parentPCEServer</mainClass>
+                  <mainClass>es.tid.pce.parentPCE.ParentPCEServer</mainClass>
                 </manifest>
               </archive>
             </configuration>
