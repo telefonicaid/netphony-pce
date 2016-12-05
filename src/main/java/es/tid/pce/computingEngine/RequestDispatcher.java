@@ -113,7 +113,7 @@ public class RequestDispatcher {
 	 * @param intraTEDBs internal tedbs
 	 */
 
-	public RequestDispatcher(int nThreads,TEDB ted,ParentPCERequestManager cpcerm, boolean analyzeRequestTime,Hashtable<Inet4Address,DomainTEDB> intraTEDBs)
+	public RequestDispatcher(int nThreads,TEDB ted,ParentPCERequestManager cpcerm, boolean analyzeRequestTime,Hashtable<String,TEDB> intraTEDBs)
 	{
 		log=LoggerFactory.getLogger("PCEServer");
 		this.nThreads = nThreads;

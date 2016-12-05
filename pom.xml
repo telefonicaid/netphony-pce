@@ -2,7 +2,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>es.tid.netphony</groupId>
   <artifactId>pce</artifactId>
-  <version>1.3.2</version>
+  <version>1.3.3</version>
   <packaging>jar</packaging>
   <name>PCE</name>
   <description>Path Computation Element</description>
@@ -22,7 +22,7 @@
   <dependency>
     <groupId>es.tid.netphony</groupId>
     <artifactId>topology</artifactId>
-    <version>1.3.2</version>
+    <version>1.3.3</version>
   </dependency>
   <dependency>
     <groupId>org.slf4j</groupId>
@@ -32,7 +32,7 @@
   <dependency>
     <groupId>es.tid.netphony</groupId>
     <artifactId>network-protocols</artifactId>
-    <version>1.3.2</version>
+    <version>1.3.3</version>
   </dependency>
   <dependency>
    <groupId>colt</groupId>
@@ -302,7 +302,7 @@
               <finalName>ParentPCE</finalName>
               <archive>
                 <manifest>
-                  <mainClass>es.tid.pce.parentPCE.parentPCEServer</mainClass>
+                  <mainClass>es.tid.pce.parentPCE.ParentPCEServer</mainClass>
                 </manifest>
               </archive>
             </configuration>

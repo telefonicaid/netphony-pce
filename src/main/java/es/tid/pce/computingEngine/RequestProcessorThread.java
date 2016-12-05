@@ -51,7 +51,7 @@ public class RequestProcessorThread extends Thread{
 	 */
 	private LinkedBlockingQueue<ComputingRequest> pathComputingRequestQueue;
 
-	private Hashtable<Inet4Address,DomainTEDB> intraTEDBs;
+	private Hashtable<String,TEDB> intraTEDBs;
 
 	private LinkedBlockingQueue<ComputingRequest> pathComputingRequestRetryQueue;
 
@@ -266,7 +266,7 @@ public class RequestProcessorThread extends Thread{
 	 * @param analyzeRequestTime boolean
 	 * @param intraTEDBs internal TEBDs
 	 */
-	public RequestProcessorThread(LinkedBlockingQueue<ComputingRequest> queue,TEDB ted,ParentPCERequestManager cpcerm, LinkedBlockingQueue<ComputingRequest> pathComputingRequestRetryQueue, boolean analyzeRequestTime, Hashtable<Inet4Address,DomainTEDB> intraTEDBs){
+	public RequestProcessorThread(LinkedBlockingQueue<ComputingRequest> queue,TEDB ted,ParentPCERequestManager cpcerm, LinkedBlockingQueue<ComputingRequest> pathComputingRequestRetryQueue, boolean analyzeRequestTime, Hashtable<String,TEDB> intraTEDBs){
 		useMaxReqTime=false;
 		this.pathComputingRequestQueue=queue;
 		running=true;
