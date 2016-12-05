@@ -15,7 +15,11 @@ This repository contains a Java based implementation of a Path Computation Eleme
 
 The PCE follows a modular architecture and allows to add customized algorithms. The PCE has also stateful and remote inititation capabilities. In current version, three components can be built, a domain PCE (aka child PCE), a parent PCE (ready for the H-PCE architecture) and a PCC (path computation client).
 
+More documentation in the [PCE Wiki](https://github.com/telefonicaid/netphony-pce/wiki). 
+
 # Latest news!
+- Compiles with netphony-network-protocols 1.3.3 and netphony-topology 1.3.3
+- Examples added.
 - Moved to slf4j logging framework
 - Apache 2.0 license for all the code
 - Sample Configurationfiles in src/main/sample-config-files/
@@ -64,9 +68,9 @@ To generate the auto-executable PCE-jar-with-dependencies.jar run bellow command
 mvn package -P generate-autojar-PCE
 ```  
 
-To execute the PCE with OSPF-TE support it is needed to build the JNI part.  Remember, it is important to have JAVA_HOME variable correclty set.
+To execute the PCE with OSPF-TE support it is needed to build the JNI part, available in the [netphony-topology repository](https://github.com/telefonicaid/netphony-topology).  Remember, it is important to have JAVA_HOME variable correclty set.
 ```
-cd netphony-pce/src/main/jni
+cd netphony-topology/src/main/jni
 make
 ``` 
 At this step, there will be a librocksaw.so which you will need to copy to a directory in your LD_LIBRARY_PATH
