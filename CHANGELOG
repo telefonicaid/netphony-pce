@@ -1,3 +1,7 @@
+v1.3.3
+- Added Orchestrator (ack to KTH)
+- update to use network-protocols v1.3.3 and topology 1.3.3
+- Examples added
 v1.3.2
 - Moved to slf4j logging framework
 - Apache 2.0 license

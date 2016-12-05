@@ -16,6 +16,7 @@ import java.io.IOException;
 import java.net.Inet4Address;
 import java.net.ServerSocket;
 import java.util.Hashtable;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.Logger;
@@ -82,7 +83,7 @@ public class Orchestrator {
 		TEDB ted;
 		TEDB simple_ted = null;
 
-		Hashtable<Inet4Address,DomainTEDB> intraTEDBs = null;
+		Hashtable<String, TEDB> intraTEDBs = null;
 
 		LocalChildRequestManager localChildRequestManager=null;
 		ReachabilityManager rm=new ReachabilityManager();
