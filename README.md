@@ -111,6 +111,7 @@ As the software is now open source, all contributors, indviduals and insititutio
 - O. Gonzalez de Dios, R. Casellas, R. Morro, F. Paolucci, V. López, R. Martínez, R. Muñoz, R. Villalta, P. Castoldi: Multi-partner Demonstration of BGP-LS enabled multi-domain EON, accepted for publication in Journal of Optical Communications and Networking, Dec. 2015, Vol. 7, Issue 12, pp. B153-B162. [DOI] 
 - O. Gonzalez de Dios, V. López, M. Cuaresma, F. Muñoz, M. Chamania and A. Jukan: Coordinated Computation and Setup of Multi-layer Paths via Inter-layer PCE Communication: Standards, Interoperability and Deployment, in IEEE Communications Magazine, December 2013, Vol. 51, pp. 144 - 154. [DOI]
 - M. Cuaresma, V. Lopez, O. Gonzalez de Dios, F. Muñoz del Nuevo and J.P. Fernández-Palacios: Implementation and Assessment of Pre-Reservation mechanism for stateless PCE environments, in Springer's Journal of the Network and Systems Management, November 2013. [DOI]
+V. López, R. Jimenez, O. Gonzalez, L.M. Contreras, J.P. Fernandez-Palacios: Open Source Netphony Suite: Enabling Multi-layer Network Programmability, in Optical Networking Design and Modeling (ONDM). May 2017.
 
 
 
