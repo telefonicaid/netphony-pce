@@ -163,13 +163,13 @@ public class SingleDomainIniProcessorThread extends Thread{
 				long sRP_ID_number_to_node =ParentPCESession.getNewReqIDCounter() ;
 				srp.setSRP_ID_number(sRP_ID_number_to_node);
 				piniToNode.setRsp(srp);
-				srp.setRFlag(pini.getRsp().isrFlag());
+				srp.setRFlag(pini.getRsp().isRFlag());
 				
 				long sRP_ID_number = pini.getRsp().getSRP_ID_number();
 				
 				
 				//Check if delete
-				if (pini.getRsp().isrFlag()){
+				if (pini.getRsp().isRFlag()){
 					delete(pini.getLsp().getLspId(), sRP_ID_number, iniReq);
 				}
 				else {

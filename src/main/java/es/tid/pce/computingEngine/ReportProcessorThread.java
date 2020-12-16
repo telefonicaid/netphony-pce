@@ -76,7 +76,7 @@ public class ReportProcessorThread extends Thread
 			int numLSPs = pcepReport.getStateReportList().size();
 			for (int j = 0; j < numLSPs ; j++)
 			{
-				syncFlag = pcepReport.getStateReportList().get(j).getLSP().issFlag();
+				syncFlag = pcepReport.getStateReportList().get(j).getLSP().isSyncFlag();
 				if ((!syncFlag)&&(pcepReport.getStateReportList().get(j).getLSP().getLspId()==0))
 				{
 					isSyncOver = true;

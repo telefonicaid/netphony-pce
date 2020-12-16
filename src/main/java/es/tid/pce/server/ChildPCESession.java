@@ -23,9 +23,9 @@ import es.tid.pce.pcepsession.DeadTimerThread;
 import es.tid.pce.pcepsession.GenericPCEPSession;
 import es.tid.pce.pcepsession.KeepAliveThread;
 import es.tid.pce.pcepsession.PCEPSessionsInformation;
-import es.tid.pce.pcepsession.PCEPValues;
 import es.tid.tedb.TEDB;
 import es.tid.util.UtilsFunctions;
+import es.tid.pce.pcepsession.PCEPValues;
 
 /**
  * PCEP Session between the Child PCE and the parent PCE. 

@@ -45,6 +45,7 @@ public class QuickClient {
 	
 	
 	public static final Logger Log =LoggerFactory.getLogger("PCCClient");
+	public static final Logger screenLog=LoggerFactory.getLogger("ScreenLogger");
 
 	public static void main(String[] args) {
 		//FileHandler fh;

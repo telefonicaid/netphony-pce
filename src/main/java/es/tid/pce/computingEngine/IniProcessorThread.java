@@ -147,7 +147,7 @@ public class IniProcessorThread extends Thread{
 				PCEPIntiatedLSP pini=iniReq.getLspIniRequest();
 				long sRP_ID_number = pini.getRsp().getSRP_ID_number();
 				//Check if delete
-				if (pini.getRsp().isrFlag()){
+				if (pini.getRsp().isRFlag()){
 					delete(pini.getLsp().getLspId());
 				}
 				else {

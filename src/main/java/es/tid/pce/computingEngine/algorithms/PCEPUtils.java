@@ -40,9 +40,9 @@ public class PCEPUtils {
 					metric.setMetricValue(metricValue);
 					path.getMetricList().add(metric);
 					break;
-				case ObjectParameters.PCEP_METRIC_TYPE_LATENCY_METRIC:
+				case ObjectParameters.PCEP_METRIC_TYPE_PATH_DELAY_METRIC:
 					Metric metricLat=new Metric();
-					metricLat.setMetricType(ObjectParameters.PCEP_METRIC_TYPE_LATENCY_METRIC);
+					metricLat.setMetricType(ObjectParameters.PCEP_METRIC_TYPE_PATH_DELAY_METRIC);
 					float metricValueLat=0;
 					for (int j=0;j<edge_list.size();++j){
 						metricValueLat+=edge_list.get(j).getDelay_ms();

@@ -39,7 +39,6 @@ import es.tid.pce.pcep.objects.ObjectParameters;
 import es.tid.pce.pcep.objects.ObjectiveFunction;
 import es.tid.pce.pcep.objects.RequestParameters;
 import es.tid.pce.pcep.objects.SRP;
-import es.tid.pce.pcep.objects.XifiUniCastEndPoints;
 import es.tid.pce.pcep.objects.tlvs.LSPDatabaseVersionTLV;
 import es.tid.pce.pcep.objects.tlvs.IPv4LSPIdentifiersTLV;
 import es.tid.pce.pcep.objects.tlvs.SymbolicPathNameTLV;
@@ -559,45 +558,7 @@ public class PCEManagementSession extends Thread {
 									
 								}
 								*/
-								else if (command.equals("send wlan") || command.equals("10")){
-
-									PCEPRequest pReq = new PCEPRequest();
-									LinkedList<SVECConstruct> svecList = new LinkedList<SVECConstruct>();
-									pReq.setSvecList(svecList);
-
-									Request req = new Request();
-
-									RequestParameters reqParams = new RequestParameters();
-									reqParams.setBidirect(false);
-									reqParams.setPrio(1);
-									reqParams.setRequestID(1);
-
-									req.setRequestParameters(reqParams);
-
-									XifiUniCastEndPoints endP = new XifiUniCastEndPoints();
-									endP.setSwitchSourceID("00:14:2c:59:e5:5e");
-									endP.setSwitchDestinationID("00:14:2c:59:e5:66");
-
-									req.setEndPoints(endP);
-
-									ObjectiveFunction obFunc = new ObjectiveFunction();
-									obFunc.setOFcode(1003);
-
-									req.setObjectiveFunction(obFunc);
-
-									LinkedList<Request> reqList = new LinkedList<Request>();
-									reqList.add(req);
-
-
-									Socket socket = new Socket("localhost", 4444);
-
-									pReq.setRequestList(reqList);
-
-									requestDispatcher.dispathRequests(pReq,new DataOutputStream(socket.getOutputStream()));
-
-									out.print("PCEPRequest sent to dispatcher!\r\n");
-
-								}
+							
 								else if (command.equals("help")){
 									out.print("1) show parent pce\r\n");
 									out.print("2) show algorithms list\r\n");
@@ -751,9 +712,9 @@ public class PCEManagementSession extends Thread {
 		UpdateRequest state_report = new UpdateRequest();
 		LSP lsp = new LSP();
 		//Delegate the LSP
-		lsp.setDFlag(true);
+		lsp.setDelegateFlag(true);
 		//No sync
-		lsp.setSFlag(false);
+		lsp.setSyncFlag(false);
 		//Is LSP operational?
 		lsp.setOpFlags(ObjectParameters.LSP_OPERATIONAL_UP);
 

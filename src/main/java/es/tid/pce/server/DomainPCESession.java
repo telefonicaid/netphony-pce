@@ -32,13 +32,13 @@ import es.tid.pce.pcepsession.DeadTimerThread;
 import es.tid.pce.pcepsession.GenericPCEPSession;
 import es.tid.pce.pcepsession.KeepAliveThread;
 import es.tid.pce.pcepsession.PCEPSessionsInformation;
-import es.tid.pce.pcepsession.PCEPValues;
 import es.tid.pce.server.communicationpce.CollaborationPCESessionManager;
-import es.tid.pce.server.communicationpce.RollSessionType;
 import es.tid.pce.server.management.PCEManagementSession;
 import es.tid.pce.server.wson.ReservationManager;
 import es.tid.tedb.TEDB;
 import es.tid.util.UtilsFunctions;
+import es.tid.pce.pcepsession.PCEPValues;
+import es.tid.pce.server.communicationpce.RollSessionType;
 
 /** Thread that maintains a PCEP Session with one PCC Client. 
  * <p> Reads the first message, and if it is a valid OPEN Message, initiates a new 
