@@ -18,7 +18,6 @@ import org.slf4j.LoggerFactory;
 
 import es.tid.pce.pcep.constructs.EndPoint;
 import es.tid.pce.pcep.constructs.GeneralizedBandwidthSSON;
-import es.tid.pce.pcep.constructs.P2PEndpoints;
 import es.tid.pce.pcep.constructs.PCEPIntiatedLSP;
 import es.tid.pce.pcep.constructs.Request;
 import es.tid.pce.pcep.messages.PCEPInitiate;
@@ -45,7 +44,7 @@ import org.apache.commons.cli.*;
 public class QuickClientMain {
 	
 	
-	public static final Logger Log =LoggerFactory.getLogger("PCCClient");
+	public static final Logger log =LoggerFactory.getLogger("PCCClient");
 
 	public static void main(String[] args) {
 		
@@ -97,14 +96,14 @@ public class QuickClientMain {
 			String ip = args[0];
 			int port = Integer.valueOf(args[1]).intValue();
 			
-			QuickClientObj qcObj = new QuickClientObj(Log, ip,  port);
+			QuickClientObj qcObj = new QuickClientObj(log, ip,  port);
 			if(line.hasOption("li")){
 				qcObj.setLocalAddress(line.getOptionValue("li"));
 			}
 			
 			qcObj.start();		
 	
-			System.out.println("Creando el mensaje");
+			log.debug("Creating the message");
 			Request req = qcObj.createReqMessage(args[2], args[3], line);
 			System.out.println("Peticion "+req.toString());
 			PCEPRequest p_r = new PCEPRequest();

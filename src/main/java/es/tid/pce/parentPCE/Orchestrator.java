@@ -286,109 +286,110 @@ public class Orchestrator {
 			
 				
 		}
-		else{
-			log.info("The PCE is IT capable");
-			
-			
-			if (params.isMultiDomain()){
-				//The PCE is multidomain
-				log.info("The PCE is multidomain");
-				ted=new ITMDTEDB();
-				((ITMDTEDB)ted).initializeFullTEDFromFile(params.getITNetworkDescriptionFile() );
-				if (params.isReadMDTEDFromFile()){
-					((ITMDTEDB)ted).initializeFromFile(params.getITMDnetworkDescriptionFile());
-				}
-			}else {
-				log.info("The PCE is single domain");
-				ted=new SimpleITTEDB();
-				ted.initializeFromFile(params.getITNetworkDescriptionFile());
-			}
-			//Read the database from a file
-			
-			//Create the multidomain topology updater
-			MultiDomainTopologyUpdater mdt=new MultiDomainTopologyUpdater((ITMDTEDB)ted);
-			mdt.ITinitialize();
-				
-			if (params.isMultiDomain()){
-				if (params.isReadMDTEDFromFile()){
-					FileTEDBUpdater.initializeReachabilityFromFile(params.getITMDnetworkDescriptionFile(), rm);
-				}
-			}
-			
-			ChildPCERequestManager childPCERequestManager = new ChildPCERequestManager();
-			
-			//The Request Dispatcher. Incoming Requests are sent here
-			//RequestQueue pathRequestsQueue;
-			RequestDispatcher requestDispatcher;
-			log.info("Inizializing "+ params.getChildPCERequestsProcessors()+" Path Request Processor Threads");
-			//pathRequestsQueue=new RequestQueue(params.getChildPCERequestsProcessors());
-			requestDispatcher=new  RequestDispatcher(params.getChildPCERequestsProcessors(),ted,null,false, intraTEDBs);
-			log.info("Inizializing "+ params.getChildPCERequestsProcessors()+" Ini Dispatcher");
-			MultiDomainLSPDB multiDomainLSPDB= new MultiDomainLSPDB();
-			MultiDomainInitiateDispatcher mdiniDispatcher = new MultiDomainInitiateDispatcher(rm,childPCERequestManager, multiDomainLSPDB);
-
-			
-			for (int i=0;i<params.algorithmRuleList.size();++i){
-				 try {
-					Class aClass = Class.forName("es.tid.pce.computingEngine.algorithms."+params.algorithmRuleList.get(i).algoName+"Manager");
-		        	log.info("Registering algorithm "+ params.algorithmRuleList.get(i).algoName+" for of = "+params.algorithmRuleList.get(i).ar.of+" and svec = "+params.algorithmRuleList.get(i).ar.svec);            
-					
-					if (params.algorithmRuleList.get(i).isParentPCEAlgorithm==false){
-						ComputingAlgorithmManager cam= ( ComputingAlgorithmManager)aClass.newInstance();
-						requestDispatcher.registerAlgorithm(params.algorithmRuleList.get(i).ar, cam);
-					}
-					else {
-						ParentPCEComputingAlgorithmManager cam= ( ParentPCEComputingAlgorithmManager)aClass.newInstance();
-						cam.setChildPCERequestManager(childPCERequestManager);
-						cam.setReachabilityManager(rm);
-						requestDispatcher.registerAlgorithm(params.algorithmRuleList.get(i).ar, cam);
-					}
-					
-				} catch (ClassNotFoundException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} catch (InstantiationException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} catch (IllegalAccessException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}
-			
-
-			log.info("Initializing Management Server");
-			ParentPCEManagementSever pms=new ParentPCEManagementSever(childPCERequestManager,requestDispatcher,(ITMDTEDB)ted,rm,pcepSessionManager,mdt,params.getParentPCEManagementPort());		
-			pms.start();
-			
-			//
-			//System.setSecurityManager(new ParentPCESessionsControler());		
-	        ServerSocket serverSocket = null;
-	        boolean listening = true;
-	        try {
-	        	log.info("Listening on port: "+params.getParentPCEServerPort());	
-	            serverSocket = new ServerSocket(params.getParentPCEServerPort());
-	            //If you want to reuse the address:
-	        	//InetSocketAddress local =new InetSocketAddress(Inet4Address.getByName("10.95.162.97"),params.getParentPCEServerPort() );
-	        	//InetSocketAddress local =new InetSocketAddress((Inet4Address)null,params.getParentPCEServerPort() );
-	        	//serverSocket = new ServerSocket();
-	        	//serverSocket.setReuseAddress(true);
-	        	//serverSocket.bind(local);        	
-	        } catch (IOException e) {
-	            System.err.println("Could not listen on port: "+params.getParentPCEServerPort());
-	            System.exit(-1);
-	        }
-
-	        try {
-	        	pcepSessionManager.setStateful(true);
-	        	while (listening) {
-	        		new ParentPCESession(serverSocket.accept(),params, requestDispatcher,mdiniDispatcher, (ITMDTEDB)ted,mdt,childPCERequestManager,rm,pcepSessionManager).start();
-	        	}
-	        	serverSocket.close();
-	        } catch (Exception e) {
-	        	e.printStackTrace();
-	        }
-		}
+//		else
+//			{
+//			log.info("The PCE is IT capable");
+//			
+//			
+//			if (params.isMultiDomain()){
+//				//The PCE is multidomain
+//				log.info("The PCE is multidomain");
+//				ted=new ITMDTEDB();
+//				((ITMDTEDB)ted).initializeFullTEDFromFile(params.getITNetworkDescriptionFile() );
+//				if (params.isReadMDTEDFromFile()){
+//					((ITMDTEDB)ted).initializeFromFile(params.getITMDnetworkDescriptionFile());
+//				}
+//			}else {
+//				log.info("The PCE is single domain");
+//				ted=new SimpleITTEDB();
+//				ted.initializeFromFile(params.getITNetworkDescriptionFile());
+//			}
+//			//Read the database from a file
+//			
+//			//Create the multidomain topology updater
+//			MultiDomainTopologyUpdater mdt=new MultiDomainTopologyUpdater((ITMDTEDB)ted);
+//			mdt.ITinitialize();
+//				
+//			if (params.isMultiDomain()){
+//				if (params.isReadMDTEDFromFile()){
+//					FileTEDBUpdater.initializeReachabilityFromFile(params.getITMDnetworkDescriptionFile(), rm);
+//				}
+//			}
+//			
+//			ChildPCERequestManager childPCERequestManager = new ChildPCERequestManager();
+//			
+//			//The Request Dispatcher. Incoming Requests are sent here
+//			//RequestQueue pathRequestsQueue;
+//			RequestDispatcher requestDispatcher;
+//			log.info("Inizializing "+ params.getChildPCERequestsProcessors()+" Path Request Processor Threads");
+//			//pathRequestsQueue=new RequestQueue(params.getChildPCERequestsProcessors());
+//			requestDispatcher=new  RequestDispatcher(params.getChildPCERequestsProcessors(),ted,null,false, intraTEDBs);
+//			log.info("Inizializing "+ params.getChildPCERequestsProcessors()+" Ini Dispatcher");
+//			MultiDomainLSPDB multiDomainLSPDB= new MultiDomainLSPDB();
+//			MultiDomainInitiateDispatcher mdiniDispatcher = new MultiDomainInitiateDispatcher(rm,childPCERequestManager, multiDomainLSPDB);
+//
+//			
+//			for (int i=0;i<params.algorithmRuleList.size();++i){
+//				 try {
+//					Class aClass = Class.forName("es.tid.pce.computingEngine.algorithms."+params.algorithmRuleList.get(i).algoName+"Manager");
+//		        	log.info("Registering algorithm "+ params.algorithmRuleList.get(i).algoName+" for of = "+params.algorithmRuleList.get(i).ar.of+" and svec = "+params.algorithmRuleList.get(i).ar.svec);            
+//					
+//					if (params.algorithmRuleList.get(i).isParentPCEAlgorithm==false){
+//						ComputingAlgorithmManager cam= ( ComputingAlgorithmManager)aClass.newInstance();
+//						requestDispatcher.registerAlgorithm(params.algorithmRuleList.get(i).ar, cam);
+//					}
+//					else {
+//						ParentPCEComputingAlgorithmManager cam= ( ParentPCEComputingAlgorithmManager)aClass.newInstance();
+//						cam.setChildPCERequestManager(childPCERequestManager);
+//						cam.setReachabilityManager(rm);
+//						requestDispatcher.registerAlgorithm(params.algorithmRuleList.get(i).ar, cam);
+//					}
+//					
+//				} catch (ClassNotFoundException e) {
+//					// TODO Auto-generated catch block
+//					e.printStackTrace();
+//				} catch (InstantiationException e) {
+//					// TODO Auto-generated catch block
+//					e.printStackTrace();
+//				} catch (IllegalAccessException e) {
+//					// TODO Auto-generated catch block
+//					e.printStackTrace();
+//				}
+//			}
+//			
+//
+//			log.info("Initializing Management Server");
+//			ParentPCEManagementSever pms=new ParentPCEManagementSever(childPCERequestManager,requestDispatcher,(ITMDTEDB)ted,rm,pcepSessionManager,mdt,params.getParentPCEManagementPort());		
+//			pms.start();
+//			
+//			//
+//			//System.setSecurityManager(new ParentPCESessionsControler());		
+//	        ServerSocket serverSocket = null;
+//	        boolean listening = true;
+//	        try {
+//	        	log.info("Listening on port: "+params.getParentPCEServerPort());	
+//	            serverSocket = new ServerSocket(params.getParentPCEServerPort());
+//	            //If you want to reuse the address:
+//	        	//InetSocketAddress local =new InetSocketAddress(Inet4Address.getByName("10.95.162.97"),params.getParentPCEServerPort() );
+//	        	//InetSocketAddress local =new InetSocketAddress((Inet4Address)null,params.getParentPCEServerPort() );
+//	        	//serverSocket = new ServerSocket();
+//	        	//serverSocket.setReuseAddress(true);
+//	        	//serverSocket.bind(local);        	
+//	        } catch (IOException e) {
+//	            System.err.println("Could not listen on port: "+params.getParentPCEServerPort());
+//	            System.exit(-1);
+//	        }
+//
+//	        try {
+//	        	pcepSessionManager.setStateful(true);
+//	        	while (listening) {
+//	        		new ParentPCESession(serverSocket.accept(),params, requestDispatcher,mdiniDispatcher, (ITMDTEDB)ted,mdt,childPCERequestManager,rm,pcepSessionManager).start();
+//	        	}
+//	        	serverSocket.close();
+//	        } catch (Exception e) {
+//	        	e.printStackTrace();
+//	        }
+//		}//
 	}
 }
 

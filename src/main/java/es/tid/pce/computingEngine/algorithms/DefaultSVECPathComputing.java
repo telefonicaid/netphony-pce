@@ -42,7 +42,7 @@ public class DefaultSVECPathComputing implements ComputingAlgorithm {
 		ComputingResponse m_resp=new ComputingResponse();
 		
 		log.info("Processing SVEC Path Computing Request: "+pathReq.getSvec().toString());
-		if (pathReq.getSvec().getSvec().islDiverseBit()|pathReq.getSvec().getSvec().isnDiverseBit()| pathReq.getSvec().getSvec().issRLGDiverseBit()){
+		if (pathReq.getSvec().getSvec().isLDiverseBit()|pathReq.getSvec().getSvec().isNDiverseBit()| pathReq.getSvec().getSvec().isSRLGDiverseBit()){
 			log.info("Diverse Path Computation");
 			for (int i=0;i<pathReq.getSvec().getSvec().getRequestIDlist().size();++i){
 				Request req=pathReq.getRequestList().get(i);
@@ -110,14 +110,14 @@ public class DefaultSVECPathComputing implements ComputingAlgorithm {
 						ero.addEROSubobject(eroso);
 						path.setEro(ero);
 						response.addPath(path);
-						if (pathReq.getSvec().getSvec().islDiverseBit()){
+						if (pathReq.getSvec().getSvec().isLDiverseBit()){
 							log.info("Removing edges from graph!");
 							for (j=0;j<edge_list.size();j++){
 								networkGraph.removeEdge(edge_list.get(j));
 							 }
 							
 						}
-						else if (pathReq.getSvec().getSvec().issRLGDiverseBit()){
+						else if (pathReq.getSvec().getSvec().isSRLGDiverseBit()){
 							log.info("Removing edges (NOW SRLGs are the links) from graph!");
 							for (j=0;j<edge_list.size();j++){
 								networkGraph.removeEdge(edge_list.get(j));

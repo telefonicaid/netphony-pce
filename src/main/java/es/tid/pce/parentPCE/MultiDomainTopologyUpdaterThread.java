@@ -10,36 +10,7 @@ import org.slf4j.LoggerFactory;
 import es.tid.ospf.ospfv2.lsa.InterASTEv2LSA;
 import es.tid.ospf.ospfv2.lsa.tlv.LinkTLV;
 import es.tid.pce.pcep.objects.Notification;
-import es.tid.pce.pcep.objects.tlvs.ITAdvertisementTLV;
 import es.tid.pce.pcep.objects.tlvs.OSPFTE_LSA_TLV;
-import es.tid.pce.pcep.objects.tlvs.ServerTLV;
-import es.tid.pce.pcep.objects.tlvs.StorageTLV;
-import es.tid.pce.pcep.objects.tlvs.subtlvs.BlockSizeSubTLV;
-import es.tid.pce.pcep.objects.tlvs.subtlvs.CostSubTLV;
-import es.tid.pce.pcep.objects.tlvs.subtlvs.EPaddressSubTLV;
-import es.tid.pce.pcep.objects.tlvs.subtlvs.IdleConsumptionSubTLV;
-import es.tid.pce.pcep.objects.tlvs.subtlvs.InterStateLatenciesSubTLV;
-import es.tid.pce.pcep.objects.tlvs.subtlvs.LocationSubTLV;
-import es.tid.pce.pcep.objects.tlvs.subtlvs.MTUSubTLV;
-import es.tid.pce.pcep.objects.tlvs.subtlvs.MaxSpeedSubTLV;
-import es.tid.pce.pcep.objects.tlvs.subtlvs.MaximumConsumptionSubTLV;
-import es.tid.pce.pcep.objects.tlvs.subtlvs.NetworkAdapterSubTLV;
-import es.tid.pce.pcep.objects.tlvs.subtlvs.NetworkSpecSubTLV;
-import es.tid.pce.pcep.objects.tlvs.subtlvs.PowerInfoSubTLV;
-import es.tid.pce.pcep.objects.tlvs.subtlvs.PowerStateSubTLV;
-import es.tid.pce.pcep.objects.tlvs.subtlvs.PowerSubTLV;
-import es.tid.pce.pcep.objects.tlvs.subtlvs.ResourceIDSubTLV;
-import es.tid.pce.pcep.objects.tlvs.subtlvs.ServerStorageSubTLV;
-import es.tid.pce.pcep.objects.tlvs.subtlvs.SleepConsumptionSubTLV;
-import es.tid.pce.pcep.objects.tlvs.subtlvs.StorageInfoSubTLV;
-import es.tid.pce.pcep.objects.tlvs.subtlvs.StorageSizeSubTLV;
-import es.tid.pce.pcep.objects.tlvs.subtlvs.TNAIPv4SubTLV;
-import es.tid.pce.pcep.objects.tlvs.subtlvs.TNAIPv6SubTLV;
-import es.tid.pce.pcep.objects.tlvs.subtlvs.TNANSAPSubTLV;
-import es.tid.pce.pcep.objects.tlvs.subtlvs.VolumeInfoSubTLV;
-import es.tid.pce.pcep.objects.tlvs.subtlvs.VolumeSizeSubTLV;
-import es.tid.pce.pcep.objects.tlvs.subtlvs.VolumeSubTLV;
-import es.tid.tedb.ITMDTEDB;
 import es.tid.tedb.MDTEDB;
 /**
  * Receives notifications with topology updates and maintains the multidomain topology
@@ -60,8 +31,6 @@ public class MultiDomainTopologyUpdaterThread extends Thread {
 	// Multi-domain TEDB
 	private MDTEDB multiDomainTEDB;
 
-	//IT Capable Multi-domain TEDB
-	private ITMDTEDB ITmultiDomainTEDB;
 
 	//List of the received LSAs
 	private LinkedList<InterASTEv2LSA> interASTEv2LSAList;
@@ -73,11 +42,6 @@ public class MultiDomainTopologyUpdaterThread extends Thread {
 		interASTEv2LSAList=new LinkedList<InterASTEv2LSA>();
 	}
 
-	public MultiDomainTopologyUpdaterThread(LinkedBlockingQueue<MultiDomainUpdate> multiDomainUpdateQueue,ITMDTEDB ITmultiDomainTEDB){
-		log=LoggerFactory.getLogger("MultiDomainTologyUpdater");
-		this.multiDomainUpdateQueue=multiDomainUpdateQueue;		
-		this.ITmultiDomainTEDB=ITmultiDomainTEDB;
-	}
 
 	public void run() {
 		log.info("Starting Multidomain Topology Upadater Thread");
@@ -89,330 +53,330 @@ public class MultiDomainTopologyUpdaterThread extends Thread {
 				notif=multiDomainUpdate.getNotif();
 				log.debug("Processing Notification to update topology");
 
-				ITAdvertisementTLV ITadv = notif.getITadvtlv();
-				if (ITadv!=null){
-					log.info("IT advertisement received!!");	//Ale: cambiar logs "info" por "finest"
-					Inet4Address IT_site = ITadv.getVirtual_IT_Site_ID();
-					log.info("Virtual IT site ID:"+IT_site);
-					int AdvType = ITadv.getAdv_Type();
-					log.info("Advertisement type:"+AdvType);
-					int AdvTrigger = ITadv.getAdv_Trigger();
-					log.info("Advertisement trigger:"+AdvTrigger);
-
-					StorageTLV Storage = notif.getStoragetlv();
-					if(Storage != null){
-						Inet4Address ResourceID = null;
-						int TotalStorageSize = 0;
-						int AvailableStorageSize = 0;
-
-						log.info("Storage:");
-
-						ResourceIDSubTLV ResourceIDsubtlv = Storage.getResourceIDSubTLV();
-						if(ResourceIDsubtlv != null){
-							ResourceID = ResourceIDsubtlv.getResourceID();
-							log.info("Resource ID:"+ResourceID);
-						}
-
-						LocationSubTLV Locationsubtlv = Storage.getLocationSubTLV();
-						if(Locationsubtlv != null){
-							int LaRes = Locationsubtlv.getLaRes();
-							log.info("Latitude Resolution:"+LaRes);
-							byte[] Latitude = Locationsubtlv.getLatitude();
-							log.info("Latitude:"+Latitude);
-							int LoRes = Locationsubtlv.getLoRes();
-							log.info("Longitude Resolution:"+LoRes);
-							byte[] Longitude = Locationsubtlv.getLongitude();
-							log.info("Longitude:"+Longitude);
-						}
-
-						LinkedList<CostSubTLV> CostsubtlvList = Storage.getCostList();
-						if(CostsubtlvList != null){
-							for (int i=0; i<CostsubtlvList.size(); i++){
-								CostSubTLV Costsubtlv = CostsubtlvList.get(i);
-								log.info("Coste "+i+": Unit:"+Costsubtlv.getUsageUnit()+" Unitari price:"+Costsubtlv.getUnitaryPrice());
-							}
-
-						}
-
-						NetworkSpecSubTLV NetworkSpecsubtlv = Storage.getNetworkSpecSubTLV();
-						if(NetworkSpecsubtlv != null){
-
-							EPaddressSubTLV EPaddresssubtlv = NetworkSpecsubtlv.getEPaddress();
-							if(EPaddresssubtlv != null){
-								String EPaddress = EPaddresssubtlv.getEPaddress();
-							}
-
-							TNAIPv4SubTLV TNAipv4subtlv = NetworkSpecsubtlv.getTNAIPv4();
-							if(TNAipv4subtlv != null){
-								Inet4Address IPv4address = TNAipv4subtlv.getIPv4address();
-							}
-
-							TNAIPv6SubTLV TNAipv6subtlv = NetworkSpecsubtlv.getTNAIPv6();
-							if(TNAipv6subtlv != null){
-								Inet6Address IPv6address = TNAipv6subtlv.getIPv6address();
-							}
-
-							TNANSAPSubTLV TNANSAPsubtlv = NetworkSpecsubtlv.getTNANSAP();
-							if(TNANSAPsubtlv != null){
-								byte[] NSAPaddress = TNANSAPsubtlv.getNSAPaddress();
-							}
-
-							MTUSubTLV MTUsubtlv = NetworkSpecsubtlv.getMTU();
-							if(MTUsubtlv != null){
-								byte[] MTU = MTUsubtlv.getMTU();
-							}
-
-							MaxSpeedSubTLV Maxspeedsubtlv = NetworkSpecsubtlv.getMaxSpeed();
-							if(Maxspeedsubtlv != null){
-								byte[] MaxSpeed = Maxspeedsubtlv.getMaxSpeed();
-							}
-
-							NetworkAdapterSubTLV Networkadaptersubtlv = NetworkSpecsubtlv.getNetworkAdapter();
-							if(Networkadaptersubtlv != null){
-								int NetworkAdapter = Networkadaptersubtlv.getAdapter_Type();
-								int FullDupplex = Networkadaptersubtlv.getFullDupplex();
-							}
-						}
-
-						PowerSubTLV Powersubtlv = Storage.getPowerSubTLV();
-						if(Powersubtlv != null){
-
-							PowerInfoSubTLV PowerInfosubtlv = Powersubtlv.getPowerInfo();
-							if (PowerInfosubtlv != null){
-								int PowerSource = PowerInfosubtlv.getPowerSource();
-								int PowerClass = PowerInfosubtlv.getPowerClass();
-								int Regeneration = PowerInfosubtlv.getRegeneration();
-							}
-
-							MaximumConsumptionSubTLV MaxConsumptionsubtlv = Powersubtlv.getMaximumConsumptionSubTLV();
-							if (MaxConsumptionsubtlv != null){
-								byte[] MaxConsumption = MaxConsumptionsubtlv.getMaximumConsumption();
-							}
-
-							IdleConsumptionSubTLV IdleConsumptionsubtlv = Powersubtlv.getIdleConsumption();
-							if (IdleConsumptionsubtlv != null){
-								byte[] IdleConsumption = IdleConsumptionsubtlv.getIdleConsumption();
-							}
-
-							SleepConsumptionSubTLV SleepConsumptionsubtlv = Powersubtlv.getSleepConsumption();
-							if (SleepConsumptionsubtlv != null){
-								byte[] SleepConsumption = SleepConsumptionsubtlv.getSleepConsumption();
-							}
-
-							InterStateLatenciesSubTLV InterStateLatenciessubtlv = Powersubtlv.getInterStateLatencies();
-							if (InterStateLatenciessubtlv != null){
-								byte[] WakeUpLatency = InterStateLatenciessubtlv.getWakeUpLatency();
-								byte[] PowerUpLatency = InterStateLatenciessubtlv.getPowerUpLatency();
-							}
-
-							PowerStateSubTLV PowerStatesubtlv = Powersubtlv.getPowerState();
-							if (PowerStatesubtlv != null){
-								byte PowerState = PowerStatesubtlv.getPowerState();
-							}
-
-						}
-
-						StorageSizeSubTLV StorageSizesubtlv = Storage.getStorageSizeSubTLV();
-						if(StorageSizesubtlv != null){
-							TotalStorageSize = StorageSizesubtlv.getTotalSize();
-							log.info("Total Size:"+TotalStorageSize);
-							AvailableStorageSize = StorageSizesubtlv.getAvailableSize();
-							log.info("Available Size:"+AvailableStorageSize);
-						}
-
-						StorageInfoSubTLV StorageInfosubtlv = Storage.getStorageInfoSubTLV();
-						if(StorageInfosubtlv != null){
-							int AccessStatus = StorageInfosubtlv.getAccessStatus();
-							int Volatil = StorageInfosubtlv.getVolatil();
-						}
-
-						LinkedList<VolumeSubTLV> VolumesubtlvList = Storage.getVolumeList();
-						if(VolumesubtlvList != null){
-							for (int i=0; i<VolumesubtlvList.size(); i++){
-								VolumeSubTLV Volumesubtlv = VolumesubtlvList.get(i);
-
-								VolumeSizeSubTLV VolumeSizesubtlv = Volumesubtlv.getVolumeSize();
-								if(VolumeSizesubtlv != null){
-									int TotalVolumeSize = VolumeSizesubtlv.getTotalSize();
-									int AvailableVolumeSize = VolumeSizesubtlv.getAvailableSize();
-								}
-
-								BlockSizeSubTLV BlockSizesubtlv = Volumesubtlv.getBlockSizeSubTLV();
-								if(BlockSizesubtlv != null){
-									byte[] BlockSize = BlockSizesubtlv.getBlockSize();
-								}
-
-								VolumeInfoSubTLV VolumeInfosubtlv = Volumesubtlv.getVolumeInfo();
-								if(VolumeInfosubtlv != null){
-									int AccessStatus = VolumeInfosubtlv.getAccessStatus();
-									int Volatil = VolumeInfosubtlv.getVolatil();
-								}
-
-							}
-
-						}
-						Inet4Address domainID=multiDomainUpdate.getDomainID();
-						ITmultiDomainTEDB.addStorage(domainID, IT_site, AdvType, ResourceID, CostsubtlvList, TotalStorageSize, AvailableStorageSize);
-
-					}
-
-					ServerTLV Server = notif.getServertlv();
-					if(Server != null){
-
-						log.info("Server:");
-
-						ResourceIDSubTLV ResourceIDsubtlv = Server.getResourceIDSubTLV();
-						if(ResourceIDsubtlv != null){
-							Inet4Address ResourceID = ResourceIDsubtlv.getResourceID();
-							log.info("Resource ID:"+ResourceID);
-						}
-
-						LocationSubTLV Locationsubtlv = Server.getLocationSubTLV();
-						if(Locationsubtlv != null){
-							int LaRes = Locationsubtlv.getLaRes();
-							log.info("Latitude Resolution:"+LaRes);
-							byte[] Latitude = Locationsubtlv.getLatitude();
-							log.info("Latitude:"+Latitude);
-							int LoRes = Locationsubtlv.getLoRes();
-							log.info("Longitude Resolution:"+LoRes);
-							byte[] Longitude = Locationsubtlv.getLongitude();
-							log.info("Longitude:"+Longitude);
-						}
-
-						LinkedList<CostSubTLV> CostsubtlvList = Server.getCostList();
-						if(CostsubtlvList != null){
-							for (int i=0; i<CostsubtlvList.size(); i++){
-								CostSubTLV Costsubtlv = CostsubtlvList.get(i);
-								log.info("Coste "+i+": Unit:"+Costsubtlv.getUsageUnit()+" Unitari price:"+Costsubtlv.getUnitaryPrice());
-							}
-
-						}
-
-						NetworkSpecSubTLV NetworkSpecsubtlv = Server.getNetworkSpecSubTLV();
-						if(NetworkSpecsubtlv != null){
-
-							EPaddressSubTLV EPaddresssubtlv = NetworkSpecsubtlv.getEPaddress();
-							if(EPaddresssubtlv != null){
-								String EPaddress = EPaddresssubtlv.getEPaddress();
-							}
-
-							TNAIPv4SubTLV TNAipv4subtlv = NetworkSpecsubtlv.getTNAIPv4();
-							if(TNAipv4subtlv != null){
-								Inet4Address IPv4address = TNAipv4subtlv.getIPv4address();
-							}
-
-							TNAIPv6SubTLV TNAipv6subtlv = NetworkSpecsubtlv.getTNAIPv6();
-							if(TNAipv6subtlv != null){
-								Inet6Address IPv6address = TNAipv6subtlv.getIPv6address();
-							}
-
-							TNANSAPSubTLV TNANSAPsubtlv = NetworkSpecsubtlv.getTNANSAP();
-							if(TNANSAPsubtlv != null){
-								byte[] NSAPaddress = TNANSAPsubtlv.getNSAPaddress();
-							}
-
-							MTUSubTLV MTUsubtlv = NetworkSpecsubtlv.getMTU();
-							if(MTUsubtlv != null){
-								byte[] MTU = MTUsubtlv.getMTU();
-							}
-
-							MaxSpeedSubTLV Maxspeedsubtlv = NetworkSpecsubtlv.getMaxSpeed();
-							if(Maxspeedsubtlv != null){
-								byte[] MaxSpeed = Maxspeedsubtlv.getMaxSpeed();
-							}
-
-							NetworkAdapterSubTLV Networkadaptersubtlv = NetworkSpecsubtlv.getNetworkAdapter();
-							if(Networkadaptersubtlv != null){
-								int NetworkAdapter = Networkadaptersubtlv.getAdapter_Type();
-								int FullDupplex = Networkadaptersubtlv.getFullDupplex();
-							}
-						}
-
-						PowerSubTLV Powersubtlv = Server.getPowerSubTLV();
-						if(Powersubtlv != null){
-
-							PowerInfoSubTLV PowerInfosubtlv = Powersubtlv.getPowerInfo();
-							if (PowerInfosubtlv != null){
-								int PowerSource = PowerInfosubtlv.getPowerSource();
-								int PowerClass = PowerInfosubtlv.getPowerClass();
-								int Regeneration = PowerInfosubtlv.getRegeneration();
-							}
-
-							MaximumConsumptionSubTLV MaxConsumptionsubtlv = Powersubtlv.getMaximumConsumptionSubTLV();
-							if (MaxConsumptionsubtlv != null){
-								byte[] MaxConsumption = MaxConsumptionsubtlv.getMaximumConsumption();
-							}
-
-							IdleConsumptionSubTLV IdleConsumptionsubtlv = Powersubtlv.getIdleConsumption();
-							if (IdleConsumptionsubtlv != null){
-								byte[] IdleConsumption = IdleConsumptionsubtlv.getIdleConsumption();
-							}
-
-							SleepConsumptionSubTLV SleepConsumptionsubtlv = Powersubtlv.getSleepConsumption();
-							if (SleepConsumptionsubtlv != null){
-								byte[] SleepConsumption = SleepConsumptionsubtlv.getSleepConsumption();
-							}
-
-							InterStateLatenciesSubTLV InterStateLatenciessubtlv = Powersubtlv.getInterStateLatencies();
-							if (InterStateLatenciessubtlv != null){
-								byte[] WakeUpLatency = InterStateLatenciessubtlv.getWakeUpLatency();
-								byte[] PowerUpLatency = InterStateLatenciessubtlv.getPowerUpLatency();
-							}
-
-							PowerStateSubTLV PowerStatesubtlv = Powersubtlv.getPowerState();
-							if (PowerStatesubtlv != null){
-								byte PowerState = PowerStatesubtlv.getPowerState();
-							}
-
-						}
-
-						ServerStorageSubTLV ServerStoragesubtlv = Server.getServerStorageSubTLV();
-						if(ServerStoragesubtlv != null){
-
-							StorageSizeSubTLV StorageSizesubtlv = ServerStoragesubtlv.getStorageSize();
-							if(StorageSizesubtlv != null){
-								int TotalSize = StorageSizesubtlv.getTotalSize();
-								log.info("Total Size:"+TotalSize);
-								int AvailableSize = StorageSizesubtlv.getAvailableSize();
-								log.info("Available Size:"+AvailableSize);
-							}
-
-							StorageInfoSubTLV StorageInfosubtlv = ServerStoragesubtlv.getStorageInfoSubTLV();
-							if(StorageInfosubtlv != null){
-								int AccessStatus = StorageInfosubtlv.getAccessStatus();
-								int Volatil = StorageInfosubtlv.getVolatil();
-							}
-
-							LinkedList<VolumeSubTLV> VolumesubtlvList = ServerStoragesubtlv.getVolumeList();
-							if(VolumesubtlvList != null){
-								for (int i=0; i<VolumesubtlvList.size(); i++){
-									VolumeSubTLV Volumesubtlv = VolumesubtlvList.get(i);
-
-									VolumeSizeSubTLV VolumeSizesubtlv = Volumesubtlv.getVolumeSize();
-									if(VolumeSizesubtlv != null){
-										int TotalSize = VolumeSizesubtlv.getTotalSize();
-										int AvailableSize = VolumeSizesubtlv.getAvailableSize();
-									}
-
-									BlockSizeSubTLV BlockSizesubtlv = Volumesubtlv.getBlockSizeSubTLV();
-									if(BlockSizesubtlv != null){
-										byte[] BlockSize = BlockSizesubtlv.getBlockSize();
-									}
-
-									VolumeInfoSubTLV VolumeInfosubtlv = Volumesubtlv.getVolumeInfo();
-									if(VolumeInfosubtlv != null){
-										int AccessStatus = VolumeInfosubtlv.getAccessStatus();
-										int Volatil = VolumeInfosubtlv.getVolatil();
-									}
-
-								}
-
-							}
-
-						}
-
-					}
-				}else{
+				//ITAdvertisementTLV ITadv = notif.getITadvtlv();
+				//if (ITadv!=null){
+//					log.info("IT advertisement received!!");	//Ale: cambiar logs "info" por "finest"
+//					Inet4Address IT_site = ITadv.getVirtual_IT_Site_ID();
+//					log.info("Virtual IT site ID:"+IT_site);
+//					int AdvType = ITadv.getAdv_Type();
+//					log.info("Advertisement type:"+AdvType);
+//					int AdvTrigger = ITadv.getAdv_Trigger();
+//					log.info("Advertisement trigger:"+AdvTrigger);
+//
+//					StorageTLV Storage = notif.getStoragetlv();
+//					if(Storage != null){
+//						Inet4Address ResourceID = null;
+//						int TotalStorageSize = 0;
+//						int AvailableStorageSize = 0;
+//
+//						log.info("Storage:");
+//
+//						ResourceIDSubTLV ResourceIDsubtlv = Storage.getResourceIDSubTLV();
+//						if(ResourceIDsubtlv != null){
+//							ResourceID = ResourceIDsubtlv.getResourceID();
+//							log.info("Resource ID:"+ResourceID);
+//						}
+//
+//						LocationSubTLV Locationsubtlv = Storage.getLocationSubTLV();
+//						if(Locationsubtlv != null){
+//							int LaRes = Locationsubtlv.getLaRes();
+//							log.info("Latitude Resolution:"+LaRes);
+//							byte[] Latitude = Locationsubtlv.getLatitude();
+//							log.info("Latitude:"+Latitude);
+//							int LoRes = Locationsubtlv.getLoRes();
+//							log.info("Longitude Resolution:"+LoRes);
+//							byte[] Longitude = Locationsubtlv.getLongitude();
+//							log.info("Longitude:"+Longitude);
+//						}
+//
+//						LinkedList<CostSubTLV> CostsubtlvList = Storage.getCostList();
+//						if(CostsubtlvList != null){
+//							for (int i=0; i<CostsubtlvList.size(); i++){
+//								CostSubTLV Costsubtlv = CostsubtlvList.get(i);
+//								log.info("Coste "+i+": Unit:"+Costsubtlv.getUsageUnit()+" Unitari price:"+Costsubtlv.getUnitaryPrice());
+//							}
+//
+//						}
+//
+//						NetworkSpecSubTLV NetworkSpecsubtlv = Storage.getNetworkSpecSubTLV();
+//						if(NetworkSpecsubtlv != null){
+//
+//							EPaddressSubTLV EPaddresssubtlv = NetworkSpecsubtlv.getEPaddress();
+//							if(EPaddresssubtlv != null){
+//								String EPaddress = EPaddresssubtlv.getEPaddress();
+//							}
+//
+//							TNAIPv4SubTLV TNAipv4subtlv = NetworkSpecsubtlv.getTNAIPv4();
+//							if(TNAipv4subtlv != null){
+//								Inet4Address IPv4address = TNAipv4subtlv.getIPv4address();
+//							}
+//
+//							TNAIPv6SubTLV TNAipv6subtlv = NetworkSpecsubtlv.getTNAIPv6();
+//							if(TNAipv6subtlv != null){
+//								Inet6Address IPv6address = TNAipv6subtlv.getIPv6address();
+//							}
+//
+//							TNANSAPSubTLV TNANSAPsubtlv = NetworkSpecsubtlv.getTNANSAP();
+//							if(TNANSAPsubtlv != null){
+//								byte[] NSAPaddress = TNANSAPsubtlv.getNSAPaddress();
+//							}
+//
+//							MTUSubTLV MTUsubtlv = NetworkSpecsubtlv.getMTU();
+//							if(MTUsubtlv != null){
+//								byte[] MTU = MTUsubtlv.getMTU();
+//							}
+//
+//							MaxSpeedSubTLV Maxspeedsubtlv = NetworkSpecsubtlv.getMaxSpeed();
+//							if(Maxspeedsubtlv != null){
+//								byte[] MaxSpeed = Maxspeedsubtlv.getMaxSpeed();
+//							}
+//
+//							NetworkAdapterSubTLV Networkadaptersubtlv = NetworkSpecsubtlv.getNetworkAdapter();
+//							if(Networkadaptersubtlv != null){
+//								int NetworkAdapter = Networkadaptersubtlv.getAdapter_Type();
+//								int FullDupplex = Networkadaptersubtlv.getFullDupplex();
+//							}
+//						}
+//
+//						PowerSubTLV Powersubtlv = Storage.getPowerSubTLV();
+//						if(Powersubtlv != null){
+//
+//							PowerInfoSubTLV PowerInfosubtlv = Powersubtlv.getPowerInfo();
+//							if (PowerInfosubtlv != null){
+//								int PowerSource = PowerInfosubtlv.getPowerSource();
+//								int PowerClass = PowerInfosubtlv.getPowerClass();
+//								int Regeneration = PowerInfosubtlv.getRegeneration();
+//							}
+//
+//							MaximumConsumptionSubTLV MaxConsumptionsubtlv = Powersubtlv.getMaximumConsumptionSubTLV();
+//							if (MaxConsumptionsubtlv != null){
+//								byte[] MaxConsumption = MaxConsumptionsubtlv.getMaximumConsumption();
+//							}
+//
+//							IdleConsumptionSubTLV IdleConsumptionsubtlv = Powersubtlv.getIdleConsumption();
+//							if (IdleConsumptionsubtlv != null){
+//								byte[] IdleConsumption = IdleConsumptionsubtlv.getIdleConsumption();
+//							}
+//
+//							SleepConsumptionSubTLV SleepConsumptionsubtlv = Powersubtlv.getSleepConsumption();
+//							if (SleepConsumptionsubtlv != null){
+//								byte[] SleepConsumption = SleepConsumptionsubtlv.getSleepConsumption();
+//							}
+//
+//							InterStateLatenciesSubTLV InterStateLatenciessubtlv = Powersubtlv.getInterStateLatencies();
+//							if (InterStateLatenciessubtlv != null){
+//								byte[] WakeUpLatency = InterStateLatenciessubtlv.getWakeUpLatency();
+//								byte[] PowerUpLatency = InterStateLatenciessubtlv.getPowerUpLatency();
+//							}
+//
+//							PowerStateSubTLV PowerStatesubtlv = Powersubtlv.getPowerState();
+//							if (PowerStatesubtlv != null){
+//								byte PowerState = PowerStatesubtlv.getPowerState();
+//							}
+//
+//						}
+//
+//						StorageSizeSubTLV StorageSizesubtlv = Storage.getStorageSizeSubTLV();
+//						if(StorageSizesubtlv != null){
+//							TotalStorageSize = StorageSizesubtlv.getTotalSize();
+//							log.info("Total Size:"+TotalStorageSize);
+//							AvailableStorageSize = StorageSizesubtlv.getAvailableSize();
+//							log.info("Available Size:"+AvailableStorageSize);
+//						}
+//
+//						StorageInfoSubTLV StorageInfosubtlv = Storage.getStorageInfoSubTLV();
+//						if(StorageInfosubtlv != null){
+//							int AccessStatus = StorageInfosubtlv.getAccessStatus();
+//							int Volatil = StorageInfosubtlv.getVolatil();
+//						}
+//
+//						LinkedList<VolumeSubTLV> VolumesubtlvList = Storage.getVolumeList();
+//						if(VolumesubtlvList != null){
+//							for (int i=0; i<VolumesubtlvList.size(); i++){
+//								VolumeSubTLV Volumesubtlv = VolumesubtlvList.get(i);
+//
+//								VolumeSizeSubTLV VolumeSizesubtlv = Volumesubtlv.getVolumeSize();
+//								if(VolumeSizesubtlv != null){
+//									int TotalVolumeSize = VolumeSizesubtlv.getTotalSize();
+//									int AvailableVolumeSize = VolumeSizesubtlv.getAvailableSize();
+//								}
+//
+//								BlockSizeSubTLV BlockSizesubtlv = Volumesubtlv.getBlockSizeSubTLV();
+//								if(BlockSizesubtlv != null){
+//									byte[] BlockSize = BlockSizesubtlv.getBlockSize();
+//								}
+//
+//								VolumeInfoSubTLV VolumeInfosubtlv = Volumesubtlv.getVolumeInfo();
+//								if(VolumeInfosubtlv != null){
+//									int AccessStatus = VolumeInfosubtlv.getAccessStatus();
+//									int Volatil = VolumeInfosubtlv.getVolatil();
+//								}
+//
+//							}
+//
+//						}
+//						Inet4Address domainID=multiDomainUpdate.getDomainID();
+//						ITmultiDomainTEDB.addStorage(domainID, IT_site, AdvType, ResourceID, CostsubtlvList, TotalStorageSize, AvailableStorageSize);
+//
+//					}
+//
+//					ServerTLV Server = notif.getServertlv();
+//					if(Server != null){
+//
+//						log.info("Server:");
+//
+//						ResourceIDSubTLV ResourceIDsubtlv = Server.getResourceIDSubTLV();
+//						if(ResourceIDsubtlv != null){
+//							Inet4Address ResourceID = ResourceIDsubtlv.getResourceID();
+//							log.info("Resource ID:"+ResourceID);
+//						}
+//
+//						LocationSubTLV Locationsubtlv = Server.getLocationSubTLV();
+//						if(Locationsubtlv != null){
+//							int LaRes = Locationsubtlv.getLaRes();
+//							log.info("Latitude Resolution:"+LaRes);
+//							byte[] Latitude = Locationsubtlv.getLatitude();
+//							log.info("Latitude:"+Latitude);
+//							int LoRes = Locationsubtlv.getLoRes();
+//							log.info("Longitude Resolution:"+LoRes);
+//							byte[] Longitude = Locationsubtlv.getLongitude();
+//							log.info("Longitude:"+Longitude);
+//						}
+//
+//						LinkedList<CostSubTLV> CostsubtlvList = Server.getCostList();
+//						if(CostsubtlvList != null){
+//							for (int i=0; i<CostsubtlvList.size(); i++){
+//								CostSubTLV Costsubtlv = CostsubtlvList.get(i);
+//								log.info("Coste "+i+": Unit:"+Costsubtlv.getUsageUnit()+" Unitari price:"+Costsubtlv.getUnitaryPrice());
+//							}
+//
+//						}
+//
+//						NetworkSpecSubTLV NetworkSpecsubtlv = Server.getNetworkSpecSubTLV();
+//						if(NetworkSpecsubtlv != null){
+//
+//							EPaddressSubTLV EPaddresssubtlv = NetworkSpecsubtlv.getEPaddress();
+//							if(EPaddresssubtlv != null){
+//								String EPaddress = EPaddresssubtlv.getEPaddress();
+//							}
+//
+//							TNAIPv4SubTLV TNAipv4subtlv = NetworkSpecsubtlv.getTNAIPv4();
+//							if(TNAipv4subtlv != null){
+//								Inet4Address IPv4address = TNAipv4subtlv.getIPv4address();
+//							}
+//
+//							TNAIPv6SubTLV TNAipv6subtlv = NetworkSpecsubtlv.getTNAIPv6();
+//							if(TNAipv6subtlv != null){
+//								Inet6Address IPv6address = TNAipv6subtlv.getIPv6address();
+//							}
+//
+//							TNANSAPSubTLV TNANSAPsubtlv = NetworkSpecsubtlv.getTNANSAP();
+//							if(TNANSAPsubtlv != null){
+//								byte[] NSAPaddress = TNANSAPsubtlv.getNSAPaddress();
+//							}
+//
+//							MTUSubTLV MTUsubtlv = NetworkSpecsubtlv.getMTU();
+//							if(MTUsubtlv != null){
+//								byte[] MTU = MTUsubtlv.getMTU();
+//							}
+//
+//							MaxSpeedSubTLV Maxspeedsubtlv = NetworkSpecsubtlv.getMaxSpeed();
+//							if(Maxspeedsubtlv != null){
+//								byte[] MaxSpeed = Maxspeedsubtlv.getMaxSpeed();
+//							}
+//
+//							NetworkAdapterSubTLV Networkadaptersubtlv = NetworkSpecsubtlv.getNetworkAdapter();
+//							if(Networkadaptersubtlv != null){
+//								int NetworkAdapter = Networkadaptersubtlv.getAdapter_Type();
+//								int FullDupplex = Networkadaptersubtlv.getFullDupplex();
+//							}
+//						}
+//
+//						PowerSubTLV Powersubtlv = Server.getPowerSubTLV();
+//						if(Powersubtlv != null){
+//
+//							PowerInfoSubTLV PowerInfosubtlv = Powersubtlv.getPowerInfo();
+//							if (PowerInfosubtlv != null){
+//								int PowerSource = PowerInfosubtlv.getPowerSource();
+//								int PowerClass = PowerInfosubtlv.getPowerClass();
+//								int Regeneration = PowerInfosubtlv.getRegeneration();
+//							}
+//
+//							MaximumConsumptionSubTLV MaxConsumptionsubtlv = Powersubtlv.getMaximumConsumptionSubTLV();
+//							if (MaxConsumptionsubtlv != null){
+//								byte[] MaxConsumption = MaxConsumptionsubtlv.getMaximumConsumption();
+//							}
+//
+//							IdleConsumptionSubTLV IdleConsumptionsubtlv = Powersubtlv.getIdleConsumption();
+//							if (IdleConsumptionsubtlv != null){
+//								byte[] IdleConsumption = IdleConsumptionsubtlv.getIdleConsumption();
+//							}
+//
+//							SleepConsumptionSubTLV SleepConsumptionsubtlv = Powersubtlv.getSleepConsumption();
+//							if (SleepConsumptionsubtlv != null){
+//								byte[] SleepConsumption = SleepConsumptionsubtlv.getSleepConsumption();
+//							}
+//
+//							InterStateLatenciesSubTLV InterStateLatenciessubtlv = Powersubtlv.getInterStateLatencies();
+//							if (InterStateLatenciessubtlv != null){
+//								byte[] WakeUpLatency = InterStateLatenciessubtlv.getWakeUpLatency();
+//								byte[] PowerUpLatency = InterStateLatenciessubtlv.getPowerUpLatency();
+//							}
+//
+//							PowerStateSubTLV PowerStatesubtlv = Powersubtlv.getPowerState();
+//							if (PowerStatesubtlv != null){
+//								byte PowerState = PowerStatesubtlv.getPowerState();
+//							}
+//
+//						}
+//
+//						ServerStorageSubTLV ServerStoragesubtlv = Server.getServerStorageSubTLV();
+//						if(ServerStoragesubtlv != null){
+//
+//							StorageSizeSubTLV StorageSizesubtlv = ServerStoragesubtlv.getStorageSize();
+//							if(StorageSizesubtlv != null){
+//								int TotalSize = StorageSizesubtlv.getTotalSize();
+//								log.info("Total Size:"+TotalSize);
+//								int AvailableSize = StorageSizesubtlv.getAvailableSize();
+//								log.info("Available Size:"+AvailableSize);
+//							}
+//
+//							StorageInfoSubTLV StorageInfosubtlv = ServerStoragesubtlv.getStorageInfoSubTLV();
+//							if(StorageInfosubtlv != null){
+//								int AccessStatus = StorageInfosubtlv.getAccessStatus();
+//								int Volatil = StorageInfosubtlv.getVolatil();
+//							}
+//
+//							LinkedList<VolumeSubTLV> VolumesubtlvList = ServerStoragesubtlv.getVolumeList();
+//							if(VolumesubtlvList != null){
+//								for (int i=0; i<VolumesubtlvList.size(); i++){
+//									VolumeSubTLV Volumesubtlv = VolumesubtlvList.get(i);
+//
+//									VolumeSizeSubTLV VolumeSizesubtlv = Volumesubtlv.getVolumeSize();
+//									if(VolumeSizesubtlv != null){
+//										int TotalSize = VolumeSizesubtlv.getTotalSize();
+//										int AvailableSize = VolumeSizesubtlv.getAvailableSize();
+//									}
+//
+//									BlockSizeSubTLV BlockSizesubtlv = Volumesubtlv.getBlockSizeSubTLV();
+//									if(BlockSizesubtlv != null){
+//										byte[] BlockSize = BlockSizesubtlv.getBlockSize();
+//									}
+//
+//									VolumeInfoSubTLV VolumeInfosubtlv = Volumesubtlv.getVolumeInfo();
+//									if(VolumeInfosubtlv != null){
+//										int AccessStatus = VolumeInfosubtlv.getAccessStatus();
+//										int Volatil = VolumeInfosubtlv.getVolatil();
+//									}
+//
+//								}
+//
+//							}
+//
+//						}
+//
+//					}
+				//}else{
 					//THIS IS THE PART OF MULTI-DOMAIN TOPOLOGY
 					LinkedList<OSPFTE_LSA_TLV>LSATLVList= notif.getLSATLVList();
 					if (LSATLVList!=null){
@@ -435,7 +399,7 @@ public class MultiDomainTopologyUpdaterThread extends Thread {
 										try {
 											Inet4Address remoteAS=tlv.getInterASTEv2LSA().getLinkTLV().getRemoteASNumber().getRemoteASNumber();
 											log.debug("Remote AS: "+remoteAS);
-											Inet4Address remoteASBR=tlv.getInterASTEv2LSA().getLinkTLV().getiPv4RemoteASBRID().getIPv4RemoteASBRID();
+											Inet4Address remoteASBR=tlv.getInterASTEv2LSA().getLinkTLV().getIPv4RemoteASBRID().getIPv4RemoteASBRID();
 											log.debug("Remote ASBR: "+remoteASBR);
 											Inet4Address localAS=multiDomainUpdate.getDomainID();
 											log.debug("Local AS: "+localAS);
@@ -443,12 +407,8 @@ public class MultiDomainTopologyUpdaterThread extends Thread {
 											log.debug("Local ASBR: "+localASBR);
 											long localRouterASBRIf=tlv.getInterASTEv2LSA().getLinkTLV().getLinkLocalRemoteIdentifiers().getLinkLocalIdentifier();
 											long remoteRouterASBRIf=tlv.getInterASTEv2LSA().getLinkTLV().getLinkLocalRemoteIdentifiers().getLinkRemoteIdentifier();
-
-											if(ITmultiDomainTEDB==null){
-												multiDomainTEDB.addInterdomainLink(localAS, localASBR, localRouterASBRIf, remoteAS, remoteASBR, remoteRouterASBRIf,null);											
-											}else{
-												ITmultiDomainTEDB.addInterdomainLink(localAS, localASBR, localRouterASBRIf, remoteAS, remoteASBR, remoteRouterASBRIf,null);
-											}
+									
+											multiDomainTEDB.addInterdomainLink(localAS, localASBR, localRouterASBRIf, remoteAS, remoteASBR, remoteRouterASBRIf,null);											
 
 										}catch (Exception e){
 											log.error("Problem with Link TLV "+e.getStackTrace());
@@ -465,7 +425,7 @@ public class MultiDomainTopologyUpdaterThread extends Thread {
 						log.warn("LSATLVList esta a null");
 					}
 
-				}
+				//}
 
 
 				//notif.getNotifyList();

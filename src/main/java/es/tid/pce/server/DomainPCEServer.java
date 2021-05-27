@@ -41,7 +41,6 @@ import es.tid.pce.server.management.PCEManagementSever;
 import es.tid.pce.server.wson.ReservationManager;
 import es.tid.tedb.DomainTEDB;
 import es.tid.tedb.MultiLayerTEDB;
-import es.tid.tedb.SimpleITTEDB;
 import es.tid.tedb.SimpleTEDB;
 
 
@@ -166,11 +165,11 @@ public class DomainPCEServer implements Runnable{
 
 		//The Traffic Engineering Database
 		DomainTEDB ted;
-		if(params.ITcapable==true){
-			//IT CAPABLE PCE
-			log.info("IT capable Domain PCE");
-			ted=new SimpleITTEDB();
-		}else{
+//		if(params.ITcapable==true){
+//			//IT CAPABLE PCE
+//			log.info("IT capable Domain PCE");
+//			ted=new SimpleITTEDB();
+//		}else{
 			//GENERIC PCE
 			log.info("GENERIC PCE");
 			if (params.isMultilayer()){
@@ -179,7 +178,7 @@ public class DomainPCEServer implements Runnable{
 			}else{
 				ted=new SimpleTEDB();
 			}
-		}
+		//}
 		if (params.isStateful())
 		{
 			log.info("Stateful PCE with T="+params.isStatefulTFlag()+" D="+params.isStatefulDFlag()+" S="+params.isStatefulSFlag());
@@ -273,16 +272,16 @@ public class DomainPCEServer implements Runnable{
 		pms.start();
 
 		SendTopologyTask stg=null;
-		ITSendTopologyTask ITstg=null;
+		//ITSendTopologyTask ITstg=null;
 		if (params.getParentPCEAddress()!=null){			
 			if(params.ITcapable==true){
-				ITstg=new ITSendTopologyTask((SimpleITTEDB)ted,pcm);
-
-				Timer timer2=new Timer();
-				if (params.getParentPCEAddress()!=null){
-					log.info("Changing topology");
-					timer2.schedule(ITstg, 0, 100000);
-				}
+//				ITstg=new ITSendTopologyTask((SimpleITTEDB)ted,pcm);
+//
+//				Timer timer2=new Timer();
+//				if (params.getParentPCEAddress()!=null){
+//					log.info("Changing topology");
+//					timer2.schedule(ITstg, 0, 100000);
+//				}
 			}else if (!(params.isActingAsBGP4Peer())){
 				stg=new SendTopologyTask((DomainTEDB)ted,pcm);
 

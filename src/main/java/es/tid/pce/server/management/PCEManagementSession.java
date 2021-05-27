@@ -39,7 +39,6 @@ import es.tid.pce.pcep.objects.ObjectParameters;
 import es.tid.pce.pcep.objects.ObjectiveFunction;
 import es.tid.pce.pcep.objects.RequestParameters;
 import es.tid.pce.pcep.objects.SRP;
-import es.tid.pce.pcep.objects.XifiUniCastEndPoints;
 import es.tid.pce.pcep.objects.tlvs.LSPDatabaseVersionTLV;
 import es.tid.pce.pcep.objects.tlvs.IPv4LSPIdentifiersTLV;
 import es.tid.pce.pcep.objects.tlvs.SymbolicPathNameTLV;
@@ -444,8 +443,8 @@ public class PCEManagementSession extends Thread {
 									PCEPReport rpt= new PCEPReport();
 									rpt.setStateReportList(new LinkedList<StateReport>());
 									rpt.getStateReportList().add(new StateReport());
-									rpt.getStateReportList().get(0).setLSP(new LSP());
-									rpt.getStateReportList().get(0).setSRP(new SRP());
+									rpt.getStateReportList().get(0).setLsp(new LSP());
+									rpt.getStateReportList().get(0).setSrp(new SRP());
 									rpt.getStateReportList().get(0).setPath(new Path());
 									rpt.getStateReportList().get(0).getPath().setEro(new ExplicitRouteObject());
 
@@ -559,45 +558,7 @@ public class PCEManagementSession extends Thread {
 									
 								}
 								*/
-								else if (command.equals("send wlan") || command.equals("10")){
-
-									PCEPRequest pReq = new PCEPRequest();
-									LinkedList<SVECConstruct> svecList = new LinkedList<SVECConstruct>();
-									pReq.setSvecList(svecList);
-
-									Request req = new Request();
-
-									RequestParameters reqParams = new RequestParameters();
-									reqParams.setBidirect(false);
-									reqParams.setPrio(1);
-									reqParams.setRequestID(1);
-
-									req.setRequestParameters(reqParams);
-
-									XifiUniCastEndPoints endP = new XifiUniCastEndPoints();
-									endP.setSwitchSourceID("00:14:2c:59:e5:5e");
-									endP.setSwitchDestinationID("00:14:2c:59:e5:66");
-
-									req.setEndPoints(endP);
-
-									ObjectiveFunction obFunc = new ObjectiveFunction();
-									obFunc.setOFcode(1003);
-
-									req.setObjectiveFunction(obFunc);
-
-									LinkedList<Request> reqList = new LinkedList<Request>();
-									reqList.add(req);
-
-
-									Socket socket = new Socket("localhost", 4444);
-
-									pReq.setRequestList(reqList);
-
-									requestDispatcher.dispathRequests(pReq,new DataOutputStream(socket.getOutputStream()));
-
-									out.print("PCEPRequest sent to dispatcher!\r\n");
-
-								}
+							
 								else if (command.equals("help")){
 									out.print("1) show parent pce\r\n");
 									out.print("2) show algorithms list\r\n");
@@ -727,8 +688,8 @@ public class PCEManagementSession extends Thread {
 			StateReport report = val.pcepReport.getStateReportList().get(i);
 
 			update.getUpdateRequestList().add(new UpdateRequest());
-			update.getUpdateRequestList().get(i).setLsp(report.getLSP());
-			update.getUpdateRequestList().get(i).setSrp(report.getSRP());
+			update.getUpdateRequestList().get(i).setLsp(report.getLsp());
+			update.getUpdateRequestList().get(i).setSrp(report.getSrp());
 			update.getUpdateRequestList().get(i).setPath(report.getPath());
 		}
 		dm.sendPCEPMessage(update);
@@ -743,7 +704,8 @@ public class PCEManagementSession extends Thread {
 
 		SymbolicPathNameTLV symPathName= new SymbolicPathNameTLV();
 
-		symPathName.setSymbolicPathNameID(ObjectParameters.redundancyID);
+		String name="test";
+		symPathName.setSymbolicPathNameID(name.getBytes());
 		rsp.setSymPathName(symPathName);
 
 		//tedb.getDomainReachabilityIPv4Prefix();
@@ -751,9 +713,9 @@ public class PCEManagementSession extends Thread {
 		UpdateRequest state_report = new UpdateRequest();
 		LSP lsp = new LSP();
 		//Delegate the LSP
-		lsp.setDFlag(true);
+		lsp.setDelegateFlag(true);
 		//No sync
-		lsp.setSFlag(false);
+		lsp.setSyncFlag(false);
 		//Is LSP operational?
 		lsp.setOpFlags(ObjectParameters.LSP_OPERATIONAL_UP);
 

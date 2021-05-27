@@ -20,8 +20,7 @@ import es.tid.pce.computingEngine.algorithms.ComputingAlgorithm;
 import es.tid.pce.computingEngine.algorithms.PCEPUtils;
 import es.tid.pce.pcep.constructs.EndPoint;
 import es.tid.pce.pcep.constructs.EndPointAndRestrictions;
-import es.tid.pce.pcep.constructs.P2MPEndpoints;
-import es.tid.pce.pcep.constructs.P2PEndpoints;
+import es.tid.pce.pcep.constructs.IPv4AddressEndPoint;
 import es.tid.pce.pcep.constructs.Path;
 import es.tid.pce.pcep.constructs.Request;
 import es.tid.pce.pcep.constructs.Response;
@@ -31,6 +30,8 @@ import es.tid.pce.pcep.objects.ExplicitRouteObject;
 import es.tid.pce.pcep.objects.GeneralizedEndPoints;
 import es.tid.pce.pcep.objects.NoPath;
 import es.tid.pce.pcep.objects.ObjectParameters;
+import es.tid.pce.pcep.objects.P2MPGeneralizedEndPoints;
+import es.tid.pce.pcep.objects.P2PGeneralizedEndPoints;
 import es.tid.pce.pcep.objects.RequestParameters;
 import es.tid.pce.pcep.objects.tlvs.NoPathTLV;
 import es.tid.pce.server.wson.ReservationManager;
@@ -102,23 +103,20 @@ public class KSP_PACK_Algorithm implements ComputingAlgorithm {
 		}else if (EP.getOT()==ObjectParameters.PCEP_OBJECT_TYPE_GENERALIZED_ENDPOINTS){
 			GeneralizedEndPoints  gep=(GeneralizedEndPoints) req.getEndPoints();
 			if(gep.getGeneralizedEndPointsType()==ObjectParameters.PCEP_GENERALIZED_END_POINTS_TYPE_P2P){
-				P2PEndpoints p2pep= gep.getP2PEndpoints();
-				EndPoint sourceep=p2pep.getSourceEndPoint();
-				EndPoint destep=p2pep.getDestinationEndPoint();
-				source_router_id_addr=sourceep.getEndPointIPv4TLV().IPv4address;
-				dest_router_id_addr=destep.getEndPointIPv4TLV().IPv4address;
+				P2PGeneralizedEndPoints p2pep= (P2PGeneralizedEndPoints)gep;		
+				source_router_id_addr = ((IPv4AddressEndPoint)p2pep.getSourceEndpoint().getEndPoint()).getEndPointIPv4().getIPv4address();
+				dest_router_id_addr = ((IPv4AddressEndPoint)p2pep.getDestinationEndpoint().getEndPoint()).getEndPointIPv4().getIPv4address();
 			}
 			if(gep.getGeneralizedEndPointsType()==ObjectParameters.PCEP_GENERALIZED_END_POINTS_TYPE_P2MP_NEW_LEAVES){
-				P2MPEndpoints p2mpep= gep.getP2MPEndpoints();
-				EndPointAndRestrictions epandrest=p2mpep.getEndPointAndRestrictions();
+				P2MPGeneralizedEndPoints p2mpep= (P2MPGeneralizedEndPoints)gep;
+				EndPointAndRestrictions epandrest=p2mpep.getEndpointAndRestrictions();
 				EndPoint sourceep=epandrest.getEndPoint();
-				source_router_id_addr=sourceep.getEndPointIPv4TLV().IPv4address;
+				source_router_id_addr=((IPv4AddressEndPoint)sourceep).getEndPointIPv4().IPv4address;
 				int cont=0;
-				while (cont<=p2mpep.getEndPointAndRestrictionsList().size()){ //esto est� mal
-					epandrest=p2mpep.getEndPointAndRestrictionsList().get(cont);
+				while (cont<=p2mpep.getEndpointAndRestrictionsList().size()){ //esto est� mal
+					epandrest=p2mpep.getEndpointAndRestrictionsList().get(cont);
 					EndPoint destep=epandrest.getEndPoint();
-					source_router_id_addr=sourceep.getEndPointIPv4TLV().IPv4address;
-					dest_router_id_addr=destep.getEndPointIPv4TLV().IPv4address;
+					dest_router_id_addr=((IPv4AddressEndPoint)destep).getEndPointIPv4().IPv4address;
 
 				}
 			}

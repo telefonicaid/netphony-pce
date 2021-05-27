@@ -220,7 +220,7 @@ public class PCCPCEPSession extends GenericPCEPSession{
 						
 						log.info(m_report.toString());
 						crm.notifyResponseInit(m_report, timeInii);
-						Semaphore semaphore = crm.semaphores.get(new Long(m_report.getStateReportList().get(0).getSRP().getSRP_ID_number()));
+						Semaphore semaphore = crm.semaphores.get(new Long(m_report.getStateReportList().get(0).getSrp().getSRP_ID_number()));
 						semaphore.release();
 
 					} catch (PCEPProtocolViolationException e1) {
@@ -296,8 +296,8 @@ public class PCCPCEPSession extends GenericPCEPSession{
 							Path path = new Path();
 							path.setEro(srero);
 							
-							srep.setSRP(rsp);
-							srep.setLSP(lsp);
+							srep.setSrp(rsp);
+							srep.setLsp(lsp);
 							srep.setPath(path);
 							
 							pcrep.addStateReport(srep);

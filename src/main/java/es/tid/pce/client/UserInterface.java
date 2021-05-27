@@ -10,9 +10,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import es.tid.pce.pcep.constructs.EndPoint;
+import es.tid.pce.pcep.constructs.EndPointAndRestrictions;
 import es.tid.pce.pcep.constructs.GeneralizedBandwidthSSON;
-import es.tid.pce.pcep.constructs.P2MPEndpoints;
-import es.tid.pce.pcep.constructs.P2PEndpoints;
+import es.tid.pce.pcep.constructs.IPv4AddressEndPoint;
 import es.tid.pce.pcep.constructs.Request;
 import es.tid.pce.pcep.constructs.SVECConstruct;
 import es.tid.pce.pcep.constructs.SwitchEncodingType;
@@ -23,18 +23,17 @@ import es.tid.pce.pcep.messages.PCEPResponse;
 import es.tid.pce.pcep.objects.BandwidthRequested;
 import es.tid.pce.pcep.objects.BandwidthRequestedGeneralizedBandwidth;
 import es.tid.pce.pcep.objects.EndPointsIPv4;
-import es.tid.pce.pcep.objects.GeneralizedEndPoints;
 import es.tid.pce.pcep.objects.InterLayer;
 import es.tid.pce.pcep.objects.Metric;
 import es.tid.pce.pcep.objects.ObjectParameters;
 import es.tid.pce.pcep.objects.ObjectiveFunction;
 import es.tid.pce.pcep.objects.P2MPEndPointsIPv4;
+import es.tid.pce.pcep.objects.P2PGeneralizedEndPoints;
 import es.tid.pce.pcep.objects.PCEPErrorObject;
 import es.tid.pce.pcep.objects.RequestParameters;
 import es.tid.pce.pcep.objects.Reservation;
 import es.tid.pce.pcep.objects.Svec;
 import es.tid.pce.pcep.objects.SwitchLayer;
-import es.tid.pce.pcep.objects.tlvs.BandwidthTLV;
 import es.tid.pce.pcep.objects.tlvs.EndPointIPv4TLV;
 
 public class UserInterface extends Thread {
@@ -300,8 +299,8 @@ public class UserInterface extends Thread {
 				Svec svec=new Svec();
 				sveco.setSvec(svec);
 				svec.setLDiverseBit(true);
-				svec.addRequestID(req.getRequestParameters().getRequestID());
-				svec.addRequestID(req2.getRequestParameters().getRequestID());
+				svec.getRequestIDlist().add(req.getRequestParameters().getRequestID());
+				svec.getRequestIDlist().add(req2.getRequestParameters().getRequestID());
 				p_r.addRequest(req);
 				p_r.addRequest(req2);
 				p_r.addSvec(sveco);
@@ -320,8 +319,8 @@ public class UserInterface extends Thread {
 				Svec svec=new Svec();
 				sveco.setSvec(svec);
 				svec.setLDiverseBit(true);
-				svec.addRequestID(req.getRequestParameters().getRequestID());
-				svec.addRequestID(req2.getRequestParameters().getRequestID());
+				svec.getRequestIDlist().add(req.getRequestParameters().getRequestID());
+				svec.getRequestIDlist().add(req2.getRequestParameters().getRequestID());
 				p_r.addRequest(req);
 				p_r.addRequest(req2);
 				p_r.addSvec(sveco);
@@ -346,16 +345,16 @@ public class UserInterface extends Thread {
 				Svec svec=new Svec();
 				sveco.setSvec(svec);
 				svec.setLDiverseBit(true);
-				svec.addRequestID(req.getRequestParameters().getRequestID());
-				svec.addRequestID(req2.getRequestParameters().getRequestID());
-				svec.addRequestID(req3.getRequestParameters().getRequestID());
-				svec.addRequestID(req4.getRequestParameters().getRequestID());
-				svec.addRequestID(req5.getRequestParameters().getRequestID());
-				svec.addRequestID(req6.getRequestParameters().getRequestID());
-				svec.addRequestID(req7.getRequestParameters().getRequestID());
-				svec.addRequestID(req8.getRequestParameters().getRequestID());
-				svec.addRequestID(req9.getRequestParameters().getRequestID());
-				svec.addRequestID(req10.getRequestParameters().getRequestID());
+				svec.getRequestIDlist().add(req.getRequestParameters().getRequestID());
+				svec.getRequestIDlist().add(req2.getRequestParameters().getRequestID());
+				svec.getRequestIDlist().add(req3.getRequestParameters().getRequestID());
+				svec.getRequestIDlist().add(req4.getRequestParameters().getRequestID());
+				svec.getRequestIDlist().add(req5.getRequestParameters().getRequestID());
+				svec.getRequestIDlist().add(req6.getRequestParameters().getRequestID());
+				svec.getRequestIDlist().add(req7.getRequestParameters().getRequestID());
+				svec.getRequestIDlist().add(req8.getRequestParameters().getRequestID());
+				svec.getRequestIDlist().add(req9.getRequestParameters().getRequestID());
+				svec.getRequestIDlist().add(req10.getRequestParameters().getRequestID());
 				
 				p_r.addRequest(req);
 				p_r.addRequest(req2);
@@ -549,20 +548,21 @@ public class UserInterface extends Thread {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
+				P2PGeneralizedEndPoints ep=new P2PGeneralizedEndPoints();
+				req.setEndPoints(ep);
+				EndPointAndRestrictions ep_s =new EndPointAndRestrictions();
+				EndPointAndRestrictions ep_d =new EndPointAndRestrictions();
+				ep.setSourceEndpoint(ep_s);
+				ep.setDestinationEndpoint(ep_s);
+				EndPoint ep_ss;
+				EndPoint ep_dd;
+				ep_ss=new IPv4AddressEndPoint();
+				((IPv4AddressEndPoint)ep_ss).setEndPointIPv4(sourceIPv4TLV);
+				ep_s.setEndPoint(ep_ss);
+     			ep_dd=new IPv4AddressEndPoint();
+				((IPv4AddressEndPoint)ep_dd).setEndPointIPv4(destIPv4TLV);
 				
-				EndPoint sourceEP=new EndPoint();
-				EndPoint destEP=new EndPoint();
-				sourceEP.setEndPointIPv4TLV(sourceIPv4TLV);
-				destEP.setEndPointIPv4TLV(destIPv4TLV);
-				
-				P2PEndpoints p2pep=new P2PEndpoints();
-				p2pep.setSourceEndpoint(sourceEP);
-				p2pep.setDestinationEndPoints(destEP);
-								
-				GeneralizedEndPoints gep=new GeneralizedEndPoints();
-				gep.setP2PEndpoints(p2pep);
-				//EndPointsIPv4 ep=new EndPointsIPv4();				
-				req.setEndPoints(gep);
+				req.setEndPoints(ep);
 				
 				PCEPResponse pr=crm.newRequest(p_r);
 				
@@ -606,38 +606,47 @@ public class UserInterface extends Thread {
 				rp.setBidirect(bi);
 				boolean lo = false;
 				rp.setLoose(lo);
-				GeneralizedEndPoints ep=new GeneralizedEndPoints();
-				P2PEndpoints p2pEndpoints = new P2PEndpoints();
-				EndPoint sourceEndPoint = new EndPoint();
-				//sourceEndPoint.setEndPointIPv4TLV(ipv4tlv);
-						
-				
-				p2pEndpoints.setSourceEndpoint(sourceEndPoint);
-				//p2pEndpoints.setDestinationEndPoints(destinationEndPoint);
-				ep.setP2PEndpoints(p2pEndpoints);
-				
-				EndPointsIPv4 ep2=new EndPointsIPv4();				
+				P2PGeneralizedEndPoints ep=new P2PGeneralizedEndPoints();
 				req.setEndPoints(ep);
-				//String src_ip= "1.1.1.1";
-				Inet4Address ipp;
-				try {
-					ipp = (Inet4Address)Inet4Address.getByName(src_ip);
-					ep2.setSourceIP(ipp);								
-				} catch (UnknownHostException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+				EndPointAndRestrictions ep_s =new EndPointAndRestrictions();
+				EndPointAndRestrictions ep_d =new EndPointAndRestrictions();
+				ep.setSourceEndpoint(ep_s);
+				ep.setDestinationEndpoint(ep_s);
+				EndPoint ep_ss;
+				EndPoint ep_dd;
+				ep_ss=new IPv4AddressEndPoint();
+				EndPointIPv4TLV ipv4tlv = new EndPointIPv4TLV();
+					Inet4Address ipp;
+					try {
+						ipp = (Inet4Address)Inet4Address.getByName(src_ip);
+						ipv4tlv.setIPv4address(ipp);
+						((IPv4AddressEndPoint)ep_ss).setEndPointIPv4(ipv4tlv);
+
+					} catch (UnknownHostException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+
+				ep_s.setEndPoint(ep_ss);
+    			ep_dd=new IPv4AddressEndPoint();
+					EndPointIPv4TLV ipv4tlv2 = new EndPointIPv4TLV();
+					Inet4Address ipp2;
+					try {
+						ipp2 = (Inet4Address)Inet4Address.getByName(dst_ip);
+						ipv4tlv2.setIPv4address(ipp2);
+						((IPv4AddressEndPoint)ep_dd).setEndPointIPv4(ipv4tlv2);
+
+					} catch (UnknownHostException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					ep_d.setEndPoint(ep_dd);
+				
+			
 				System.out.println(" - Destination IP address: ");
 				//br2 = new BufferedReader(new InputStreamReader(System.in));
 				//String dst_ip="172.16.101.101";
-				Inet4Address i_d;
-				try {
-					i_d = (Inet4Address)Inet4Address.getByName(dst_ip);
-					ep2.setDestIP(i_d);
-				} catch (UnknownHostException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+	
 				//req.getRequestParameters().s
 				ObjectiveFunction of=new ObjectiveFunction();
 				of.setOFcode(1002);
@@ -672,42 +681,49 @@ public class UserInterface extends Thread {
 				boolean lo = false;
 				rp.setLoose(lo);
 				
-				EndPointIPv4TLV sourceIPv4TLV=new EndPointIPv4TLV();
-				EndPointIPv4TLV destIPv4TLV=new EndPointIPv4TLV();
+				P2PGeneralizedEndPoints ep=new P2PGeneralizedEndPoints();
+				req.setEndPoints(ep);
+				EndPointAndRestrictions ep_s =new EndPointAndRestrictions();
+				EndPointAndRestrictions ep_d =new EndPointAndRestrictions();
+				ep.setSourceEndpoint(ep_s);
+				ep.setDestinationEndpoint(ep_s);
+				EndPoint ep_ss;
+				EndPoint ep_dd;
+				ep_ss=new IPv4AddressEndPoint();
+				EndPointIPv4TLV ipv4tlv = new EndPointIPv4TLV();
+					Inet4Address ipp;
+					try {
+						System.out.println(" - Source IP address: 1.1.1.1");
+						ipp = (Inet4Address)Inet4Address.getByName("1.1.1.1");
+						ipv4tlv.setIPv4address(ipp);
+						((IPv4AddressEndPoint)ep_ss).setEndPointIPv4(ipv4tlv);
+
+					} catch (UnknownHostException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+
+				ep_s.setEndPoint(ep_ss);
+    			ep_dd=new IPv4AddressEndPoint();
+					EndPointIPv4TLV ipv4tlv2 = new EndPointIPv4TLV();
+					Inet4Address ipp2;
+					try {
+						System.out.println(" - Destination IP address: 172.16.101.102");
+						ipp2 = (Inet4Address)Inet4Address.getByName("172.16.101.102");
+						ipv4tlv2.setIPv4address(ipp2);
+						((IPv4AddressEndPoint)ep_dd).setEndPointIPv4(ipv4tlv2);
+
+					} catch (UnknownHostException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					ep_d.setEndPoint(ep_dd);
 				
-				System.out.println(" - Source IP address: 1.1.1.1");
-				Inet4Address sourceIPP;
-				try {
-					sourceIPP = (Inet4Address)Inet4Address.getByName ("1.1.1.1");
-					sourceIPv4TLV.setIPv4address(sourceIPP);
-				} catch (UnknownHostException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+					
+					
 				
-				System.out.println(" - Destination IP address: 172.16.101.102");
-				Inet4Address destIPP;
-				try {
-					destIPP = (Inet4Address)Inet4Address.getByName ("172.16.101.102");
-					destIPv4TLV.setIPv4address(destIPP);
-				} catch (UnknownHostException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-				
-				EndPoint sourceEP=new EndPoint();
-				EndPoint destEP=new EndPoint();
-				sourceEP.setEndPointIPv4TLV(sourceIPv4TLV);
-				destEP.setEndPointIPv4TLV(destIPv4TLV);
-				
-				P2PEndpoints p2pep=new P2PEndpoints();
-				p2pep.setSourceEndpoint(sourceEP);
-				p2pep.setDestinationEndPoints(destEP);
-								
-				GeneralizedEndPoints gep=new GeneralizedEndPoints();
-				gep.setP2PEndpoints(p2pep);
-				//EndPointsIPv4 ep=new EndPointsIPv4();				
-				req.setEndPoints(gep);
+			
+				req.setEndPoints(ep);
 				
 				PCEPResponse pr=crm.newRequest(p_r);
 				
@@ -732,42 +748,49 @@ public class UserInterface extends Thread {
 				boolean lo = false;
 				rp.setLoose(lo);
 				
-				EndPointIPv4TLV sourceIPv4TLV=new EndPointIPv4TLV();
-				EndPointIPv4TLV destIPv4TLV=new EndPointIPv4TLV();
+				P2PGeneralizedEndPoints ep=new P2PGeneralizedEndPoints();
+				req.setEndPoints(ep);
+				EndPointAndRestrictions ep_s =new EndPointAndRestrictions();
+				EndPointAndRestrictions ep_d =new EndPointAndRestrictions();
+				ep.setSourceEndpoint(ep_s);
+				ep.setDestinationEndpoint(ep_s);
+				EndPoint ep_ss;
+				EndPoint ep_dd;
+				ep_ss=new IPv4AddressEndPoint();
+				EndPointIPv4TLV ipv4tlv = new EndPointIPv4TLV();
+					Inet4Address ipp;
+					try {
+						System.out.println(" - Source IP address: 1.1.1.1");
+						ipp = (Inet4Address)Inet4Address.getByName("1.1.1.1");
+						ipv4tlv.setIPv4address(ipp);
+						((IPv4AddressEndPoint)ep_ss).setEndPointIPv4(ipv4tlv);
+
+					} catch (UnknownHostException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+
+				ep_s.setEndPoint(ep_ss);
+    			ep_dd=new IPv4AddressEndPoint();
+					EndPointIPv4TLV ipv4tlv2 = new EndPointIPv4TLV();
+					Inet4Address ipp2;
+					try {
+						System.out.println(" - Destination IP address: 172.16.101.102");
+						ipp2 = (Inet4Address)Inet4Address.getByName("172.16.101.102");
+						ipv4tlv2.setIPv4address(ipp2);
+						((IPv4AddressEndPoint)ep_dd).setEndPointIPv4(ipv4tlv2);
+
+					} catch (UnknownHostException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					ep_d.setEndPoint(ep_dd);
 				
-				System.out.println(" - Source IP address: 1.1.1.1");
-				Inet4Address sourceIPP;
-				try {
-					sourceIPP = (Inet4Address)Inet4Address.getByName ("1.1.1.1");
-					sourceIPv4TLV.setIPv4address(sourceIPP);
-				} catch (UnknownHostException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+					
+					
 				
-				System.out.println(" - Destination IP address: 172.16.101.102");
-				Inet4Address destIPP;
-				try {
-					destIPP = (Inet4Address)Inet4Address.getByName ("172.16.101.102");
-					destIPv4TLV.setIPv4address(destIPP);
-				} catch (UnknownHostException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-				
-				EndPoint sourceEP=new EndPoint();
-				EndPoint destEP=new EndPoint();
-				sourceEP.setEndPointIPv4TLV(sourceIPv4TLV);
-				destEP.setEndPointIPv4TLV(destIPv4TLV);
-				
-				P2PEndpoints p2pep=new P2PEndpoints();
-				p2pep.setSourceEndpoint(sourceEP);
-				p2pep.setDestinationEndPoints(destEP);
-								
-				GeneralizedEndPoints gep=new GeneralizedEndPoints();
-				gep.setP2PEndpoints(p2pep);
-				//EndPointsIPv4 ep=new EndPointsIPv4();				
-				req.setEndPoints(gep);
+			
+				req.setEndPoints(ep);
 				
 				PCEPResponse pr=crm.newRequest(p_r);
 				
@@ -825,7 +848,7 @@ public class UserInterface extends Thread {
 				}
 				System.out.println(" ADD svec");
 				Svec svec = new Svec();
-				svec.addRequestID(rp.getRequestID());
+				svec.getRequestIDlist().add(rp.getRequestID());
 				SVECConstruct sc = new SVECConstruct();
 				
 				sc.setSvec(svec);
@@ -835,9 +858,9 @@ public class UserInterface extends Thread {
 				of2.setOFcode(42);
 				sc.getObjectiveFunctionList().add(of1);
 				sc.getObjectiveFunctionList().add(of2);
-				BandwidthTLV bwTLV = new BandwidthTLV();
-				float bw=(float) 400.0;
-				bwTLV.setBw(bw);
+				//BandwidthTLV bwTLV = new BandwidthTLV();
+				//float bw=(float) 400.0;
+				//bwTLV.setBw(bw);
 				//of2.s setBwTLV(bwTLV);
 				p_r.addSvec(sc);
 				InterLayer il =new InterLayer();

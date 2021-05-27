@@ -8,18 +8,15 @@ import java.util.LinkedList;
 import java.util.concurrent.TimeUnit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
 
 import es.tid.pce.pcep.constructs.EndPoint;
+import es.tid.pce.pcep.constructs.EndPointAndRestrictions;
 import es.tid.pce.pcep.constructs.GeneralizedBandwidthSSON;
-import es.tid.pce.pcep.constructs.P2PEndpoints;
+import es.tid.pce.pcep.constructs.IPv4AddressEndPoint;
 import es.tid.pce.pcep.constructs.PCEPIntiatedLSP;
 import es.tid.pce.pcep.constructs.Request;
+import es.tid.pce.pcep.constructs.UnnumIfEndPoint;
 import es.tid.pce.pcep.messages.PCEPInitiate;
 import es.tid.pce.pcep.messages.PCEPMessage;
 import es.tid.pce.pcep.messages.PCEPMessageTypes;
@@ -33,6 +30,7 @@ import es.tid.pce.pcep.objects.GeneralizedEndPoints;
 import es.tid.pce.pcep.objects.LSP;
 import es.tid.pce.pcep.objects.ObjectiveFunction;
 import es.tid.pce.pcep.objects.P2MPEndPointsIPv4;
+import es.tid.pce.pcep.objects.P2PGeneralizedEndPoints;
 import es.tid.pce.pcep.objects.RequestParameters;
 import es.tid.pce.pcep.objects.SRP;
 import es.tid.pce.pcep.objects.tlvs.EndPointIPv4TLV;
@@ -166,35 +164,36 @@ public class QuickClientObj {
 		boolean gen=false;
 		if(optArgs.hasOption("g")){
 			gen=true;
-			GeneralizedEndPoints ep=new GeneralizedEndPoints();
+			P2PGeneralizedEndPoints ep=new P2PGeneralizedEndPoints();
 			req.setEndPoints(ep);
-			P2PEndpoints p2pEndpoints = new P2PEndpoints();	
-			EndPoint ep_s =new EndPoint();
-			p2pEndpoints.setSourceEndpoint(ep_s);
-			EndPoint ep_d =new EndPoint();
-			p2pEndpoints.setDestinationEndPoints(ep_d);
-			ep.setP2PEndpoints(p2pEndpoints);
+			EndPointAndRestrictions ep_s =new EndPointAndRestrictions();
+			EndPointAndRestrictions ep_d =new EndPointAndRestrictions();
+			ep.setSourceEndpoint(ep_s);
+			ep.setDestinationEndpoint(ep_s);
+			EndPoint ep_ss;
+			EndPoint ep_dd;
 			if (src_if!=0){
+				ep_ss=new UnnumIfEndPoint();
 				UnnumberedEndpointTLV un = new UnnumberedEndpointTLV();
 				Inet4Address ipp;
 				try {
 					ipp = (Inet4Address)Inet4Address.getByName(src_ip);
 					un.setIPv4address(ipp);
-					un.setIfID(src_if);
-					ep_s.setUnnumberedEndpoint(un);
-
+					un.setIfID(src_if); 
+					((UnnumIfEndPoint)ep_ss).setUnnumberedEndpoint(un); 
 
 				} catch (UnknownHostException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 			}else {
+				ep_ss=new IPv4AddressEndPoint();
 				EndPointIPv4TLV ipv4tlv = new EndPointIPv4TLV();
 				Inet4Address ipp;
 				try {
 					ipp = (Inet4Address)Inet4Address.getByName(src_ip);
 					ipv4tlv.setIPv4address(ipp);
-					ep_s.setEndPointIPv4TLV(ipv4tlv);
+					((IPv4AddressEndPoint)ep_ss).setEndPointIPv4(ipv4tlv);
 
 				} catch (UnknownHostException e) {
 					// TODO Auto-generated catch block
@@ -202,14 +201,16 @@ public class QuickClientObj {
 				}
 
 			}
+			ep_s.setEndPoint(ep_ss);
 			if (dst_if!=0){
+				ep_dd=new UnnumIfEndPoint();
 				UnnumberedEndpointTLV un = new UnnumberedEndpointTLV();
 				Inet4Address ipp;
 				try {
 					ipp = (Inet4Address)Inet4Address.getByName(dst_ip);
 					un.setIPv4address(ipp);
 					un.setIfID(dst_if);
-					ep_d.setUnnumberedEndpoint(un);
+					((UnnumIfEndPoint)ep_dd).setUnnumberedEndpoint(un); 
 
 
 				} catch (UnknownHostException e) {
@@ -217,18 +218,19 @@ public class QuickClientObj {
 					e.printStackTrace();
 				}
 			}else {
+				ep_dd=new IPv4AddressEndPoint();
 				EndPointIPv4TLV ipv4tlv = new EndPointIPv4TLV();
 				Inet4Address ipp;
 				try {
 					ipp = (Inet4Address)Inet4Address.getByName(dst_ip);
 					ipv4tlv.setIPv4address(ipp);
-					ep_d.setEndPointIPv4TLV(ipv4tlv);
+					((IPv4AddressEndPoint)ep_dd).setEndPointIPv4(ipv4tlv);
 
 				} catch (UnknownHostException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-
+				ep_d.setEndPoint(ep_dd);
 			}
 
 			
@@ -335,72 +337,74 @@ public class QuickClientObj {
 		PCEPIntiatedLSP lsp_ini = new PCEPIntiatedLSP();
 		p_i.getPcepIntiatedLSPList().add(lsp_ini);
 		EndPoints ep;
-		
-		
-
 		if (gen==true){
-			ep=new GeneralizedEndPoints();
-			P2PEndpoints p2pEndpoints = new P2PEndpoints();	
-			EndPoint ep_s =new EndPoint();
-			p2pEndpoints.setSourceEndpoint(ep_s);
-			EndPoint ep_d =new EndPoint();
-			p2pEndpoints.setDestinationEndPoints(ep_d);
-			((GeneralizedEndPoints) ep).setP2PEndpoints(p2pEndpoints);
+			ep=new P2PGeneralizedEndPoints();
+		
+			EndPointAndRestrictions ep_s =new EndPointAndRestrictions();
+			EndPointAndRestrictions ep_d =new EndPointAndRestrictions();
+			((P2PGeneralizedEndPoints)ep).setSourceEndpoint(ep_s);
+			((P2PGeneralizedEndPoints)ep).setDestinationEndpoint(ep_s);
+			EndPoint ep_ss;
+			EndPoint ep_dd;
 			if (src_if!=0){
+				ep_ss=new UnnumIfEndPoint();
 				UnnumberedEndpointTLV un = new UnnumberedEndpointTLV();
 				Inet4Address ipp;
 				try {
 					ipp = (Inet4Address)Inet4Address.getByName(src_ip);
 					un.setIPv4address(ipp);
-					un.setIfID(src_if);
-					ep_s.setUnnumberedEndpoint(un);
-
+					un.setIfID(src_if); 
+					((UnnumIfEndPoint)ep_ss).setUnnumberedEndpoint(un); 
 
 				} catch (UnknownHostException e) {
-						// TODO Auto-generated catch block
+					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 			}else {
+				ep_ss=new IPv4AddressEndPoint();
 				EndPointIPv4TLV ipv4tlv = new EndPointIPv4TLV();
 				Inet4Address ipp;
 				try {
 					ipp = (Inet4Address)Inet4Address.getByName(src_ip);
 					ipv4tlv.setIPv4address(ipp);
-					ep_s.setEndPointIPv4TLV(ipv4tlv);
+					((IPv4AddressEndPoint)ep_ss).setEndPointIPv4(ipv4tlv);
 
 				} catch (UnknownHostException e) {
-						// TODO Auto-generated catch block
+					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 
 			}
+			ep_s.setEndPoint(ep_ss);
 			if (dst_if!=0){
+				ep_dd=new UnnumIfEndPoint();
 				UnnumberedEndpointTLV un = new UnnumberedEndpointTLV();
 				Inet4Address ipp;
 				try {
 					ipp = (Inet4Address)Inet4Address.getByName(dst_ip);
 					un.setIPv4address(ipp);
 					un.setIfID(dst_if);
-					ep_d.setUnnumberedEndpoint(un);
+					((UnnumIfEndPoint)ep_dd).setUnnumberedEndpoint(un); 
 
 
 				} catch (UnknownHostException e) {
-						// TODO Auto-generated catch block
+					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 			}else {
+				ep_dd=new IPv4AddressEndPoint();
 				EndPointIPv4TLV ipv4tlv = new EndPointIPv4TLV();
 				Inet4Address ipp;
 				try {
 					ipp = (Inet4Address)Inet4Address.getByName(dst_ip);
 					ipv4tlv.setIPv4address(ipp);
-					ep_d.setEndPointIPv4TLV(ipv4tlv);
+					((IPv4AddressEndPoint)ep_dd).setEndPointIPv4(ipv4tlv);
 
 				} catch (UnknownHostException e) {
-						// TODO Auto-generated catch block
+					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-
+				ep_d.setEndPoint(ep_dd);
 			}
 
 		} else if (p2mp==true){ 
@@ -514,7 +518,7 @@ public class QuickClientObj {
 		if (optArgs.hasOption("ero")){
 				System.out.println("HAY ERROO");
 				PCEPResponse rep =(PCEPResponse)messageList.get(0);
-				lsp_ini.setEro(rep.getResponse(0).getPath(0).geteRO());
+				lsp_ini.setEro(rep.getResponse(0).getPath(0).getEro());
 			
 		}
 		return p_i;

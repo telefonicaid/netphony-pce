@@ -74,7 +74,7 @@ public class ReportDB_Simple implements ReportDB
 	
 	public int getKey(StateReport rpt)
 	{
-		return rpt.getLSP().getLspId();
+		return rpt.getLsp().getLspId();
 	}
 	
 

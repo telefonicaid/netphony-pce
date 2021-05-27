@@ -9,7 +9,6 @@ import es.tid.pce.parentPCE.ChildPCERequestManager;
 import es.tid.pce.parentPCE.MultiDomainTopologyUpdater;
 import es.tid.pce.parentPCE.MDLSPDB.MultiDomainLSPDB;
 import es.tid.pce.pcepsession.PCEPSessionsInformation;
-import es.tid.tedb.ITMDTEDB;
 import es.tid.tedb.MDTEDB;
 import es.tid.tedb.ReachabilityManager;
 import es.tid.tedb.SimpleTEDB;
@@ -33,8 +32,6 @@ public class ParentPCEManagementSever extends Thread {
 	private MultiDomainLSPDB multiDomainLSPDB;
 	
 	private SimpleTEDB simpleTedb;
-	
-	private ITMDTEDB ITmdtedb;
 	
 	private ReachabilityManager rm;
 	
@@ -60,20 +57,6 @@ public class ParentPCEManagementSever extends Thread {
 		this.multiDomainLSPDB=multiDomainLSPDB;
 	}
 	
-	
-	public ParentPCEManagementSever(ChildPCERequestManager cprm, RequestDispatcher requestDispatcher, ITMDTEDB ITmdtedb, ReachabilityManager rm,PCEPSessionsInformation pcepSessionManager,MultiDomainTopologyUpdater mdtu,int parentPCEManagementPort){
-		log =LoggerFactory.getLogger("PCEServer");
-		this.cprm=cprm;
-		this.requestDispatcher=requestDispatcher;
-		this.ITmdtedb=ITmdtedb;
-		this.rm=rm;
-		isITcapable=true;
-		this.pcepSessionManager=pcepSessionManager;
-		this.mdtu=mdtu;
-		this.parentPCEManagementPort=parentPCEManagementPort;
-	}
-	
-	
 	public void run(){
 	    ServerSocket serverSocket = null;
 	    boolean listening=true;
@@ -89,11 +72,7 @@ public class ParentPCEManagementSever extends Thread {
 		
 		   try {
 	        	while (listening) {
-	        		if(isITcapable){
-	        			new ParentPCEManagementSession(serverSocket.accept(),cprm,requestDispatcher, ITmdtedb,rm,pcepSessionManager,mdtu).start();
-	        		}else{
-	        			new ParentPCEManagementSession(serverSocket.accept(),cprm,requestDispatcher, mdtedb,simpleTedb,rm,pcepSessionManager,mdtu, multiDomainLSPDB).start();	
-	        		}
+	        		new ParentPCEManagementSession(serverSocket.accept(),cprm,requestDispatcher, mdtedb,simpleTedb,rm,pcepSessionManager,mdtu, multiDomainLSPDB).start();
 	        	}
 	        	serverSocket.close();
 	        } catch (Exception e) {

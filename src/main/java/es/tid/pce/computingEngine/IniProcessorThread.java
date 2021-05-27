@@ -1,82 +1,40 @@
 package es.tid.pce.computingEngine;
 
-import java.io.IOException;
 import java.net.Inet4Address;
-import java.net.UnknownHostException;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.TimeUnit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import es.tid.pce.computingEngine.algorithms.ComputingAlgorithm;
-import es.tid.pce.computingEngine.algorithms.ComputingAlgorithmManager;
-import es.tid.pce.computingEngine.algorithms.ComputingAlgorithmManagerSSON;
-import es.tid.pce.computingEngine.algorithms.DefaultSVECPathComputing;
-import es.tid.pce.computingEngine.algorithms.DefaultSinglePathComputing;
-import es.tid.pce.computingEngine.algorithms.multiLayer.OperationsCounter;
 import es.tid.pce.parentPCE.ChildPCERequestManager;
 import es.tid.pce.parentPCE.MD_LSP;
 import es.tid.pce.parentPCE.ParentPCESession;
 import es.tid.pce.parentPCE.MDLSPDB.MultiDomainLSPDB;
 import es.tid.pce.parentPCE.MDLSPDB.SaveLSPinRedis;
-import es.tid.pce.pcep.PCEPProtocolViolationException;
-import es.tid.pce.pcep.constructs.EndPoint;
-import es.tid.pce.pcep.constructs.ErrorConstruct;
-import es.tid.pce.pcep.constructs.MetricPCE;
-import es.tid.pce.pcep.constructs.Notify;
-import es.tid.pce.pcep.constructs.P2PEndpoints;
+import es.tid.pce.pcep.constructs.EndPointAndRestrictions;
+import es.tid.pce.pcep.constructs.IPv4AddressEndPoint;
 import es.tid.pce.pcep.constructs.PCEPIntiatedLSP;
 import es.tid.pce.pcep.constructs.Path;
-import es.tid.pce.pcep.constructs.Request;
-import es.tid.pce.pcep.constructs.Response;
 import es.tid.pce.pcep.constructs.StateReport;
-import es.tid.pce.pcep.messages.PCEPError;
+import es.tid.pce.pcep.constructs.UnnumIfEndPoint;
 import es.tid.pce.pcep.messages.PCEPInitiate;
-import es.tid.pce.pcep.messages.PCEPMessageTypes;
-import es.tid.pce.pcep.messages.PCEPNotification;
 import es.tid.pce.pcep.messages.PCEPReport;
-import es.tid.pce.pcep.messages.PCEPRequest;
-import es.tid.pce.pcep.messages.PCEPResponse;
 import es.tid.pce.pcep.objects.Bandwidth;
 import es.tid.pce.pcep.objects.EndPoints;
-import es.tid.pce.pcep.objects.EndPointsIPv4;
-import es.tid.pce.pcep.objects.EndPointsUnnumberedIntf;
 import es.tid.pce.pcep.objects.ExplicitRouteObject;
-import es.tid.pce.pcep.objects.GeneralizedEndPoints;
 import es.tid.pce.pcep.objects.LSP;
-import es.tid.pce.pcep.objects.NoPath;
-import es.tid.pce.pcep.objects.Notification;
-import es.tid.pce.pcep.objects.ObjectParameters;
-import es.tid.pce.pcep.objects.ObjectiveFunction;
-import es.tid.pce.pcep.objects.PCEPErrorObject;
-import es.tid.pce.pcep.objects.PceIdIPv4;
-import es.tid.pce.pcep.objects.ProcTime;
-import es.tid.pce.pcep.objects.RequestParameters;
+import es.tid.pce.pcep.objects.P2PGeneralizedEndPoints;
 import es.tid.pce.pcep.objects.SRP;
-import es.tid.pce.pcep.objects.tlvs.EndPointDataPathTLV;
 import es.tid.pce.pcep.objects.tlvs.EndPointIPv4TLV;
-import es.tid.pce.pcep.objects.tlvs.NoPathTLV;
-import es.tid.pce.pcep.objects.tlvs.PathReservationTLV;
 import es.tid.pce.pcep.objects.tlvs.SymbolicPathNameTLV;
 import es.tid.pce.pcep.objects.tlvs.UnnumberedEndpointTLV;
-import es.tid.pce.pcep.objects.tlvs.subtlvs.SymbolicPathNameSubTLV;
-import es.tid.pce.server.ParentPCERequestManager;
-import es.tid.pce.server.communicationpce.CollaborationPCESessionManager;
-import es.tid.pce.server.wson.ReservationManager;
 import es.tid.rsvp.objects.subobjects.EROSubobject;
 import es.tid.rsvp.objects.subobjects.IPv4prefixEROSubobject;
 import es.tid.rsvp.objects.subobjects.UnnumberIfIDEROSubobject;
-import es.tid.tedb.DomainTEDB;
 import es.tid.tedb.ReachabilityManager;
-import es.tid.tedb.TEDB;
-//import tid.pce.pcep.objects.tlvs.NotificationTLV;
-//import tid.pce.pcep.objects.tlvs.subtlvs.NotificationSubTLV;
-import es.tid.util.Analysis;
-import es.tid.util.UtilsFunctions;
+
 
 /**
  * IniProcessorThread is devoted to LSP Inititation from the PCE
@@ -147,7 +105,7 @@ public class IniProcessorThread extends Thread{
 				PCEPIntiatedLSP pini=iniReq.getLspIniRequest();
 				long sRP_ID_number = pini.getRsp().getSRP_ID_number();
 				//Check if delete
-				if (pini.getRsp().isrFlag()){
+				if (pini.getRsp().isRFlag()){
 					delete(pini.getLsp().getLspId());
 				}
 				else {
@@ -260,8 +218,8 @@ public class IniProcessorThread extends Thread{
 	     					ComputingResponse cr=reps.get(i);
 	     					LinkedList<StateReport> lsr=cr.ReportList;
 	     					StateReport sr=lsr.get(0);
-	     					int id=sr.getLSP().getLspId();
-	     					mdlsp.getDomainLSPIDMap().put((Inet4Address)domainList.get(i), new Integer(id));
+	     					int id=sr.getLsp().getLspId();
+	     					mdlsp.getDomainLSPIDMap().put((Inet4Address)domainList.get(i), Integer.valueOf(id));
 	     					mdlsp.getDomainLSRMpa().put((Inet4Address)domainList.get(i), sr);
 	     				}
 	     				
@@ -270,10 +228,10 @@ public class IniProcessorThread extends Thread{
 						StateReport srmd = new StateReport();
 						SRP srp = new SRP();
 						srp.setSRP_ID_number(sRP_ID_number);
-						srmd.setSRP(srp);
+						srmd.setSrp(srp);
 						LSP lsp = new LSP();
 						lsp.setLspId(lspId);
-						srmd.setLSP(lsp);
+						srmd.setLsp(lsp);
 						Path p=new Path();
 						p.setEro(fullEro);
 						srmd.setPath(p);
@@ -313,51 +271,59 @@ public class IniProcessorThread extends Thread{
 				
 		Iterator<EROSubobject> eroi= ero.getEROSubobjectList().iterator();
 		EROSubobject eroso;
-		GeneralizedEndPoints gep = new GeneralizedEndPoints();
-		P2PEndpoints p2pEndpoints = new P2PEndpoints();
-		EndPoint sourceEndPoint=null;
-		EndPoint destinationEndPoint=null;
+		P2PGeneralizedEndPoints gep = new P2PGeneralizedEndPoints();
 		
-		gep.setP2PEndpoints(p2pEndpoints);
+		EndPointAndRestrictions sourceEndPoint=null;
+		EndPointAndRestrictions destinationEndPoint=null;
+		
 		while (eroi.hasNext()){
 			eroso=eroi.next();
 			if (eroso instanceof IPv4prefixEROSubobject) {
 				if(sourceEndPoint==null){
-					sourceEndPoint=new EndPoint();
+					sourceEndPoint= new EndPointAndRestrictions();
+					IPv4AddressEndPoint ep=new IPv4AddressEndPoint();
 					EndPointIPv4TLV epipv4=new EndPointIPv4TLV();
 					epipv4.setIPv4address(((IPv4prefixEROSubobject)eroso).getIpv4address());
-					sourceEndPoint.setEndPointIPv4TLV(epipv4);					
+					ep.setEndPointIPv4(epipv4);		
+					sourceEndPoint.setEndPoint(ep);
 				}
 				else if (!eroi.hasNext()){
-					destinationEndPoint=new EndPoint();
+					destinationEndPoint= new EndPointAndRestrictions();
+					IPv4AddressEndPoint ep=new IPv4AddressEndPoint();
 					EndPointIPv4TLV epipv4=new EndPointIPv4TLV();
 					epipv4.setIPv4address(((IPv4prefixEROSubobject)eroso).getIpv4address());
-					destinationEndPoint.setEndPointIPv4TLV(epipv4);
+					ep.setEndPointIPv4(epipv4);					
+					destinationEndPoint.setEndPoint(ep);
 				}
 			}else if (eroso instanceof UnnumberIfIDEROSubobject) {
 				if(sourceEndPoint==null){
-					sourceEndPoint=new EndPoint();
+					sourceEndPoint= new EndPointAndRestrictions();
+					UnnumIfEndPoint ep=new UnnumIfEndPoint();
 					UnnumberedEndpointTLV epipv4=new UnnumberedEndpointTLV();
 					epipv4.setIPv4address(((UnnumberIfIDEROSubobject)eroso).getRouterID());
 					epipv4.setIfID(((UnnumberIfIDEROSubobject)eroso).getInterfaceID());
-					sourceEndPoint.setUnnumberedEndpoint(epipv4);		
-					destinationEndPoint=new EndPoint();
-					UnnumberedEndpointTLV epipv42=new UnnumberedEndpointTLV();
-					epipv42.setIPv4address(((UnnumberIfIDEROSubobject)eroso).getRouterID());
-					epipv42.setIfID(((UnnumberIfIDEROSubobject)eroso).getInterfaceID());
-					destinationEndPoint.setUnnumberedEndpoint(epipv42);
+					
+					ep.setUnnumberedEndpoint(epipv4);
+					
+					sourceEndPoint.setEndPoint(ep);
+					
+
 				}
 				else {
-					destinationEndPoint=new EndPoint();
-					UnnumberedEndpointTLV epipv4=new UnnumberedEndpointTLV();
-					epipv4.setIPv4address(((UnnumberIfIDEROSubobject)eroso).getRouterID());
-					epipv4.setIfID(((UnnumberIfIDEROSubobject)eroso).getInterfaceID());
-					destinationEndPoint.setUnnumberedEndpoint(epipv4);
+					destinationEndPoint= new EndPointAndRestrictions();	
+					UnnumIfEndPoint epd=new UnnumIfEndPoint();
+					UnnumberedEndpointTLV epipv42=new UnnumberedEndpointTLV();
+					epipv42.setIPv4address(((UnnumberIfIDEROSubobject)eroso).getRouterID());
+					epipv42.setIfID(((UnnumberIfIDEROSubobject)eroso).getInterfaceID());					
+					epd.setUnnumberedEndpoint(epipv42);
+					destinationEndPoint.setEndPoint(epd);
+
 				}
 			}
 		}
-		p2pEndpoints.setSourceEndpoint(sourceEndPoint);
-		p2pEndpoints.setDestinationEndPoints(destinationEndPoint);
+		gep.setSourceEndpoint(sourceEndPoint);
+		gep.setDestinationEndpoint(destinationEndPoint);
+		
 		return gep;
 		
 	}
@@ -385,8 +351,8 @@ public class IniProcessorThread extends Thread{
 				LSP lsp =new LSP();
 				SymbolicPathNameTLV symbolicPathNameTLV_tlv = new SymbolicPathNameTLV();
 				StateReport SR =mdlsp.getDomainLSRMpa().get(domain);
-				if (SR.getLSP().getSymbolicPathNameTLV_tlv()!=null){
-					symbolicPathNameTLV_tlv.setSymbolicPathNameID(SR.getLSP().getSymbolicPathNameTLV_tlv().getSymbolicPathNameID() );
+				if (SR.getLsp().getSymbolicPathNameTLV_tlv()!=null){
+					symbolicPathNameTLV_tlv.setSymbolicPathNameID(SR.getLsp().getSymbolicPathNameTLV_tlv().getSymbolicPathNameID() );
 					lsp.setSymbolicPathNameTLV_tlv(symbolicPathNameTLV_tlv);
 				}else {
 					log.warn("NO SYMBOLIC PATH NAME TLV!!!" );

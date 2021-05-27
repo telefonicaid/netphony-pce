@@ -14,11 +14,11 @@ import es.tid.pce.computingEngine.ComputingRequest;
 import es.tid.pce.computingEngine.ComputingResponse;
 import es.tid.pce.pcep.constructs.EndPoint;
 import es.tid.pce.pcep.constructs.EndPointAndRestrictions;
-import es.tid.pce.pcep.constructs.P2MPEndpoints;
-import es.tid.pce.pcep.constructs.P2PEndpoints;
+import es.tid.pce.pcep.constructs.IPv4AddressEndPoint;
 import es.tid.pce.pcep.constructs.Path;
 import es.tid.pce.pcep.constructs.Request;
 import es.tid.pce.pcep.constructs.Response;
+import es.tid.pce.pcep.constructs.UnnumIfEndPoint;
 import es.tid.pce.pcep.objects.EndPoints;
 import es.tid.pce.pcep.objects.EndPointsIPv4;
 import es.tid.pce.pcep.objects.ExplicitRouteObject;
@@ -27,6 +27,8 @@ import es.tid.pce.pcep.objects.Metric;
 import es.tid.pce.pcep.objects.Monitoring;
 import es.tid.pce.pcep.objects.NoPath;
 import es.tid.pce.pcep.objects.ObjectParameters;
+import es.tid.pce.pcep.objects.P2MPGeneralizedEndPoints;
+import es.tid.pce.pcep.objects.P2PGeneralizedEndPoints;
 import es.tid.pce.pcep.objects.RequestParameters;
 import es.tid.pce.pcep.objects.tlvs.NoPathTLV;
 import es.tid.rsvp.objects.subobjects.DataPathIDEROSubobject;
@@ -35,7 +37,6 @@ import es.tid.rsvp.objects.subobjects.UnnumberIfIDEROSubobject;
 import es.tid.rsvp.objects.subobjects.UnnumberedDataPathIDEROSubobject;
 import es.tid.tedb.IntraDomainEdge;
 import es.tid.tedb.MDTEDB;
-import es.tid.tedb.SimpleITTEDB;
 import es.tid.tedb.SimpleTEDB;
 import es.tid.tedb.TEDB;
 
@@ -54,9 +55,7 @@ public class DefaultSinglePathComputing implements ComputingAlgorithm {
 			} else if (ted.getClass().equals(MDTEDB.class) ){
 				//this.networkGraph= ((MDTEDB)ted).getDuplicatedNetworkGraph();
 				this.networkGraph=null;
-			} else if (ted.getClass().equals(SimpleITTEDB.class) ){
-				this.networkGraph= ((SimpleITTEDB)ted).getDuplicatedNetworkGraph();
-			}
+			} 
 
 			this.pathReq=pathReq;	
 		}catch (Exception e){
@@ -106,69 +105,37 @@ public class DefaultSinglePathComputing implements ComputingAlgorithm {
 		}else if (EP.getOT()==ObjectParameters.PCEP_OBJECT_TYPE_ENDPOINTS_IPV6){
 			log.info("ENDPOINTS IPv6 not supported");
 		}
-
-		if (EP.getOT()==ObjectParameters.PCEP_OBJECT_TYPE_GENERALIZED_ENDPOINTS){
+		else if (EP.getOT()==ObjectParameters.PCEP_OBJECT_TYPE_GENERALIZED_ENDPOINTS){
 			GeneralizedEndPoints  gep=(GeneralizedEndPoints) req.getEndPoints();
 			if(gep.getGeneralizedEndPointsType()==ObjectParameters.PCEP_GENERALIZED_END_POINTS_TYPE_P2P){
-				P2PEndpoints p2pep= gep.getP2PEndpoints();
-				EndPoint sourceep = p2pep.getSourceEndPoint();
-				EndPoint destep=p2pep.getDestinationEndPoint();
-								
-				if (sourceep.getEndPointIPv4TLV() != null && destep.getEndPointIPv4TLV() != null){
-					// IPv4 End Points					
-					source_router_id_addr=sourceep.getEndPointIPv4TLV().IPv4address;
-					dest_router_id_addr=destep.getEndPointIPv4TLV().IPv4address;
-					
-				}else if (sourceep.getUnnumberedEndpoint() != null && destep.getUnnumberedEndpoint() != null){
-					// IPv4 End Points					
-					source_router_id_addr=sourceep.getUnnumberedEndpoint().IPv4address;
-					dest_router_id_addr=destep.getUnnumberedEndpoint().IPv4address;
-					
-					source_port=sourceep.getUnnumberedEndpoint().getIfID();
-					destination_port=destep.getUnnumberedEndpoint().getIfID();
-					
-				}else if (sourceep.getEndPointDataPathTLV() != null && destep.getEndPointDataPathTLV() != null){
-					// Datapath ID End Points
-					log.info("router_id_addr type: DataPathID, "+sourceep.toString().toUpperCase()+"  "+destep.toString().toUpperCase());
-					source_router_id_addr=sourceep.getEndPointDataPathTLV().getDataPathID();
-					dest_router_id_addr=destep.getEndPointDataPathTLV().getDataPathID();
-/*Aqui no tiene sentido el xro porque no depende del endpoint
-					//Case XRO is not null
-					if(req.getXro()!=null){
-						router_xro=req.getXro().getEROSubobjectList().getFirst().toString().substring(0,23);
-						xro.setDataPathID((String)router_xro);
-						log.info("Algorithm.getXro ::"+xro);
-					}
-				*/
-				}else if (sourceep.getEndPointUnnumberedDataPathTLV() != null && destep.getEndPointUnnumberedDataPathTLV() != null){
-					// UnnumberedDataPath ID End Points
-					log.info("router_id_addr type: Unnumbered DataPathID, "+sourceep.toString().toUpperCase()+"  "+destep.toString().toUpperCase());
-					source_router_id_addr=sourceep.getEndPointUnnumberedDataPathTLV().getDataPathID();
-					dest_router_id_addr=destep.getEndPointUnnumberedDataPathTLV().getDataPathID();
-
-					source_port=sourceep.getEndPointUnnumberedDataPathTLV().getIfID();
-					destination_port=destep.getEndPointUnnumberedDataPathTLV().getIfID();
-				}else {
-					log.info("Error in the EndPoints -  not defined");
+				P2PGeneralizedEndPoints p2pep= (P2PGeneralizedEndPoints)gep;	
+				EndPoint sep= p2pep.getSourceEndpoint().getEndPoint();
+				
+				if (sep instanceof IPv4AddressEndPoint) {
+				  source_router_id_addr = ((IPv4AddressEndPoint)p2pep.getSourceEndpoint().getEndPoint()).getEndPointIPv4().getIPv4address();
+				  dest_router_id_addr = ((IPv4AddressEndPoint)p2pep.getDestinationEndpoint().getEndPoint()).getEndPointIPv4().getIPv4address();
+				}else if (sep instanceof UnnumIfEndPoint) {
+					source_router_id_addr = ((UnnumIfEndPoint)p2pep.getSourceEndpoint().getEndPoint()).getUnnumberedEndpoint().getIPv4address();
+					dest_router_id_addr = ((UnnumIfEndPoint)p2pep.getDestinationEndpoint().getEndPoint()).getUnnumberedEndpoint().getIPv4address();
+					source_port=((UnnumIfEndPoint)p2pep.getSourceEndpoint().getEndPoint()).getUnnumberedEndpoint().getIfID();
+					destination_port=((UnnumIfEndPoint)p2pep.getSourceEndpoint().getEndPoint()).getUnnumberedEndpoint().getIfID();
 				}
-
 			}
 			if(gep.getGeneralizedEndPointsType()==ObjectParameters.PCEP_GENERALIZED_END_POINTS_TYPE_P2MP_NEW_LEAVES){
-				P2MPEndpoints p2mpep= gep.getP2MPEndpoints();
-				EndPointAndRestrictions epandrest=p2mpep.getEndPointAndRestrictions();
+				P2MPGeneralizedEndPoints p2mpep= (P2MPGeneralizedEndPoints)gep;
+				EndPointAndRestrictions epandrest=p2mpep.getEndpointAndRestrictions();
 				EndPoint sourceep=epandrest.getEndPoint();
-				source_router_id_addr=sourceep.getEndPointIPv4TLV().IPv4address;
+				source_router_id_addr=((IPv4AddressEndPoint)sourceep).getEndPointIPv4().IPv4address;
 				int cont=0;
-				while (cont<=p2mpep.getEndPointAndRestrictionsList().size()){
-					epandrest=p2mpep.getEndPointAndRestrictionsList().get(cont);
+				while (cont<=p2mpep.getEndpointAndRestrictionsList().size()){ //esto est� mal
+					epandrest=p2mpep.getEndpointAndRestrictionsList().get(cont);
 					EndPoint destep=epandrest.getEndPoint();
-					source_router_id_addr=sourceep.getEndPointIPv4TLV().IPv4address;
-					dest_router_id_addr=destep.getEndPointIPv4TLV().IPv4address;
+					dest_router_id_addr=((IPv4AddressEndPoint)destep).getEndPointIPv4().IPv4address;
 
 				}
 			}
 		}
-
+		
 		log.info("Algorithm->  Source:: "+source_router_id_addr+" Destination:: "+dest_router_id_addr);
 		log.info("Check if we have source and destination in our TED");
 		

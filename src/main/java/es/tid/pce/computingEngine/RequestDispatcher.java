@@ -309,7 +309,7 @@ public class RequestDispatcher {
     				cr.setRequestList(new LinkedList<Request>());
     				cr.setOut(out);
     				cr.setSvec(svecc);
-	    			ArrayList<Long> reqIDlist=reqMessage.getSvecList().get(i).getSvec().getRequestIDlist();
+    				LinkedList<Long> reqIDlist=reqMessage.getSvecList().get(i).getSvec().getRequestIDlist();
 	    			for (int j=0;j<reqIDlist.size();++j){
 	    				long reqId=reqIDlist.get(j);
 	    				Request req=hashReqList.remove(reqId);

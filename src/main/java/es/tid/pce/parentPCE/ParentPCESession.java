@@ -164,10 +164,10 @@ public class ParentPCESession extends GenericPCEPSession{
 							Iterator<StateReport> it= pcrpt.getStateReportList().iterator();
 							while (it.hasNext()){
 								StateReport sr=it.next();
-								SRP srp=sr.getSRP();
+								SRP srp=sr.getSrp();
 								if (srp!=null) {
 									//log.info("SRP Id: "+ sr.getSRP().getSRP_ID_number());
-									Object lock=childPCERequestManager.inilocks.get(sr.getSRP().getSRP_ID_number());
+									Object lock=childPCERequestManager.inilocks.get(sr.getSrp().getSRP_ID_number());
 									if (lock!=null){
 										synchronized (lock) {
 											childPCERequestManager.notifyReport(sr);

@@ -137,8 +137,8 @@ public class Operacion34_Initiate  {
 	}
 
 	private static boolean isInReport(String node, PCEPReport report) {
-		for (int i=0; i<report.getStateReportList().get(0).getPath().geteRO().getEROSubobjectList().size();i++){
-			if (node.equals(((OpenFlowUnnumberIfIDEROSubobject)report.getStateReportList().get(0).getPath().geteRO().getEROSubobjectList().get(i)).getSwitchID())){
+		for (int i=0; i<report.getStateReportList().get(0).getPath().getEro().getEROSubobjectList().size();i++){
+			if (node.equals(((OpenFlowUnnumberIfIDEROSubobject)report.getStateReportList().get(0).getPath().getEro().getEROSubobjectList().get(i)).getSwitchID())){
 				return true;
 			}
 		}

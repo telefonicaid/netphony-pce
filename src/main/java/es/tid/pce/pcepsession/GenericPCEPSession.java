@@ -643,7 +643,7 @@ public abstract class GenericPCEPSession extends Thread implements PCEPSession {
 								}
 								else if (pcepSessionManager.isStateful() && p_open.getOpen().getStateful_capability_tlv()!=null)
 								{
-									updateEffective = p_open.getOpen().getStateful_capability_tlv().isuFlag();
+									updateEffective = p_open.getOpen().getStateful_capability_tlv().isUFlag();
 									log.info("Other PCEP speaker is also stateful");
 								}
 								else
@@ -694,7 +694,9 @@ public abstract class GenericPCEPSession extends Thread implements PCEPSession {
 									perrorObject.setErrorValue(ObjectParameters.ERROR_ESTABLISHMENT_SECOND_OPEN_MESSAGE_UNACCEPTABLE_SESSION_CHARACTERISTICS);
 									ErrorConstruct error_c=new ErrorConstruct();
 									error_c.getErrorObjList().add(perrorObject);
-									perror.setError(error_c);
+									 LinkedList<ErrorConstruct> ec=new LinkedList<ErrorConstruct>();
+									 ec.add(error_c);
+									perror.setErrorList(ec);
 									log.info("Sending Error and ending PCEPSession");
 									sendPCEPMessage(perror);										
 								}
@@ -780,7 +782,7 @@ public abstract class GenericPCEPSession extends Thread implements PCEPSession {
 								}
 								else if (pcepSessionManager.isStateful() && p_open.getOpen().getStateful_capability_tlv()!=null)
 								{
-									updateEffective = p_open.getOpen().getStateful_capability_tlv().isuFlag();
+									updateEffective = p_open.getOpen().getStateful_capability_tlv().isUFlag();
 									log.info("Other PCEP speaker is also stateful");
 								}
 								else
@@ -944,9 +946,7 @@ public abstract class GenericPCEPSession extends Thread implements PCEPSession {
 							PCEPErrorObject perrorObject=new PCEPErrorObject();
 							perrorObject.setErrorType(ObjectParameters.ERROR_ESTABLISHMENT);
 							perrorObject.setErrorValue(ObjectParameters.ERROR_ESTABLISHMENT_INVALID_OPEN_MESSAGE);
-							ErrorConstruct error_c=new ErrorConstruct();
-							error_c.getErrorObjList().add(perrorObject);
-							perror.setError(error_c);
+							perror.getErrorObjList().add(perrorObject);
 							log.info("Sending Error and ending PCEPSession");
 							sendPCEPMessage(perror);	
 							pcepSessionManager.notifyPeerSessionFail((Inet4Address)this.socket.getInetAddress());
@@ -991,12 +991,8 @@ public abstract class GenericPCEPSession extends Thread implements PCEPSession {
 						PCEPError msg_error=new PCEPError(msg);
 						if (this.FSMstate==PCEPValues.PCEP_STATE_KEEP_WAIT){
 							int errorValue;
-							if (msg_error.getError()!=null){
-								errorValue=msg_error.getError().getErrorObjList().get(0).getErrorValue();
-							}
-							else {
-								errorValue=msg_error.getErrorObjList().get(0).getErrorValue();
-							}
+							//TODO: CHECK
+							errorValue=msg_error.getErrorObjList().get(0).getErrorValue();
 							if (errorValue==ObjectParameters.ERROR_ESTABLISHMENT_UNACCEPTABLE_NEGOTIABLE_SESSION_CHARACTERISTICS)
 							{
 								log.info("ERROR_ESTABLISHMENT_UNACCEPTABLE_NEGOTIABLE_SESSION_CHARACTERISTICS");	
@@ -1036,9 +1032,7 @@ public abstract class GenericPCEPSession extends Thread implements PCEPSession {
 									PCEPErrorObject perrorObject=new PCEPErrorObject();
 									perrorObject.setErrorType(ObjectParameters.ERROR_ESTABLISHMENT);
 									perrorObject.setErrorValue(ObjectParameters.ERROR_ESTABLISHMENT_PCERR_UNACCEPTABLE_SESSION_CHARACTERISTICS);
-									ErrorConstruct error_c=new ErrorConstruct();
-									error_c.getErrorObjList().add(perrorObject);
-									perror.setError(error_c);
+									perror.getErrorObjList().add(perrorObject);
 									log.info("Sending Error and ending PCEPSession");
 									sendPCEPMessage(perror);	
 									killSession();
@@ -1094,9 +1088,7 @@ public abstract class GenericPCEPSession extends Thread implements PCEPSession {
 						perrorObject.setErrorType(ObjectParameters.ERROR_ESTABLISHMENT);
 						perrorObject.setErrorValue(ObjectParameters.ERROR_ESTABLISHMENT_INVALID_OPEN_MESSAGE);
 						log.info("Sending Error and ending PCEPSession");
-						ErrorConstruct error_c=new ErrorConstruct();
-						error_c.getErrorObjList().add(perrorObject);
-						perror.setError(error_c);
+						perror.getErrorObjList().add(perrorObject);
 						sendPCEPMessage(perror);							
 					}
 					break;
@@ -1112,9 +1104,7 @@ public abstract class GenericPCEPSession extends Thread implements PCEPSession {
 					PCEPErrorObject perrorObject=new PCEPErrorObject();
 					perrorObject.setErrorType(ObjectParameters.ERROR_ESTABLISHMENT);
 					perrorObject.setErrorValue(ObjectParameters.ERROR_ESTABLISHMENT_INVALID_OPEN_MESSAGE);
-					ErrorConstruct error_c=new ErrorConstruct();
-					error_c.getErrorObjList().add(perrorObject);
-					perror.setError(error_c);
+					perror.getErrorObjList().add(perrorObject);
 					sendPCEPMessage(perror);		
 				}
 			}//Fin del else
@@ -1197,9 +1187,7 @@ public abstract class GenericPCEPSession extends Thread implements PCEPSession {
 			PCEPErrorObject perrorObject=new PCEPErrorObject();
 			perrorObject.setErrorType(ObjectParameters.ERROR_INVALID_OPERATION);
 			perrorObject.setErrorValue(ObjectParameters.ERROR_STATEFUL_CAPABILITY_NOT_SUPPORTED);
-			ErrorConstruct error_c=new ErrorConstruct();
-			error_c.getErrorObjList().add(perrorObject);
-			perror.setError(error_c);
+			perror.getErrorObjList().add(perrorObject);
 			this.sendPCEPMessage(perror);
 		}
 		else
@@ -1228,7 +1216,7 @@ public abstract class GenericPCEPSession extends Thread implements PCEPSession {
 	
 	private boolean checkLSPsync(PCEPOpen p_open)
 	{
-		if (pcepSessionManager.isStatefulSFlag() && p_open.getOpen().getStateful_capability_tlv().issFlag())
+		if (pcepSessionManager.isStatefulSFlag() && p_open.getOpen().getStateful_capability_tlv().isSFlag())
 		{
 			//if (data)
 		}
