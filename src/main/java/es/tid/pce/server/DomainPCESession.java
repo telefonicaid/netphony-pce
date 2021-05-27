@@ -27,6 +27,7 @@ import es.tid.pce.pcep.objects.EndPointsIPv4;
 import es.tid.pce.pcep.objects.EndPointsUnnumberedIntf;
 import es.tid.pce.pcep.objects.GeneralizedEndPoints;
 import es.tid.pce.pcep.objects.OPEN;
+import es.tid.pce.pcep.objects.P2PGeneralizedEndPoints;
 import es.tid.pce.pcep.objects.SRP;
 import es.tid.pce.pcepsession.DeadTimerThread;
 import es.tid.pce.pcepsession.GenericPCEPSession;
@@ -263,10 +264,10 @@ public class DomainPCESession extends GenericPCEPSession{
 									Iterator<StateReport> it= pcrpt.getStateReportList().iterator();
 									while (it.hasNext()){
 										StateReport sr=it.next();
-										SRP srp=sr.getSRP();
+										SRP srp=sr.getSrp();
 										if (srp!=null) {
-											log.info("SRP Id: "+ sr.getSRP().getSRP_ID_number());
-											Object lock=iniManager.inilocks.get(sr.getSRP().getSRP_ID_number());
+											log.info("SRP Id: "+ sr.getSrp().getSRP_ID_number());
+											Object lock=iniManager.inilocks.get(sr.getSrp().getSRP_ID_number());
 											if (lock!=null){
 												synchronized (lock) {
 													iniManager.notifyReport(sr);
@@ -338,13 +339,15 @@ public class DomainPCESession extends GenericPCEPSession{
 						break;
 					case PCEPMessageTypes.MESSAGE_PCMONREQ:
 						log.info("PCMonREQ message received");
-						PCEPMonReq p_mon_req=new PCEPMonReq();
+						PCEPMonReq p_mon_req;
 						try {
-							p_mon_req.decode(msg);
-						} catch (PCEPProtocolViolationException e) {
-							e.printStackTrace();
-							break;
+							p_mon_req = new PCEPMonReq(msg);
+							p_mon_req.decode();
+						} catch (PCEPProtocolViolationException e1) {
+							// TODO Auto-generated catch block
+							e1.printStackTrace();
 						}
+
 					case PCEPMessageTypes.MESSAGE_INITIATE:
 						
 						log.info("INITIATE RECEIVED");
@@ -425,7 +428,7 @@ public class DomainPCESession extends GenericPCEPSession{
 			
 		}else if (endPoint instanceof GeneralizedEndPoints){
 			log.info("jm endPoint es de tipo GeneralizedEndPoints");
-			sourceIP = ((GeneralizedEndPoints) endPoint).getP2PEndpoints().getSourceEndPoint().toString();
+			sourceIP = ((P2PGeneralizedEndPoints) endPoint).getSourceEndpoint().toString();
 			
 		}else log.info("jm endPoint NO es de tipo conocido");
 		
@@ -450,7 +453,7 @@ public String getDestinationIP(Object endPoint) {
 			
 		}else if (endPoint instanceof GeneralizedEndPoints){
 			log.info("jm endPoint es de tipo GeneralizedEndPoints");
-			destinationIP = ((GeneralizedEndPoints) endPoint).getP2PEndpoints().getDestinationEndPoint().toString();
+			destinationIP =  ((P2PGeneralizedEndPoints) endPoint).getDestinationEndpoint().toString();
 			
 		}else log.info("jm endPoint NO es de tipo conocido");
 		

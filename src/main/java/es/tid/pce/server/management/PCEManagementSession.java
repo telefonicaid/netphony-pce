@@ -443,8 +443,8 @@ public class PCEManagementSession extends Thread {
 									PCEPReport rpt= new PCEPReport();
 									rpt.setStateReportList(new LinkedList<StateReport>());
 									rpt.getStateReportList().add(new StateReport());
-									rpt.getStateReportList().get(0).setLSP(new LSP());
-									rpt.getStateReportList().get(0).setSRP(new SRP());
+									rpt.getStateReportList().get(0).setLsp(new LSP());
+									rpt.getStateReportList().get(0).setSrp(new SRP());
 									rpt.getStateReportList().get(0).setPath(new Path());
 									rpt.getStateReportList().get(0).getPath().setEro(new ExplicitRouteObject());
 
@@ -688,8 +688,8 @@ public class PCEManagementSession extends Thread {
 			StateReport report = val.pcepReport.getStateReportList().get(i);
 
 			update.getUpdateRequestList().add(new UpdateRequest());
-			update.getUpdateRequestList().get(i).setLsp(report.getLSP());
-			update.getUpdateRequestList().get(i).setSrp(report.getSRP());
+			update.getUpdateRequestList().get(i).setLsp(report.getLsp());
+			update.getUpdateRequestList().get(i).setSrp(report.getSrp());
 			update.getUpdateRequestList().get(i).setPath(report.getPath());
 		}
 		dm.sendPCEPMessage(update);
@@ -704,7 +704,8 @@ public class PCEManagementSession extends Thread {
 
 		SymbolicPathNameTLV symPathName= new SymbolicPathNameTLV();
 
-		symPathName.setSymbolicPathNameID(ObjectParameters.redundancyID);
+		String name="test";
+		symPathName.setSymbolicPathNameID(name.getBytes());
 		rsp.setSymPathName(symPathName);
 
 		//tedb.getDomainReachabilityIPv4Prefix();

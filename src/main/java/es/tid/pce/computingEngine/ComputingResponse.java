@@ -105,7 +105,7 @@ public class ComputingResponse
 		{
 			case PCEPMessageTypes.MESSAGE_PCREP:
 				PCEPResponse p_resp = new PCEPResponse();
-				p_resp.setResponsetList(ResponseList);
+				p_resp.setResponseList(ResponseList);
 				p_resp.encode();
 				setMessageBytes(p_resp.getBytes());
 			break;
@@ -115,7 +115,7 @@ public class ComputingResponse
 				{
 					//This part will suppose the Initiate has only one Path
 					
-					ExplicitRouteObject ero = ResponseList.get(0).getPath(0).geteRO();
+					ExplicitRouteObject ero = ResponseList.get(0).getPath(0).getEro();
 					
 					EroAndIP EaIP;
 					
@@ -169,7 +169,7 @@ public class ComputingResponse
 						PCEPIntiatedLSP pILSP = new PCEPIntiatedLSP();
 						LSP lsp = new LSP();
 						SRP rsp = new SRP();
-						ExplicitRouteObject ero = ResponseList.get(i).getPath(0).geteRO();
+						ExplicitRouteObject ero = ResponseList.get(i).getPath(0).getEro();
 						
 						pILSP.setLsp(lsp);
 						pILSP.setRsp(rsp);
@@ -189,12 +189,11 @@ public class ComputingResponse
 			case PCEPMessageTypes.MESSAGE_REPORT:
 				if (ReportList.isEmpty()){
 					PCEPError perror = new PCEPError();
-					ErrorConstruct error = new ErrorConstruct();
 					PCEPErrorObject e = new PCEPErrorObject();
 					e.setErrorType(24);
 					e.setErrorValue(3);
-					error.getErrorObjList().add(e);
-					perror.setError(error);
+					perror.getErrorObjList().add(e);
+
 					
 				}
 				else {

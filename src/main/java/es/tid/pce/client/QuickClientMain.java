@@ -18,7 +18,6 @@ import org.slf4j.LoggerFactory;
 
 import es.tid.pce.pcep.constructs.EndPoint;
 import es.tid.pce.pcep.constructs.GeneralizedBandwidthSSON;
-import es.tid.pce.pcep.constructs.P2PEndpoints;
 import es.tid.pce.pcep.constructs.PCEPIntiatedLSP;
 import es.tid.pce.pcep.constructs.Request;
 import es.tid.pce.pcep.messages.PCEPInitiate;

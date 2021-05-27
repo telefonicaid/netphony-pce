@@ -35,10 +35,8 @@ public class OpenWaitTimerTask extends TimerTask {
 		PCEPError perror=new PCEPError();
 		PCEPErrorObject perrorObject=new PCEPErrorObject();
 		perrorObject.setErrorType(ObjectParameters.ERROR_ESTABLISHMENT);
-		perrorObject.setErrorValue(ObjectParameters.ERROR_ESTABLISHMENT_NO_OPEN_MESSAGE);
-		ErrorConstruct error_c=new ErrorConstruct();
-		error_c.getErrorObjList().add(perrorObject);
-		perror.setError(error_c);
+		perrorObject.setErrorValue(ObjectParameters.ERROR_ESTABLISHMENT_NO_OPEN_MESSAGE);		
+		perror.getErrorObjList().add(perrorObject);
 		log.info("Sending Error");
 		parentPCESession.sendPCEPMessage(perror);
 		this.parentPCESession.killSession();

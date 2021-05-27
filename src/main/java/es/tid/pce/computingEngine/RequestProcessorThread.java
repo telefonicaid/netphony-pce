@@ -457,9 +457,7 @@ public class RequestProcessorThread extends Thread{
 			
 			
 			
-			P2PEndpoints p2pep=null;
-			
-			
+
 			
 			
 			
@@ -467,8 +465,8 @@ public class RequestProcessorThread extends Thread{
 				//For the IT case
 				if (ted.isITtedb()){
 					log.info("Processing New Path Computing request, id: "+pathCompReq.getRequestList().get(0).toString());		
-					source =(((GeneralizedEndPoints)pathCompReq.getRequestList().get(0).getEndPoints()).getP2PEndpoints().getSourceEndPoint().getEndPointIPv4TLV().getIPv4address());
-					dest =(((GeneralizedEndPoints)pathCompReq.getRequestList().get(0).getEndPoints()).getP2PEndpoints().getDestinationEndPoint().getEndPointIPv4TLV().getIPv4address());
+					//source =(((GeneralizedEndPoints)pathCompReq.getRequestList().get(0).getEndPoints()).getSourceEndPoint().getEndpoint().getEndPointIPv4TLV().getIPv4address());
+					//dest =(((GeneralizedEndPoints)pathCompReq.getRequestList().get(0).getEndPoints()).getP2PEndpoints().getDestinationEndPoint().getEndPointIPv4TLV().getIPv4address());
 				}else {
 					try {  //EndPointsIPv4
 						if (pathCompReq.getRequestList().get(0).getEndPoints() instanceof GeneralizedEndPoints){
@@ -490,17 +488,15 @@ public class RequestProcessorThread extends Thread{
 					} catch (Exception e) {  //GeneralizedEndPoints
 						if (pathCompReq.getRequestList().get(0).getEndPoints() instanceof GeneralizedEndPoints){
 							
-							p2pep = ((GeneralizedEndPoints)pathCompReq.getRequestList().get(0).getEndPoints()).getP2PEndpoints();			
+							P2PGeneralizedEndPoints p2pep = ((P2PGeneralizedEndPoints)pathCompReq.getRequestList().get(0).getEndPoints());			
 
 							//P2PEndpoints p2pep = ((GeneralizedEndPoints)pathCompReq.getRequestList().get(0).getEndPoints()).getP2PEndpoints();			
-							log.info("RequestProcessorThread GeneralizedEndPoints -> sourceDataPath:: "+p2pep.getSourceEndPoint()+" destDataPath :: "+p2pep.getDestinationEndPoint());
+							log.info("RequestProcessorThread GeneralizedEndPoints -> sourceDataPath:: "+p2pep.getSourceEndpoint()+" destDataPath :: "+p2pep.getDestinationEndpoint());
 
-							GeneralizedEndPoints ep= new GeneralizedEndPoints();
-							ep.setP2PEndpoints(p2pep); 	
-							pathCompReq.getRequestList().get(0).setEndPoints(ep);
+							pathCompReq.getRequestList().get(0).setEndPoints(p2pep);
 							
-							source = p2pep.getSourceEndPoint().getEndPointIPv4TLV().getIPv4address();
-							dest = p2pep.getDestinationEndPoint().getEndPointIPv4TLV().getIPv4address();
+							source = ((IPv4AddressEndPoint)p2pep.getSourceEndpoint().getEndPoint()).getEndPointIPv4().getIPv4address();
+							dest = ((IPv4AddressEndPoint)p2pep.getDestinationEndpoint().getEndPoint()).getEndPointIPv4().getIPv4address();
 						}
 					}
 				}
@@ -611,7 +607,7 @@ public class RequestProcessorThread extends Thread{
 								error.setErrorType(ObjectParameters.ERROR_UNSUPPORTEDOBJECT);
 								error.setErrorValue(ObjectParameters.ERROR_UNSUPPORTEDOBJECT_UNSUPPORTED_PARAMETER);
 								error_c.getErrorObjList().add(error);
-								msg_error.setError(error_c);
+								msg_error.getErrorList().add(error_c);
 								try {
 									msg_error.encode();
 									pathCompReq.getOut().write(msg_error.getBytes());
@@ -684,7 +680,7 @@ public class RequestProcessorThread extends Thread{
 									error.setErrorValue(ObjectParameters.ERROR_UNSUPPORTEDOBJECT_UNSUPPORTED_PARAMETER);
 									error_c.getErrorObjList().add(error);
 									error_c.getRequestIdList().add(pathCompReq.getRequestList().get(0).getRequestParameters());
-									msg_error.setError(error_c);
+									msg_error.getErrorList().add(error_c);
 									try {
 										msg_error.encode();
 										pathCompReq.getOut().write(msg_error.getBytes());
@@ -919,30 +915,30 @@ public class RequestProcessorThread extends Thread{
 	private void trappingResponse(ComputingResponse resp, long sourceIF, long destIF){
 		//Ancora no fa niente
 
-		log.info("First ERO SubObject type "+resp.getResponseList().get(0).getPath(0).geteRO().getEROSubobjectList().getFirst().getClass());
-		log.info("Second ERO SubObject type "+resp.getResponseList().get(0).getPath(0).geteRO().getEROSubobjectList().get(1).getClass());
-		log.info("Last ERO SubObject type "+resp.getResponseList().get(0).getPath(0).geteRO().getEROSubobjectList().getLast().getClass());
-		Inet4Address firstIP=((UnnumberIfIDEROSubobject)resp.getResponseList().get(0).getPath(0).geteRO().getEROSubobjectList().getFirst()).getRouterID();
+		log.info("First ERO SubObject type "+resp.getResponseList().get(0).getPath(0).getEro().getEROSubobjectList().getFirst().getClass());
+		log.info("Second ERO SubObject type "+resp.getResponseList().get(0).getPath(0).getEro().getEROSubobjectList().get(1).getClass());
+		log.info("Last ERO SubObject type "+resp.getResponseList().get(0).getPath(0).getEro().getEROSubobjectList().getLast().getClass());
+		Inet4Address firstIP=((UnnumberIfIDEROSubobject)resp.getResponseList().get(0).getPath(0).getEro().getEROSubobjectList().getFirst()).getRouterID();
 
-		EROSubobject label= resp.getResponseList().get(0).getPath(0).geteRO().getEROSubobjectList().get(1);
-		resp.getResponseList().get(0).getPath(0).geteRO().getEROSubobjectList().add(0, label);
+		EROSubobject label= resp.getResponseList().get(0).getPath(0).getEro().getEROSubobjectList().get(1);
+		resp.getResponseList().get(0).getPath(0).getEro().getEROSubobjectList().add(0, label);
 
 		UnnumberIfIDEROSubobject firsteroso= new UnnumberIfIDEROSubobject();
 		firsteroso.setRouterID(firstIP);
 		firsteroso.setInterfaceID(sourceIF);
 		firsteroso.setLoosehop(false);
-		resp.getResponseList().get(0).getPath(0).geteRO().getEROSubobjectList().add(0, firsteroso);
+		resp.getResponseList().get(0).getPath(0).getEro().getEROSubobjectList().add(0, firsteroso);
 
 
-		int size=resp.getResponseList().get(0).getPath(0).geteRO().getEROSubobjectList().size();
-		Inet4Address lastIP=((IPv4prefixEROSubobject)resp.getResponseList().get(0).getPath(0).geteRO().getEROSubobjectList().getLast()).getIpv4address();
-		resp.getResponseList().get(0).getPath(0).geteRO().getEROSubobjectList().removeLast();
+		int size=resp.getResponseList().get(0).getPath(0).getEro().getEROSubobjectList().size();
+		Inet4Address lastIP=((IPv4prefixEROSubobject)resp.getResponseList().get(0).getPath(0).getEro().getEROSubobjectList().getLast()).getIpv4address();
+		resp.getResponseList().get(0).getPath(0).getEro().getEROSubobjectList().removeLast();
 		UnnumberIfIDEROSubobject lasteroso= new UnnumberIfIDEROSubobject();
 		lasteroso.setRouterID(lastIP);
 		lasteroso.setInterfaceID(destIF);
 		lasteroso.setLoosehop(false);
-		resp.getResponseList().get(0).getPath(0).geteRO().getEROSubobjectList().add(lasteroso);
-		resp.getResponseList().get(0).getPath(0).geteRO().getEROSubobjectList().add(label);
+		resp.getResponseList().get(0).getPath(0).getEro().getEROSubobjectList().add(lasteroso);
+		resp.getResponseList().get(0).getPath(0).getEro().getEROSubobjectList().add(label);
 	}
 
 	private void sendNoPath(ComputingRequest pathCompReq){
@@ -989,7 +985,7 @@ public class RequestProcessorThread extends Thread{
 		notif.setNotificationType(ObjectParameters.PCEP_NOTIFICATION_TYPE_PRERESERVE);
 		LinkedList<Notification> notificationList=new LinkedList<Notification>();
 		PathReservationTLV pathReservationTLV=new PathReservationTLV();			
-		pathReservationTLV.setERO(resp.getResponseList().getFirst().getPathList().getFirst().geteRO());					
+		pathReservationTLV.setERO(resp.getResponseList().getFirst().getPathList().getFirst().getEro());					
 		boolean bidirect = resp.getResponseList().getFirst().getRequestParameters().isBidirect();		
 		pathReservationTLV.setTime(timer);
 		pathReservationTLV.setBidirectional(bidirect);

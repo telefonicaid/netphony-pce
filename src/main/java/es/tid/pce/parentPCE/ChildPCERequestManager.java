@@ -199,7 +199,7 @@ public class ChildPCERequestManager {
 	}
 	
 	public void notifyReport(StateReport sr){
-		long idRequest=sr.getSRP().getSRP_ID_number();
+		long idRequest=sr.getSrp().getSRP_ID_number();
 		log.debug("Entrando en Notify Report de id "+idRequest);
 		Object object_lock=inilocks.get(new Long(idRequest));
 		reports.put(new Long(idRequest), sr);

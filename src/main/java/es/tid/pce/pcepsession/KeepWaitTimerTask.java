@@ -36,9 +36,7 @@ public class KeepWaitTimerTask extends TimerTask {
 		PCEPErrorObject perrorObject=new PCEPErrorObject();
 		perrorObject.setErrorType(ObjectParameters.ERROR_ESTABLISHMENT);
 		perrorObject.setErrorValue(ObjectParameters.ERROR_ESTABLISHMENT_NO_KA_OR_ERROR_KEEPWAIT_TIMER);
-		ErrorConstruct error_c=new ErrorConstruct();
-		error_c.getErrorObjList().add(perrorObject);
-		perror.setError(error_c);
+		perror.getErrorObjList().add(perrorObject);
 		parentPCESession.sendPCEPMessage(perror);
 		this.parentPCESession.killSession();	
 		return;

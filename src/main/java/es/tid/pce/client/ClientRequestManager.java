@@ -61,7 +61,7 @@ public class ClientRequestManager {
 		lastTime=timeIni;
 		
 		
-		long idIni=pcres.getStateReportList().get(0).getSRP().getSRP_ID_number();
+		long idIni=pcres.getStateReportList().get(0).getSrp().getSRP_ID_number();
 		System.out.println("Nos llega un" +idIni);
 		responsesInit.put(new Long(idIni), pcres);
 		

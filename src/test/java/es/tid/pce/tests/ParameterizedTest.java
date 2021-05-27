@@ -145,7 +145,7 @@ public class ParameterizedTest {
 			}
 			if(line.hasOption("ero")){
 				ExplicitRouteObject ero = new ExplicitRouteObject();
-				ExplicitRouteObject eroRes = res.getResponseList().getFirst().getPath(0).geteRO();
+				ExplicitRouteObject eroRes = res.getResponseList().getFirst().getPath(0).getEro();
 				System.out.println("ERO en respuesta: "+eroRes);
 				
 				String argEro = line.getOptionValue("ero");

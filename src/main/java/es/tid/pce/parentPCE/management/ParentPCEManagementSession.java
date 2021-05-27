@@ -10,9 +10,6 @@ import java.util.Enumeration;
 import java.util.Hashtable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import es.tid.pce.computingEngine.RequestDispatcher;
 import es.tid.pce.computingEngine.RequestProcessorThread;
 import es.tid.pce.computingEngine.algorithms.ComputingAlgorithmManager;
@@ -20,7 +17,6 @@ import es.tid.pce.parentPCE.ChildPCERequestManager;
 import es.tid.pce.parentPCE.MultiDomainTopologyUpdater;
 import es.tid.pce.parentPCE.MDLSPDB.MultiDomainLSPDB;
 import es.tid.pce.pcepsession.PCEPSessionsInformation;
-import es.tid.tedb.ITMDTEDB;
 import es.tid.tedb.MDTEDB;
 import es.tid.tedb.ReachabilityManager;
 import es.tid.tedb.SimpleTEDB;
@@ -42,8 +38,6 @@ public class ParentPCEManagementSession extends Thread {
 	private MDTEDB mdtedb;
 	
 	private SimpleTEDB simpleTedb;
-	
-	private ITMDTEDB ITmdtedb;
 	
 	private ReachabilityManager rm;
 	
@@ -69,19 +63,6 @@ public class ParentPCEManagementSession extends Thread {
 		this.multiDomainLSPDB=multiDomainLSPDB;
 	}
 
-	
-	public ParentPCEManagementSession(Socket s, ChildPCERequestManager cprm, RequestDispatcher requestDispatcher, ITMDTEDB ITmdtedb, ReachabilityManager rm, PCEPSessionsInformation pcepSessionManager,MultiDomainTopologyUpdater mdtu){
-		this.socket=s;
-		this.cprm=cprm;
-		this.requestDispatcher=requestDispatcher;
-		this.ITmdtedb=ITmdtedb;
-		this.rm=rm;
-		log=LoggerFactory.getLogger("PCEServer");
-		isITcapable=true;
-		this.pcepSessionManager=pcepSessionManager;
-		this.mdtu=mdtu;
-	}
-	
 	
 	public void run(){
 		log.info("Starting Management session");
@@ -221,14 +202,8 @@ public class ParentPCEManagementSession extends Thread {
 						out.print(simpleTedb.printTopology()); 
 					}
 					
-				}else if ((command.equals("show topology")&&(isITcapable)) ||(command.equals("3")&&(!isITcapable))){
-					out.print(ITmdtedb.printTopology());
-					if (simpleTedb != null){
-						out.print("\nSIMPLE TEDB2:\n");
-						out.print(simpleTedb.printTopology());
-					}
-					
-				}else if ((command.equals("show reachability"))||(command.equals("4"))){
+				}
+				else if ((command.equals("show reachability"))||(command.equals("4"))){
 					out.print( rm.printReachability());
 					
 				}else if ((command.equals("show mdlspdb"))||(command.equals("5"))){

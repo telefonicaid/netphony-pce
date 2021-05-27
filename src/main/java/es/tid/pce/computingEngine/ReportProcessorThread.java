@@ -59,15 +59,15 @@ public class ReportProcessorThread extends Thread
 	public void effectivelyDispatch(PCEPReport pcepReport)
 	{
 		log.info("Received new report message: "+pcepReport.toString());
-		log.info("whith ID :"+pcepReport.getStateReportList().get(0).getLSP().getLspId());
-		Inet4Address addres = pcepReport.getStateReportList().get(0).getLSP().getLspIdentifiers_tlv().getTunnelSenderIPAddress();
+		log.info("whith ID :"+pcepReport.getStateReportList().get(0).getLsp().getLspId());
+		Inet4Address addres = pcepReport.getStateReportList().get(0).getLsp().getLspIdentifiers_tlv().getTunnelSenderIPAddress();
 		
 		Boolean isSyncOver = false;
 		
 		log.info("Size LSP:"+pcepReport.getStateReportList().size());
 		//isSyncOver = lspDB.isPCCSyncOver(pcepReport.getStateReportList().get(0).getLSP().getLspIdentifiers_tlv().getTunnelSenderIPAddress());
 		
-		log.info("Package received from adress: "+pcepReport.getStateReportList().get(0).getLSP().getLspIdentifiers_tlv().getTunnelSenderIPAddress());
+		log.info("Package received from adress: "+pcepReport.getStateReportList().get(0).getLsp().getLspIdentifiers_tlv().getTunnelSenderIPAddress());
 		
 		
 		if (!isSyncOver)
@@ -76,8 +76,8 @@ public class ReportProcessorThread extends Thread
 			int numLSPs = pcepReport.getStateReportList().size();
 			for (int j = 0; j < numLSPs ; j++)
 			{
-				syncFlag = pcepReport.getStateReportList().get(j).getLSP().isSyncFlag();
-				if ((!syncFlag)&&(pcepReport.getStateReportList().get(j).getLSP().getLspId()==0))
+				syncFlag = pcepReport.getStateReportList().get(j).getLsp().isSyncFlag();
+				if ((!syncFlag)&&(pcepReport.getStateReportList().get(j).getLsp().getLspId()==0))
 				{
 					isSyncOver = true;
 					log.info("Sync is over");

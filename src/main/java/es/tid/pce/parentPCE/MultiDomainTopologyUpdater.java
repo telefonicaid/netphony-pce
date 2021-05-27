@@ -3,7 +3,6 @@ package es.tid.pce.parentPCE;
 import es.tid.bgp.bgp4.messages.BGP4Update;
 import es.tid.bgp.bgp4Peer.updateTEDB.UpdateProccesorThread;
 import es.tid.pce.pcep.objects.Notification;
-import es.tid.tedb.ITMDTEDB;
 import es.tid.tedb.MDTEDB;
 
 import java.net.Inet4Address;
@@ -23,7 +22,6 @@ public class MultiDomainTopologyUpdater {
 	
 	private MDTEDB multiDomainTEDB;
 	
-	private ITMDTEDB ITmultiDomainTEDB;
 	/**
 	 * BGP
 	 */
@@ -39,13 +37,6 @@ public class MultiDomainTopologyUpdater {
 		this.bgpActivated=bgpActivated;
 	}
 	
-	public MultiDomainTopologyUpdater(ITMDTEDB ITmultiDomainTEDB){
-		log=LoggerFactory.getLogger("PCEServer");
-		multiDomainUpdateQueue= new LinkedBlockingQueue<MultiDomainUpdate>();
-		this.updateList=new LinkedBlockingQueue<BGP4Update>();
-		this.ITmultiDomainTEDB=ITmultiDomainTEDB;
-	}
-	
 	public void initialize(){
 		log.info("Multidomain Topology Updater initiated");
 //		if (bgpActivated){
@@ -57,13 +48,7 @@ public class MultiDomainTopologyUpdater {
 		//}
 	}
 	
-	public void ITinitialize(){
-		log.info("IT Multidomain Topology Updater initiated");
 
-		mdtuThread= new MultiDomainTopologyUpdaterThread(multiDomainUpdateQueue,ITmultiDomainTEDB);
-		mdtuThread.start();		
-	}
-	
 	public void processNotification(Notification notif, Inet4Address pceId, Inet4Address domainID){
 		MultiDomainUpdate multiDomainUpdate= new MultiDomainUpdate();
 		multiDomainUpdate.setDomainID(domainID);

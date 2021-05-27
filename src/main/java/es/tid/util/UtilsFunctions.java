@@ -31,7 +31,7 @@ public class UtilsFunctions {
 	}
 
 	public static void imprimeLambdas(ComputingResponse rep, Logger log){
-		LinkedList<EROSubobject> erolist=rep.getResponseList().getFirst().getPathList().getFirst().geteRO().getEROSubobjectList();
+		LinkedList<EROSubobject> erolist=rep.getResponseList().getFirst().getPathList().getFirst().getEro().getEROSubobjectList();
 		int size = erolist.size();
 		for (int i=0;i< size-1;i++){
 		if (erolist.get(i).getType()==SubObjectValues.ERO_SUBOBJECT_LABEL){								
@@ -43,7 +43,7 @@ public class UtilsFunctions {
 	}
 
 	public static void imprimeRespuesta(ComputingResponse rep, Logger log, long id){
-		LinkedList<EROSubobject> erolist=rep.getResponseList().getFirst().getPathList().getFirst().geteRO().getEROSubobjectList();
+		LinkedList<EROSubobject> erolist=rep.getResponseList().getFirst().getPathList().getFirst().getEro().getEROSubobjectList();
 		int size = erolist.size();
 		int n=-1;
 		boolean noEncontrada=true;

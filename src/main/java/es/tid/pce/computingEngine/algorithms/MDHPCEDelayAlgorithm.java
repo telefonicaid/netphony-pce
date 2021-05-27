@@ -51,23 +51,14 @@ public class MDHPCEDelayAlgorithm implements ComputingAlgorithm{
 	private boolean acceptIntraReq=true;
 
 	public MDHPCEDelayAlgorithm(ComputingRequest pathReq, TEDB ted, ChildPCERequestManager cprm , ReachabilityManager rm){
-		if(ted.isITtedb()){
-			this.Graph=((ITMDTEDB)ted).getDuplicatedMDNetworkGraph();
-		}else{
-			this.Graph=((MDTEDB)ted).getDuplicatedMDNetworkGraph();
-		}
+		this.Graph=((MDTEDB)ted).getDuplicatedMDNetworkGraph();
 		this.reachabilityManager=rm;
 		this.pathReq=pathReq;		
 		this.childPCERequestManager=cprm;
 	}
 
 	public MDHPCEDelayAlgorithm(ComputingRequest pathReq, TEDB ted, ChildPCERequestManager cprm , ReachabilityManager rm, Hashtable<Inet4Address,DomainTEDB> intra){
-		if(ted.isITtedb()){
-			this.Graph=((ITMDTEDB)ted).getDuplicatedMDNetworkGraph();
-		}else{
-			this.Graph=((MDTEDB)ted).getDuplicatedMDNetworkGraph();
-		}
-
+		this.Graph=((MDTEDB)ted).getDuplicatedMDNetworkGraph();
 		this.intraTEDBs=intra;
 		this.reachabilityManager=rm;
 		this.pathReq=pathReq;
@@ -101,33 +92,29 @@ public class MDHPCEDelayAlgorithm implements ComputingAlgorithm{
 		}
 		else if (EP.getOT()==ObjectParameters.PCEP_OBJECT_TYPE_ENDPOINTS_IPV6){
 
-		}
-
-		if (EP.getOT()==ObjectParameters.PCEP_OBJECT_TYPE_GENERALIZED_ENDPOINTS){
+		} else if (EP.getOT()==ObjectParameters.PCEP_OBJECT_TYPE_GENERALIZED_ENDPOINTS){
 			GeneralizedEndPoints  gep=(GeneralizedEndPoints) req.getEndPoints();
 			if(gep.getGeneralizedEndPointsType()==ObjectParameters.PCEP_GENERALIZED_END_POINTS_TYPE_P2P){
-				P2PEndpoints p2pep= gep.getP2PEndpoints();
-				EndPoint sourceep=p2pep.getSourceEndPoint();
-				EndPoint destep=p2pep.getDestinationEndPoint();
-				source_router_id_addr=sourceep.getEndPointIPv4TLV().IPv4address;
-				dest_router_id_addr=destep.getEndPointIPv4TLV().IPv4address;
+				P2PGeneralizedEndPoints p2pep= (P2PGeneralizedEndPoints)gep;		
+				source_router_id_addr = ((IPv4AddressEndPoint)p2pep.getSourceEndpoint().getEndPoint()).getEndPointIPv4().getIPv4address();
+				dest_router_id_addr = ((IPv4AddressEndPoint)p2pep.getDestinationEndpoint().getEndPoint()).getEndPointIPv4().getIPv4address();
 			}
 			if(gep.getGeneralizedEndPointsType()==ObjectParameters.PCEP_GENERALIZED_END_POINTS_TYPE_P2MP_NEW_LEAVES){
-				P2MPEndpoints p2mpep= gep.getP2MPEndpoints();
-				EndPointAndRestrictions epandrest=p2mpep.getEndPointAndRestrictions();
+				P2MPGeneralizedEndPoints p2mpep= (P2MPGeneralizedEndPoints)gep;
+				EndPointAndRestrictions epandrest=p2mpep.getEndpointAndRestrictions();
 				EndPoint sourceep=epandrest.getEndPoint();
-				source_router_id_addr=sourceep.getEndPointIPv4TLV().IPv4address;
+				source_router_id_addr=((IPv4AddressEndPoint)sourceep).getEndPointIPv4().IPv4address;
 				int cont=0;
-				while (cont<=p2mpep.getEndPointAndRestrictionsList().size()){ //esto est� mal
-					epandrest=p2mpep.getEndPointAndRestrictionsList().get(cont);
+				while (cont<=p2mpep.getEndpointAndRestrictionsList().size()){ //esto est� mal
+					epandrest=p2mpep.getEndpointAndRestrictionsList().get(cont);
 					EndPoint destep=epandrest.getEndPoint();
-					source_router_id_addr=sourceep.getEndPointIPv4TLV().IPv4address;
-					dest_router_id_addr=destep.getEndPointIPv4TLV().IPv4address;
+					dest_router_id_addr=((IPv4AddressEndPoint)destep).getEndPointIPv4().IPv4address;
 
 				}
 			}
 		}
 
+	
 		//First, we obtain the domains of each endPoint
 		Inet4Address source_domain_id=this.reachabilityManager.getDomain(source_router_id_addr);
 		Inet4Address dest_domain_id=this.reachabilityManager.getDomain(dest_router_id_addr);
@@ -427,44 +414,43 @@ public class MDHPCEDelayAlgorithm implements ComputingAlgorithm{
 			Inet4Address destIP = null;
 
 			// End points
-
+			
 			EndPoints endpointsRequest = null;
-			if (EP.getOT() == ObjectParameters.PCEP_OBJECT_TYPE_ENDPOINTS_IPV4) {
+			if (EP.getOT()==ObjectParameters.PCEP_OBJECT_TYPE_ENDPOINTS_IPV4){
 				endpointsRequest = new EndPointsIPv4();
-				((EndPointsIPv4) endpointsRequest).setSourceIP( source_router_id_addr );
-				destIP = (Inet4Address) edge_list.get( 0 ).getSrc_router_id();
-				((EndPointsIPv4) endpointsRequest).setDestIP( destIP );
+				((EndPointsIPv4) endpointsRequest).setSourceIP(source_router_id_addr);
+				destIP=(Inet4Address)edge_list.get(0).getSrc_router_id();
+				((EndPointsIPv4) endpointsRequest).setDestIP(destIP);
 
-			} else if (EP.getOT() == ObjectParameters.PCEP_OBJECT_TYPE_ENDPOINTS_IPV6) {
+			} else if (EP.getOT()==ObjectParameters.PCEP_OBJECT_TYPE_ENDPOINTS_IPV6){
 				//NO IMPLEMENTADO
-			}
+			} else if (EP.getOT()==ObjectParameters.PCEP_OBJECT_TYPE_GENERALIZED_ENDPOINTS){
+				GeneralizedEndPoints gep=(GeneralizedEndPoints) req.getEndPoints();
 
-			if (EP.getOT() == ObjectParameters.PCEP_OBJECT_TYPE_GENERALIZED_ENDPOINTS) {
-				GeneralizedEndPoints gep = (GeneralizedEndPoints) req.getEndPoints();
-				if (gep.getGeneralizedEndPointsType() == ObjectParameters.PCEP_GENERALIZED_END_POINTS_TYPE_P2P) {
+				if(gep.getGeneralizedEndPointsType()==ObjectParameters.PCEP_GENERALIZED_END_POINTS_TYPE_P2P){
 					EndPointIPv4TLV sourceIPv4TLV = new EndPointIPv4TLV();
 					EndPointIPv4TLV destIPv4TLV = new EndPointIPv4TLV();
-					sourceIPv4TLV.setIPv4address( source_router_id_addr );
-					destIP = (Inet4Address) edge_list.get( 0 ).getSrc_router_id();
-					destIPv4TLV.setIPv4address( destIP );
+					sourceIPv4TLV.setIPv4address(source_router_id_addr);
+					destIP=(Inet4Address)edge_list.get(0).getSrc_router_id();
+					destIPv4TLV.setIPv4address(destIP);
 
-					EndPoint sourceEP = new EndPoint();
-					EndPoint destEP = new EndPoint();
-					sourceEP.setEndPointIPv4TLV( sourceIPv4TLV );
-					destEP.setEndPointIPv4TLV( destIPv4TLV );
+					EndPointAndRestrictions sourceEPA=new EndPointAndRestrictions();
+					EndPointAndRestrictions destEPA=new EndPointAndRestrictions();
+					IPv4AddressEndPoint sourceEP = new IPv4AddressEndPoint();
+					IPv4AddressEndPoint destEP = new IPv4AddressEndPoint();
+					sourceEP.setEndPointIPv4(sourceIPv4TLV);
+					destEP.setEndPointIPv4(destIPv4TLV);
+					sourceEPA.setEndPoint(sourceEP);
+					destEPA.setEndPoint(destEP);
 
-					P2PEndpoints p2pep = new P2PEndpoints();
-					p2pep.setSourceEndpoint( sourceEP );
-					p2pep.setDestinationEndPoints( destEP );
 
-					endpointsRequest = new GeneralizedEndPoints();
-					((GeneralizedEndPoints) endpointsRequest).setP2PEndpoints( p2pep );
 
-				}
-				if (gep.getGeneralizedEndPointsType() == ObjectParameters.PCEP_GENERALIZED_END_POINTS_TYPE_P2MP_NEW_LEAVES) {
+					((P2PGeneralizedEndPoints)gep).setSourceEndpoint(sourceEPA);
+					((P2PGeneralizedEndPoints)gep).setDestinationEndpoint(destEPA);
 
 				}
 			}
+			
 
 			/////////////////////////////////////////////////////////
 			//SRC domain

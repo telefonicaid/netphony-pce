@@ -134,7 +134,7 @@ public class ReportDB_Handler {
 		for (int i = 0; i < pcepReport.getStateReportList().size(); i++)
 		{
 			StateReport stateReport = pcepReport.getStateReportList().get(i);
-			LSP lsp = stateReport.getLSP();
+			LSP lsp = stateReport.getLsp();
 			if (lsp.getLspId() ==0)
 			{
 				log.info("sync lsp received, ignoring..");
@@ -159,7 +159,7 @@ public class ReportDB_Handler {
 				}
 				moduleList.put(adress.toString(),rptdb);
 			}
-			if (lsp.isrFlag())
+			if (lsp.isRemoveFlag())
 			{
 				rptdb.remove(stateReport);
 			}

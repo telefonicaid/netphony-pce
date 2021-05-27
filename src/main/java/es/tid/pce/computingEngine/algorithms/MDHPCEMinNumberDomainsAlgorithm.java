@@ -21,14 +21,14 @@ import es.tid.pce.pcep.constructs.EndPoint;
 import es.tid.pce.pcep.constructs.EndPointAndRestrictions;
 import es.tid.pce.pcep.constructs.GeneralizedBandwidth;
 import es.tid.pce.pcep.constructs.GeneralizedBandwidthSSON;
+import es.tid.pce.pcep.constructs.IPv4AddressEndPoint;
 import es.tid.pce.pcep.constructs.NCF;
-import es.tid.pce.pcep.constructs.P2MPEndpoints;
-import es.tid.pce.pcep.constructs.P2PEndpoints;
 import es.tid.pce.pcep.constructs.PCEPIntiatedLSP;
 import es.tid.pce.pcep.constructs.Path;
 import es.tid.pce.pcep.constructs.Request;
 import es.tid.pce.pcep.constructs.Response;
 import es.tid.pce.pcep.constructs.StateReport;
+import es.tid.pce.pcep.constructs.UnnumIfEndPoint;
 import es.tid.pce.pcep.messages.PCEPInitiate;
 import es.tid.pce.pcep.messages.PCEPMessageTypes;
 import es.tid.pce.pcep.messages.PCEPReport;
@@ -48,6 +48,7 @@ import es.tid.pce.pcep.objects.Monitoring;
 import es.tid.pce.pcep.objects.NoPath;
 import es.tid.pce.pcep.objects.ObjectParameters;
 import es.tid.pce.pcep.objects.ObjectiveFunction;
+import es.tid.pce.pcep.objects.P2PGeneralizedEndPoints;
 import es.tid.pce.pcep.objects.RequestParameters;
 import es.tid.pce.pcep.objects.SRP;
 import es.tid.pce.pcep.objects.subobjects.UnnumberIfIDXROSubobject;
@@ -57,7 +58,6 @@ import es.tid.pce.pcep.objects.tlvs.EndPointIPv4TLV;
 import es.tid.pce.pcep.objects.tlvs.NoPathTLV;
 import es.tid.pce.pcep.objects.tlvs.SymbolicPathNameTLV;
 import es.tid.pce.pcep.objects.tlvs.UnnumberedEndpointTLV;
-import es.tid.pce.pcep.objects.tlvs.subtlvs.SymbolicPathNameSubTLV;
 import es.tid.rsvp.constructs.gmpls.DWDMWavelengthLabel;
 import es.tid.rsvp.objects.subobjects.EROSubobject;
 import es.tid.rsvp.objects.subobjects.GeneralizedLabelEROSubobject;
@@ -65,7 +65,6 @@ import es.tid.rsvp.objects.subobjects.IPv4prefixEROSubobject;
 import es.tid.rsvp.objects.subobjects.LabelEROSubobject;
 import es.tid.rsvp.objects.subobjects.UnnumberIfIDEROSubobject;
 import es.tid.tedb.DomainTEDB;
-import es.tid.tedb.ITMDTEDB;
 import es.tid.tedb.InterDomainEdge;
 import es.tid.tedb.MDTEDB;
 import es.tid.tedb.ReachabilityManager;
@@ -93,19 +92,15 @@ public class MDHPCEMinNumberDomainsAlgorithm implements ComputingAlgorithm{
 	public static int OF_CODE_SBVT_CHANNEL = 58020;
 
 	public int channelType;
-	
+
 	public long reqId;
-	
+
 	boolean explicit_label = false;
 
 	EndPoints  original_end_points; // Original EndPoints of the Request
 
 	public MDHPCEMinNumberDomainsAlgorithm(ComputingRequest pathReq,TEDB ted,ChildPCERequestManager cprm , ReachabilityManager rm){
-		if(ted.isITtedb()){
-			this.networkGraph=((ITMDTEDB)ted).getDuplicatedMDNetworkGraph();
-		}else{
-			this.networkGraph=((MDTEDB)ted).getDuplicatedMDNetworkGraph();
-		}
+		this.networkGraph=((MDTEDB)ted).getDuplicatedMDNetworkGraph();
 		this.reachabilityManager=rm;
 		this.pathReq=pathReq;		
 		this.childPCERequestManager=cprm;
@@ -178,7 +173,7 @@ public class MDHPCEMinNumberDomainsAlgorithm implements ComputingAlgorithm{
 			m_resp.addResponse(response);
 			return m_resp;
 		}
-		
+
 		int of=-1;
 		if(req.getObjectiveFunction()!=null){
 			of=req.getObjectiveFunction().getOFcode();
@@ -197,7 +192,7 @@ public class MDHPCEMinNumberDomainsAlgorithm implements ComputingAlgorithm{
 			log.info("We are dealing with a GENERIC CHANNEL AS NO OF WAS RECEIVED");
 		}
 
-		
+
 		//Prune the graph if needed
 		if (channelType==MDHPCEMinNumberDomainsAlgorithm.MEDIA_CHANNEL) {
 			pruneSVBTs(this.networkGraph);
@@ -230,7 +225,7 @@ public class MDHPCEMinNumberDomainsAlgorithm implements ComputingAlgorithm{
 		//Let's check the OF code and get the channel type
 
 
-	
+
 		boolean first_domain_equal=false;
 		if (source_domain_id.equals(dest_domain_id)){
 			PCEPRequest pcreqToDomain=createRequest(this.channelType, req.getXro(), pathReq.getRequestList().get(0).getBandwidth().duplicate(),pathReq.getRequestList().get(0).getEndPoints());
@@ -258,36 +253,51 @@ public class MDHPCEMinNumberDomainsAlgorithm implements ComputingAlgorithm{
 
 			if (original_end_points.getOT()==ObjectParameters.PCEP_OBJECT_TYPE_GENERALIZED_ENDPOINTS){
 				GeneralizedEndPoints  gep=(GeneralizedEndPoints) req.getEndPoints();
-				EndPoint sourceEP=new EndPoint();
-				EndPoint destEP=new EndPoint();
+				EndPointAndRestrictions sourceEPA = new EndPointAndRestrictions();
+				EndPointAndRestrictions destEPA = new EndPointAndRestrictions();
+				EndPoint sourceEP;
+				EndPoint destEP;
 				if(gep.getGeneralizedEndPointsType()==ObjectParameters.PCEP_GENERALIZED_END_POINTS_TYPE_P2P){
-					if (gep.getP2PEndpoints().getSourceEndPoint().getEndPointIPv4TLV()!=null){
-						source_router_id_addr=  gep.getP2PEndpoints().getSourceEndPoint().getEndPointIPv4TLV().getIPv4address();
+					P2PGeneralizedEndPoints p2ep=(P2PGeneralizedEndPoints)gep;
+					if (p2ep.getSourceEndpoint().getEndPoint() instanceof IPv4AddressEndPoint) {
+						source_router_id_addr = ((IPv4AddressEndPoint)p2ep.getSourceEndpoint().getEndPoint()).getEndPointIPv4().getIPv4address();
+						dest_router_id_addr = ((IPv4AddressEndPoint)p2ep.getDestinationEndpoint().getEndPoint()).getEndPointIPv4().getIPv4address();
 						EndPointIPv4TLV sourceIPv4TLV = new EndPointIPv4TLV();
 						EndPointIPv4TLV destIPv4TLV = new EndPointIPv4TLV();
 						sourceIPv4TLV.setIPv4address(source_router_id_addr);
 						destIP=(Inet4Address)edge_list.get(0).getSrc_router_id();
 						destIPv4TLV.setIPv4address(destIP);
-						sourceEP.setEndPointIPv4TLV(sourceIPv4TLV);
-						destEP.setEndPointIPv4TLV(destIPv4TLV);
-					}else if (gep.getP2PEndpoints().getSourceEndPoint().getUnnumberedEndpoint()!=null){
-						source_router_id_addr=  gep.getP2PEndpoints().getSourceEndPoint().getUnnumberedEndpoint().getIPv4address();
+						sourceEP= new IPv4AddressEndPoint();
+						((IPv4AddressEndPoint)sourceEP).setEndPointIPv4(sourceIPv4TLV);
+						sourceEPA.setEndPoint(sourceEP);
+						destEP= new IPv4AddressEndPoint();
+						((IPv4AddressEndPoint)destEP).setEndPointIPv4(destIPv4TLV);
+						destEPA.setEndPoint(destEP);
+					} else if  (p2ep.getSourceEndpoint().getEndPoint() instanceof UnnumIfEndPoint) {
+						source_router_id_addr = ((UnnumIfEndPoint)p2ep.getSourceEndpoint().getEndPoint()).getUnnumberedEndpoint().getIPv4address();
+						long if_ids=((UnnumIfEndPoint)p2ep.getSourceEndpoint().getEndPoint()).getUnnumberedEndpoint().getIfID();
+						dest_router_id_addr = ((UnnumIfEndPoint)p2ep.getDestinationEndpoint().getEndPoint()).getUnnumberedEndpoint().getIPv4address();
+						long if_idd=((UnnumIfEndPoint)p2ep.getSourceEndpoint().getEndPoint()).getUnnumberedEndpoint().getIfID();
 						UnnumberedEndpointTLV sourceIPv4TLV = new UnnumberedEndpointTLV();
 						UnnumberedEndpointTLV destIPv4TLV = new UnnumberedEndpointTLV();
 						sourceIPv4TLV.setIPv4address(source_router_id_addr);
 						destIP=(Inet4Address)edge_list.get(0).getSrc_router_id();
-						sourceIPv4TLV.setIfID(gep.getP2PEndpoints().getSourceEndPoint().getUnnumberedEndpoint().getIfID());
+						sourceIPv4TLV.setIfID(if_ids);
 						destIPv4TLV.setIPv4address(destIP);
 						destIPv4TLV.setIfID(edge_list.get(0).getSrc_if_id());
-						sourceEP.setUnnumberedEndpoint(sourceIPv4TLV);
-						destEP.setUnnumberedEndpoint(destIPv4TLV);
-					}					
-					P2PEndpoints p2pep=new P2PEndpoints();
-					p2pep.setSourceEndpoint(sourceEP);
-					p2pep.setDestinationEndPoints(destEP);
+						sourceEP= new UnnumIfEndPoint();
+						((UnnumIfEndPoint)sourceEP).setUnnumberedEndpoint(sourceIPv4TLV);
+						sourceEPA.setEndPoint(sourceEP);
+						destEP= new UnnumIfEndPoint();
+						((UnnumIfEndPoint)destEP).setUnnumberedEndpoint(destIPv4TLV);
+						destEPA.setEndPoint(destEP);
+					}
 
-					endpointsRequest = new GeneralizedEndPoints();
-					((GeneralizedEndPoints) endpointsRequest).setP2PEndpoints(p2pep);
+
+					endpointsRequest = new P2PGeneralizedEndPoints();
+
+					((P2PGeneralizedEndPoints)endpointsRequest).setSourceEndpoint(sourceEPA);
+					((P2PGeneralizedEndPoints)endpointsRequest).setDestinationEndpoint(destEPA);
 
 				}
 
@@ -297,8 +307,8 @@ public class MDHPCEMinNumberDomainsAlgorithm implements ComputingAlgorithm{
 			log.info("First part of the LSP is in domain: "+ domain+" from "+ source_router_id_addr+" to "+destIP);
 			//FIXME: METRICA? OF? BW?
 			long requestID;
-			
-			
+
+
 
 			if (source_router_id_addr.equals(destIP)){
 				log.info("Origin and destination are the same");
@@ -314,27 +324,27 @@ public class MDHPCEMinNumberDomainsAlgorithm implements ComputingAlgorithm{
 				}
 				Request requestToFirstDomain=new Request();
 				log.info("Llega BW "+pathReq.getRequestList().get(0).getBandwidth().toString());
-				
-								
+
+
 				Request req1=pathReq.getRequestList().get(0);
 				BandwidthRequestedGeneralizedBandwidth  bw =null;
-				
+
 				if (req1.getBandwidth() instanceof BandwidthRequestedGeneralizedBandwidth){
 					bw= (BandwidthRequestedGeneralizedBandwidth)req1.getBandwidth(); 
-					
+
 					if(bw.getGeneralizedBandwidth()!= null){
-						
+
 						if(bw.getGeneralizedBandwidth() instanceof GeneralizedBandwidthSSON ){
-						
-						GeneralizedBandwidthSSON a = (GeneralizedBandwidthSSON)bw.getGeneralizedBandwidth();
-						m=a.getM();
-						
+
+							GeneralizedBandwidthSSON a = (GeneralizedBandwidthSSON)bw.getGeneralizedBandwidth();
+							m=a.getM();
+
 						}
-							
+
 					}
 				}
-				
-				
+
+
 				//requestToFirstDomain.setObjectiveFunction(pathReq.getRequestList().get(0).getObjectiveFunction());
 				requestToFirstDomain.setBandwidth(pathReq.getRequestList().get(0).getBandwidth().duplicate());
 				if(pathReq.getRequestList().get(0).getReservation()!=null){
@@ -376,17 +386,22 @@ public class MDHPCEMinNumberDomainsAlgorithm implements ComputingAlgorithm{
 				if (original_end_points.getOT()==ObjectParameters.PCEP_OBJECT_TYPE_GENERALIZED_ENDPOINTS){
 					GeneralizedEndPoints  gep=(GeneralizedEndPoints) req.getEndPoints();
 					if(gep.getGeneralizedEndPointsType()==ObjectParameters.PCEP_GENERALIZED_END_POINTS_TYPE_P2P){
-						EndPoint sourceEP=new EndPoint();
-						EndPoint destEP=new EndPoint();
-						if (gep.getP2PEndpoints().getSourceEndPoint().getEndPointIPv4TLV()!=null){
+						P2PGeneralizedEndPoints  gepP2P=(P2PGeneralizedEndPoints) gep;
+						EndPointAndRestrictions sourceEPA=new EndPointAndRestrictions();
+						EndPointAndRestrictions destEPA=new EndPointAndRestrictions();
+						if (gepP2P.getSourceEndpoint().getEndPoint() instanceof IPv4AddressEndPoint){
 							EndPointIPv4TLV sourceIPv4TLV = new EndPointIPv4TLV();
 							EndPointIPv4TLV destIPv4TLV = new EndPointIPv4TLV();
 							sourceIPv4TLV.setIPv4address((Inet4Address)edge_list.get(i-1).getDst_router_id());
 							destIP=(Inet4Address)edge_list.get(i).getSrc_router_id();
 							destIPv4TLV.setIPv4address(destIP);
-							sourceEP.setEndPointIPv4TLV(sourceIPv4TLV);
-							destEP.setEndPointIPv4TLV(destIPv4TLV);
-						}else if (gep.getP2PEndpoints().getSourceEndPoint().getUnnumberedEndpoint()!=null){
+							IPv4AddressEndPoint sourceEP = new IPv4AddressEndPoint();
+							IPv4AddressEndPoint destEP = new IPv4AddressEndPoint();
+							sourceEP.setEndPointIPv4(sourceIPv4TLV);
+							destEP.setEndPointIPv4(destIPv4TLV);
+							sourceEPA.setEndPoint(sourceEP);
+							destEPA.setEndPoint(destEP);
+						}else if (gepP2P.getSourceEndpoint().getEndPoint() instanceof UnnumIfEndPoint){
 
 							UnnumberedEndpointTLV sourceIPv4TLV = new UnnumberedEndpointTLV();
 							UnnumberedEndpointTLV destIPv4TLV = new UnnumberedEndpointTLV();
@@ -395,16 +410,20 @@ public class MDHPCEMinNumberDomainsAlgorithm implements ComputingAlgorithm{
 							sourceIPv4TLV.setIfID(edge_list.get(i-1).getDst_if_id());
 							destIPv4TLV.setIPv4address(destIP);
 							destIPv4TLV.setIfID(edge_list.get(i).getSrc_if_id());
+							UnnumIfEndPoint sourceEP = new UnnumIfEndPoint();
+							UnnumIfEndPoint destEP = new UnnumIfEndPoint();
 							sourceEP.setUnnumberedEndpoint(sourceIPv4TLV);
 							destEP.setUnnumberedEndpoint(destIPv4TLV);
+							sourceEPA.setEndPoint(sourceEP);
+							destEPA.setEndPoint(destEP);
 						}					
 
-						P2PEndpoints p2pep=new P2PEndpoints();
-						p2pep.setSourceEndpoint(sourceEP);
-						p2pep.setDestinationEndPoints(destEP);
+						endpointsRequest = new P2PGeneralizedEndPoints();
 
-						endpointsRequest = new GeneralizedEndPoints();
-						((GeneralizedEndPoints) endpointsRequest).setP2PEndpoints(p2pep);
+						((P2PGeneralizedEndPoints)endpointsRequest).setSourceEndpoint(sourceEPA);
+						((P2PGeneralizedEndPoints)endpointsRequest).setDestinationEndpoint(destEPA);
+						
+						
 
 					}
 					if(gep.getGeneralizedEndPointsType()==ObjectParameters.PCEP_GENERALIZED_END_POINTS_TYPE_P2MP_NEW_LEAVES){
@@ -481,16 +500,21 @@ public class MDHPCEMinNumberDomainsAlgorithm implements ComputingAlgorithm{
 			if (original_end_points.getOT()==ObjectParameters.PCEP_OBJECT_TYPE_GENERALIZED_ENDPOINTS){
 				GeneralizedEndPoints  gep=(GeneralizedEndPoints) req.getEndPoints();
 				if(gep.getGeneralizedEndPointsType()==ObjectParameters.PCEP_GENERALIZED_END_POINTS_TYPE_P2P){
-					EndPoint sourceEP=new EndPoint();
-					EndPoint destEP=new EndPoint();
-					if (gep.getP2PEndpoints().getSourceEndPoint().getEndPointIPv4TLV()!=null){
+					P2PGeneralizedEndPoints  gepP2P=(P2PGeneralizedEndPoints) gep;
+					EndPointAndRestrictions sourceEPA=new EndPointAndRestrictions();
+					EndPointAndRestrictions destEPA=new EndPointAndRestrictions();
+					if (gepP2P.getSourceEndpoint().getEndPoint() instanceof IPv4AddressEndPoint){
 						EndPointIPv4TLV sourceIPv4TLV = new EndPointIPv4TLV();
 						EndPointIPv4TLV destIPv4TLV = new EndPointIPv4TLV();
 						sourceIPv4TLV.setIPv4address(last_source_IP);
 						destIPv4TLV.setIPv4address(dest_router_id_addr);
-						sourceEP.setEndPointIPv4TLV(sourceIPv4TLV);
-						destEP.setEndPointIPv4TLV(destIPv4TLV);
-					}else if (gep.getP2PEndpoints().getSourceEndPoint().getUnnumberedEndpoint()!=null){
+						IPv4AddressEndPoint sourceEP = new IPv4AddressEndPoint();
+						IPv4AddressEndPoint destEP = new IPv4AddressEndPoint();
+						sourceEP.setEndPointIPv4(sourceIPv4TLV);
+						destEP.setEndPointIPv4(destIPv4TLV);
+						sourceEPA.setEndPoint(sourceEP);
+						destEPA.setEndPoint(destEP);
+					}else if (gepP2P.getSourceEndpoint().getEndPoint() instanceof UnnumIfEndPoint){
 
 						UnnumberedEndpointTLV sourceIPv4TLV = new UnnumberedEndpointTLV();
 						UnnumberedEndpointTLV destIPv4TLV = new UnnumberedEndpointTLV();
@@ -498,17 +522,18 @@ public class MDHPCEMinNumberDomainsAlgorithm implements ComputingAlgorithm{
 						sourceIPv4TLV.setIfID(edge_list.get(i-1).getDst_if_id());
 						destIPv4TLV.setIPv4address(dest_router_id_addr);
 						destIPv4TLV.setIfID(dst_if_id);
+						UnnumIfEndPoint sourceEP = new UnnumIfEndPoint();
+						UnnumIfEndPoint destEP = new UnnumIfEndPoint();
 						sourceEP.setUnnumberedEndpoint(sourceIPv4TLV);
 						destEP.setUnnumberedEndpoint(destIPv4TLV);
+						sourceEPA.setEndPoint(sourceEP);
+						destEPA.setEndPoint(destEP);
 					}					
+					endpointsLastDomain = new P2PGeneralizedEndPoints();
 
-					P2PEndpoints p2pep=new P2PEndpoints();
-					p2pep.setSourceEndpoint(sourceEP);
-					p2pep.setDestinationEndPoints(destEP);
-
-					endpointsLastDomain = new GeneralizedEndPoints();
-					((GeneralizedEndPoints) endpointsLastDomain).setP2PEndpoints(p2pep);
-
+					((P2PGeneralizedEndPoints)endpointsLastDomain).setSourceEndpoint(sourceEPA);
+					((P2PGeneralizedEndPoints)endpointsLastDomain).setDestinationEndpoint(destEPA);
+					
 				}
 				if(gep.getGeneralizedEndPointsType()==ObjectParameters.PCEP_GENERALIZED_END_POINTS_TYPE_P2MP_NEW_LEAVES){
 					//POR HACER
@@ -604,7 +629,7 @@ public class MDHPCEMinNumberDomainsAlgorithm implements ComputingAlgorithm{
 				ero.addEROSubobject(idLink);
 				j+=1;
 			}
-			
+
 		}
 		boolean childrenFailed=false;
 		int i;
@@ -635,7 +660,7 @@ public class MDHPCEMinNumberDomainsAlgorithm implements ComputingAlgorithm{
 				}
 				else {		
 					log.info("Respuesta de "+i+" es: "+respList.get(i).toString());
-					ExplicitRouteObject eroInternal =respList.get(i).getResponse(0).getPath(0).geteRO();
+					ExplicitRouteObject eroInternal =respList.get(i).getResponse(0).getPath(0).getEro();
 					//addFirstObject(eroInternal, );
 					log.info(" "+eroInternal.toString());
 
@@ -648,7 +673,7 @@ public class MDHPCEMinNumberDomainsAlgorithm implements ComputingAlgorithm{
 						ero.addEROSubobjectList(eroInternal.getEROSubobjectList());
 					}
 					else {
-						
+
 						if (this.channelType==MDHPCEMinNumberDomainsAlgorithm.MEDIA_CHANNEL){
 							label_continuity=true;
 						}
@@ -657,7 +682,7 @@ public class MDHPCEMinNumberDomainsAlgorithm implements ComputingAlgorithm{
 						}
 						ExplicitRouteObject cleanEro=prepareERO(eroInternal,channelType,  remove_elcs, original_end_points, first,  last,  removeFirstNode);
 						if (label_continuity) {
-							
+
 							if (i==0){
 								if ((respList.get(i).getResponse(0).getPath(0).getLabelSet())!=null){
 									log.info("TENEMOS BITMAP LABEL SET");
@@ -674,12 +699,12 @@ public class MDHPCEMinNumberDomainsAlgorithm implements ComputingAlgorithm{
 									//
 								}
 							}else {
-																
+
 								if ((respList.get(i).getResponse(0).getPath(0).getLabelSet())!=null){
 									//bitmap=restrictNCFList(ncflist,((LabelSetInclusiveList)respList.get(i).getResponse(0).getPath(0).getLabelSet()).getNCFList() );	
 									restrictBitmap(bitmap,((BitmapLabelSet)respList.get(i).getResponse(0).getPath(0).getLabelSet()).getBytesBitmap());
 								} else {
-									
+
 									label2=getELCfromERO(eroInternal);
 									if (label==null){
 										label=label2;
@@ -707,7 +732,7 @@ public class MDHPCEMinNumberDomainsAlgorithm implements ComputingAlgorithm{
 									j++;
 								}
 							}
-							
+
 						}
 					}
 
@@ -715,10 +740,10 @@ public class MDHPCEMinNumberDomainsAlgorithm implements ComputingAlgorithm{
 				}
 			}
 		}
-		
-		
-		
-		
+
+
+
+
 		if (childrenFailed==true){
 			log.warn("Some child has failed");
 			NoPath noPath= new NoPath();
@@ -733,9 +758,9 @@ public class MDHPCEMinNumberDomainsAlgorithm implements ComputingAlgorithm{
 							log.warn("NO LABEL!!!");
 							NoPath noPath= new NoPath();
 							response.setNoPath(noPath);
-								
+
 						}else{			
-							
+
 							if (explicit_label == true)	{
 								ero=addELC(ero,label,original_end_points,this.channelType);
 								Iterator<ExplicitRouteObject> it= eroList.iterator();
@@ -745,7 +770,7 @@ public class MDHPCEMinNumberDomainsAlgorithm implements ComputingAlgorithm{
 									ExplicitRouteObject ero3=addELC(erori,label,reqList.get(k).getRequest(0).getEndPoints(),this.channelType);
 									eroList2.add(ero3);
 								}
-			
+
 								path.setEro(ero);
 								response.addPath(path);	
 							}else {
@@ -754,7 +779,7 @@ public class MDHPCEMinNumberDomainsAlgorithm implements ComputingAlgorithm{
 								response.setNoPath(noPath);
 							}
 						}
-							
+
 					}else {
 						log.warn("NO LABEL!!!");
 						NoPath noPath= new NoPath();
@@ -770,7 +795,7 @@ public class MDHPCEMinNumberDomainsAlgorithm implements ComputingAlgorithm{
 		}
 
 
-	
+
 
 		long tiempofin =System.nanoTime();
 		long tiempotot=tiempofin-tiempoini;
@@ -787,7 +812,7 @@ public class MDHPCEMinNumberDomainsAlgorithm implements ComputingAlgorithm{
 
 	private DWDMWavelengthLabel getELCfromERO(ExplicitRouteObject eroInternal) {
 		DWDMWavelengthLabel label=null;
-		
+
 		Iterator<EROSubobject> iterEro= eroInternal.getEROSubobjectList().iterator();
 		while (iterEro.hasNext()){
 			EROSubobject eroSubobject = iterEro.next();
@@ -796,12 +821,12 @@ public class MDHPCEMinNumberDomainsAlgorithm implements ComputingAlgorithm{
 				label = ((GeneralizedLabelEROSubobject)eroSubobject).getDwdmWavelengthLabel();
 			}
 		}
-		
+
 		return label;
 	}
 
-	
-	
+
+
 	private ExplicitRouteObject prepareERO(ExplicitRouteObject ero, int channelType, boolean removeELC, EndPoints ep,boolean first, boolean last, boolean removeFirstNode ){
 		ExplicitRouteObject eroClean= new ExplicitRouteObject();
 		if (channelType==MDHPCEMinNumberDomainsAlgorithm.MEDIA_CHANNEL){
@@ -858,7 +883,7 @@ public class MDHPCEMinNumberDomainsAlgorithm implements ComputingAlgorithm{
 	public void restrictBitmap(byte[] bitmap, byte[] bitmap2) {
 		if (bitmap2==null){
 			log.info("BORRAAAANDO");
-			
+
 			for (int i=0;i<bitmap.length;++i){
 				bitmap[i]=0;
 			}
@@ -1001,25 +1026,25 @@ public class MDHPCEMinNumberDomainsAlgorithm implements ComputingAlgorithm{
 		if (EP.getOT()==ObjectParameters.PCEP_OBJECT_TYPE_GENERALIZED_ENDPOINTS){
 			GeneralizedEndPoints  gep=(GeneralizedEndPoints) EP;
 			if(gep.getGeneralizedEndPointsType()==ObjectParameters.PCEP_GENERALIZED_END_POINTS_TYPE_P2P){
-				P2PEndpoints p2pep= gep.getP2PEndpoints();
-				EndPoint sourceep=p2pep.getSourceEndPoint();
-				if (sourceep.getEndPointIPv4TLV()!=null){
-					source_router_id_addr=sourceep.getEndPointIPv4TLV().getIPv4address();
-				}else if (sourceep.getUnnumberedEndpoint()!=null){
-					source_router_id_addr=sourceep.getUnnumberedEndpoint().getIPv4address();
+				P2PGeneralizedEndPoints  gepP2P=(P2PGeneralizedEndPoints) gep;
+				EndPoint sourceep=gepP2P.getSourceEndpoint().getEndPoint();
+				if (sourceep instanceof IPv4AddressEndPoint){
+					source_router_id_addr=((IPv4AddressEndPoint)sourceep).getEndPointIPv4().getIPv4address();
+				}else if (sourceep instanceof UnnumIfEndPoint){
+					source_router_id_addr=((UnnumIfEndPoint)sourceep).getUnnumberedEndpoint().getIPv4address();
 				}			
 			}
 			if(gep.getGeneralizedEndPointsType()==ObjectParameters.PCEP_GENERALIZED_END_POINTS_TYPE_P2MP_NEW_LEAVES){
-				P2MPEndpoints p2mpep= gep.getP2MPEndpoints();
-				EndPointAndRestrictions epandrest=p2mpep.getEndPointAndRestrictions();
-				EndPoint sourceep=epandrest.getEndPoint();
-				source_router_id_addr=sourceep.getEndPointIPv4TLV().IPv4address;
-				int cont=0;
-				while (cont<=p2mpep.getEndPointAndRestrictionsList().size()){ //esto est� mal
-					epandrest=p2mpep.getEndPointAndRestrictionsList().get(cont);
-					source_router_id_addr=sourceep.getEndPointIPv4TLV().IPv4address;
-
-				}
+//				P2MPEndpoints p2mpep= gep.getP2MPEndpoints();
+//				EndPointAndRestrictions epandrest=p2mpep.getEndPointAndRestrictions();
+//				EndPoint sourceep=epandrest.getEndPoint();
+//				source_router_id_addr=sourceep.getEndPointIPv4TLV().IPv4address;
+//				int cont=0;
+//				while (cont<=p2mpep.getEndPointAndRestrictionsList().size()){ //esto est� mal
+//					epandrest=p2mpep.getEndPointAndRestrictionsList().get(cont);
+//					source_router_id_addr=sourceep.getEndPointIPv4TLV().IPv4address;
+//
+//				}
 			}
 		}
 		return source_router_id_addr;
@@ -1030,8 +1055,9 @@ public class MDHPCEMinNumberDomainsAlgorithm implements ComputingAlgorithm{
 		if (EP.getOT()==ObjectParameters.PCEP_OBJECT_TYPE_GENERALIZED_ENDPOINTS){
 			GeneralizedEndPoints  gep=(GeneralizedEndPoints) EP;
 			if(gep.getGeneralizedEndPointsType()==ObjectParameters.PCEP_GENERALIZED_END_POINTS_TYPE_P2P){
-				if (gep.getP2PEndpoints().getSourceEndPoint().getUnnumberedEndpoint()!=null){
-					if_id =gep.getP2PEndpoints().getSourceEndPoint().getUnnumberedEndpoint().getIfID() ;
+				P2PGeneralizedEndPoints  gepP2P=(P2PGeneralizedEndPoints) gep;
+				if (gepP2P.getSourceEndpoint().getEndPoint() instanceof UnnumIfEndPoint){
+					if_id =((UnnumIfEndPoint)gepP2P.getSourceEndpoint().getEndPoint()).getUnnumberedEndpoint().getIfID() ;
 				}			
 			}
 
@@ -1044,8 +1070,9 @@ public class MDHPCEMinNumberDomainsAlgorithm implements ComputingAlgorithm{
 		if (EP.getOT()==ObjectParameters.PCEP_OBJECT_TYPE_GENERALIZED_ENDPOINTS){
 			GeneralizedEndPoints  gep=(GeneralizedEndPoints) EP;
 			if(gep.getGeneralizedEndPointsType()==ObjectParameters.PCEP_GENERALIZED_END_POINTS_TYPE_P2P){
-				if (gep.getP2PEndpoints().getDestinationEndPoint().getUnnumberedEndpoint()!=null){
-					if_id =gep.getP2PEndpoints().getDestinationEndPoint().getUnnumberedEndpoint().getIfID() ;
+				P2PGeneralizedEndPoints  gepP2P=(P2PGeneralizedEndPoints) gep;
+				if (gepP2P.getDestinationEndpoint().getEndPoint() instanceof UnnumIfEndPoint){
+					if_id =((UnnumIfEndPoint)gepP2P.getDestinationEndpoint().getEndPoint()).getUnnumberedEndpoint().getIfID() ;
 				}			
 			}
 
@@ -1066,14 +1093,15 @@ public class MDHPCEMinNumberDomainsAlgorithm implements ComputingAlgorithm{
 		if (EP.getOT()==ObjectParameters.PCEP_OBJECT_TYPE_GENERALIZED_ENDPOINTS){
 			GeneralizedEndPoints  gep=(GeneralizedEndPoints) EP;
 			if(gep.getGeneralizedEndPointsType()==ObjectParameters.PCEP_GENERALIZED_END_POINTS_TYPE_P2P){
-				P2PEndpoints p2pep= gep.getP2PEndpoints();
-				EndPoint sourceep=p2pep.getSourceEndPoint();
-				EndPoint destep=p2pep.getDestinationEndPoint();
+				P2PGeneralizedEndPoints  gepP2P=(P2PGeneralizedEndPoints) gep;
+				
+				EndPoint sourceep=gepP2P.getSourceEndpoint().getEndPoint();
+				EndPoint destep=gepP2P.getDestinationEndpoint().getEndPoint();
 
-				if (destep.getEndPointIPv4TLV()!=null){
-					dest_router_id_addr=destep.getEndPointIPv4TLV().getIPv4address();
-				}else if (destep.getUnnumberedEndpoint()!=null){
-					dest_router_id_addr=destep.getUnnumberedEndpoint().getIPv4address();
+				if (destep instanceof IPv4AddressEndPoint){
+					dest_router_id_addr=((IPv4AddressEndPoint)destep).getEndPointIPv4().getIPv4address(); 
+				}else if (destep instanceof UnnumIfEndPoint){
+					dest_router_id_addr=((UnnumIfEndPoint)destep).getUnnumberedEndpoint().getIPv4address();
 				}
 
 			}
@@ -1122,8 +1150,8 @@ public class MDHPCEMinNumberDomainsAlgorithm implements ComputingAlgorithm{
 
 		return pcreqToDomain;
 	}
-	
-	
+
+
 	public void pruneSVBTs (DirectedWeightedMultigraph<Object,InterDomainEdge> graph){
 		Iterator<InterDomainEdge> it=graph.edgeSet().iterator();
 		LinkedList<InterDomainEdge> delList=new LinkedList<InterDomainEdge>();
@@ -1139,8 +1167,8 @@ public class MDHPCEMinNumberDomainsAlgorithm implements ComputingAlgorithm{
 		for (int i=0;i<delList.size();++i){
 			graph.removeEdge(delList.get(i));
 		}
-		
-		
+
+
 	}
 
 }
