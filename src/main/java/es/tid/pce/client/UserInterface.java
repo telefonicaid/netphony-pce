@@ -35,6 +35,7 @@ import es.tid.pce.pcep.objects.Reservation;
 import es.tid.pce.pcep.objects.Svec;
 import es.tid.pce.pcep.objects.SwitchLayer;
 import es.tid.pce.pcep.objects.tlvs.EndPointIPv4TLV;
+import es.tid.pce.pcep.objects.tlvs.PathSetupTLV;
 
 public class UserInterface extends Thread {
 	
@@ -51,8 +52,11 @@ public class UserInterface extends Thread {
 		
 	}
 	
+	
+	
 	@Override
 	public void run() {
+		int counter=0; 
 		log.info("Starting User Interface");
 		running=true;
 		while (running) {
@@ -100,6 +104,16 @@ public class UserInterface extends Thread {
 				ObjectiveFunction of=new ObjectiveFunction();
 				of.setOFcode(1100);
 				req.setObjectiveFunction(of);
+				p_r.addRequest(req);
+				PCEPResponse pr=crm.newRequest(p_r);
+				System.out.println("Respuesta "+pr.toString());
+			}
+			if (command.equals("C")) {
+				counter+=1;
+				System.out.println("Single Request to cisco!");
+				PCEPRequest p_r = new PCEPRequest();
+				Request req = createRequest2("1.1.1.1", "1.1.1.2",counter);
+				
 				p_r.addRequest(req);
 				PCEPResponse pr=crm.newRequest(p_r);
 				System.out.println("Respuesta "+pr.toString());
@@ -901,6 +915,51 @@ public class UserInterface extends Thread {
 		rp.setPbit(true);
 		req.setRequestParameters(rp);		
 		rp.setRequestID(PCCPCEPSession.getNewReqIDCounter());
+		System.out.println("Creating test Request");
+		
+		int prio = 1;;
+		rp.setPrio(prio);
+		boolean reo = false;
+		rp.setReopt(reo);
+		boolean bi = false;
+		rp.setBidirect(bi);
+		boolean lo = false;
+		rp.setLoose(lo);
+		EndPointsIPv4 ep=new EndPointsIPv4();				
+		req.setEndPoints(ep);
+		//String src_ip= "1.1.1.1";
+		Inet4Address ipp;
+		try {
+			ipp = (Inet4Address)Inet4Address.getByName(src_ip);
+			ep.setSourceIP(ipp);								
+		} catch (UnknownHostException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		System.out.println(" - Destination IP address: ");
+		//br2 = new BufferedReader(new InputStreamReader(System.in));
+		//String dst_ip="172.16.101.101";
+		Inet4Address i_d;
+		try {
+			i_d = (Inet4Address)Inet4Address.getByName(dst_ip);
+			ep.setDestIP(i_d);
+		} catch (UnknownHostException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return req;
+	}
+	
+	
+	public Request createRequest2(String src_ip, String dst_ip, int counter){
+		Request req = new Request();
+		RequestParameters rp= new RequestParameters();
+		rp.setPbit(true);
+		req.setRequestParameters(rp);		
+		rp.setRequestID(counter);
+		
+		PathSetupTLV pst =new PathSetupTLV();
+		rp.setPathSetupTLV(pst);
 		System.out.println("Creating test Request");
 		
 		int prio = 1;;

@@ -12,6 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import es.tid.pce.computingEngine.ReportDispatcher;
+import es.tid.pce.computingEngine.ReportProcessTask;
 import es.tid.pce.computingEngine.RequestDispatcher;
 import es.tid.pce.pcep.PCEPProtocolViolationException;
 import es.tid.pce.pcep.constructs.StateReport;
@@ -262,6 +263,7 @@ public class DomainPCESession extends GenericPCEPSession{
 								try {
 									pcrpt=new PCEPReport(msg);
 									Iterator<StateReport> it= pcrpt.getStateReportList().iterator();
+									boolean reportProcessed=false;//FIXME
 									while (it.hasNext()){
 										StateReport sr=it.next();
 										SRP srp=sr.getSrp();
@@ -275,7 +277,27 @@ public class DomainPCESession extends GenericPCEPSession{
 											}else {
 												if (reportDispatcher != null)
 												{
-													reportDispatcher.dispatchReport(m_report);
+													if (reportProcessed==false) {
+														ReportProcessTask rpt=new ReportProcessTask();
+														rpt.setOut(out);
+														rpt.setReportMessage(m_report);
+														
+														reportDispatcher.dispatchReport(rpt);
+														reportProcessed=true;
+													}
+													
+												}
+											}
+										}else {
+											if (reportDispatcher != null)
+											{
+												if (reportProcessed==false) {
+													ReportProcessTask rpt=new ReportProcessTask();
+													rpt.setOut(out);
+													rpt.setReportMessage(m_report);
+													
+													reportDispatcher.dispatchReport(rpt);
+													reportProcessed=true;
 												}
 											}
 										}
@@ -459,4 +481,32 @@ public String getDestinationIP(Object endPoint) {
 		
 		return destinationIP;
 	}
+
+
+public RequestDispatcher getRequestDispatcher() {
+	return requestDispatcher;
 }
+
+
+public void setRequestDispatcher(RequestDispatcher requestDispatcher) {
+	this.requestDispatcher = requestDispatcher;
+}
+
+
+public ReportDispatcher getReportDispatcher() {
+	return reportDispatcher;
+}
+
+
+public void setReportDispatcher(ReportDispatcher reportDispatcher) {
+	this.reportDispatcher = reportDispatcher;
+}
+
+
+
+
+}
+
+
+
+

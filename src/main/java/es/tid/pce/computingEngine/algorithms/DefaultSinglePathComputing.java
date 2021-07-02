@@ -12,6 +12,8 @@ import org.jgrapht.graph.SimpleDirectedWeightedGraph;
 import es.tid.of.DataPathID;
 import es.tid.pce.computingEngine.ComputingRequest;
 import es.tid.pce.computingEngine.ComputingResponse;
+import es.tid.pce.computingEngine.algorithms.mpls.EncodeEroMPLS;
+import es.tid.pce.computingEngine.algorithms.mpls.EncodeEroMPLS2;
 import es.tid.pce.pcep.constructs.EndPoint;
 import es.tid.pce.pcep.constructs.EndPointAndRestrictions;
 import es.tid.pce.pcep.constructs.IPv4AddressEndPoint;
@@ -31,6 +33,7 @@ import es.tid.pce.pcep.objects.P2MPGeneralizedEndPoints;
 import es.tid.pce.pcep.objects.P2PGeneralizedEndPoints;
 import es.tid.pce.pcep.objects.RequestParameters;
 import es.tid.pce.pcep.objects.tlvs.NoPathTLV;
+import es.tid.pce.pcep.objects.tlvs.PathSetupTLV;
 import es.tid.rsvp.objects.subobjects.DataPathIDEROSubobject;
 import es.tid.rsvp.objects.subobjects.IPv4prefixEROSubobject;
 import es.tid.rsvp.objects.subobjects.UnnumberIfIDEROSubobject;
@@ -76,8 +79,13 @@ public class DefaultSinglePathComputing implements ComputingAlgorithm {
 		//Start creating the response
 		Response response=new Response();
 		RequestParameters rp = new RequestParameters();
+		rp.setPbit(true);
 		rp.setRequestID(reqId);
 		response.setRequestParameters(rp);
+		if (req.getRequestParameters().getPathSetupTLV()!=null ) {
+			PathSetupTLV pst =new PathSetupTLV();
+			rp.setPathSetupTLV(pst);
+		}
 		if (this.networkGraph==null){
 			NoPath noPath= new NoPath();
 			noPath.setNatureOfIssue(ObjectParameters.NOPATH_NOPATH_SAT_CONSTRAINTS);
@@ -190,90 +198,101 @@ public class DefaultSinglePathComputing implements ComputingAlgorithm {
 		Path path=new Path();
 		ExplicitRouteObject ero= new ExplicitRouteObject();
 		List<IntraDomainEdge> edge_list=gp.getEdgeList();
+		EncodeEroMPLS2.createEroMpls(ero, edge_list);
 		
-		// Add first hop in the ERO Object in there is an interface
-		if (source_port!=0){
-			if (edge_list.get(0).getSource() instanceof Inet4Address){
-				UnnumberIfIDEROSubobject eroso = new UnnumberIfIDEROSubobject();
-				eroso.setRouterID((Inet4Address)edge_list.get(0).getSource());
-				eroso.setInterfaceID(source_port);
-				eroso.setLoosehop(false);
-				ero.addEROSubobject(eroso);
-			}else if (edge_list.get(0).getSource() instanceof DataPathID){
-				UnnumberedDataPathIDEROSubobject eroso = new UnnumberedDataPathIDEROSubobject();
-				eroso.setDataPath((DataPathID)edge_list.get(0).getSource());
-				eroso.setInterfaceID(source_port);
-				eroso.setLoosehop(false);
-				ero.addEROSubobject(eroso);
-			}else{
-				log.info("Edge instance error");
-			}
-		} 
-		
-		// Add intermediate hops
-		int i;
-		for (i=0;i<edge_list.size();i++){
-			if (edge_list.get(i).getSource() instanceof Inet4Address){
-				UnnumberIfIDEROSubobject eroso = new UnnumberIfIDEROSubobject();
-				eroso.setRouterID((Inet4Address)edge_list.get(i).getSource());
-				eroso.setInterfaceID(edge_list.get(i).getSrc_if_id());
-				eroso.setLoosehop(false);
-				ero.addEROSubobject(eroso);
-			}else if (edge_list.get(i).getSource() instanceof DataPathID){
-				UnnumberedDataPathIDEROSubobject eroso = new UnnumberedDataPathIDEROSubobject();
-				eroso.setDataPath((DataPathID)edge_list.get(i).getSource());
-				eroso.setInterfaceID(edge_list.get(i).getSrc_if_id());
-				eroso.setLoosehop(false);
-				ero.addEROSubobject(eroso);
-			}else{
-				log.info("Edge instance error");
-			}
-		}
-		// Add last hop in the ERO Object
-		log.info("jm dspc destination_port: "+ destination_port);
-		if (destination_port!=0){
-			if (edge_list.get(edge_list.size()-1).getTarget() instanceof Inet4Address){
-				log.info("jm defoultsingle ultima interfaz ip"+ edge_list.get(edge_list.size()-1));
-				UnnumberIfIDEROSubobject eroso = new UnnumberIfIDEROSubobject();
-				eroso.setRouterID((Inet4Address)edge_list.get(edge_list.size()-1).getTarget());
-				eroso.setInterfaceID(destination_port);
-				eroso.setLoosehop(false);
-				ero.addEROSubobject(eroso);
-			}else if (edge_list.get(edge_list.size()-1).getTarget() instanceof DataPathID){
-				log.info("jm defoultsingle ultima interfaz dpid"+ edge_list.get(edge_list.size()-1));
-				UnnumberedDataPathIDEROSubobject eroso = new UnnumberedDataPathIDEROSubobject();
-				eroso.setDataPath((DataPathID)edge_list.get(edge_list.size()-1).getTarget());
-				eroso.setInterfaceID(destination_port);
-				eroso.setLoosehop(false);
-				ero.addEROSubobject(eroso);
-			}			
-		} else {
-			if (edge_list.get(edge_list.size()-1).getTarget() instanceof Inet4Address){
-				IPv4prefixEROSubobject eroso= new IPv4prefixEROSubobject();
-				eroso.setIpv4address((Inet4Address)edge_list.get(edge_list.size()-1).getTarget());
-				eroso.setPrefix(32);
-				ero.addEROSubobject(eroso);
-			} else if (edge_list.get(edge_list.size()-1).getTarget() instanceof DataPathID){
-				DataPathIDEROSubobject eroso = new DataPathIDEROSubobject();
-				eroso.setDataPath((DataPathID)edge_list.get(edge_list.size()-1).getTarget());
-				ero.addEROSubobject(eroso);
-			}else{
-				log.info("Edge instance error");
-			}
-		}
+//		// Add first hop in the ERO Object in there is an interface
+//		if (source_port!=0){
+//			if (edge_list.get(0).getSource() instanceof Inet4Address){
+//				UnnumberIfIDEROSubobject eroso = new UnnumberIfIDEROSubobject();
+//				eroso.setRouterID((Inet4Address)edge_list.get(0).getSource());
+//				eroso.setInterfaceID(source_port);
+//				eroso.setLoosehop(false);
+//				ero.addEROSubobject(eroso);
+//			}else if (edge_list.get(0).getSource() instanceof DataPathID){
+//				UnnumberedDataPathIDEROSubobject eroso = new UnnumberedDataPathIDEROSubobject();
+//				eroso.setDataPath((DataPathID)edge_list.get(0).getSource());
+//				eroso.setInterfaceID(source_port);
+//				eroso.setLoosehop(false);
+//				ero.addEROSubobject(eroso);
+//			}else{
+//				log.info("Edge instance error");
+//			}
+//		} 
+//		
+//		// Add intermediate hops
+//		int i;
+//		for (i=0;i<edge_list.size();i++){
+//			if (edge_list.get(i).getSource() instanceof Inet4Address){
+//				UnnumberIfIDEROSubobject eroso = new UnnumberIfIDEROSubobject();
+//				eroso.setRouterID((Inet4Address)edge_list.get(i).getSource());
+//				eroso.setInterfaceID(edge_list.get(i).getSrc_if_id());
+//				eroso.setLoosehop(false);
+//				ero.addEROSubobject(eroso);
+//			}else if (edge_list.get(i).getSource() instanceof DataPathID){
+//				UnnumberedDataPathIDEROSubobject eroso = new UnnumberedDataPathIDEROSubobject();
+//				eroso.setDataPath((DataPathID)edge_list.get(i).getSource());
+//				eroso.setInterfaceID(edge_list.get(i).getSrc_if_id());
+//				eroso.setLoosehop(false);
+//				ero.addEROSubobject(eroso);
+//			}else{
+//				log.info("Edge instance error");
+//			}
+//		}
+//		// Add last hop in the ERO Object
+//		log.info("jm dspc destination_port: "+ destination_port);
+//		if (destination_port!=0){
+//			if (edge_list.get(edge_list.size()-1).getTarget() instanceof Inet4Address){
+//				log.info("jm defoultsingle ultima interfaz ip"+ edge_list.get(edge_list.size()-1));
+//				UnnumberIfIDEROSubobject eroso = new UnnumberIfIDEROSubobject();
+//				eroso.setRouterID((Inet4Address)edge_list.get(edge_list.size()-1).getTarget());
+//				eroso.setInterfaceID(destination_port);
+//				eroso.setLoosehop(false);
+//				ero.addEROSubobject(eroso);
+//			}else if (edge_list.get(edge_list.size()-1).getTarget() instanceof DataPathID){
+//				log.info("jm defoultsingle ultima interfaz dpid"+ edge_list.get(edge_list.size()-1));
+//				UnnumberedDataPathIDEROSubobject eroso = new UnnumberedDataPathIDEROSubobject();
+//				eroso.setDataPath((DataPathID)edge_list.get(edge_list.size()-1).getTarget());
+//				eroso.setInterfaceID(destination_port);
+//				eroso.setLoosehop(false);
+//				ero.addEROSubobject(eroso);
+//			}			
+//		} else {
+//			if (edge_list.get(edge_list.size()-1).getTarget() instanceof Inet4Address){
+//				IPv4prefixEROSubobject eroso= new IPv4prefixEROSubobject();
+//				eroso.setIpv4address((Inet4Address)edge_list.get(edge_list.size()-1).getTarget());
+//				eroso.setPrefix(32);
+//				ero.addEROSubobject(eroso);
+//			} else if (edge_list.get(edge_list.size()-1).getTarget() instanceof DataPathID){
+//				DataPathIDEROSubobject eroso = new DataPathIDEROSubobject();
+//				eroso.setDataPath((DataPathID)edge_list.get(edge_list.size()-1).getTarget());
+//				ero.addEROSubobject(eroso);
+//			}else{
+//				log.info("Edge instance error");
+//			}
+//		}
 
 		log.info("Algorithm.ero :: "+ero.toString());
 		path.setEro(ero);
 		log.info("Algorithm.path:: "+path.toString());
-
-		if (req.getMetricList().size()!=0){
-			Metric metric=new Metric();
-			metric.setMetricType(req.getMetricList().get(0).getMetricType() );
-			log.debug("Number of hops "+edge_list.size());
-			float metricValue=(float)edge_list.size();
-			metric.setMetricValue(metricValue);
-			path.getMetricList().add(metric);
-		}
+		Metric metric=new Metric();
+		metric.setMetricType(2);
+		metric.setMetricValue(10);
+		path.getMetricList().add(metric);
+		
+//		log.debug("Number of hops "+edge_list.size());
+//		//FIXME
+//		float metricValue=(float)edge_list.size()*10;
+//		metric.setMetricValue(metricValue);
+//		path.getMetricList().add(metric);
+//		if (req.getMetricList().size()!=0){
+//			Metric metric=new Metric();
+//			metric.setMetricType(req.getMetricList().get(0).getMetricType() );
+//			log.debug("Number of hops "+edge_list.size());
+//			//FIXME
+//			float metricValue=(float)edge_list.size()*10;
+//			metric.setMetricValue(metricValue);
+//			path.getMetricList().add(metric);
+//		}
 		response.addPath(path);
 		long tiempofin =System.nanoTime();
 		long tiempotot=tiempofin-tiempoini;

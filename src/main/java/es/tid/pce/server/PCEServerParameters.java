@@ -414,6 +414,12 @@ public class PCEServerParameters {
 					else if (qName.equalsIgnoreCase("PCCRequestsProcessors")) {
 						PCCRequestsProcessors=Integer.parseInt(tempVal.trim());
 					}
+					else if (qName.equalsIgnoreCase("KeepAliveTimer")) {
+						KeepAliveTimer=Integer.parseInt(tempVal.trim());
+					}
+					else if (qName.equalsIgnoreCase("DeadTimer")) {
+						DeadTimer=Integer.parseInt(tempVal.trim());
+					}				
 					else if (qName.equalsIgnoreCase("ParentPCERequestProcessors")) {
 						ParentPCERequestProcessors=Integer.parseInt(tempVal.trim());
 					}

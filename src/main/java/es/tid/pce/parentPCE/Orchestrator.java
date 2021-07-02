@@ -227,7 +227,7 @@ public class Orchestrator {
 			
 			ReportDispatcher stateReportDispatcher= null;
 			ReportDB_Handler rptdb = new ReportDB_Handler();
-			stateReportDispatcher = new ReportDispatcher( rptdb, 2);
+			stateReportDispatcher = new ReportDispatcher( rptdb, 2,null);
 			if (params.getLocalPcepCapability().isStateful()){
 				
 //				//

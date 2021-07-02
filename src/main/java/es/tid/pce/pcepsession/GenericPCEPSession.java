@@ -27,6 +27,7 @@ import es.tid.pce.pcep.objects.tlvs.GMPLSCapabilityTLV;
 import es.tid.pce.pcep.objects.tlvs.LSPDatabaseVersionTLV;
 import es.tid.pce.pcep.objects.tlvs.PCE_ID_TLV;
 import es.tid.pce.pcep.objects.tlvs.PCE_Redundancy_Group_Identifier_TLV;
+import es.tid.pce.pcep.objects.tlvs.PathSetupCapabilityTLV;
 import es.tid.pce.pcep.objects.tlvs.SRCapabilityTLV;
 import es.tid.pce.pcep.objects.tlvs.StatefulCapabilityTLV;
 import es.tid.pce.server.RequestQueue;
@@ -579,8 +580,11 @@ public abstract class GenericPCEPSession extends Thread implements PCEPSession {
 			GMPLSCapabilityTLV gmplsCapabilityTLV=new GMPLSCapabilityTLV();
 			p_open_snd.getOpen().setGmplsCapabilityTLV(gmplsCapabilityTLV);
 		}
-
-
+		//FIXME: HACER BIEN
+//		PathSetupCapabilityTLV pathSetupCapability=new PathSetupCapabilityTLV();
+//		pathSetupCapability.getPathSetupTypes().add(Integer.valueOf(0));		
+//		p_open_snd.getOpen().setPathSetupCababiity(pathSetupCapability);
+		
 
 		//Send the OPEN message
 		sendPCEPMessage(p_open_snd);

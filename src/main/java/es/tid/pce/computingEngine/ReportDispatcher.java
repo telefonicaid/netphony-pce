@@ -6,7 +6,9 @@ import org.slf4j.LoggerFactory;
 
 import es.tid.pce.pcep.messages.PCEPReport;
 import es.tid.pce.server.PCEServerParameters;
+import es.tid.pce.server.delegation.DelegationManager;
 import es.tid.pce.server.lspdb.ReportDB_Handler;
+import es.tid.pce.server.lspdb.SingleDomainLSPDB;
 
 /**
  * The ReportDispatcher receives PCEPReport messages and decides what to do with:
@@ -27,13 +29,13 @@ public class ReportDispatcher
 	  */
 	 private final ReportProcessorThread[] threads;
 	 
-	 
+	 private DelegationManager dm;
 	 
 	 /**
 	  * Queue to add path computing requests.
 	  * This queue is read by the request processor threads. 
 	  */
-	 private LinkedBlockingQueue<PCEPReport> reportMessageQueue;
+	 private LinkedBlockingQueue<ReportProcessTask> reportMessageQueue;
 
 	
 	/**
@@ -42,27 +44,35 @@ public class ReportDispatcher
 	private Logger log;
 	
 			
-	public ReportDispatcher(ReportDB_Handler lspDB, int nThreads)
+	public ReportDispatcher(ReportDB_Handler lspDB, int nThreads,SingleDomainLSPDB singleDomainLSPDB)
 	{
 		log=LoggerFactory.getLogger("PCEServer");
-		
+		dm=new DelegationManager(singleDomainLSPDB);
 		
 		this.nThreads = nThreads;
-	    reportMessageQueue = new LinkedBlockingQueue<PCEPReport>();
+	    reportMessageQueue = new LinkedBlockingQueue<ReportProcessTask>();
 	    threads = new ReportProcessorThread[nThreads];
         for (int i=0; i<this.nThreads; i++) {
         	log.info("Starting Request Processor Thread");	        	
-            threads[i] = new ReportProcessorThread(reportMessageQueue, lspDB);
+            threads[i] = new ReportProcessorThread(reportMessageQueue, lspDB,dm);
             threads[i].setPriority(Thread.MAX_PRIORITY);
             threads[i].start();
             
         }
 	}
 	
-	public void dispatchReport(PCEPReport pcepReport)
+	public void dispatchReport(ReportProcessTask pcepReport)
 	{	    
 		reportMessageQueue.add(pcepReport);
     }
+
+	public DelegationManager getDm() {
+		return dm;
+	}
+
+	public void setDm(DelegationManager dm) {
+		this.dm = dm;
+	}
 	
 
 }

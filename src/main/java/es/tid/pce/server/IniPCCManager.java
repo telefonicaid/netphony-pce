@@ -17,15 +17,25 @@ import es.tid.pce.computingEngine.ComputingResponse;
 import es.tid.pce.computingEngine.algorithms.ChildPCEInitiate;
 import es.tid.pce.computingEngine.algorithms.ChildPCERequest;
 import es.tid.pce.pcep.PCEPProtocolViolationException;
+import es.tid.pce.pcep.constructs.PCEPIntiatedLSP;
+import es.tid.pce.pcep.constructs.Path;
 import es.tid.pce.pcep.constructs.StateReport;
 import es.tid.pce.pcep.messages.PCEPInitiate;
 import es.tid.pce.pcep.messages.PCEPMessage;
 import es.tid.pce.pcep.messages.PCEPReport;
 import es.tid.pce.pcep.messages.PCEPRequest;
 import es.tid.pce.pcep.messages.PCEPResponse;
+import es.tid.pce.pcep.objects.EndPoints;
+import es.tid.pce.pcep.objects.ExplicitRouteObject;
+import es.tid.pce.pcep.objects.LSP;
+import es.tid.pce.pcep.objects.SRP;
+import es.tid.pce.pcep.objects.tlvs.SymbolicPathNameTLV;
+import es.tid.pce.server.delegation.DelegationManager;
 
 
 public class IniPCCManager {
+	
+	private int nextId=0;
 
 	private Hashtable<Inet4Address,DataOutputStream> pccOutputStream;
 	
@@ -121,6 +131,34 @@ public class IniPCCManager {
 			Hashtable<Inet4Address, DataOutputStream> pccOutputStream) {
 		this.pccOutputStream = pccOutputStream;
 	}
+	
+	public synchronized void initiateLSP(EndPoints endPoints, ExplicitRouteObject ero, Object node) {
+		
+		PCEPInitiate ini = new PCEPInitiate();
+		PCEPIntiatedLSP inilsp = new PCEPIntiatedLSP();
+		ini.getPcepIntiatedLSPList().add(inilsp);
+		SRP srp= new SRP();
+		srp.setSRP_ID_number(DelegationManager.getNextSRPID());
+		Path path = new Path();
+		inilsp.setEro(ero);
+		inilsp.setEndPoint(endPoints);
+		inilsp.setSrp(srp);
+		LSP lsp= new LSP();
+		lsp.setAdministrativeFlag(true);
+		lsp.setLspId(0);
+		inilsp.setLsp(lsp);
+		String name="Oscar-initated LSP-id "+getNextId();
+		SymbolicPathNameTLV spn= new SymbolicPathNameTLV();
+		spn.setSymbolicPathNameID(name.getBytes());
+		lsp.setSymbolicPathNameTLV_tlv(spn);
+		this.newIni(ini, node); 
+	}
+	
+	public synchronized int getNextId() {
+		nextId+=1;
+		return nextId;
+	}
+	
 
 	
 }

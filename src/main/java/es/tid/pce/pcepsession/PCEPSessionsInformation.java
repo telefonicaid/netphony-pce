@@ -136,6 +136,7 @@ public class PCEPSessionsInformation {
 	
 	public void setActive(boolean isActive) {
 		this.isActive = isActive;
+		this.localPcepCapability.setInstantiationCapability(isActive);
 	}
 	
 	public boolean isStatefulDFlag() {

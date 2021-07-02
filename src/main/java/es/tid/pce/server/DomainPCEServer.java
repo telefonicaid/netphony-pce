@@ -47,17 +47,30 @@ import es.tid.tedb.SimpleTEDB;
 public class DomainPCEServer implements Runnable{
 
 	/**
-	 * Logger
+	 * log: main logger for the PCE
 	 */
 	public static final Logger log =LoggerFactory.getLogger("PCEServer");
-	public static Logger log5;
-	private static OperationsCounter OPcounter;
 	
+	/**
+	 * PCEPSessionsInformation contains information about all the sessions of the PCE 
+	 */
+	private PCEPSessionsInformation pcepSessionsInformation;
+	
+
+	/*
+	 * OPcounter: used for Multilayer PCE
+	 */
+	private static OperationsCounter OPcounter;
+
 	private static ReportDB_Handler rptdb;
-	private static boolean listening;
+	
+	/**
+	 * True if the PCE is listening. False otherwise.
+	 */
+	private static boolean listening=false;
 
 	/**
-	 * Parameters of the PCE
+	 * params: Parameters of the PCE read from the configuration File.
 	 */
 	PCEServerParameters params;
 
@@ -70,118 +83,127 @@ public class DomainPCEServer implements Runnable{
 	 */
 	PCEManagementSever pms;
 
+	// LSP Database FIXME: Merge later with Report_DB. Better a SINGLE LSP Database.
+	SingleDomainLSPDB singleDomainLSPDB;
+
+	RequestDispatcher PCCRequestDispatcher;
 	
+	//The Traffic Engineering Database
+	DomainTEDB ted;
+			
+	//Used to initiate paths from NBI or locally. To merge later with the previous one.
+	
+	//Manager to initiate Paths
+	IniPCCManager iniManager=null;
+	
+	ReportDispatcher PCCReportDispatcher = null;
+	
+	/**
+	 * First of all, it is needed to configure the PCE
+	 * @param configFile
+	 */
 	public void configure (String configFile){
 		if (configFile!=null){
-			
+
 			params=new PCEServerParameters(configFile);
 		}else {
 			params=new PCEServerParameters();
 		}
 		params.initialize();
-		
-		//Initialize loggers
-//		FileHandler fh;
-//		FileHandler fh2;
-//		FileHandler fh3;
-//		FileHandler fh4;
-//		FileHandler fh5;
-		//FileHandler fh6;
-		try {
-			
-//			fh=new FileHandler(params.getPCEServerLogFile());
-//			fh2=new FileHandler(params.getPCEPParserLogFile());
-//			fh3=new FileHandler(params.getOSPFParserLogFile());
-//			fh4=new FileHandler(params.getTEDBParserLogFile());
-//			fh5=new FileHandler("OpMultiLayer.log", false);
-//			fh5.setFormatter(new SimpleFormatter());
-			//fh.setFormatter(new SimpleFormatter());
-			//fh2.setFormatter(new SimpleFormatter());	
-			
-			Logger log2=LoggerFactory.getLogger("PCEPParser");
-			Logger log3=LoggerFactory.getLogger("OSPFParser");
-			Logger log4=LoggerFactory.getLogger("TEDBParser");
-			//Logger log6=LoggerFactory.getLogger("BGPParser");
-			log5=LoggerFactory.getLogger("OpMultiLayer");
-//			log.addHandler(fh);
-//			log2.addHandler(fh2);
-//			log3.addHandler(fh3);
-//			log4.addHandler(fh4);
-			//logTimePCE.addHandler(fh5);
-//			fh4.setFormatter(new SimpleFormatter());
-//			log5.addHandler(fh5);
-//			log5.setLevel(Level.ALL);
-//			if (params.isSetTraces() == false){		    	
-//				log.setLevel(Level.SEVERE);
-//				log2.setLevel(Level.SEVERE);	
-//				log3.setLevel(Level.SEVERE);
-//				log4.setLevel(Level.SEVERE);
-//				//log6.setLevel(Level.SEVERE);
-//				//log5.setLevel(Level.SEVERE);
-//			}
-//
-//			else{
-//				log.setLevel(Level.ALL);
-//				log2.setLevel(Level.ALL);
-//				log3.setLevel(Level.ALL);
-//				log4.setLevel(Level.ALL);
-//				//log6.setLevel(Level.ALL);
-//			}
 
-		} catch (Exception e1) {
-			e1.printStackTrace();
-			System.exit(1);
-		}
+		//Initialize loggers
+		//FIXME: check loggers
+
+		//		try {
+		//			
+		//			
+		//			Logger log2=LoggerFactory.getLogger("PCEPParser");
+		//			Logger log3=LoggerFactory.getLogger("OSPFParser");
+		//			Logger log4=LoggerFactory.getLogger("TEDBParser");
+		//			//Logger log6=LoggerFactory.getLogger("BGPParser");
+		//			log5=LoggerFactory.getLogger("OpMultiLayer");
+		////			log.addHandler(fh);
+		////			log2.addHandler(fh2);
+		////			log3.addHandler(fh3);
+		////			log4.addHandler(fh4);
+		//			//logTimePCE.addHandler(fh5);
+		////			fh4.setFormatter(new SimpleFormatter());
+		////			log5.addHandler(fh5);
+		////			log5.setLevel(Level.ALL);
+		////			if (params.isSetTraces() == false){		    	
+		////				log.setLevel(Level.SEVERE);
+		////				log2.setLevel(Level.SEVERE);	
+		////				log3.setLevel(Level.SEVERE);
+		////				log4.setLevel(Level.SEVERE);
+		////				//log6.setLevel(Level.SEVERE);
+		////				//log5.setLevel(Level.SEVERE);
+		////			}
+		////
+		////			else{
+		////				log.setLevel(Level.ALL);
+		////				log2.setLevel(Level.ALL);
+		////				log3.setLevel(Level.ALL);
+		////				log4.setLevel(Level.ALL);
+		////				//log6.setLevel(Level.ALL);
+		////			}
+		//
+		//		} catch (Exception e1) {
+		//			e1.printStackTrace();
+		//			System.exit(1);
+		//		}
 
 		log.info("Configuration file: " + configFile);
-		log.info("Inizializing TID PCE Server!!");
-		
+		log.info("Inizializing Netphony Domain PCE Server!!");
+
 	}
 
 	public void run(){
-	
-	
-		//Elements of the PCE Server
 
-		// Information about all the sessions of the PCE
-		PCEPSessionsInformation pcepSessionsInformation = new PCEPSessionsInformation();
-		pcepSessionsInformation.setStateful(params.isStateful());
-		pcepSessionsInformation.setStatefulDFlag(params.isStatefulDFlag());
+		//Create all the Elements of the PCE Server
+
+		// 1) PCEPSessionsInformation contains information about all the sessions of the PCE (dead or alive)
+		pcepSessionsInformation = new PCEPSessionsInformation();
+		// set all information about THIS PCE (not the peer)
+		pcepSessionsInformation.setStateful(params.isStateful()); // If the PCE is stateful (it can receive delegations) 
+		pcepSessionsInformation.setStatefulDFlag(params.isStatefulDFlag()); // If the PCE can delete
 		pcepSessionsInformation.setStatefulSFlag(params.isStatefulSFlag());
 		pcepSessionsInformation.setStatefulTFlag(params.isStatefulTFlag());
-
-
-		pcepSessionsInformation.setActive(params.isActive());
+		pcepSessionsInformation.setActive(params.isActive()); // If the PCE is active (it CAN instantiate)
 		pcepSessionsInformation.setSRCapable(params.isSRCapable());
 		pcepSessionsInformation.setMSD(params.getMSD());
-		
+
+		// Used to initiate paths from Parent PCE requests
 		SingleDomainInitiateDispatcher iniDispatcher=null;
 		
-		SingleDomainLSPDB singleDomainLSPDB=null;
-		 IniPCCManager iniManager=null;
 		
-		if (params.isSRCapable())
-			log.info("PCEServer: PCE is SR capable with MSD="+pcepSessionsInformation.getMSD());
 
-		//The Traffic Engineering Database
-		DomainTEDB ted;
-//		if(params.ITcapable==true){
-//			//IT CAPABLE PCE
-//			log.info("IT capable Domain PCE");
-//			ted=new SimpleITTEDB();
-//		}else{
-			//GENERIC PCE
-			log.info("GENERIC PCE");
-			if (params.isMultilayer()){
-				ted=new MultiLayerTEDB();
-				log.info("is multilayer");
-			}else{
-				ted=new SimpleTEDB();
-			}
-		//}
+		
+
+		
+		 
+		
+
+
+
+		//Log if the PCE is SR capable or NOT
+		if (params.isSRCapable()) {
+			log.info("PCEServer: PCE is SR capable with MSD="+pcepSessionsInformation.getMSD());
+		}
+
+		
+
+		if (params.isMultilayer()){
+			ted=new MultiLayerTEDB();
+			log.info("Multilayer");
+		}else{
+			log.info("Single layer PCE");
+			ted=new SimpleTEDB();
+		}
+
 		if (params.isStateful())
 		{
-			log.info("Stateful PCE with T="+params.isStatefulTFlag()+" D="+params.isStatefulDFlag()+" S="+params.isStatefulSFlag());
+			//FIXME: By now, U flag is ALWAYS TRUE.
+			log.info("Stateful PCE with T="+params.isStatefulTFlag()+" D="+params.isStatefulDFlag()+" S="+params.isStatefulSFlag()+" U=true "+"I="+params.isActive());
 			singleDomainLSPDB=new SingleDomainLSPDB();
 			if(params.getDbType().equals("_"))
 			{
@@ -215,7 +237,7 @@ public class DomainPCEServer implements Runnable{
 
 		//The Request Dispatcher, needed to dispatch the requests coming from the PCCs
 		log.info("Initializing Request Dispatcher");
-		RequestDispatcher PCCRequestDispatcher;
+		
 
 		ReservationManager reservationManager=null;
 		if (params.isReservation()){
@@ -241,47 +263,38 @@ public class DomainPCEServer implements Runnable{
 				PCCRequestDispatcher=new  RequestDispatcher(params.getPCCRequestsProcessors(),ted,null,params.isAnalyzeRequestTime(),params.isUseMaxReqTime(), reservationManager);
 		}
 
-		if(params.ITcapable==false){
-//			if (params.isMultilayer() == false)
-//			{
-//				((SimpleTEDB)ted).setRequestDispatcher(PCCRequestDispatcher);
-//			}
-
-		}
-
-		//The Reservation Manager,		
+		//Notification dispatcher
 		NotificationDispatcher nd=new NotificationDispatcher(reservationManager);
 
 
 		if(params.algorithmRuleList.size()==0){
 
-			log.warn("No hay algoritmos registrados!");
-			//System.exit(1);
-
+			log.warn("There are no registered algorithms besides the default");
 		}
-		//FIXME: cambiar esto de orden
 
-
+		// When there is a parent PCE, connect to the parent PCE
 		Timer timer=new Timer();
 		if (params.getParentPCEAddress()!=null){
 			log.info("Inizializing Session with Parent PCE");
 			timer.schedule(pcm, 0, 1000000);
 		}	
+		
+		//Start the management server
+		pms=new PCEManagementSever(this);	
+		pms.start(); 
 
-		pms=new PCEManagementSever(PCCRequestDispatcher,ted,params, reservationManager,collaborationPCESessionManager);	
-		pms.start();
-
+		//In case it there is parent PCE, send topology periodically to the parent PCE
 		SendTopologyTask stg=null;
 		//ITSendTopologyTask ITstg=null;
 		if (params.getParentPCEAddress()!=null){			
 			if(params.ITcapable==true){
-//				ITstg=new ITSendTopologyTask((SimpleITTEDB)ted,pcm);
-//
-//				Timer timer2=new Timer();
-//				if (params.getParentPCEAddress()!=null){
-//					log.info("Changing topology");
-//					timer2.schedule(ITstg, 0, 100000);
-//				}
+				//				ITstg=new ITSendTopologyTask((SimpleITTEDB)ted,pcm);
+				//
+				//				Timer timer2=new Timer();
+				//				if (params.getParentPCEAddress()!=null){
+				//					log.info("Changing topology");
+				//					timer2.schedule(ITstg, 0, 100000);
+				//				}
 			}else if (!(params.isActingAsBGP4Peer())){
 				stg=new SendTopologyTask((DomainTEDB)ted,pcm);
 
@@ -398,11 +411,11 @@ public class DomainPCEServer implements Runnable{
 			// This parameter tells the dispatcher that sync will be avoided.
 			// In better future times sync should be implemented
 
-			ReportDispatcher PCCReportDispatcher = null;
+
 			//
 			if (pcepSessionsInformation.isStateful())
 			{
-			log.info("redis: "+params.getDbType() + " "+params.getDbName());
+				log.info("redis: "+params.getDbType() + " "+params.getDbName());
 				if (params.getDbType().equals("redis") && params.getDbName().length() > 0)
 				{
 					log.info("redis: redis db with id: "+ params.getDbName());
@@ -415,9 +428,10 @@ public class DomainPCEServer implements Runnable{
 				}
 				params.setLspDB(rptdb);	
 				log.info("Creando dispatchers para el LSP DB");
-				PCCReportDispatcher = new ReportDispatcher( rptdb, 2);
+				//FIXME: Por ahora, evito concurrencia hasta solventar el tema de los state sync
+				PCCReportDispatcher = new ReportDispatcher( rptdb, 1,singleDomainLSPDB);
 			}
-			
+
 
 			//while (listening) {
 			while (listening) {
@@ -430,7 +444,7 @@ public class DomainPCEServer implements Runnable{
 				}
 			}
 			serverSocket.close();
-			
+
 		} catch (SocketException e) {
 			if (listening==false){
 				log.info("Socket closed due to controlled close");
@@ -445,8 +459,8 @@ public class DomainPCEServer implements Runnable{
 
 	}
 
-	
-	
+
+
 	public void stopServer(){
 		pms.stopServer();
 		listening=false;
@@ -458,7 +472,108 @@ public class DomainPCEServer implements Runnable{
 				e.printStackTrace();
 			}
 		}
-		
+
 	}
 
+	public PCEPSessionsInformation getPcepSessionsInformation() {
+		return pcepSessionsInformation;
+	}
+
+	public void setPcepSessionsInformation(PCEPSessionsInformation pcepSessionsInformation) {
+		this.pcepSessionsInformation = pcepSessionsInformation;
+	}
+
+	public static OperationsCounter getOPcounter() {
+		return OPcounter;
+	}
+
+	public static void setOPcounter(OperationsCounter oPcounter) {
+		OPcounter = oPcounter;
+	}
+
+	public static ReportDB_Handler getRptdb() {
+		return rptdb;
+	}
+
+	public static void setRptdb(ReportDB_Handler rptdb) {
+		DomainPCEServer.rptdb = rptdb;
+	}
+
+	public static boolean isListening() {
+		return listening;
+	}
+
+	public static void setListening(boolean listening) {
+		DomainPCEServer.listening = listening;
+	}
+
+	public PCEServerParameters getParams() {
+		return params;
+	}
+
+	public void setParams(PCEServerParameters params) {
+		this.params = params;
+	}
+
+	public ServerSocket getServerSocket() {
+		return serverSocket;
+	}
+
+	public void setServerSocket(ServerSocket serverSocket) {
+		this.serverSocket = serverSocket;
+	}
+
+	public PCEManagementSever getPms() {
+		return pms;
+	}
+
+	public void setPms(PCEManagementSever pms) {
+		this.pms = pms;
+	}
+
+	public SingleDomainLSPDB getSingleDomainLSPDB() {
+		return singleDomainLSPDB;
+	}
+
+	public void setSingleDomainLSPDB(SingleDomainLSPDB singleDomainLSPDB) {
+		this.singleDomainLSPDB = singleDomainLSPDB;
+	}
+
+	public static Logger getLog() {
+		return log;
+	}
+
+	public RequestDispatcher getPCCRequestDispatcher() {
+		return PCCRequestDispatcher;
+	}
+
+	public void setPCCRequestDispatcher(RequestDispatcher pCCRequestDispatcher) {
+		PCCRequestDispatcher = pCCRequestDispatcher;
+	}
+
+	public DomainTEDB getTed() {
+		return ted;
+	}
+
+	public void setTed(DomainTEDB ted) {
+		this.ted = ted;
+	}
+
+	public IniPCCManager getIniManager() {
+		return iniManager;
+	}
+
+	public void setIniManager(IniPCCManager iniManager) {
+		this.iniManager = iniManager;
+	}
+
+	public ReportDispatcher getPCCReportDispatcher() {
+		return PCCReportDispatcher;
+	}
+
+	public void setPCCReportDispatcher(ReportDispatcher pCCReportDispatcher) {
+		PCCReportDispatcher = pCCReportDispatcher;
+	}
+
+	
 }
