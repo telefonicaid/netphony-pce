@@ -25,10 +25,16 @@ import es.tid.pce.pcep.messages.PCEPMessage;
 import es.tid.pce.pcep.messages.PCEPReport;
 import es.tid.pce.pcep.messages.PCEPRequest;
 import es.tid.pce.pcep.messages.PCEPResponse;
+import es.tid.pce.pcep.messages.PCEPUpdate;
+import es.tid.pce.pcep.objects.BandwidthRequested;
 import es.tid.pce.pcep.objects.EndPoints;
+import es.tid.pce.pcep.objects.EndPointsIPv4;
 import es.tid.pce.pcep.objects.ExplicitRouteObject;
 import es.tid.pce.pcep.objects.LSP;
+import es.tid.pce.pcep.objects.Metric;
 import es.tid.pce.pcep.objects.SRP;
+import es.tid.pce.pcep.objects.tlvs.IPv4LSPIdentifiersTLV;
+import es.tid.pce.pcep.objects.tlvs.PathSetupTLV;
 import es.tid.pce.pcep.objects.tlvs.SymbolicPathNameTLV;
 import es.tid.pce.server.delegation.DelegationManager;
 
@@ -136,6 +142,9 @@ public class IniPCCManager {
 		
 		PCEPInitiate ini = new PCEPInitiate();
 		PCEPIntiatedLSP inilsp = new PCEPIntiatedLSP();
+		
+		Metric metric= new Metric();
+		BandwidthRequested bandwith = new BandwidthRequested();
 		ini.getPcepIntiatedLSPList().add(inilsp);
 		SRP srp= new SRP();
 		srp.setSRP_ID_number(DelegationManager.getNextSRPID());
@@ -146,7 +155,22 @@ public class IniPCCManager {
 		LSP lsp= new LSP();
 		lsp.setAdministrativeFlag(true);
 		lsp.setLspId(0);
+		
+		PathSetupTLV path2 = new PathSetupTLV();
+		path2.setTLVType(28);
+		srp.setPathSetupTLV(path2);
+		
 		inilsp.setLsp(lsp);
+		
+		
+		metric.setMetricType(3);
+		metric.setMetricValue((float)4);
+		inilsp.getMetricList().add(metric);
+		
+		
+		bandwith.setBw((float)0);
+		inilsp.setBandwidth(bandwith);
+		
 		String name="Oscar-initated LSP-id "+getNextId();
 		SymbolicPathNameTLV spn= new SymbolicPathNameTLV();
 		spn.setSymbolicPathNameID(name.getBytes());
@@ -157,6 +181,25 @@ public class IniPCCManager {
 	public synchronized int getNextId() {
 		nextId+=1;
 		return nextId;
+	}
+
+	public void terminateLSP(int lsp_number,Object node) {
+		PCEPInitiate terminate = new PCEPInitiate();
+		PCEPIntiatedLSP inlsp = new PCEPIntiatedLSP();
+		SRP srp= new SRP();
+		srp.setSRP_ID_number(DelegationManager.getNextSRPID());
+		srp.setRFlag(true);
+		LSP lsp= new LSP();
+		lsp.setRemoveFlag(true);
+		lsp.setAdministrativeFlag(true);
+		lsp.setLspId(lsp_number);
+		inlsp.setLsp(lsp);
+		inlsp.setSrp(srp);
+		terminate.getPcepIntiatedLSPList().add(inlsp);
+		
+		this.newIni(terminate, node);
+		
+
 	}
 	
 
