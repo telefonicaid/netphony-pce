@@ -191,6 +191,11 @@ public class PCEManagementSession extends Thread {
 					update(command.substring(11));
 					out.print("\rUpdate sent");
 					out.print("\r\n");
+				}else if (command.startsWith("terminate lsp")) {
+					this.terminate(command.substring(14));
+					out.print("\rTerminate sent");
+					out.print("\r\n");
+					
 				}else if (command.startsWith("initiate lsp")) {
 					this.initiate(command.substring(13));
 					out.print("\rUpdate sent");
@@ -561,6 +566,28 @@ public class PCEManagementSession extends Thread {
 		}
 	}
 
+	private void terminate(String lsp_number) {
+
+		log.info("parsing "+lsp_number);
+		
+		
+		StringTokenizer st = new StringTokenizer(lsp_number," ");
+		String pcc= st.nextToken();
+		//Next 2 Items are the source and destination
+		Inet4Address ip_pcc=null;
+		try {
+			ip_pcc = (Inet4Address)Inet4Address.getByName(pcc);
+		} catch (UnknownHostException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		String number= st.nextToken();
+		int int_lsp_number = Integer.parseInt(number);
+
+		this.domainPCEServer.getIniManager().terminateLSP(int_lsp_number,ip_pcc);
+		
+	}
 	
 	
 	private void initiate(String inir) {
@@ -599,6 +626,12 @@ public class PCEManagementSession extends Thread {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		
+		/*String token2=st.nextToken();
+		
+		if(token2.startsWith("-m")) {
+			
+		}*/
 		
 		offset+=src_ip.length()+1+dst_ip.length()+1;
 		log.info("parsing ero "+inir.substring(offset));
