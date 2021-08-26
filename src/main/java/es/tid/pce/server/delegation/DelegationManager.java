@@ -89,8 +89,6 @@ public class DelegationManager {
 					ero= sr.getPath().getEro();
 					
 					
-					
-				
 					srp.setSRP_ID_number(DelegationManager.getNextSRPID());
 					ls.setLspId(sr.getLsp().getLspId());
 					ls.setDelegateFlag(true);

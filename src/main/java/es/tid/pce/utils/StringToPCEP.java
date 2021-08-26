@@ -4,9 +4,12 @@ import java.net.Inet4Address;
 import java.net.UnknownHostException;
 import java.util.StringTokenizer;
 
+import es.tid.pce.pcep.constructs.NAIIPv4Adjacency;
+import es.tid.pce.pcep.constructs.NAIIPv4NodeID;
 import es.tid.pce.pcep.objects.EndPoints;
 import es.tid.pce.pcep.objects.EndPointsIPv4;
 import es.tid.pce.pcep.objects.ExplicitRouteObject;
+import es.tid.pce.pcep.objects.subobjects.SREROSubobject;
 import es.tid.rsvp.objects.subobjects.IPv4prefixEROSubobject;
 
 /**
@@ -51,6 +54,7 @@ public class StringToPCEP {
 	}
 
 	public static ExplicitRouteObject stringToExplicitRouteObject(String eroString) {
+		SREROSubobject ero2 = null;
 		StringTokenizer st = new StringTokenizer(eroString, " ");
 
 		ExplicitRouteObject ero = new ExplicitRouteObject();
@@ -59,27 +63,78 @@ public class StringToPCEP {
 			try {
 				String ero1 = st.nextToken();
 				Inet4Address eru;
-				if (ero1.contains("/")) {
+				if(ero1.startsWith("nn")) {
+					
+					if(ero2.equals(null)) {
+						ero2 = new SREROSubobject();
+						ero.getEROSubobjectList().add(ero2);
+						ero2.setSflag(true);
+					}
+					
+					ero2.setNT(1);
+					eru = (Inet4Address) Inet4Address.getByName(ero1.substring(2));
+					NAIIPv4NodeID nai= new NAIIPv4NodeID();
+					
+					nai.setNodeID(eru);
+					ero2.setFflag(false);
+					ero2.setNai(nai);
+					ero2 = null;
+					
+				}else if(ero1.startsWith("na")) {
+					NAIIPv4Adjacency naia = new NAIIPv4Adjacency();
+					
+				
+					String dirs[]= ero1.substring(2).split("-");
+					eru = (Inet4Address) Inet4Address.getByName(dirs[0]);
+					naia.setLocalNodeAddress(eru);
+					eru = (Inet4Address) Inet4Address.getByName(dirs[1]);
+					naia.setRemoteNodeAddress(eru);
+					
+					ero2.setFflag(false);
+					naia.setNaiType(3);
+					
+					ero2.setNai(naia);
+					ero2.setNT(0);
+					
+					
+				}else if (ero1.contains("/")) {
 					// There is / hence, prefix might be present
 					StringTokenizer st2 = new StringTokenizer(ero1, "/");
 					String ip = st2.nextToken();
 					eru = (Inet4Address) Inet4Address.getByName(ip);
 					IPv4prefixEROSubobject eroso = new IPv4prefixEROSubobject();
 					eroso.setIpv4address(eru);
-					int prefix=Integer.parseInt(st2.nextToken());
+					int prefix = Integer.parseInt(st2.nextToken());
 					eroso.setPrefix(prefix);
-					//TODO: HACER LOOSE OF FALSE
+					// TODO: HACER LOOSE OF FALSE
 					eroso.setLoosehop(false);
 					ero.getEROSubobjectList().add(eroso);
-				}else {
+				}else if (ero1.contains(".")) {
+
 					eru = (Inet4Address) Inet4Address.getByName(ero1);
 					IPv4prefixEROSubobject eroso = new IPv4prefixEROSubobject();
 					eroso.setIpv4address(eru);
 					eroso.setPrefix(32);
 					eroso.setLoosehop(false);
 					ero.getEROSubobjectList().add(eroso);
+				}else {
+				
+					ero2 = new SREROSubobject();
+					if(ero1.startsWith("m")) {
+						long sid = Long.parseLong(ero1.substring(1));
+						
+//						ero2.setNT(1);
+						ero2.setMflag(true);
+						ero2.setSID(sid);
+						ero2.setLoosehop(false);
+						ero.getEROSubobjectList().add(ero2);
+					}else {
+						long sid = Long.parseLong(ero1);
+					ero2.setSID(sid);
+					ero2.setLoosehop(false);
+					ero.getEROSubobjectList().add(ero2);
+					}
 				}
-
 
 			} catch (UnknownHostException e) {
 				// TODO Auto-generated catch block
