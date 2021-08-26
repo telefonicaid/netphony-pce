@@ -604,13 +604,7 @@ public class PCEManagementSession extends Thread {
 		String lspid= st.nextToken();
 		int lsp_id = Integer.parseInt(lspid);
 		
-		
-		
 		this.domainPCEServer.getIniManager().createCandidatePath(ip_pcc,int_color,ip_dest,lsp_id);
-		
-		
-	}
-	private void SRinitiate(String substring) {
 		
 		
 	}
