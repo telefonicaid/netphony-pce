@@ -420,6 +420,11 @@ public class PCEManagementSession extends Thread {
 					out.print("\rCreating candidate Path");
 					out.print("\r\n");
 				}
+				else if(command.startsWith("delete candidatepath")) {
+					this.deleteCandidatePath(command.substring(15));
+					out.print("\rDeleting candidate Path");
+					out.print("\r\n");
+				}
 				/*
 				 * else if (command.equals("send update") || command.equals("9")){
 				 * out.println("Choose an available IP to send the update"); for (int i = 0; i <
@@ -576,36 +581,79 @@ public class PCEManagementSession extends Thread {
 		}
 	}
 	
-	private void createCandidatePath(String substring) {
-		Inet4Address ip_pcc=null;
-		Inet4Address ip_dest=null;
+	private void deleteCandidatePath(String substring) {
+		Inet4Address ip_pcc = null;
+		StringTokenizer st = new StringTokenizer(substring, " ");
 		
-		StringTokenizer st = new StringTokenizer(substring," ");
-		String pcc= st.nextToken();
-		
+		String pcc = st.nextToken();
+
 		try {
-			ip_pcc = (Inet4Address)Inet4Address.getByName(pcc);
+			ip_pcc = (Inet4Address) Inet4Address.getByName(pcc);
 		} catch (UnknownHostException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
-		String dest= st.nextToken();
+		
+		String lspid = st.nextToken();
+		int lsp_id = Integer.parseInt(lspid);
+		
+		this.domainPCEServer.getIniManager().deleteCandidatePath(ip_pcc,lsp_id);
+	}
+
+
+	private void createCandidatePath(String substring) {
+		Inet4Address ip_pcc = null;
+		Inet4Address ip_dest = null;
+
+		String policyName = null;
+		String candidatePathName = null;
+		String preference = null;
+		String check = null;
+
+		StringTokenizer st = new StringTokenizer(substring, " ");
+		String pcc = st.nextToken();
+
 		try {
-			ip_dest = (Inet4Address)Inet4Address.getByName(dest);
+			ip_pcc = (Inet4Address) Inet4Address.getByName(pcc);
 		} catch (UnknownHostException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
-		String color= st.nextToken();
+
+		String dest = st.nextToken();
+		try {
+			ip_dest = (Inet4Address) Inet4Address.getByName(dest);
+		} catch (UnknownHostException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		String color = st.nextToken();
 		int int_color = Integer.parseInt(color);
-		
-		String lspid= st.nextToken();
+
+		String lspid = st.nextToken();
 		int lsp_id = Integer.parseInt(lspid);
 		
-		this.domainPCEServer.getIniManager().createCandidatePath(ip_pcc,int_color,ip_dest,lsp_id);
 		
+		// TLVs opcionales
+		check = st.nextToken();
+		while (check != null) {
+			if (check == "-pn") {
+				policyName = st.nextToken();
+			}
+			if (check == "-cn") {
+				candidatePathName = st.nextToken();
+			}
+			if (check == "-p") {
+				preference = st.nextToken();
+			}
+			
+			check = st.nextToken();
+		}
+
+		this.domainPCEServer.getIniManager().createCandidatePath(ip_pcc, int_color, ip_dest, lsp_id, policyName,
+				candidatePathName, preference);
 		
 	}
 

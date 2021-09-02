@@ -124,6 +124,7 @@ public class StringToPCEP {
 						long sid = Long.parseLong(ero1.substring(1));
 						
 //						ero2.setNT(1);
+						
 						ero2.setMflag(true);
 						ero2.setSID(sid);
 						ero2.setLoosehop(false);

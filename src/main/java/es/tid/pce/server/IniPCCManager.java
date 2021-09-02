@@ -41,6 +41,9 @@ import es.tid.pce.pcep.objects.tlvs.ExtendedAssociationIDTLV;
 import es.tid.pce.pcep.objects.tlvs.IPv4LSPIdentifiersTLV;
 import es.tid.pce.pcep.objects.tlvs.PathSetupTLV;
 import es.tid.pce.pcep.objects.tlvs.SRPolicyCandidatePathIdentifiersTLV;
+import es.tid.pce.pcep.objects.tlvs.SRPolicyCandidatePathNameTLV;
+import es.tid.pce.pcep.objects.tlvs.SRPolicyCandidatePathPreferenceTLV;
+import es.tid.pce.pcep.objects.tlvs.SRPolicyName;
 import es.tid.pce.pcep.objects.tlvs.SymbolicPathNameTLV;
 import es.tid.pce.server.delegation.DelegationManager;
 
@@ -214,43 +217,41 @@ public class IniPCCManager {
 
 	}
 
-	public void createCandidatePath(Object node,int color, Inet4Address ip_dest,int lsp_id) {
+	public void createCandidatePath(Object node,int color, Inet4Address ip_dest,int lsp_id,String policyName, String candidatePathName, String preference) {
 		PCEPInitiate initiate = new PCEPInitiate();
 		PCEPIntiatedLSP inlsp = new PCEPIntiatedLSP();
 		
 		/**SRP**/
 		SRP srp= new SRP();
 		srp.setSRP_ID_number(DelegationManager.getNextSRPID());
-		srp.setRFlag(true);
+		
 		/**LSP**/
 		LSP lsp= new LSP();
-		lsp.setRemoveFlag(true);
 		lsp.setAdministrativeFlag(true);
+		lsp.setOpFlags(1);
 		lsp.setLspId(lsp_id);
+		
 		/**Association Object**/
 		AssociationIPv4 aso=new AssociationIPv4();
-		
 		String string_ip_source = "1.1.1.1";
 		Inet4Address ip_source = null;
-		
 		SRPolicyCandidatePathIdentifiersTLV policyIds=new SRPolicyCandidatePathIdentifiersTLV();
 		ExtendedAssociationIDTLV extended_aso=new ExtendedAssociationIDTLV();
 		
 		try {
 			ip_source = (Inet4Address) InetAddress.getByName(string_ip_source);
-			
 
 		} catch (UnknownHostException e) {
 
 			e.printStackTrace();
 		}
+		
 		aso.setAssociationSource(ip_source);
 		aso.setAssocType(6);
 		aso.setAssocID(1);
 		
 		//TLVs
 		//Mandatories
-		extended_aso.setTLVType(31);
 		extended_aso.setColor(color);
 		extended_aso.setEndpoint(ip_dest);
 		
@@ -260,10 +261,24 @@ public class IniPCCManager {
 		policyIds.setDiscriminator(0);
 		policyIds.setOriginatorASN(0);
 		policyIds.setProtocol(10); //Value of PCEP
-		policyIds.setTLVType(57);
 		aso.setSr_policy_candidate_path_identifiers_tlv(policyIds);
-		//Optionals
 		
+		//Optionals
+		if(policyName!=null) {
+			SRPolicyName srPolicyName = new SRPolicyName();
+			srPolicyName.setPolicyName(policyName);
+			aso.setSr_policy_name(srPolicyName);
+		}
+		if(candidatePathName!=null) {
+			SRPolicyCandidatePathNameTLV srPolicyCandidatePathName = new SRPolicyCandidatePathNameTLV();
+			srPolicyCandidatePathName.setSRPolicyCandidatePathName(candidatePathName);
+			aso.setSr_policy_candidate_path_tlv(srPolicyCandidatePathName);
+		}
+		if(preference!=null) {
+			SRPolicyCandidatePathPreferenceTLV pathPreference = new SRPolicyCandidatePathPreferenceTLV();
+			pathPreference.setPreference(Long.parseLong(preference));
+			aso.setSr_policy_candidate_path_preference_tlv(pathPreference);
+		}
 		
 		//PCEP Initiate
 		inlsp.setLsp(lsp);
@@ -273,6 +288,28 @@ public class IniPCCManager {
 		//Send Initiate
 		this.newIni(initiate, node);
 		
+		
+	}
+
+	public void deleteCandidatePath(Object node, int lsp_id) {
+		PCEPInitiate initiate = new PCEPInitiate();
+		PCEPIntiatedLSP inlsp = new PCEPIntiatedLSP();
+		
+		/**SRP**/
+		SRP srp= new SRP();
+		srp.setSRP_ID_number(DelegationManager.getNextSRPID());
+		srp.setRFlag(true);
+		
+		/**LSP**/
+		LSP lsp= new LSP();
+		lsp.setRemoveFlag(true);
+		lsp.setAdministrativeFlag(true);
+		lsp.setLspId(lsp_id);
+		
+		inlsp.setLsp(lsp);
+		inlsp.setSrp(srp);
+		
+		this.newIni(initiate, node);
 		
 	}
 	
