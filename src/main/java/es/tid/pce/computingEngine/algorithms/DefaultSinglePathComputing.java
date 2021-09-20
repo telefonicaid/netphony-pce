@@ -17,6 +17,8 @@ import es.tid.pce.computingEngine.algorithms.mpls.EncodeEroMPLS2;
 import es.tid.pce.pcep.constructs.EndPoint;
 import es.tid.pce.pcep.constructs.EndPointAndRestrictions;
 import es.tid.pce.pcep.constructs.IPv4AddressEndPoint;
+import es.tid.pce.pcep.constructs.NAIIPv4Adjacency;
+import es.tid.pce.pcep.constructs.NAIIPv4NodeID;
 import es.tid.pce.pcep.constructs.Path;
 import es.tid.pce.pcep.constructs.Request;
 import es.tid.pce.pcep.constructs.Response;
@@ -32,6 +34,7 @@ import es.tid.pce.pcep.objects.ObjectParameters;
 import es.tid.pce.pcep.objects.P2MPGeneralizedEndPoints;
 import es.tid.pce.pcep.objects.P2PGeneralizedEndPoints;
 import es.tid.pce.pcep.objects.RequestParameters;
+import es.tid.pce.pcep.objects.subobjects.SREROSubobject;
 import es.tid.pce.pcep.objects.tlvs.NoPathTLV;
 import es.tid.pce.pcep.objects.tlvs.PathSetupTLV;
 import es.tid.rsvp.objects.subobjects.DataPathIDEROSubobject;
@@ -75,17 +78,24 @@ public class DefaultSinglePathComputing implements ComputingAlgorithm {
 		long reqId=req.getRequestParameters().getRequestID();
 		log.info("Processing Single Path Computing Request id: "+reqId);
 		
-
+		
 		//Start creating the response
 		Response response=new Response();
 		RequestParameters rp = new RequestParameters();
+		
+		/***************ELIMINAR************/
+		PathSetupTLV patheo = new PathSetupTLV();
+		patheo.setTLVType(28);
+		patheo.setPST(1);
+		rp.setPathSetupTLV(patheo);/*************/
+		
 		rp.setPbit(true);
 		rp.setRequestID(reqId);
 		response.setRequestParameters(rp);
-		if (req.getRequestParameters().getPathSetupTLV()!=null ) {
+		/*if (req.getRequestParameters().getPathSetupTLV()!=null ) {
 			PathSetupTLV pst =new PathSetupTLV();
 			rp.setPathSetupTLV(pst);
-		}
+		}*/
 		if (this.networkGraph==null){
 			NoPath noPath= new NoPath();
 			noPath.setNatureOfIssue(ObjectParameters.NOPATH_NOPATH_SAT_CONSTRAINTS);
@@ -192,13 +202,73 @@ public class DefaultSinglePathComputing implements ComputingAlgorithm {
 			m_resp.addResponse(response);
 			return m_resp;
 		}
-
+		
 		// Code ERO Object
 		m_resp.addResponse(response);
 		Path path=new Path();
+		
 		ExplicitRouteObject ero= new ExplicitRouteObject();
 		List<IntraDomainEdge> edge_list=gp.getEdgeList();
-		EncodeEroMPLS2.createEroMpls(ero, edge_list);
+		/*EncodeEroMPLS2.createEroMpls(ero, edge_list);*/
+		
+		/********ELIMINAR*******************/
+		SREROSubobject ero2 = new SREROSubobject();
+		SREROSubobject ero3 = new SREROSubobject();
+		NAIIPv4Adjacency naia = new NAIIPv4Adjacency();
+		NAIIPv4Adjacency naia2 = new NAIIPv4Adjacency();
+		NAIIPv4NodeID nai= new NAIIPv4NodeID();
+		Inet4Address eru;
+		try {
+			eru = (Inet4Address) Inet4Address.getByName("192.168.3.11");
+			naia.setLocalNodeAddress(eru);
+			eru = (Inet4Address) Inet4Address.getByName("192.168.3.13");
+			naia.setRemoteNodeAddress(eru);
+			naia.setNaiType(3);
+		}catch(Exception e) {
+			
+		}
+		/*try {
+			eru = (Inet4Address) Inet4Address.getByName("1.1.1.2");
+			nai.setNodeID(eru);
+		}catch(Exception e) {
+			
+		}*/
+		
+		ero2.setFflag(false);
+
+		ero2.setNai(naia);
+		ero2.setNT(3);
+		ero2.setMflag(false);
+		ero2.setSID(300);
+		ero2.setLoosehop(false);
+		ero.getEROSubobjectList().add(ero2);
+		
+		try {
+			eru = (Inet4Address) Inet4Address.getByName("192.168.2.13");
+			naia2.setLocalNodeAddress(eru);
+			eru = (Inet4Address) Inet4Address.getByName("192.168.2.12");
+			naia2.setRemoteNodeAddress(eru);
+			naia2.setNaiType(3);
+		}catch(Exception e) {
+			
+		}
+		/*try {
+			eru = (Inet4Address) Inet4Address.getByName("1.1.1.2");
+			nai.setNodeID(eru);
+		}catch(Exception e) {
+			
+		}*/
+		
+		ero3.setFflag(false);
+
+		ero3.setNai(naia2);
+		ero3.setNT(3);
+		ero3.setMflag(false);
+		ero3.setSID(200);
+		ero3.setLoosehop(false);
+		ero.getEROSubobjectList().add(ero3);
+		
+		/***************************/
 		
 //		// Add first hop in the ERO Object in there is an interface
 //		if (source_port!=0){

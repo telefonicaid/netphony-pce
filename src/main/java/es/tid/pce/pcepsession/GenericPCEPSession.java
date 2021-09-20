@@ -566,16 +566,32 @@ public abstract class GenericPCEPSession extends Thread implements PCEPSession {
 				p_open_snd.getOpen().setLsp_database_version_tlv(lsp_database_version);
 			}
 		}
+
+//		if (pcepSessionManager.isSRCapable())
+//		{
+//			PathSetupCapabilityTLV pathSetup = new PathSetupCapabilityTLV();
+//			pathSetup.getPathSetupTypes().add(Integer.valueOf(1));
+//			
+//			SRCapabilityTLV SR_capability_tlv = new SRCapabilityTLV();
+//			//TODO: get?
+//			SR_capability_tlv.setMSD(pcepSessionManager.getMSD());
+//			pathSetup.setSrCapabilitySubTLV(SR_capability_tlv);
+//			//p_open_snd.getOpen().setSR_capability_tlv(SR_capability_tlv);
+//			p_open_snd.getOpen().setPathSetupCababiity(pathSetup);
+//			
+//			log.info("SR: "+pcepSessionManager.isSRCapable()+" MSD: "+pcepSessionManager.getMSD());
+//
+//		}
 		if (pcepSessionManager.isSRCapable())
-		{
-			SRCapabilityTLV SR_capability_tlv = new SRCapabilityTLV();
-			//TODO: get?
-			SR_capability_tlv.setMSD(pcepSessionManager.getMSD());
-			p_open_snd.getOpen().setSR_capability_tlv(SR_capability_tlv);
-
-			log.info("SR: "+pcepSessionManager.isSRCapable()+" MSD: "+pcepSessionManager.getMSD());
-
-		}
+			{
+				SRCapabilityTLV SR_capability_tlv = new SRCapabilityTLV();
+				//TODO: get?
+				SR_capability_tlv.setMSD(pcepSessionManager.getMSD());
+				p_open_snd.getOpen().setSR_capability_tlv(SR_capability_tlv);
+				
+				log.info("SR: "+pcepSessionManager.isSRCapable()+" MSD: "+pcepSessionManager.getMSD());
+	
+			}
 		if (pcepSessionManager.getLocalPcepCapability().isGmpls()){
 			GMPLSCapabilityTLV gmplsCapabilityTLV=new GMPLSCapabilityTLV();
 			p_open_snd.getOpen().setGmplsCapabilityTLV(gmplsCapabilityTLV);

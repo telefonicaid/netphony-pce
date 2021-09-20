@@ -34,6 +34,8 @@ import es.tid.pce.pcep.messages.PCEPInitiate;
 import es.tid.pce.pcep.messages.PCEPReport;
 import es.tid.pce.pcep.messages.PCEPRequest;
 import es.tid.pce.pcep.messages.PCEPUpdate;
+import es.tid.pce.pcep.objects.Association;
+import es.tid.pce.pcep.objects.AssociationIPv4;
 import es.tid.pce.pcep.objects.BandwidthRequested;
 import es.tid.pce.pcep.objects.EndPointsIPv4;
 import es.tid.pce.pcep.objects.ExplicitRouteObject;
@@ -42,7 +44,10 @@ import es.tid.pce.pcep.objects.ObjectParameters;
 import es.tid.pce.pcep.objects.ObjectiveFunction;
 import es.tid.pce.pcep.objects.RequestParameters;
 import es.tid.pce.pcep.objects.SRP;
+import es.tid.pce.pcep.objects.subobjects.SREROSubobject;
 import es.tid.pce.pcep.objects.tlvs.LSPDatabaseVersionTLV;
+import es.tid.pce.pcep.objects.tlvs.SRPolicyCandidatePathNameTLV;
+import es.tid.pce.pcep.objects.tlvs.ExtendedAssociationIDTLV;
 import es.tid.pce.pcep.objects.tlvs.IPv4LSPIdentifiersTLV;
 import es.tid.pce.pcep.objects.tlvs.SymbolicPathNameTLV;
 import es.tid.pce.pcepsession.PCEPSessionsInformation;
@@ -410,6 +415,16 @@ public class PCEManagementSession extends Thread {
 						e.printStackTrace();
 					}
 				}
+				else if(command.startsWith("create candidatepath")) {
+					this.createCandidatePath(command.substring(20));
+					out.print("\rCreating candidate Path");
+					out.print("\r\n");
+				}
+				else if(command.startsWith("delete candidatepath")) {
+					this.deleteCandidatePath(command.substring(15));
+					out.print("\rDeleting candidate Path");
+					out.print("\r\n");
+				}
 				/*
 				 * else if (command.equals("send update") || command.equals("9")){
 				 * out.println("Choose an available IP to send the update"); for (int i = 0; i <
@@ -565,6 +580,111 @@ public class PCEManagementSession extends Thread {
 			return;
 		}
 	}
+	
+	private void deleteCandidatePath(String substring) {
+		Inet4Address ip_pcc = null;
+		StringTokenizer st = new StringTokenizer(substring, " ");
+		
+		String pcc = st.nextToken();
+
+		try {
+			ip_pcc = (Inet4Address) Inet4Address.getByName(pcc);
+		} catch (UnknownHostException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		
+		String lspid = st.nextToken();
+		int lsp_id = Integer.parseInt(lspid);
+		
+		this.domainPCEServer.getIniManager().deleteCandidatePath(ip_pcc,lsp_id);
+	}
+
+
+	private void createCandidatePath(String substring) {
+		Inet4Address ip_pcc = null;
+		Inet4Address ip_dest = null;
+		ExplicitRouteObject ero = null;
+		
+		int offset= 0;
+		log.info("parsing PCC "+substring.substring(offset));
+		StringTokenizer st = new StringTokenizer(substring, " ");
+		String pcc = st.nextToken();
+		
+		offset += pcc.getBytes().length;
+		
+		String policyName = null;	
+		String preference = null;
+		String candidatePathName = null;
+		
+		try {
+			ip_pcc = (Inet4Address) Inet4Address.getByName(pcc);
+		} catch (UnknownHostException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		log.info("parsing DEST "+substring.substring(offset));
+		String dest = st.nextToken();
+		log.warn("DESTINO: " + dest);
+		offset += dest.getBytes().length;	
+		try {
+			ip_dest = (Inet4Address) Inet4Address.getByName(dest);
+		} catch (UnknownHostException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		log.info("parsing COLOR "+substring.substring(offset));
+		String color = st.nextToken();
+		log.warn("Color: " +color);
+		offset += color.getBytes().length;
+			
+		int int_color = Integer.parseInt(color);
+
+		log.info("parsing LSPID "+substring.substring(offset));
+		String lspid = st.nextToken();
+		log.warn("LSP ID: " +lspid);
+		offset += lspid.getBytes().length;
+		
+		
+		int lsp_id = Integer.parseInt(lspid);
+		
+		
+		// TLVs opcionales
+		/*while(st.hasMoreTokens()) {
+			String check = st.nextToken();	
+			offset += check.getBytes().length;
+			log.warn("CHECK: " + check);
+			
+			if (check == "-pn") {
+				policyName = st.nextToken();
+			} else if (check == "-cn") {
+				candidatePathName = st.nextToken();
+			} else if (check == "-p") {
+				preference = st.nextToken();
+			}	else {
+				log.warn("OFFSET: " + offset);
+				break;
+			}
+		}*/
+		policyName = "Nombre_policy";
+		
+		preference = "10";
+
+		offset +=4;
+		log.info("parsing ero "+substring.substring(offset));
+		ero=StringToPCEP.stringToExplicitRouteObject(substring.substring(offset));
+		
+		int signalingType = 0;
+		if(ero.getEROSubobjectList().getFirst() instanceof SREROSubobject) {
+			//SR Up
+			signalingType = 1;
+		}
+		
+		this.domainPCEServer.getIniManager().createCandidatePath(ip_pcc, int_color, ip_dest, lsp_id, policyName,
+				candidatePathName, preference,ero);
+		
+	}
 
 	private void terminate(String lsp_number) {
 
@@ -592,8 +712,13 @@ public class PCEManagementSession extends Thread {
 	
 	private void initiate(String inir) {
 		int offset=0;
+		
 		log.info("parsing "+inir);
 		StringTokenizer st = new StringTokenizer(inir," ");
+		
+		String name=st.nextToken();
+		offset+=name.length()+1;
+		
 		String pcc= st.nextToken();
 		//Next 2 Items are the source and destination
 		Inet4Address ip_pcc=null;
@@ -607,7 +732,7 @@ public class PCEManagementSession extends Thread {
 		//System.out.println("END POINTS NORMALES");
 		EndPointsIPv4 ep=new EndPointsIPv4();
 		String src_ip= st.nextToken();
-		//String src_ip= "1.1.1.1";
+		
 		Inet4Address ipp;
 		try {
 			ipp = (Inet4Address)Inet4Address.getByName(src_ip);
@@ -636,8 +761,14 @@ public class PCEManagementSession extends Thread {
 		offset+=src_ip.length()+1+dst_ip.length()+1;
 		log.info("parsing ero "+inir.substring(offset));
 		ExplicitRouteObject ero=StringToPCEP.stringToExplicitRouteObject(inir.substring(offset));
-
-		this.domainPCEServer.getIniManager().initiateLSP(ep,ero,ip_pcc);
+		
+		int signalingType = 0;
+		if(ero.getEROSubobjectList().getFirst() instanceof SREROSubobject) {
+			//SR Up
+			signalingType = 1;
+		}
+		
+		this.domainPCEServer.getIniManager().initiateLSP(ep,ero,ip_pcc,signalingType,name);
 	}
 	
 	private void easySendUpdate(LSPTEInfo val, DomainPCESession dm) throws UnknownHostException {
