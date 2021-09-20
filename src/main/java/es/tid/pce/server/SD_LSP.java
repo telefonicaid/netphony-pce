@@ -19,6 +19,8 @@ public class SD_LSP {
 	
 	public EndPoints endpoints;
 	
+	boolean segmentRouting = false;
+	
 	/**
 	 * True if the LSP has been delegated to the PCE
 	 */
@@ -32,6 +34,8 @@ public class SD_LSP {
 	public SD_LSP(){
 		//By default, the LSP is not delegated
 		delegated=false;
+		//By default the LSP is RSVP-TE
+		segmentRouting = false;
 	}
 
 	public int getpLSPID() {
@@ -51,10 +55,11 @@ public class SD_LSP {
 		this.stateRport = stateRport;
 	}
 
+	@Override
 	public String toString() {
-		String ret="";
-		
-		return ret;
+		return "SD_LSP [pLSPID=" + pLSPID + ", stateRport=" + stateRport + ", fullERO=" + fullERO + ", endpoints="
+				+ endpoints + ", segmentRouting=" + segmentRouting + ", delegated=" + delegated + ", created=" + created
+				+ "]";
 	}
 
 	public ExplicitRouteObject getFullERO() {
@@ -88,7 +93,16 @@ public class SD_LSP {
 	public void setCreated(boolean created) {
 		this.created = created;
 	}
-	
+
+	public boolean isSegmentRouting() {
+		return segmentRouting;
+	}
+
+	public void setSegmentRouting(boolean segmentRouting) {
+		this.segmentRouting = segmentRouting;
+	}
+
+
 	
 	
 	

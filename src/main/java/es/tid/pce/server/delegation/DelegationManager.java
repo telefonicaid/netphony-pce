@@ -1,6 +1,9 @@
 package es.tid.pce.server.delegation;
 
+import java.io.BufferedReader;
 import java.io.DataOutputStream;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
 import java.net.Inet4Address;
 import java.net.InetAddress;
@@ -17,8 +20,10 @@ import es.tid.pce.pcep.messages.PCEPUpdate;
 import es.tid.pce.pcep.objects.ExplicitRouteObject;
 import es.tid.pce.pcep.objects.LSP;
 import es.tid.pce.pcep.objects.SRP;
+import es.tid.pce.pcep.objects.tlvs.PathSetupTLV;
 import es.tid.pce.server.SD_LSP;
 import es.tid.pce.server.lspdb.SingleDomainLSPDB;
+import es.tid.pce.utils.StringToPCEP;
 import es.tid.rsvp.objects.subobjects.IPv4prefixEROSubobject;
 
 public class DelegationManager {
@@ -27,6 +32,12 @@ public class DelegationManager {
 
 	private SingleDomainLSPDB lsp_database;
 
+	private boolean compute_path=false; //True if the delegations are really computed
+	
+	private boolean getPathFromFile=true; // True if the path is get from a file
+	
+	private String file="update_path.txt"; // True if the path is get from a file
+	
 	/**
 	 * Logger
 	 */
@@ -81,38 +92,69 @@ public class DelegationManager {
 					PCEPUpdate pup = new PCEPUpdate();
 					UpdateRequest ur = new UpdateRequest();
 					SRP srp = new SRP();
-					LSP ls = new LSP();
-					ExplicitRouteObject ero;
-					//ExplicitRouteObject ero = new ExplicitRouteObject();
-					//Get original ero
-					log.debug("Prepare answer with intended path in the ERO");
-					ero= sr.getPath().getEro();
-					
-					
 					srp.setSRP_ID_number(DelegationManager.getNextSRPID());
-					ls.setLspId(sr.getLsp().getLspId());
-					ls.setDelegateFlag(true);
-					
-					ls.setAdministrativeFlag(true);
-					ls.setOpFlags(1);
-					
-					
+					//First thing, check type of LSP (if RSVP or SR)
+					log.info("Checking LSP signalling type");
+					if (lsp.getStateRport().getSrp()!=null) {
+						if (lsp.getStateRport().getSrp().getPathSetupTLV()!=null) {
+							PathSetupTLV pst = new PathSetupTLV();
+							if (lsp.getStateRport().getSrp().getPathSetupTLV().isSR()==true) {
+								lsp.setSegmentRouting(true);
+								log.info("The LSP is Segment Routing signalled");								
+								pst.setPST(PathSetupTLV.SR);								
+							}else {
+								lsp.setSegmentRouting(false);
+								log.info("The LSP is RSVP-TE signalled");								
+								pst.setPST(PathSetupTLV.DEFAULT);				
+							}
+						}
+						
+					}
 					ur.setSrp(srp);
-					log.info(sr.toString());
+					
+
+					
+					LSP ls = new LSP();
+					//Copy the LSP ID
+					ls.setLspId(sr.getLsp().getLspId());
+					//Set deletation flag to true
+					ls.setDelegateFlag(true);
+					//Set Admin flag to true
+					ls.setAdministrativeFlag(true);
+					//Set Operation Flags to UP
+					ls.setOpFlags(1);
+					//Read symbolic path name and copy it
+					String name=null;
 					if (sr.getLsp().getLspIdentifiers_tlv() != null) {
+						
 						ls.setLspIdentifiers_tlv(sr.getLsp().getLspIdentifiers_tlv());
 					}
 					if (sr.getLsp().getSymbolicPathNameTLV_tlv() != null) {
+						name = new String(sr.getLsp().getSymbolicPathNameTLV_tlv().getSymbolicPathNameID());
+						log.info("LSP Name "+name);
 						ls.setSymbolicPathNameTLV_tlv(sr.getLsp().getSymbolicPathNameTLV_tlv());
 					}
-
 					ur.setLsp(ls);
-					// ur.setLsp(sr.getLsp());
-					Path path = new Path();
-					path.setEro(ero);
+					log.debug("Prepare answer with the Path");
+					Path path=null;
+					if (this.getPathFromFile) {
+						log.debug("Getting path from a file");
+						path=this.getEroFromFile();
+					}else if (this.compute_path) {
+						path=this.computePath();
+					}else {
+						//Copy the path
+					}
+					ur.setPath(path);					
+					//Copy association
+				
+					for (int i=0;i<lsp.getStateRport().getAssociationList().size();++i ) {
+						log.info("adding association");
+						ur.getAssociationList().add(lsp.getStateRport().getAssociationList().get(i));
+					}
+					log.info(sr.toString());
 
-					// ur.setPath(sr.getPath());
-					ur.setPath(path);
+
 					pup.getUpdateRequestList().add(ur);
 
 					try {
@@ -172,7 +214,13 @@ public class DelegationManager {
 		
 
 		log.debug("Prepare answer with intended path in the ERO");
-		//ero= sr.getPath().getEro();
+//		if (this.getPathFromFile) {
+//			
+//		}else if (this.compute_path) {
+//			
+//		}else {
+//			
+//		}
 		
 		srp.setSRP_ID_number(this.getNextSRPID());
 		if (sr!=null) {
@@ -234,6 +282,32 @@ public class DelegationManager {
 		this.lsp_database = lsp_database;
 	}
 
+	public Path getEroFromFile() {
+		FileReader fr;
+		Path path =new Path();
+		try {
+			fr = new FileReader(this.file);
+			BufferedReader reader = new BufferedReader(fr);
+			String line = reader.readLine();
+			log.info("Creating ERO "+line);
+			ExplicitRouteObject ero=StringToPCEP.stringToExplicitRouteObject(line);
+			path.setEro(ero);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		
+		
+		return path;
+	}
+	
+	public Path computePath() {
+		Path path =new Path();
+		ExplicitRouteObject ero = new ExplicitRouteObject();
+		path.setEro(ero);
+		return path;
+	}
 
 
 }

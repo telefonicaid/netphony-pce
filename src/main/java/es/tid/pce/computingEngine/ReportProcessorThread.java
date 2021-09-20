@@ -88,6 +88,7 @@ public class ReportProcessorThread extends Thread {
 
 			lspDB.processReport(pcepReport);
 			for (int i = 0; i < pcepReport.getStateReportList().size(); i++) {
+				log.info("PROCESSING REPORT");
 				dm.processReport(pcepReport.getStateReportList().get(i), reportTask.getOut());
 			}
 
