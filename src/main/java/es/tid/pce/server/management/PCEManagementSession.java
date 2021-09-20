@@ -416,7 +416,7 @@ public class PCEManagementSession extends Thread {
 					}
 				}
 				else if(command.startsWith("create candidatepath")) {
-					this.createCandidatePath(command.substring(15));
+					this.createCandidatePath(command.substring(20));
 					out.print("\rCreating candidate Path");
 					out.print("\r\n");
 				}
@@ -605,55 +605,84 @@ public class PCEManagementSession extends Thread {
 	private void createCandidatePath(String substring) {
 		Inet4Address ip_pcc = null;
 		Inet4Address ip_dest = null;
-
-		String policyName = null;
-		String candidatePathName = null;
-		String preference = null;
-		String check = null;
-
+		ExplicitRouteObject ero = null;
+		
+		int offset= 0;
+		log.info("parsing PCC "+substring.substring(offset));
 		StringTokenizer st = new StringTokenizer(substring, " ");
 		String pcc = st.nextToken();
-
+		
+		offset += pcc.getBytes().length;
+		
+		String policyName = null;	
+		String preference = null;
+		String candidatePathName = null;
+		
 		try {
 			ip_pcc = (Inet4Address) Inet4Address.getByName(pcc);
 		} catch (UnknownHostException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-
+		log.info("parsing DEST "+substring.substring(offset));
 		String dest = st.nextToken();
+		log.warn("DESTINO: " + dest);
+		offset += dest.getBytes().length;	
 		try {
 			ip_dest = (Inet4Address) Inet4Address.getByName(dest);
 		} catch (UnknownHostException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-
+		log.info("parsing COLOR "+substring.substring(offset));
 		String color = st.nextToken();
+		log.warn("Color: " +color);
+		offset += color.getBytes().length;
+			
 		int int_color = Integer.parseInt(color);
 
+		log.info("parsing LSPID "+substring.substring(offset));
 		String lspid = st.nextToken();
+		log.warn("LSP ID: " +lspid);
+		offset += lspid.getBytes().length;
+		
+		
 		int lsp_id = Integer.parseInt(lspid);
 		
 		
 		// TLVs opcionales
-		check = st.nextToken();
-		while (check != null) {
+		/*while(st.hasMoreTokens()) {
+			String check = st.nextToken();	
+			offset += check.getBytes().length;
+			log.warn("CHECK: " + check);
+			
 			if (check == "-pn") {
 				policyName = st.nextToken();
-			}
-			if (check == "-cn") {
+			} else if (check == "-cn") {
 				candidatePathName = st.nextToken();
-			}
-			if (check == "-p") {
+			} else if (check == "-p") {
 				preference = st.nextToken();
+			}	else {
+				log.warn("OFFSET: " + offset);
+				break;
 			}
-			
-			check = st.nextToken();
-		}
+		}*/
+		policyName = "Nombre_policy";
+		
+		preference = "10";
 
+		offset +=4;
+		log.info("parsing ero "+substring.substring(offset));
+		ero=StringToPCEP.stringToExplicitRouteObject(substring.substring(offset));
+		
+		int signalingType = 0;
+		if(ero.getEROSubobjectList().getFirst() instanceof SREROSubobject) {
+			//SR Up
+			signalingType = 1;
+		}
+		
 		this.domainPCEServer.getIniManager().createCandidatePath(ip_pcc, int_color, ip_dest, lsp_id, policyName,
-				candidatePathName, preference);
+				candidatePathName, preference,ero);
 		
 	}
 
@@ -703,7 +732,7 @@ public class PCEManagementSession extends Thread {
 		//System.out.println("END POINTS NORMALES");
 		EndPointsIPv4 ep=new EndPointsIPv4();
 		String src_ip= st.nextToken();
-		//String src_ip= "1.1.1.1";
+		
 		Inet4Address ipp;
 		try {
 			ipp = (Inet4Address)Inet4Address.getByName(src_ip);

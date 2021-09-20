@@ -19,6 +19,7 @@ import es.tid.pce.computingEngine.ComputingResponse;
 import es.tid.pce.computingEngine.algorithms.ChildPCEInitiate;
 import es.tid.pce.computingEngine.algorithms.ChildPCERequest;
 import es.tid.pce.pcep.PCEPProtocolViolationException;
+import es.tid.pce.pcep.constructs.NAIIPv4NodeID;
 import es.tid.pce.pcep.constructs.PCEPIntiatedLSP;
 import es.tid.pce.pcep.constructs.Path;
 import es.tid.pce.pcep.constructs.StateReport;
@@ -37,6 +38,7 @@ import es.tid.pce.pcep.objects.ExplicitRouteObject;
 import es.tid.pce.pcep.objects.LSP;
 import es.tid.pce.pcep.objects.Metric;
 import es.tid.pce.pcep.objects.SRP;
+import es.tid.pce.pcep.objects.subobjects.SREROSubobject;
 import es.tid.pce.pcep.objects.tlvs.ExtendedAssociationIDTLV;
 import es.tid.pce.pcep.objects.tlvs.IPv4LSPIdentifiersTLV;
 import es.tid.pce.pcep.objects.tlvs.PathSetupTLV;
@@ -78,6 +80,8 @@ public class IniPCCManager {
 		Object object_lock=new Object();
 
 		long idSRP=pcini.getPcepIntiatedLSPList().get(0).getRsp().getSRP_ID_number();
+		//long idSRP= DelegationManager.getNextSRPID();
+		log.warn("SRP ID: " + idSRP);
 		log.info("Sending PCEPInitiate to node "+node+"srp_id "+idSRP+" : "+pcini.toString());
 		inilocks.put(new Long(idSRP), object_lock);
 		try {		
@@ -217,23 +221,62 @@ public class IniPCCManager {
 
 	}
 
-	public void createCandidatePath(Object node,int color, Inet4Address ip_dest,int lsp_id,String policyName, String candidatePathName, String preference) {
+	public void createCandidatePath(Object node,int color, Inet4Address ip_dest,int lsp_id,String policyName, String candidatePathName, String preference, ExplicitRouteObject ero) {
 		PCEPInitiate initiate = new PCEPInitiate();
 		PCEPIntiatedLSP inlsp = new PCEPIntiatedLSP();
+		
+		
 		
 		/**SRP**/
 		SRP srp= new SRP();
 		srp.setSRP_ID_number(DelegationManager.getNextSRPID());
+		PathSetupTLV path = new PathSetupTLV();
+		path.setPST(1);
+		srp.setPathSetupTLV(path);
+		inlsp.setSrp(srp);
 		
+		log.warn("SRP: " + srp.toString());
 		/**LSP**/
 		LSP lsp= new LSP();
 		lsp.setAdministrativeFlag(true);
 		lsp.setOpFlags(1);
-		lsp.setLspId(lsp_id);
 		
+		lsp_id = 0;
+		lsp.setLspId(lsp_id);
+		SymbolicPathNameTLV spn= new SymbolicPathNameTLV();
+		String name = "cfg_pce_ini_pol_discr" + srp.getSRP_ID_number();
+		spn.setSymbolicPathNameID(name.getBytes());
+		lsp.setSymbolicPathNameTLV_tlv(spn);
+		log.warn("LSP: " + lsp.toString());
+		
+		inlsp.setLsp(lsp);
+		/**Endpoints**/
+		EndPointsIPv4 ep=new EndPointsIPv4();
+		String src_ip= "1.1.1.1";
+		
+		Inet4Address ipp;
+		try {
+			ipp = (Inet4Address)Inet4Address.getByName(src_ip);
+			((EndPointsIPv4) ep).setSourceIP(ipp);								
+		} catch (UnknownHostException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		String dst_ip= "1.1.1.2";
+		//String src_ip= "1.1.1.1";
+		try {
+			ipp = (Inet4Address)Inet4Address.getByName(dst_ip);
+			((EndPointsIPv4) ep).setDestIP(ipp);								
+		} catch (UnknownHostException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		inlsp.setEndPoint(ep);
 		/**Association Object**/
 		AssociationIPv4 aso=new AssociationIPv4();
-		String string_ip_source = "1.1.1.1";
+		String string_ip_source = "10.95.43.175";
 		Inet4Address ip_source = null;
 		SRPolicyCandidatePathIdentifiersTLV policyIds=new SRPolicyCandidatePathIdentifiersTLV();
 		ExtendedAssociationIDTLV extended_aso=new ExtendedAssociationIDTLV();
@@ -250,6 +293,7 @@ public class IniPCCManager {
 		aso.setAssocType(6);
 		aso.setAssocID(1);
 		
+		
 		//TLVs
 		//Mandatories
 		extended_aso.setColor(color);
@@ -262,6 +306,8 @@ public class IniPCCManager {
 		policyIds.setOriginatorASN(0);
 		policyIds.setProtocol(10); //Value of PCEP
 		aso.setSr_policy_candidate_path_identifiers_tlv(policyIds);
+		
+		inlsp.getAssociationList().add(aso);
 		
 		//Optionals
 		if(policyName!=null) {
@@ -279,13 +325,15 @@ public class IniPCCManager {
 			pathPreference.setPreference(Long.parseLong(preference));
 			aso.setSr_policy_candidate_path_preference_tlv(pathPreference);
 		}
+		log.warn("ASO: " + aso.toString());
 		
-		//PCEP Initiate
-		inlsp.setLsp(lsp);
-		inlsp.setSrp(srp);
-		inlsp.getAssociationList().add(aso);
+		//ERO
+		inlsp.setEro(ero);
+		log.warn("ERO: " + ero.toString());
+		
 		
 		//Send Initiate
+		initiate.getPcepIntiatedLSPList().add(inlsp);
 		this.newIni(initiate, node);
 		
 		
