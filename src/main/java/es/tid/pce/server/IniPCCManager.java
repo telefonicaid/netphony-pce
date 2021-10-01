@@ -180,13 +180,13 @@ public class IniPCCManager {
 		
 		inilsp.setLsp(lsp);
 		
-		metric.setMetricType(3);
-		metric.setMetricValue((float)4);
-		inilsp.getMetricList().add(metric);
-		
-		
-		bandwith.setBw((float)0);
-		inilsp.setBandwidth(bandwith);
+//		metric.setMetricType(2);
+//		metric.setMetricValue((float)100);
+//		inilsp.getMetricList().add(metric);
+//
+//	
+//		bandwith.setBw((float)4096);
+//		inilsp.setBandwidth(bandwith);
 		
 		name = name+getNextId();
 		SymbolicPathNameTLV spn= new SymbolicPathNameTLV();
@@ -244,7 +244,7 @@ public class IniPCCManager {
 		lsp_id = 0;
 		lsp.setLspId(lsp_id);
 		SymbolicPathNameTLV spn= new SymbolicPathNameTLV();
-		String name = "cfg_pce_ini_pol_discr" + srp.getSRP_ID_number();
+		String name = "PCE-INIPOL-LSP-NAME-" + srp.getSRP_ID_number();
 		spn.setSymbolicPathNameID(name.getBytes());
 		lsp.setSymbolicPathNameTLV_tlv(spn);
 		log.warn("LSP: " + lsp.toString());
@@ -309,6 +309,7 @@ public class IniPCCManager {
 		
 		inlsp.getAssociationList().add(aso);
 		
+		candidatePathName = "PCE-INIPOL-CANDIDATEPATHNAME-" + srp.getSRP_ID_number();
 		//Optionals
 		if(policyName!=null) {
 			SRPolicyName srPolicyName = new SRPolicyName();

@@ -501,6 +501,11 @@ public class PCEManagementSession extends Thread {
 					out.print("9) send report\r\n");
 					out.print("10) send update \r\n");
 					out.print("0) quit\r\n");
+//					out.print("\rShowing help commands:\r\n");
+//					out.print("\rcreate candidatepath \tCreates a candidate path\r\n");
+//					out.print("\rdelete candidatepath \tDeletes a candidate path\r\n");
+//					out.print("\rsend report \tSends an empty report\r\n");
+//					out.print("\rcreate candidatepath \tCreates a candidate path\r\n");
 
 				}
 				/*
@@ -667,9 +672,9 @@ public class PCEManagementSession extends Thread {
 				break;
 			}
 		}*/
-		policyName = "Nombre_policy";
+		policyName = "PCE-INIPOL-POLICYNAME-" + lsp_id;
 		
-		preference = "10";
+		preference = "200" + lsp_id;
 
 		offset +=4;
 		log.info("parsing ero "+substring.substring(offset));
