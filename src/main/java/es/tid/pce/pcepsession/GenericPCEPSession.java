@@ -592,6 +592,12 @@ public abstract class GenericPCEPSession extends Thread implements PCEPSession {
 				log.info("SR: "+pcepSessionManager.isSRCapable()+" MSD: "+pcepSessionManager.getMSD());
 	
 			}
+		if(pcepSessionManager.isRsvpCapable()){
+				SRCapabilityTLV Rsvp_capability_tlv = new SRCapabilityTLV();
+				Rsvp_capability_tlv.setMSD(pcepSessionManager.getMSD());
+			
+				
+	}
 		if (pcepSessionManager.getLocalPcepCapability().isGmpls()){
 			GMPLSCapabilityTLV gmplsCapabilityTLV=new GMPLSCapabilityTLV();
 			p_open_snd.getOpen().setGmplsCapabilityTLV(gmplsCapabilityTLV);
