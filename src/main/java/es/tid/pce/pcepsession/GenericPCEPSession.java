@@ -25,6 +25,7 @@ import es.tid.pce.pcep.objects.PCEPErrorObject;
 import es.tid.pce.pcep.objects.tlvs.DomainIDTLV;
 import es.tid.pce.pcep.objects.tlvs.GMPLSCapabilityTLV;
 import es.tid.pce.pcep.objects.tlvs.LSPDatabaseVersionTLV;
+import es.tid.pce.pcep.objects.tlvs.OSPFDomainIDTLV;
 import es.tid.pce.pcep.objects.tlvs.PCE_ID_TLV;
 import es.tid.pce.pcep.objects.tlvs.PCE_Redundancy_Group_Identifier_TLV;
 import es.tid.pce.pcep.objects.tlvs.PathSetupCapabilityTLV;
@@ -522,7 +523,7 @@ public abstract class GenericPCEPSession extends Thread implements PCEPSession {
 		}
 		if (requestsParentPCE==true){
 			p_open_snd.getOpen().setParentPCERequestBit(true);
-			DomainIDTLV domain_id_tlv=new DomainIDTLV();
+			OSPFDomainIDTLV domain_id_tlv=new OSPFDomainIDTLV();
 			domain_id_tlv.setDomainId(domainId);
 			p_open_snd.getOpen().setDomain_id_tlv(domain_id_tlv);
 			PCE_ID_TLV pce_id_tlv=new PCE_ID_TLV();
@@ -744,7 +745,13 @@ public abstract class GenericPCEPSession extends Thread implements PCEPSession {
 										this.remotePCEId=p_open.getOpen().getPce_id_tlv().getPceId();	
 									}
 									if (p_open.getOpen().getDomain_id_tlv()!=null){
-										this.remoteDomainId=p_open.getOpen().getDomain_id_tlv().getDomainId();	
+										
+										if (p_open.getOpen().getDomain_id_tlv() instanceof es.tid.pce.pcep.objects.tlvs.EmptyDomainIDTLV) {
+											//Ignore 
+										}else if (p_open.getOpen().getDomain_id_tlv() instanceof es.tid.pce.pcep.objects.tlvs.OSPFDomainIDTLV) {
+											this.remoteDomainId=((OSPFDomainIDTLV)p_open.getOpen().getDomain_id_tlv()).getDomainId();	
+										}
+											
 									}
 									if (p_open.getOpen().getOf_list_tlv()!=null){
 										this.remoteOfCodes=p_open.getOpen().getOf_list_tlv().getOfCodes();
@@ -925,7 +932,12 @@ public abstract class GenericPCEPSession extends Thread implements PCEPSession {
 										this.remotePCEId=p_open.getOpen().getPce_id_tlv().getPceId();	
 									}
 									if (p_open.getOpen().getDomain_id_tlv()!=null){
-										this.remoteDomainId=p_open.getOpen().getDomain_id_tlv().getDomainId();	
+										if (p_open.getOpen().getDomain_id_tlv() instanceof es.tid.pce.pcep.objects.tlvs.EmptyDomainIDTLV) {
+											//Ignore 
+										}else if (p_open.getOpen().getDomain_id_tlv() instanceof es.tid.pce.pcep.objects.tlvs.OSPFDomainIDTLV) {
+											this.remoteDomainId=((OSPFDomainIDTLV)p_open.getOpen().getDomain_id_tlv()).getDomainId();	
+										}
+												
 									}
 									if (p_open.getOpen().getOf_list_tlv()!=null){
 										this.remoteOfCodes=p_open.getOpen().getOf_list_tlv().getOfCodes();
