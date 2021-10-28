@@ -19,11 +19,16 @@ import es.tid.pce.pcep.constructs.Path;
 import es.tid.pce.pcep.constructs.StateReport;
 import es.tid.pce.pcep.constructs.UpdateRequest;
 import es.tid.pce.pcep.messages.PCEPUpdate;
+import es.tid.pce.pcep.objects.Bandwidth;
+import es.tid.pce.pcep.objects.BandwidthExistingLSP;
+import es.tid.pce.pcep.objects.BandwidthUtilization;
 import es.tid.pce.pcep.objects.ExplicitRouteObject;
 import es.tid.pce.pcep.objects.LSP;
+import es.tid.pce.pcep.objects.LSPA;
 import es.tid.pce.pcep.objects.Metric;
 import es.tid.pce.pcep.objects.SRP;
 import es.tid.pce.pcep.objects.tlvs.PathSetupTLV;
+import es.tid.pce.pcep.objects.tlvs.SymbolicPathNameTLV;
 import es.tid.pce.server.SD_LSP;
 import es.tid.pce.server.lspdb.SingleDomainLSPDB;
 import es.tid.pce.utils.StringToPCEP;
@@ -115,14 +120,16 @@ public class DelegationManager {
 					}
 					ur.setSrp(srp);
 					
+					PathSetupTLV sym = new PathSetupTLV();
+					sym.setPST(1);
+					sym.setTLVType(28);
+					srp.setPathSetupTLV(sym);
 					
-					;
-					Metric metric = new Metric();
 					
-					metric.setMetricType(2);
-					metric.setMetricValue(10);
 					
 					LSP ls = new LSP();
+					
+					
 					//Copy the LSP ID
 					ls.setLspId(sr.getLsp().getLspId());
 					//Set deletation flag to true
@@ -153,6 +160,36 @@ public class DelegationManager {
 					}else {
 						//Copy the path
 					}
+					
+					LSPA lspa = new LSPA();
+					lspa.setExcludeAny(2);
+					lspa.setHoldingPrio(0);
+					lspa.setSetupPrio(7);
+					path.setLspa(lspa);
+						
+//					Metric metric1 = new Metric();
+//					
+//					metric1.setBoundBit(true);
+//					metric1.setMetricType(3);
+//					metric1.setMetricValue(4);
+//					
+//					path.getMetricList().add(metric1);
+//					
+//					Metric metric = new Metric();
+//					metric.setBoundBit(true);
+//					metric.setMetricType(2);
+//					metric.setMetricValue(30);
+//					
+//					path.getMetricList().add(metric);
+//			
+//					BandwidthExistingLSP bw = new BandwidthExistingLSP();
+//					
+//					bw.setOT(1);
+//					bw.setBw(100);
+//					
+//					path.setBandwidth(bw);
+					
+
 					ur.setPath(path);	
 //					List<Path> pathList = null;
 //					if (this.getPathFromFile) {
@@ -236,6 +273,8 @@ public class DelegationManager {
 		SRP srp = new SRP();
 		LSP ls = new LSP();
 		
+		
+	
 		ls.setAdministrativeFlag(true);
 		ls.setOpFlags(1);
 		
@@ -257,6 +296,7 @@ public class DelegationManager {
 		}
 		
 		ls.setDelegateFlag(true);
+		
 		ur.setSrp(srp);
 		
 		if (sr!=null) {

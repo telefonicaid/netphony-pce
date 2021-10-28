@@ -36,6 +36,7 @@ import es.tid.pce.pcep.objects.EndPoints;
 import es.tid.pce.pcep.objects.EndPointsIPv4;
 import es.tid.pce.pcep.objects.ExplicitRouteObject;
 import es.tid.pce.pcep.objects.LSP;
+import es.tid.pce.pcep.objects.LSPA;
 import es.tid.pce.pcep.objects.Metric;
 import es.tid.pce.pcep.objects.SRP;
 import es.tid.pce.pcep.objects.subobjects.SREROSubobject;
@@ -180,13 +181,24 @@ public class IniPCCManager {
 		
 		inilsp.setLsp(lsp);
 		
-//		metric.setMetricType(2);
-//		metric.setMetricValue((float)100);
+//		metric.setMetricType(12);
+//		metric.setMetricValue((float)40);
 //		inilsp.getMetricList().add(metric);
-//
-//	
-//		bandwith.setBw((float)4096);
-//		inilsp.setBandwidth(bandwith);
+//		
+		
+		//EXCLUDE
+//		LSPA lspa = new LSPA();
+//		lspa.setExcludeAny(2048);
+//		path.setLspa(lspa);
+		
+		
+		AssociationIPv4 aso = new AssociationIPv4();
+		inilsp.getAssociationList().add(aso);
+		
+		
+	
+		bandwith.setBw((float)4097);
+		inilsp.setBandwidth(bandwith);
 		
 		name = name+getNextId();
 		SymbolicPathNameTLV spn= new SymbolicPathNameTLV();
