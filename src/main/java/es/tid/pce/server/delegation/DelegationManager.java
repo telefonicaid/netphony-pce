@@ -125,11 +125,7 @@ public class DelegationManager {
 					sym.setTLVType(28);
 					srp.setPathSetupTLV(sym);
 					
-					
-					
 					LSP ls = new LSP();
-					
-					
 					//Copy the LSP ID
 					ls.setLspId(sr.getLsp().getLspId());
 					//Set deletation flag to true
@@ -162,9 +158,9 @@ public class DelegationManager {
 					}
 					
 					LSPA lspa = new LSPA();
-					lspa.setExcludeAny(2);
+					lspa.setExcludeAny(0);
 					lspa.setHoldingPrio(0);
-					lspa.setSetupPrio(7);
+					lspa.setSetupPrio(0);
 					path.setLspa(lspa);
 						
 //					Metric metric1 = new Metric();
@@ -189,7 +185,6 @@ public class DelegationManager {
 //					
 //					path.setBandwidth(bw);
 					
-
 					ur.setPath(path);	
 //					List<Path> pathList = null;
 //					if (this.getPathFromFile) {
@@ -209,7 +204,8 @@ public class DelegationManager {
 //					}
 					
 //					path.getMetricList().add(metric);
-					ur.setPath(path);					
+					ur.setPath(path);
+					
 					//Copy association
 				
 					for (int i=0;i<lsp.getStateRport().getAssociationList().size();++i ) {

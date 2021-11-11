@@ -209,24 +209,49 @@ public class DefaultSinglePathComputing implements ComputingAlgorithm {
 		
 		ExplicitRouteObject ero= new ExplicitRouteObject();
 		List<IntraDomainEdge> edge_list=gp.getEdgeList();
-		/*EncodeEroMPLS2.createEroMpls(ero, edge_list);*/
+		EncodeEroMPLS2.createEroMpls(ero, edge_list);
 		
 		/********ELIMINAR*******************/
-		SREROSubobject ero2 = new SREROSubobject();
-		SREROSubobject ero3 = new SREROSubobject();
-		NAIIPv4Adjacency naia = new NAIIPv4Adjacency();
-		NAIIPv4Adjacency naia2 = new NAIIPv4Adjacency();
-		NAIIPv4NodeID nai= new NAIIPv4NodeID();
-		Inet4Address eru;
-		try {
-			eru = (Inet4Address) Inet4Address.getByName("192.168.3.11");
-			naia.setLocalNodeAddress(eru);
-			eru = (Inet4Address) Inet4Address.getByName("192.168.3.13");
-			naia.setRemoteNodeAddress(eru);
-			naia.setNaiType(3);
-		}catch(Exception e) {
-			
-		}
+//		SREROSubobject ero2 = new SREROSubobject();
+//		SREROSubobject ero3 = new SREROSubobject();
+//		NAIIPv4Adjacency naia = new NAIIPv4Adjacency();
+//		NAIIPv4Adjacency naia2 = new NAIIPv4Adjacency();
+//		NAIIPv4NodeID nai= new NAIIPv4NodeID();
+//		Inet4Address eru;
+//		try {
+//			eru = (Inet4Address) Inet4Address.getByName("192.168.3.11");
+//			naia.setLocalNodeAddress(eru);
+//			eru = (Inet4Address) Inet4Address.getByName("192.168.3.13");
+//			naia.setRemoteNodeAddress(eru);
+//			naia.setNaiType(3);
+//		}catch(Exception e) {
+//			
+//		}
+//		try {
+//			eru = (Inet4Address) Inet4Address.getByName("1.1.1.2");
+//			nai.setNodeID(eru);
+//		}catch(Exception e) {
+//			
+//		}
+//		
+//		ero2.setFflag(false);
+//
+//		ero2.setNai(naia);
+//		ero2.setNT(3);
+//		ero2.setMflag(false);
+//		ero2.setSID(300);
+//		ero2.setLoosehop(false);
+//		ero.getEROSubobjectList().add(ero2);
+//		
+//		try {
+//			eru = (Inet4Address) Inet4Address.getByName("192.168.2.13");
+//			naia2.setLocalNodeAddress(eru);
+//			eru = (Inet4Address) Inet4Address.getByName("192.168.2.12");
+//			naia2.setRemoteNodeAddress(eru);
+//			naia2.setNaiType(3);
+//		}catch(Exception e) {
+//			
+//		}
 		/*try {
 			eru = (Inet4Address) Inet4Address.getByName("1.1.1.2");
 			nai.setNodeID(eru);
@@ -234,39 +259,14 @@ public class DefaultSinglePathComputing implements ComputingAlgorithm {
 			
 		}*/
 		
-		ero2.setFflag(false);
-
-		ero2.setNai(naia);
-		ero2.setNT(3);
-		ero2.setMflag(false);
-		ero2.setSID(300);
-		ero2.setLoosehop(false);
-		ero.getEROSubobjectList().add(ero2);
-		
-		try {
-			eru = (Inet4Address) Inet4Address.getByName("192.168.2.13");
-			naia2.setLocalNodeAddress(eru);
-			eru = (Inet4Address) Inet4Address.getByName("192.168.2.12");
-			naia2.setRemoteNodeAddress(eru);
-			naia2.setNaiType(3);
-		}catch(Exception e) {
-			
-		}
-		/*try {
-			eru = (Inet4Address) Inet4Address.getByName("1.1.1.2");
-			nai.setNodeID(eru);
-		}catch(Exception e) {
-			
-		}*/
-		
-		ero3.setFflag(false);
-
-		ero3.setNai(naia2);
-		ero3.setNT(3);
-		ero3.setMflag(false);
-		ero3.setSID(200);
-		ero3.setLoosehop(false);
-		ero.getEROSubobjectList().add(ero3);
+//		ero3.setFflag(false);
+//
+//		ero3.setNai(naia2);
+//		ero3.setNT(3);
+//		ero3.setMflag(false);
+//		ero3.setSID(200);
+//		ero3.setLoosehop(false);
+//		ero.getEROSubobjectList().add(ero3);
 		
 		/***************************/
 		
