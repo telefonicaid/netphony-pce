@@ -161,20 +161,47 @@ public class IniPCCManager {
 		PCEPIntiatedLSP inilsp = new PCEPIntiatedLSP();
 		Metric metric= new Metric();
 		
-		
 		BandwidthRequested bandwith = new BandwidthRequested();
 		ini.getPcepIntiatedLSPList().add(inilsp);
 		SRP srp= new SRP();
+//		srp.setPbit(true);
 		srp.setSRP_ID_number(DelegationManager.getNextSRPID());
 		
-		
 		inilsp.setEro(ero);
+		
+		endPoints.setPbit(true);
 		inilsp.setEndPoint(endPoints);
 		inilsp.setSrp(srp);
 		LSP lsp= new LSP();
+		lsp.setPbit(true);
 		lsp.setAdministrativeFlag(true);
-		lsp.setOpFlags(1);
+//		lsp.setCreateFlag(true);
+//		lsp.setOpFlags(0);
+//		lsp.setDelegateFlag(true);
 		lsp.setLspId(0);
+		
+		IPv4LSPIdentifiersTLV ta_good = new IPv4LSPIdentifiersTLV();
+		String str = "1.1.1.1";
+		Inet4Address ip_pcc = null;
+		try {
+			 ip_pcc = (Inet4Address) Inet4Address.getByName(str);
+			} catch (UnknownHostException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+			}
+		ta_good.setTunnelSenderIPAddress(ip_pcc);
+		
+		str = "1.1.1.2";
+		Inet4Address ip_dest = null;
+		try {
+			 ip_dest = (Inet4Address) Inet4Address.getByName(str);
+			} catch (UnknownHostException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+			}
+		ta_good.setTunnelEndPointIPAddress(ip_dest);
+		
+		lsp.setLspIdentifiers_tlv(ta_good);
 		
 		PathSetupTLV path2 = new PathSetupTLV();
 		path2.setPST(signalingType);
@@ -182,34 +209,46 @@ public class IniPCCManager {
 		
 		inilsp.setLsp(lsp);
 		
-//		metric.setMetricType(12);
-//		metric.setMetricValue((float)40);
+//		metric.setMetricType(1);
+//		metric.setMetricValue((float)100);
+//		metric.setBoundBit(false);
+//		metric.setComputedMetricBit(true);
 //		inilsp.getMetricList().add(metric);
-//		
+		
+//		Metric metric2 = new Metric();
+//		metric2.setMetricType(3);
+//		metric2.setMetricValue((float)5);
+//		metric2.setBoundBit(false);
+//		metric2.setComputedMetricBit(true);
+//		inilsp.getMetricList().add(metric2);
+		
 
 //		EXCLUDE
-//		LSPA lspa = new LSPA();
-//		lspa.setSetupPrio(7);
+		LSPA lspa = new LSPA();
+		lspa.setSetupPrio(7);
+		lspa.setHoldingPrio(7);
+		lspa.setIncludeAny(4);
 //		lspa.setExcludeAny(Integer.parseInt(exclude));
-//		inilsp.setLspa(lspa);
-		
-		
-		
+		inilsp.setLspa(lspa);
+	
 //		AssociationIPv4 aso = new AssociationIPv4();
 //		aso.setAssocID(0);
 //		aso.setAssocType(1);
 //		PathProtectionAssociationTLV path = new PathProtectionAssociationTLV();
 //		
 //		path.setData(Long.parseLong(exclude));
-//		
+//		log.info("ASO: " + aso.toString());
+		
 //		ExtendedAssociationIDTLV ext = new ExtendedAssociationIDTLV();
-//		ext.setColor(4);
+//		ext.setColor(3);
 //		ext.setEndpoint(null);
+//		log.info("Extended tlv: " + ext.toString());
 //		aso.setExtended_ssociation_id_tlv(ext);
-//		
+		
 //		aso.setPathProtectionAssoTLV(path);
-//		
-//		String str = "10.95.228.125";
+
+//		ExtendedAssociationIDTLV ext = new ExtendedAssociationIDTLV();
+//		String str = "10.95.42.104";
 //		Inet4Address ip_pcc = null;
 //		try {
 //			 ip_pcc = (Inet4Address) Inet4Address.getByName(str);
@@ -218,26 +257,14 @@ public class IniPCCManager {
 //					e.printStackTrace();
 //			}
 //		aso.setAssociationSource(ip_pcc);
-//		
-//		log.info("ASSO: " +aso.toString());
-
-//		ExtendedAssociationIDTLV ext = new ExtendedAssociationIDTLV();
-//		String str = "10.95.228.125";
-//		Inet4Address ip_pcc = null;
-//		try {
-//			 ip_pcc = (Inet4Address) Inet4Address.getByName(str);
-//			} catch (UnknownHostException e) {
-//					// TODO Auto-generated catch block
-//					e.printStackTrace();
-//			}
 //		ext.setEndpoint(ip_pcc);
 //		ext.setColor(3);
 //		aso.setExtended_ssociation_id_tlv(ext);
-		
+//
 //		inilsp.getAssociationList().add(aso);
 		
 
-		bandwith.setBw((float)4097);
+		bandwith.setBw((float)0);
 		inilsp.setBandwidth(bandwith);
 		
 		SymbolicPathNameTLV spn= new SymbolicPathNameTLV();
@@ -262,6 +289,9 @@ public class IniPCCManager {
 		lsp.setRemoveFlag(true);
 		lsp.setAdministrativeFlag(true);
 		lsp.setLspId(lsp_number);
+		
+		
+		
 		inlsp.setLsp(lsp);
 		inlsp.setSrp(srp);
 		terminate.getPcepIntiatedLSPList().add(inlsp);
@@ -292,7 +322,7 @@ public class IniPCCManager {
 		lsp.setOpFlags(1);
 		lsp.setLspId(0);
 		SymbolicPathNameTLV spn= new SymbolicPathNameTLV();
-		String name = "PCE-INIPOL-2CP/PATH-" + srp.getSRP_ID_number();
+		String name = "PCE-INI-2CPs-" + srp.getSRP_ID_number();
 		spn.setSymbolicPathNameID(name.getBytes());
 		lsp.setSymbolicPathNameTLV_tlv(spn);
 		log.warn("LSP: " + lsp.toString());
@@ -300,7 +330,7 @@ public class IniPCCManager {
 		inlsp.setLsp(lsp);
 		/**Endpoints**/
 		EndPointsIPv4 ep=new EndPointsIPv4();
-		String src_ip= "10.95.86.139";
+		String src_ip= "10.95.86.214";
 		
 		Inet4Address ipp;
 		try {
@@ -311,7 +341,7 @@ public class IniPCCManager {
 			e.printStackTrace();
 		}
 		
-		String dst_ip= "1.1.1.135";
+		String dst_ip= "1.1.1.2";
 		//String src_ip= "1.1.1.1";
 		try {
 			ipp = (Inet4Address)Inet4Address.getByName(dst_ip);
@@ -324,7 +354,7 @@ public class IniPCCManager {
 		inlsp.setEndPoint(ep);
 		/**Association Object**/
 		AssociationIPv4 aso=new AssociationIPv4();
-		String string_ip_source = "10.95.228.125";
+		String string_ip_source = "10.95.47.193";
 		Inet4Address ip_source = null;
 		
 		SRPolicyCandidatePathIdentifiersTLV policyIds=new SRPolicyCandidatePathIdentifiersTLV();
@@ -342,35 +372,33 @@ public class IniPCCManager {
 		aso.setAssocType(6);
 		aso.setAssocID(1);
 		
-		
-		
-		PathProtectionAssociationTLV pathi = new PathProtectionAssociationTLV();
-		pathi.setData(lsp_id);
-		aso.setPathProtectionAssoTLV(pathi);
+//		PathProtectionAssociationTLV pathi = new PathProtectionAssociationTLV();
+//		pathi.setData(lsp_id);
+//		aso.setPathProtectionAssoTLV(pathi);
 		
 		//TLVs
 		//Mandatories
-//		extended_aso.setColor(color);
-//		extended_aso.setEndpoint(ip_dest);
-//		
-//		aso.setExtended_ssociation_id_tlv(extended_aso);
-//		
-//		policyIds.setOriginatorAddress(ip_source);
-//		policyIds.setDiscriminator(0);
-//		policyIds.setOriginatorASN(0);
-//		policyIds.setProtocol(10); //Value of PCEP
-//		aso.setSr_policy_candidate_path_identifiers_tlv(policyIds);
+		extended_aso.setColor(color);
+		extended_aso.setEndpoint(ip_dest);
+		
+		aso.setExtended_ssociation_id_tlv(extended_aso);
+		
+		policyIds.setOriginatorAddress(ip_source);
+		policyIds.setDiscriminator(0);
+		policyIds.setOriginatorASN(0);
+		policyIds.setProtocol(10); //Value of PCEP
+		aso.setSr_policy_candidate_path_identifiers_tlv(policyIds);
 //		
 		inlsp.getAssociationList().add(aso);
 		
 		//METRIC
-		Metric metric = new Metric();
-		metric.setMetricType(2);
-		metric.setMetricValue((float)10);
-		inlsp.getMetricList().add(metric);
+//		Metric metric = new Metric();
+//		metric.setMetricType(2);
+//		metric.setMetricValue((float)8);
+//		inlsp.getMetricList().add(metric);
 		
-		candidatePathName = "PCE-INIPOL-2CP" + srp.getSRP_ID_number();
-		//Optionals
+		candidatePathName = "PCE-INIPOL-CP-" + srp.getSRP_ID_number();
+//		Optionals
 //		if(policyName!=null) {
 //			SRPolicyName srPolicyName = new SRPolicyName();
 //			srPolicyName.setPolicyName(policyName);
@@ -381,12 +409,12 @@ public class IniPCCManager {
 //			srPolicyCandidatePathName.setSRPolicyCandidatePathName(candidatePathName);
 //			aso.setSr_policy_candidate_path_tlv(srPolicyCandidatePathName);
 //		}
-//		if(preference!=null) {
-//			SRPolicyCandidatePathPreferenceTLV pathPreference = new SRPolicyCandidatePathPreferenceTLV();
-//			
-//			pathPreference.setPreference(Long.parseLong(preference));
-//			aso.setSr_policy_candidate_path_preference_tlv(pathPreference);
-//		}
+		if(preference!=null) {
+			SRPolicyCandidatePathPreferenceTLV pathPreference = new SRPolicyCandidatePathPreferenceTLV();
+			
+			pathPreference.setPreference(Long.parseLong(preference) + srp.getSRP_ID_number());
+			aso.setSr_policy_candidate_path_preference_tlv(pathPreference);
+		}
 		log.warn("ASO: " + aso.toString());
 		
 		//ERO
@@ -417,6 +445,12 @@ public class IniPCCManager {
 		lsp.setAdministrativeFlag(true);
 		lsp.setLspId(lsp_id);
 		
+//		SymbolicPathNameTLV sym = new SymbolicPathNameTLV();
+//		String nome = "PCE-INI-2CPs-1";
+//		sym.setSymbolicPathNameID(nome.getBytes());
+//		sym.setTLVType(17);
+//		lsp.setSymbolicPathNameTLV_tlv(sym);
+		
 		inlsp.setLsp(lsp);
 		inlsp.setSrp(srp);
 		
@@ -426,7 +460,7 @@ public class IniPCCManager {
 		
 	}
 
-	public void initiateLSPWP(EndPoints endPoints, ExplicitRouteObject ero, Object node,int signalingType, String name, String exclude) {
+	public void initiateLSPWP(EndPoints endPoints, ExplicitRouteObject ero, Object node,int signalingType, String name, String exclude, String id) {
 		PCEPInitiate ini = new PCEPInitiate();
 		PCEPIntiatedLSP inilsp = new PCEPIntiatedLSP();
 		Metric metric= new Metric();	
@@ -476,13 +510,13 @@ public class IniPCCManager {
 		path.setData(Long.parseLong(exclude));
 		
 		ExtendedAssociationIDTLV ext = new ExtendedAssociationIDTLV();
-		ext.setColor(4);
+		ext.setColor(Long.parseLong(id));
 		ext.setEndpoint(null);
 		aso.setExtended_ssociation_id_tlv(ext);
 		
 		aso.setPathProtectionAssoTLV(path);
 		
-		String str = "10.95.228.";
+		String str = "10.95.45.107";
 		Inet4Address ip_pcc = null;
 		try {
 			 ip_pcc = (Inet4Address) Inet4Address.getByName(str);
@@ -510,8 +544,8 @@ public class IniPCCManager {
 		inilsp.getAssociationList().add(aso);
 		
 
-		bandwith.setBw((float)4097);
-		inilsp.setBandwidth(bandwith);
+//		bandwith.setBw((float)4097);
+//		inilsp.setBandwidth(bandwith);
 		
 		SymbolicPathNameTLV spn= new SymbolicPathNameTLV();
 		spn.setSymbolicPathNameID(name.getBytes());

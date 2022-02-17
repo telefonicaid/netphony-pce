@@ -121,7 +121,7 @@ public class DelegationManager {
 					ur.setSrp(srp);
 					
 					PathSetupTLV sym = new PathSetupTLV();
-					sym.setPST(1);
+					sym.setPST(0);
 					sym.setTLVType(28);
 					srp.setPathSetupTLV(sym);
 					
@@ -157,33 +157,35 @@ public class DelegationManager {
 						//Copy the path
 					}
 					
-					LSPA lspa = new LSPA();
-					lspa.setExcludeAny(0);
-					lspa.setHoldingPrio(0);
-					lspa.setSetupPrio(0);
-					path.setLspa(lspa);
+					
+					
+//					LSPA lspa = new LSPA();
+//					lspa.setExcludeAny(0);
+//					lspa.setHoldingPrio(0);
+//					lspa.setSetupPrio(0);
+//					path.setLspa(lspa);
 						
 //					Metric metric1 = new Metric();
 //					
 //					metric1.setBoundBit(true);
 //					metric1.setMetricType(3);
-//					metric1.setMetricValue(4);
+//					metric1.setMetricValue(6);
 //					
 //					path.getMetricList().add(metric1);
-//					
+					
 //					Metric metric = new Metric();
 //					metric.setBoundBit(true);
-//					metric.setMetricType(2);
-//					metric.setMetricValue(30);
+//					metric.setMetricType(12);
+//					metric.setMetricValue(5);
 //					
 //					path.getMetricList().add(metric);
 //			
-//					BandwidthExistingLSP bw = new BandwidthExistingLSP();
-//					
-//					bw.setOT(1);
-//					bw.setBw(100);
-//					
-//					path.setBandwidth(bw);
+					BandwidthExistingLSP bw = new BandwidthExistingLSP();
+					
+					bw.setOT(1);
+					bw.setBw(100);
+					
+					path.setBandwidth(bw);
 					
 					ur.setPath(path);	
 //					List<Path> pathList = null;

@@ -614,11 +614,11 @@ public abstract class GenericPCEPSession extends Thread implements PCEPSession {
 		/**
 		 * PARA SEGMENT ROUTING
 		 */
-		
-		ASSOCTypeListTLV aso = new ASSOCTypeListTLV();
-		aso.getAssociation_types().add(1);
-		aso.getAssociation_types().add(6);
-		p_open_snd.getOpen().setAssoc_type_list_tlv(aso);
+//		
+//		ASSOCTypeListTLV aso = new ASSOCTypeListTLV();
+//		aso.getAssociation_types().add(1);
+//		aso.getAssociation_types().add(6);
+//		p_open_snd.getOpen().setAssoc_type_list_tlv(aso);
 		
 		
 		//Send the OPEN message

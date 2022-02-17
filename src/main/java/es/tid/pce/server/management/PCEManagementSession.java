@@ -603,6 +603,9 @@ public class PCEManagementSession extends Thread {
 		String exclude = st.nextToken();
 		offset +=exclude.length()+1;
 		
+		String id = st.nextToken();
+		offset += id.length()+1;
+		
 		String pcc= st.nextToken();
 		//Next 2 Items are the source and destination
 		Inet4Address ip_pcc=null;
@@ -612,7 +615,7 @@ public class PCEManagementSession extends Thread {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		offset+=pcc.length();
+		offset+=pcc.length()+1;
 		//System.out.println("END POINTS NORMALES");
 		EndPointsIPv4 ep=new EndPointsIPv4();
 		String src_ip= st.nextToken();
@@ -646,7 +649,7 @@ public class PCEManagementSession extends Thread {
 			signalingType = 1;
 		}
 		
-		this.domainPCEServer.getIniManager().initiateLSPWP(ep,ero,ip_pcc,signalingType,name,exclude);
+		this.domainPCEServer.getIniManager().initiateLSPWP(ep,ero,ip_pcc,signalingType,name,exclude,id);
 		
 	}
 
@@ -789,6 +792,7 @@ public class PCEManagementSession extends Thread {
 		
 		String name=st.nextToken();
 		offset+=name.length()+1;
+		
 
 		String exclude = st.nextToken();
 		offset +=exclude.length()+1;
