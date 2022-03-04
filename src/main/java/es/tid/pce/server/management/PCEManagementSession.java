@@ -421,8 +421,13 @@ public class PCEManagementSession extends Thread {
 					out.print("\r\n");
 				}
 				else if(command.startsWith("delete candidatepath")) {
-					this.deleteCandidatePath(command.substring(15));
+					this.deleteCandidatePath(command.substring(20));
 					out.print("\rDeleting candidate Path");
+					out.print("\r\n");
+				}
+				else if(command.startsWith("initiatewp")) {
+					this.initiatewp(command.substring(10));
+					out.print("\rCreating working or protecting lsp");
 					out.print("\r\n");
 				}
 				/*
@@ -501,6 +506,11 @@ public class PCEManagementSession extends Thread {
 					out.print("9) send report\r\n");
 					out.print("10) send update \r\n");
 					out.print("0) quit\r\n");
+//					out.print("\rShowing help commands:\r\n");
+//					out.print("\rcreate candidatepath \tCreates a candidate path\r\n");
+//					out.print("\rdelete candidatepath \tDeletes a candidate path\r\n");
+//					out.print("\rsend report \tSends an empty report\r\n");
+//					out.print("\rcreate candidatepath \tCreates a candidate path\r\n");
 
 				}
 				/*
@@ -581,11 +591,75 @@ public class PCEManagementSession extends Thread {
 		}
 	}
 	
+	private void initiatewp(String inir) {
+		int offset=0;
+		
+		log.info("parsing "+inir);
+		StringTokenizer st = new StringTokenizer(inir," ");
+		
+		String name=st.nextToken();
+		offset+=name.length()+1;
+
+		String exclude = st.nextToken();
+		offset +=exclude.length()+1;
+		
+		String id = st.nextToken();
+		offset += id.length()+1;
+		
+		String pcc= st.nextToken();
+		//Next 2 Items are the source and destination
+		Inet4Address ip_pcc=null;
+		try {
+			ip_pcc = (Inet4Address)Inet4Address.getByName(pcc);
+		} catch (UnknownHostException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		offset+=pcc.length()+1;
+		//System.out.println("END POINTS NORMALES");
+		EndPointsIPv4 ep=new EndPointsIPv4();
+		String src_ip= st.nextToken();
+		
+		Inet4Address ipp;
+		try {
+			ipp = (Inet4Address)Inet4Address.getByName(src_ip);
+			((EndPointsIPv4) ep).setSourceIP(ipp);								
+		} catch (UnknownHostException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		String dst_ip= st.nextToken();
+		//String src_ip= "1.1.1.1";
+		try {
+			ipp = (Inet4Address)Inet4Address.getByName(dst_ip);
+			((EndPointsIPv4) ep).setDestIP(ipp);								
+		} catch (UnknownHostException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		offset+=src_ip.length()+1+dst_ip.length()+1;
+		log.info("parsing ero "+inir.substring(offset));
+		ExplicitRouteObject ero=StringToPCEP.stringToExplicitRouteObject(inir.substring(offset));
+		
+		int signalingType = 0;
+		if(ero.getEROSubobjectList().getFirst() instanceof SREROSubobject) {
+			//SR Up
+			signalingType = 1;
+		}
+		
+		this.domainPCEServer.getIniManager().initiateLSPWP(ep,ero,ip_pcc,signalingType,name,exclude,id);
+		
+	}
+
+
 	private void deleteCandidatePath(String substring) {
 		Inet4Address ip_pcc = null;
 		StringTokenizer st = new StringTokenizer(substring, " ");
 		
 		String pcc = st.nextToken();
+		log.info("PCC: " + pcc);
 
 		try {
 			ip_pcc = (Inet4Address) Inet4Address.getByName(pcc);
@@ -594,9 +668,9 @@ public class PCEManagementSession extends Thread {
 			e.printStackTrace();
 		}
 
-		
 		String lspid = st.nextToken();
 		int lsp_id = Integer.parseInt(lspid);
+		log.info("PLSP-ID: " + lsp_id);
 		
 		this.domainPCEServer.getIniManager().deleteCandidatePath(ip_pcc,lsp_id);
 	}
@@ -667,9 +741,9 @@ public class PCEManagementSession extends Thread {
 				break;
 			}
 		}*/
-		policyName = "Nombre_policy";
+		policyName = "PCE-INIPOL-POLICYNAME-IGP" + lsp_id;
 		
-		preference = "10";
+		preference = "100";
 
 		offset +=4;
 		log.info("parsing ero "+substring.substring(offset));
@@ -718,6 +792,10 @@ public class PCEManagementSession extends Thread {
 		
 		String name=st.nextToken();
 		offset+=name.length()+1;
+		
+
+		String exclude = st.nextToken();
+		offset +=exclude.length()+1;
 		
 		String pcc= st.nextToken();
 		//Next 2 Items are the source and destination
@@ -768,7 +846,7 @@ public class PCEManagementSession extends Thread {
 			signalingType = 1;
 		}
 		
-		this.domainPCEServer.getIniManager().initiateLSP(ep,ero,ip_pcc,signalingType,name);
+		this.domainPCEServer.getIniManager().initiateLSP(ep,ero,ip_pcc,signalingType,name,exclude);
 	}
 	
 	private void easySendUpdate(LSPTEInfo val, DomainPCESession dm) throws UnknownHostException {

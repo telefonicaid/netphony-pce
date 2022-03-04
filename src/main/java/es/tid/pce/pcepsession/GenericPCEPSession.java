@@ -19,9 +19,12 @@ import es.tid.pce.pcep.messages.PCEPKeepalive;
 import es.tid.pce.pcep.messages.PCEPMessage;
 import es.tid.pce.pcep.messages.PCEPMessageTypes;
 import es.tid.pce.pcep.messages.PCEPOpen;
+import es.tid.pce.pcep.objects.Association;
+import es.tid.pce.pcep.objects.AssociationIPv4;
 import es.tid.pce.pcep.objects.OPEN;
 import es.tid.pce.pcep.objects.ObjectParameters;
 import es.tid.pce.pcep.objects.PCEPErrorObject;
+import es.tid.pce.pcep.objects.tlvs.ASSOCTypeListTLV;
 import es.tid.pce.pcep.objects.tlvs.DomainIDTLV;
 import es.tid.pce.pcep.objects.tlvs.GMPLSCapabilityTLV;
 import es.tid.pce.pcep.objects.tlvs.LSPDatabaseVersionTLV;
@@ -593,6 +596,12 @@ public abstract class GenericPCEPSession extends Thread implements PCEPSession {
 				log.info("SR: "+pcepSessionManager.isSRCapable()+" MSD: "+pcepSessionManager.getMSD());
 	
 			}
+		if(pcepSessionManager.isRsvpCapable()){
+				SRCapabilityTLV Rsvp_capability_tlv = new SRCapabilityTLV();
+				Rsvp_capability_tlv.setMSD(pcepSessionManager.getMSD());
+			
+				
+	}
 		if (pcepSessionManager.getLocalPcepCapability().isGmpls()){
 			GMPLSCapabilityTLV gmplsCapabilityTLV=new GMPLSCapabilityTLV();
 			p_open_snd.getOpen().setGmplsCapabilityTLV(gmplsCapabilityTLV);
@@ -602,7 +611,16 @@ public abstract class GenericPCEPSession extends Thread implements PCEPSession {
 //		pathSetupCapability.getPathSetupTypes().add(Integer.valueOf(0));		
 //		p_open_snd.getOpen().setPathSetupCababiity(pathSetupCapability);
 		
-
+		/**
+		 * PARA SEGMENT ROUTING
+		 */
+//		
+//		ASSOCTypeListTLV aso = new ASSOCTypeListTLV();
+//		aso.getAssociation_types().add(1);
+//		aso.getAssociation_types().add(6);
+//		p_open_snd.getOpen().setAssoc_type_list_tlv(aso);
+		
+		
 		//Send the OPEN message
 		sendPCEPMessage(p_open_snd);
 

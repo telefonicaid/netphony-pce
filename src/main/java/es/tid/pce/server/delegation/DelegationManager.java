@@ -8,6 +8,8 @@ import java.io.IOException;
 import java.net.Inet4Address;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,10 +19,16 @@ import es.tid.pce.pcep.constructs.Path;
 import es.tid.pce.pcep.constructs.StateReport;
 import es.tid.pce.pcep.constructs.UpdateRequest;
 import es.tid.pce.pcep.messages.PCEPUpdate;
+import es.tid.pce.pcep.objects.Bandwidth;
+import es.tid.pce.pcep.objects.BandwidthExistingLSP;
+import es.tid.pce.pcep.objects.BandwidthUtilization;
 import es.tid.pce.pcep.objects.ExplicitRouteObject;
 import es.tid.pce.pcep.objects.LSP;
+import es.tid.pce.pcep.objects.LSPA;
+import es.tid.pce.pcep.objects.Metric;
 import es.tid.pce.pcep.objects.SRP;
 import es.tid.pce.pcep.objects.tlvs.PathSetupTLV;
+import es.tid.pce.pcep.objects.tlvs.SymbolicPathNameTLV;
 import es.tid.pce.server.SD_LSP;
 import es.tid.pce.server.lspdb.SingleDomainLSPDB;
 import es.tid.pce.utils.StringToPCEP;
@@ -36,7 +44,7 @@ public class DelegationManager {
 	
 	private boolean getPathFromFile=true; // True if the path is get from a file
 	
-	private String file="update_path.txt"; // True if the path is get from a file
+	private String file="C:\\Users\\b.lcm\\eclipse-workspace\\FORK\\netphony-network-protocols\\update_path.txt"; // True if the path is get from a file
 	
 	/**
 	 * Logger
@@ -112,7 +120,10 @@ public class DelegationManager {
 					}
 					ur.setSrp(srp);
 					
-
+					PathSetupTLV sym = new PathSetupTLV();
+					sym.setPST(0);
+					sym.setTLVType(28);
+					srp.setPathSetupTLV(sym);
 					
 					LSP ls = new LSP();
 					//Copy the LSP ID
@@ -136,7 +147,7 @@ public class DelegationManager {
 					}
 					ur.setLsp(ls);
 					log.debug("Prepare answer with the Path");
-					Path path=null;
+					Path path = null;
 					if (this.getPathFromFile) {
 						log.debug("Getting path from a file");
 						path=this.getEroFromFile();
@@ -145,7 +156,58 @@ public class DelegationManager {
 					}else {
 						//Copy the path
 					}
-					ur.setPath(path);					
+					
+					
+					
+//					LSPA lspa = new LSPA();
+//					lspa.setExcludeAny(0);
+//					lspa.setHoldingPrio(0);
+//					lspa.setSetupPrio(0);
+//					path.setLspa(lspa);
+						
+//					Metric metric1 = new Metric();
+//					
+//					metric1.setBoundBit(true);
+//					metric1.setMetricType(3);
+//					metric1.setMetricValue(6);
+//					
+//					path.getMetricList().add(metric1);
+					
+//					Metric metric = new Metric();
+//					metric.setBoundBit(true);
+//					metric.setMetricType(12);
+//					metric.setMetricValue(5);
+//					
+//					path.getMetricList().add(metric);
+//			
+					BandwidthExistingLSP bw = new BandwidthExistingLSP();
+					
+					bw.setOT(1);
+					bw.setBw(100);
+					
+					path.setBandwidth(bw);
+					
+					ur.setPath(path);	
+//					List<Path> pathList = null;
+//					if (this.getPathFromFile) {
+//						log.debug("Getting path from a file");
+//						pathList=this.getEroFromFile();
+//					}else if (this.compute_path) {
+//						path=this.computePath();
+//					}else {
+//						//Copy the path
+//					}
+//					
+//					if(pathList != null) {
+//						path = pathList.get(0);
+//						if(pathList.size()>1) {
+//							pathList.remove(0);
+//						}
+//					}
+					
+//					path.getMetricList().add(metric);
+					ur.setPath(path);
+					
 					//Copy association
 				
 					for (int i=0;i<lsp.getStateRport().getAssociationList().size();++i ) {
@@ -209,6 +271,8 @@ public class DelegationManager {
 		SRP srp = new SRP();
 		LSP ls = new LSP();
 		
+		
+	
 		ls.setAdministrativeFlag(true);
 		ls.setOpFlags(1);
 		
@@ -230,6 +294,7 @@ public class DelegationManager {
 		}
 		
 		ls.setDelegateFlag(true);
+		
 		ur.setSrp(srp);
 		
 		if (sr!=null) {
@@ -282,6 +347,30 @@ public class DelegationManager {
 		this.lsp_database = lsp_database;
 	}
 
+//	public List<Path> getEroFromFile() {
+//		FileReader fr;
+//		List<Path> pathList =new ArrayList();
+//		Path path = new Path();
+//		try {
+//			fr = new FileReader(this.file);
+//			BufferedReader reader = new BufferedReader(fr);
+//			String line = reader.readLine();
+//			while(line != null ) {
+//				log.info("Creating ERO "+line);
+//				ExplicitRouteObject ero=StringToPCEP.stringToExplicitRouteObject(line);
+//				path.setEro(ero);
+//				pathList.add(path);
+//				
+//				line = reader.readLine();
+//			}
+//			
+//		} catch (Exception e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+//	return pathList;
+//	}
+		
 	public Path getEroFromFile() {
 		FileReader fr;
 		Path path =new Path();
@@ -296,11 +385,11 @@ public class DelegationManager {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
-		
-		
+
 		return path;
 	}
+		
+	
 	
 	public Path computePath() {
 		Path path =new Path();

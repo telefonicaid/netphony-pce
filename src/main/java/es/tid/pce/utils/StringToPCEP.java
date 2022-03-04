@@ -58,6 +58,8 @@ public class StringToPCEP {
 		StringTokenizer st = new StringTokenizer(eroString, " ");
 
 		ExplicitRouteObject ero = new ExplicitRouteObject();
+		
+	
 
 		while (st.hasMoreTokens()) {
 			try {

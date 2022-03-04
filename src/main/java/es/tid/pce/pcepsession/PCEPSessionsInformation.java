@@ -31,6 +31,7 @@ public class PCEPSessionsInformation {
 	
 	//FIXME: mover a capabilities
 	private boolean isSRCapable = false;
+	private boolean isRsvpCapable = false;
 	private int MSD = 0;
 
 	
@@ -81,7 +82,6 @@ public class PCEPSessionsInformation {
 	}
 	
 	
-	 
 	public DataOutputStream getOut() {
 		return out;
 	}
@@ -105,6 +105,10 @@ public class PCEPSessionsInformation {
 	public boolean isSRCapable() {
 		return isSRCapable;
 	}
+	public boolean isRsvpCapable() {
+		// TODO Auto-generated method stub
+		return isRsvpCapable;
+	}
 	
 	public int getMSD() 
 	{
@@ -124,6 +128,7 @@ public class PCEPSessionsInformation {
 		this.isSRCapable = (MSD>=0);
 		this.MSD = MSD;
 	}
+
 	
 	public void setMSD(int MSD) {
 		this.MSD = MSD;
@@ -214,6 +219,7 @@ public class PCEPSessionsInformation {
 		}
 		return sb.toString();
 	}
+	
 	
 	
 }
