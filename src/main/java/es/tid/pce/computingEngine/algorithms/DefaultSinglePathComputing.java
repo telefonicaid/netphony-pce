@@ -1,6 +1,7 @@
 package es.tid.pce.computingEngine.algorithms;
 
 import java.net.Inet4Address;
+import java.net.UnknownHostException;
 import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,6 +24,9 @@ import es.tid.pce.pcep.constructs.Path;
 import es.tid.pce.pcep.constructs.Request;
 import es.tid.pce.pcep.constructs.Response;
 import es.tid.pce.pcep.constructs.UnnumIfEndPoint;
+import es.tid.pce.pcep.objects.Bandwidth;
+import es.tid.pce.pcep.objects.BandwidthExistingLSP;
+import es.tid.pce.pcep.objects.BandwidthRequested;
 import es.tid.pce.pcep.objects.EndPoints;
 import es.tid.pce.pcep.objects.EndPointsIPv4;
 import es.tid.pce.pcep.objects.ExplicitRouteObject;
@@ -71,7 +75,7 @@ public class DefaultSinglePathComputing implements ComputingAlgorithm {
 
 	}
 
-	public ComputingResponse call(){
+	public ComputingResponse call() {
 		long tiempoini =System.nanoTime();
 		ComputingResponse m_resp=new ComputingResponse();
 		Request req=pathReq.getRequestList().get(0);
@@ -82,21 +86,28 @@ public class DefaultSinglePathComputing implements ComputingAlgorithm {
 		//Start creating the response
 		Response response=new Response();
 		RequestParameters rp = new RequestParameters();
+//		PathSetupTLV pathi = new PathSetupTLV();
+//		pathi.setPST(1);
+//		pathi.setTLVType(28);
+//		rp.setPathSetupTLV(pathi);
+		
 		
 		/***************ELIMINAR************/
-		PathSetupTLV patheo = new PathSetupTLV();
-		patheo.setTLVType(28);
-		patheo.setPST(1);
-		rp.setPathSetupTLV(patheo);/*************/
+//		PathSetupTLV patheo = new PathSetupTLV();
+//		patheo.setTLVType(28);
+//		patheo.setPST(1);
+//		rp.setPathSetupTLV(patheo);
+		/////////////////////////////////////////
+//		rp.setPbit(true);
+//		rp.setRequestID(reqId);
+//		response.setRequestParameters(rp);
 		
-		rp.setPbit(true);
-		rp.setRequestID(reqId);
-		response.setRequestParameters(rp);
-		/*if (req.getRequestParameters().getPathSetupTLV()!=null ) {
+		
+		if (req.getRequestParameters().getPathSetupTLV()!=null ) {
 			PathSetupTLV pst =new PathSetupTLV();
 			rp.setPathSetupTLV(pst);
-		}*/
-		if (this.networkGraph==null){
+		}
+		 if (this.networkGraph==null){
 			NoPath noPath= new NoPath();
 			noPath.setNatureOfIssue(ObjectParameters.NOPATH_NOPATH_SAT_CONSTRAINTS);
 			NoPathTLV noPathTLV=new NoPathTLV();	
@@ -104,7 +115,7 @@ public class DefaultSinglePathComputing implements ComputingAlgorithm {
 			response.setNoPath(noPath);
 			m_resp.addResponse(response);
 			return m_resp;
-		}
+		} 
 
 
 		EndPoints  EP= req.getEndPoints();	
@@ -186,10 +197,10 @@ public class DefaultSinglePathComputing implements ComputingAlgorithm {
 			response.setNoPath(noPath);
 			m_resp.addResponse(response);
 			return m_resp;
-		}
+		} 
 
 		log.debug("Computing path");
-		//long tiempoini =System.nanoTime();
+//		long tiempoini =System.nanoTime();
 		DijkstraShortestPath<Object,IntraDomainEdge>  dsp=new DijkstraShortestPath<Object,IntraDomainEdge> (networkGraph, source_router_id_addr, dest_router_id_addr);
 		GraphPath<Object,IntraDomainEdge> gp=dsp.getPath();
 
@@ -201,7 +212,7 @@ public class DefaultSinglePathComputing implements ComputingAlgorithm {
 			response.setNoPath(noPath);
 			m_resp.addResponse(response);
 			return m_resp;
-		}
+		} 
 		
 		// Code ERO Object
 		m_resp.addResponse(response);
@@ -209,64 +220,80 @@ public class DefaultSinglePathComputing implements ComputingAlgorithm {
 		
 		ExplicitRouteObject ero= new ExplicitRouteObject();
 		List<IntraDomainEdge> edge_list=gp.getEdgeList();
-		/*EncodeEroMPLS2.createEroMpls(ero, edge_list);*/
+		EncodeEroMPLS2.createEroMpls(ero, edge_list);
+		
+		/**Inet4Address eru = null;
+		
+		try {
+			eru = (Inet4Address) Inet4Address.getByName("192.168.1.12");
+		} catch (UnknownHostException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		IPv4prefixEROSubobject eroso = new IPv4prefixEROSubobject();
+		eroso.setIpv4address(eru);
+		eroso.setPrefix(32);
+		eroso.setLoosehop(false);
+		ero.getEROSubobjectList().add(eroso);**/
+		
 		
 		/********ELIMINAR*******************/
-		SREROSubobject ero2 = new SREROSubobject();
-		SREROSubobject ero3 = new SREROSubobject();
-		NAIIPv4Adjacency naia = new NAIIPv4Adjacency();
-		NAIIPv4Adjacency naia2 = new NAIIPv4Adjacency();
-		NAIIPv4NodeID nai= new NAIIPv4NodeID();
-		Inet4Address eru;
-		try {
-			eru = (Inet4Address) Inet4Address.getByName("192.168.3.11");
-			naia.setLocalNodeAddress(eru);
-			eru = (Inet4Address) Inet4Address.getByName("192.168.3.13");
-			naia.setRemoteNodeAddress(eru);
-			naia.setNaiType(3);
-		}catch(Exception e) {
-			
-		}
-		/*try {
-			eru = (Inet4Address) Inet4Address.getByName("1.1.1.2");
-			nai.setNodeID(eru);
-		}catch(Exception e) {
-			
-		}*/
+//		SREROSubobject ero2 = new SREROSubobject();
+//		SREROSubobject ero3 = new SREROSubobject();
+//		NAIIPv4Adjacency naia = new NAIIPv4Adjacency();
+//		NAIIPv4Adjacency naia2 = new NAIIPv4Adjacency();
+//		NAIIPv4NodeID nai= new NAIIPv4NodeID();
+//		Inet4Address eru;
+//		
+//		try {
+//			eru = (Inet4Address) Inet4Address.getByName("172.16.0.2");
+//			naia.setLocalNodeAddress(eru);
+//			eru = (Inet4Address) Inet4Address.getByName("172.16.0.1");
+//			naia.setRemoteNodeAddress(eru);
+//			naia.setNaiType(3);
+//		}catch(Exception e) {
+//			
+//		}
+//		try {
+//			eru = (Inet4Address) Inet4Address.getByName("172.16.0.1/30");
+//			nai.setNodeID(eru);
+//			nai.setNaiType(1);
+//		}catch(Exception e) {
+//			
+//		}
+//		
+//		ero2.setNai(nai);
+//		ero2.setNT(0);
+//		ero2.setMflag(true);
+//		ero2.setFflag(false);
+//		ero2.setSID(253956096);
+//		ero2.setLoosehop(false);
+//		ero.getEROSubobjectList().add(ero2); 
+//		
+//		try {
+//			eru = (Inet4Address) Inet4Address.getByName("192.168.1.11");
+//			naia2.setLocalNodeAddress(eru);
+//			eru = (Inet4Address) Inet4Address.getByName("192.168.1.12");
+//			naia2.setRemoteNodeAddress(eru);
+//			naia2.setNaiType(3);
+//		}catch(Exception e) {
+//			
+//		}
+//		try {
+//			eru = (Inet4Address) Inet4Address.getByName("1.1.1.2");
+//			nai.setNodeID(eru);
+//		}catch(Exception e) {
+//			
+//		}
 		
-		ero2.setFflag(false);
-
-		ero2.setNai(naia);
-		ero2.setNT(3);
-		ero2.setMflag(false);
-		ero2.setSID(300);
-		ero2.setLoosehop(false);
-		ero.getEROSubobjectList().add(ero2);
-		
-		try {
-			eru = (Inet4Address) Inet4Address.getByName("192.168.2.13");
-			naia2.setLocalNodeAddress(eru);
-			eru = (Inet4Address) Inet4Address.getByName("192.168.2.12");
-			naia2.setRemoteNodeAddress(eru);
-			naia2.setNaiType(3);
-		}catch(Exception e) {
-			
-		}
-		/*try {
-			eru = (Inet4Address) Inet4Address.getByName("1.1.1.2");
-			nai.setNodeID(eru);
-		}catch(Exception e) {
-			
-		}*/
-		
-		ero3.setFflag(false);
-
-		ero3.setNai(naia2);
-		ero3.setNT(3);
-		ero3.setMflag(false);
-		ero3.setSID(200);
-		ero3.setLoosehop(false);
-		ero.getEROSubobjectList().add(ero3);
+//		ero3.setFflag(false);
+//
+//		ero3.setNai(naia2);
+//		ero3.setNT(3);
+//		ero3.setMflag(false);
+//		ero3.setSID(200);
+//		ero3.setLoosehop(false);
+//		ero.getEROSubobjectList().add(ero3);
 		
 		/***************************/
 		
@@ -344,10 +371,14 @@ public class DefaultSinglePathComputing implements ComputingAlgorithm {
 		log.info("Algorithm.ero :: "+ero.toString());
 		path.setEro(ero);
 		log.info("Algorithm.path:: "+path.toString());
-		Metric metric=new Metric();
-		metric.setMetricType(2);
+		/*Metric metric=new Metric();
+		metric.setMetricType(12);
 		metric.setMetricValue(10);
-		path.getMetricList().add(metric);
+		path.getMetricList().add(metric);*/
+		
+//		BandwidthRequested bw = new BandwidthRequested();
+//		bw.setBw(100);
+//		path.setBandwidth(bw);
 		
 //		log.debug("Number of hops "+edge_list.size());
 //		//FIXME
@@ -363,7 +394,28 @@ public class DefaultSinglePathComputing implements ComputingAlgorithm {
 //			metric.setMetricValue(metricValue);
 //			path.getMetricList().add(metric);
 //		}
+		
+//		Metric metric = new Metric();
+//		
+//		metric.setBoundBit(true);
+//		metric.setMetricType(12);
+//		metric.setMetricValue(5);
+//		path.getMetricList().add(metric);
+//		Metric metric2 = new Metric();
+//		metric2.setBoundBit(true);
+//		metric2.setMetricType(2);
+//		metric2.setMetricValue(50);
+//		path.getMetricList().add(metric2);
+		
+		BandwidthExistingLSP bw = new BandwidthExistingLSP();
+		
+		bw.setOT(1);
+		bw.setBw(100);
+		
+		path.setBandwidth(bw);
 		response.addPath(path);
+		
+		
 		long tiempofin =System.nanoTime();
 		long tiempotot=tiempofin-tiempoini;
 		log.info("Ha tardado "+tiempotot+" nanosegundos");
